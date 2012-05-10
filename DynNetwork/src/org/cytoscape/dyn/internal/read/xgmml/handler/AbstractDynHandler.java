@@ -1,0 +1,27 @@
+package org.cytoscape.dyn.internal.read.xgmml.handler;
+
+import org.cytoscape.dyn.internal.attributes.DynInterval;
+import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
+import org.xml.sax.Attributes;
+
+public abstract class AbstractDynHandler<T> implements DynHandler<T> {
+
+	protected DynNetworkEventManagerImpl<T> manager;
+	protected DynInterval<T> attributeValueUtil;
+
+	public AbstractDynHandler() {
+	}
+
+	@Override
+	abstract public void handleStart(String tag, Attributes atts, ParseDynState current);
+	
+	@Override
+	abstract public void handleEnd(String tag, Attributes atts, ParseDynState current);
+
+	@Override
+	public void setManager(DynNetworkEventManagerImpl<T> manager) {
+		this.manager = manager;
+	}
+
+}
