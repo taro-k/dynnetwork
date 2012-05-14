@@ -19,6 +19,9 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 
 	@Override
 	public void run() {
+		
+		System.out.println("Trhead running");
+		
 		while((timeStep==1 && slider.getValue()<100) || (timeStep==-1 && slider.getValue()>0))
 		{
 			if (this.cancelled==true)
@@ -33,8 +36,12 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 			if (this.cancelled==true)
 				break;
 			
+//			slider.setValueIsAdjusting(true);
 			slider.setValue(slider.getValue()+timeStep);
+//			slider.setValueIsAdjusting(false);
 		}
+		
+		System.out.println("Trhead finished running");
 	}
 
 	public void cancel() {

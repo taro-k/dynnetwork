@@ -1,7 +1,7 @@
 package org.cytoscape.dyn;
 
-import org.cytoscape.app.AbstractCyApp;
-import org.cytoscape.app.CyAppAdapter;
+import org.cytoscape.app.swing.AbstractCySwingApp;
+import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.dyn.internal.events.MenuAction;
 
 /**
@@ -10,9 +10,9 @@ import org.cytoscape.dyn.internal.events.MenuAction;
  *
  * @param <T>
  */
-public class DynNetworkApp<T> extends AbstractCyApp
+public class DynNetworkApp<T> extends AbstractCySwingApp
 {
-	public DynNetworkApp(CyAppAdapter adapter)
+	public DynNetworkApp(CySwingAppAdapter adapter)
 	{
 		super(adapter);
 		adapter.getCySwingApplication().addAction(new MenuAction<T>(adapter));

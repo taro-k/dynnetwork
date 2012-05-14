@@ -43,7 +43,7 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
 
-		queue.lock(); 
+//		queue.lock(); 
 
 //		 Iterate over nodes and nodes attributes and update changes
 		Iterator<KeyPairs> keyItrN = manager.getDynNodesAttr().getDynTable().keySet().iterator();
@@ -128,7 +128,7 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 
 		view.updateView();
 
-		queue.unlock(); 
+//		queue.unlock(); 
 
 	}
 

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.cytoscape.app.CyAppAdapter;
+import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
@@ -37,10 +37,10 @@ import org.cytoscape.work.TunableSetter;
 public class MenuAction<T> extends AbstractCyAction
 {
 
-	private final CyAppAdapter adapter;
+	private final CySwingAppAdapter adapter;
     private List<FileChooserFilter> filters;
 
-    public MenuAction(CyAppAdapter adapter)
+    public MenuAction(CySwingAppAdapter adapter)
     {
         super("Dynamic XGMML Loader");
         this.adapter = adapter;

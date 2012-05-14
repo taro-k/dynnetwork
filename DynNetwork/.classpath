@@ -33,7 +33,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/filter-impl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/graphml-impl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/group-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/group-data-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/group-data-impl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/group-impl"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/group-view-impl"/>
@@ -96,5 +95,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/work-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/work-swing-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/work-swing-impl"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/help-impl"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/model-impl-table-performance-debug"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/swing-app-api"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

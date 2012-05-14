@@ -61,6 +61,7 @@ public class DynControlPanel<T> extends JPanel implements ChangeListener, Action
 	}
 
 	public synchronized void stateChanged(ChangeEvent event) {
+		System.out.println("change event");
 		JSlider source = (JSlider)event.getSource();
 		if (!source.getValueIsAdjusting()) {
 			time = source.getValue()*
@@ -78,12 +79,12 @@ public class DynControlPanel<T> extends JPanel implements ChangeListener, Action
 		if (source.equals(forwardButton))
 		{
 			recursiveTask = new DynNetworkViewTaskIterator<T>(slider, 1);
-			startAndJoin(new Thread(recursiveTask));
+			new Thread(recursiveTask).start();
 		}
 		else if (source.equals(backwardButton))
 		{
 			recursiveTask = new DynNetworkViewTaskIterator<T>(slider, -1);
-			startAndJoin(new Thread(recursiveTask));
+			new Thread(recursiveTask).start();
 		}
 		else if (source.equals(stopButton))
 		{
@@ -126,19 +127,6 @@ public class DynControlPanel<T> extends JPanel implements ChangeListener, Action
 		this.add(new JLabel());
 		this.add(panel);
 		this.setVisible(true);
-	}
-	
-	public static void startAndJoin(Thread thread)
-	{
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.start();
-
-		try {   
-			thread.join();
-		}
-		catch (InterruptedException ie) {
-			throw new RuntimeException(ie);
-		}
 	}
 
 }
