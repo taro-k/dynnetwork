@@ -61,7 +61,6 @@ public class DynControlPanel<T> extends JPanel implements ChangeListener, Action
 	}
 
 	public synchronized void stateChanged(ChangeEvent event) {
-		System.out.println("change event");
 		JSlider source = (JSlider)event.getSource();
 		if (!source.getValueIsAdjusting()) {
 			time = source.getValue()*
