@@ -1,2 +1,5 @@
 Manifest-Version: 1.0
 Cytoscape-App: org.cytoscape.dyn.DynNetworkApp
+Cytoscape-App-Version: 1.0
+Cytoscape-App-Author: Sabina Sara Pfister
+Cytoscape-Version: 3.0.0-M5
