@@ -13,6 +13,8 @@ import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.view.DynControlPanelTask;
+import org.cytoscape.group.CyGroupFactory;
+import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetworkFactory;
@@ -29,18 +31,18 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TunableSetter;
 
 
-// TODO: make bundle
+// TODO: make bundle?
 
 /**
  * Launch the App from the menu "File/Dynamic XGMML Loader"
  */
-public class MenuAction<T> extends AbstractCyAction
+public class MenuActionLoadXGMML<T> extends AbstractCyAction
 {
 
 	private final CySwingAppAdapter adapter;
     private List<FileChooserFilter> filters;
 
-    public MenuAction(CySwingAppAdapter adapter)
+    public MenuActionLoadXGMML(CySwingAppAdapter adapter)
     {
         super("Dynamic XGMML Loader");
         this.adapter = adapter;
@@ -61,7 +63,9 @@ public class MenuAction<T> extends AbstractCyAction
     	CyNetworkNaming cyNetworkNamingServiceRef = adapter.getCyServiceRegistrar().getService(CyNetworkNaming.class);
     	TunableSetter tunableSetterServiceRef = adapter.getCyServiceRegistrar().getService(TunableSetter.class);
     	RenderingEngineManager renderingEngineMgr = adapter.getRenderingEngineManager();
-    	DynNetworkEventManagerImpl<T> manager = new DynNetworkEventManagerImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef);
+    	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
+    	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
+    	DynNetworkEventManagerImpl<T> manager = new DynNetworkEventManagerImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef);
     	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(manager);
     	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml"}, new String[]{"text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
     	XGMMLDynNetworkReaderFactory<T> xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory<T>(xgmmlFilter,cyNetworkViewFactoryServiceRef,cyNetworkFactoryServiceRef,manager,xgmmlParser,renderingEngineMgr);

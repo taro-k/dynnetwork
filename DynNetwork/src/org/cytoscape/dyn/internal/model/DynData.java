@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.attributes;
+package org.cytoscape.dyn.internal.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +33,15 @@ public final class DynData<T> {
 		key = new KeyPairs(column, row);
 		if (!dynTable.containsKey(key))
 			dynTable.put(key, (DynAttribute<T>) typeMap.getTypedValue(typeMap.getType(classType)));
+		dynTable.get(key).addInterval(interval);
+		key = new KeyPairs(column, row);
+	}
+	
+	public void add(DynInterval<T> interval, DynAttribute<T> attribute, long row, String column)
+	{
+		key = new KeyPairs(column, row);
+		if (!dynTable.containsKey(key))
+			dynTable.put(key, attribute);
 		dynTable.get(key).addInterval(interval);
 		key = new KeyPairs(column, row);
 	}

@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.attributes;
+package org.cytoscape.dyn.internal.model;
 
 /**
  * {@inheritDoc}

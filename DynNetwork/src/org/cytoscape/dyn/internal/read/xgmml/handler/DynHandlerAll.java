@@ -14,15 +14,16 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 
 	private DynNetworkEventManagerImpl<T> manager;
 	
-	String id;
-	String label;
-	String name;
-	String source;
-	String target;
-	String type;
-	String value;
-	String start;
-	String end;
+	private String directed;
+	private String id;
+	private String label;
+	private String name;
+	private String source;
+	private String target;
+	private String type;
+	private String value;
+	private String start;
+	private String end;
 
 	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager) {
 		super();
@@ -30,8 +31,9 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	}
 
 	@Override
-	public void handleStart(String tag, Attributes atts, ParseDynState current)
+	public void handleStart(Attributes atts, ParseDynState current)
 	{
+		System.out.println("START: " + current);
 		switch(current)
 		{
 		case NONE:
@@ -42,7 +44,16 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			label = atts.getValue("label");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addGraph(id==null?label:id, label, start, end);
+			directed = atts.getValue("directed");
+			manager.addGraph(id==null?label:id, label, start, end, directed==null?"1":directed);
+			break;
+			
+		case NODE_GRAPH:
+			id = atts.getValue("id");
+			label = atts.getValue("label");
+			start = atts.getValue("start");
+			end = atts.getValue("end");
+			manager.addMetaNode(id==null?label:id, label, start, end);
 			break;
 			
 		case NODE:
@@ -94,20 +105,19 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	}
 
 	@Override
-	public void handleEnd(String tag, Attributes atts, ParseDynState current)
+	public void handleEnd(Attributes atts, ParseDynState current)
 	{
+		System.out.println("END: " + current);
 		switch(current)
 		{
-		case NONE:
+		case NODE_GRAPH:
+			manager.exitMetaNode();
 			break;
 			
 		case GRAPH:
+			manager.exitGraph();
 			break;
 		}
-
 	}
-
-
-	
 
 }

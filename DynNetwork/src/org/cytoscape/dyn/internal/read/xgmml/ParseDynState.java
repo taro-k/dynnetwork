@@ -1,13 +1,14 @@
 package org.cytoscape.dyn.internal.read.xgmml;
 
 public enum ParseDynState {
+	
+	// Graph elements
     NONE("none"),
-    RDF("RDF"),
     NET_ATT("Network Attribute"),
     NODE_ATT("Node Attribute"),
     EDGE_ATT("Edge Attribute"),
 
-    // Types of attributes that require special handling
+    // Elements that require special handling
     LIST_ATT("List Attribute"),
     LIST_ELEMENT("List Element"),
     NET_GRAPHICS("Network Graphics"),
@@ -23,7 +24,6 @@ public enum ParseDynState {
     NODE("Node Element"),
     EDGE("Edge Element"),
     GRAPH("Graph Element"),
-    RDF_DESC("RDF Description"),
     ANY("any");
 
     private String name;

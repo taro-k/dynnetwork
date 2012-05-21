@@ -3,28 +3,22 @@ package org.cytoscape.dyn.internal.events;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.cytoscape.dyn.internal.util.DynIntervalTypeMap;
 import org.cytoscape.dyn.internal.util.ObjectTypeMap;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyRow;
-import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 
-public abstract class AbstractDynNetworkEventManager {
+public abstract class AbstractDynNetworkEventManager<T> {
 	
 	protected final static String XLINK = "http://www.w3.org/1999/xlink";
-
+	
 	protected final ObjectTypeMap typeMap;
+	protected final DynIntervalTypeMap typeIntervalMap;
 	
 	protected final Set<CyNetwork> networks;
-	
-	protected CyRootNetwork parentNetwork;
-	protected CyNetwork currentNetwork;
-	protected CyNode currentNode;
-	protected CyEdge currentEdge;
-	protected CyRow currentRow;
 	
 	protected final CyNetworkFactory networkFactory;
 	protected final CyRootNetworkManager rootNetworkManager;
@@ -35,11 +29,14 @@ public abstract class AbstractDynNetworkEventManager {
 		this.rootNetworkManager = rootNetworkManager;
 		networks = new LinkedHashSet<CyNetwork>();
 		typeMap = new ObjectTypeMap();
+		typeIntervalMap = new DynIntervalTypeMap();
 	}
 
-	abstract public void addGraph(String id, String label, String start, String end);
+	abstract public void addGraph(String id, String label, String start, String end, String directed);
 	
 	abstract public void addNode(String id, String label, String start, String end);
+	
+	abstract public void addMetaNode(String id, String label, String start, String end);
 	
 	abstract public void addEdge(String id, String label, String source, String target, String start, String end);
 	
@@ -50,6 +47,8 @@ public abstract class AbstractDynNetworkEventManager {
 	abstract public void addEdgeAttribute(String name, String value, String Type, String start, String end);
 	
 	abstract public void deleteGraph(CyNetwork netwrok);
+	
+	abstract public void deleteSubGraph(CyNetwork netwrok);
 	
 	abstract public void deleteNode(CyNode node);
 	
@@ -64,46 +63,5 @@ public abstract class AbstractDynNetworkEventManager {
 	public Set<CyNetwork> getNetworks() {
 		return networks;
 	}
-
-	public CyRootNetwork getParentNetwork() {
-		return parentNetwork;
-	}
-
-	public void setParentNetwork(CyRootNetwork parentNetwork) {
-		this.parentNetwork = parentNetwork;
-	}
-
-	public CyNetwork getCurrentNetwork() {
-		return currentNetwork;
-	}
-
-	public void setCurrentNetwork(CyNetwork currentNetwork) {
-		this.currentNetwork = currentNetwork;
-	}
-
-	public CyNode getCurrentNode() {
-		return currentNode;
-	}
-
-	public void setCurrentNode(CyNode currentNode) {
-		this.currentNode = currentNode;
-	}
-
-	public CyEdge getCurrentEdge() {
-		return currentEdge;
-	}
-
-	public void setCurrentEdge(CyEdge currentEdge) {
-		this.currentEdge = currentEdge;
-	}
-
-	public CyRow getCurrentRow() {
-		return currentRow;
-	}
-
-	public void setCurrentRow(CyRow currentRow) {
-		this.currentRow = currentRow;
-	}
-	
 	
 }

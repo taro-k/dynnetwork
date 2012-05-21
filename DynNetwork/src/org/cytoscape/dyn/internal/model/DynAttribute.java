@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.attributes;
+package org.cytoscape.dyn.internal.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public abstract class DynAttribute<T> {
         }
 		return null;
     }
-    
+ 
     public boolean getIsInRange(DynInterval<T> interval) {
         for (DynInterval<T> i : intervalList)
         {

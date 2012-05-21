@@ -2,8 +2,8 @@ package org.cytoscape.dyn.internal.view;
 
 import java.util.Iterator;
 
-import org.cytoscape.dyn.internal.attributes.DynInterval;
 import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.DynInterval;
 import org.cytoscape.dyn.internal.util.KeyPairs;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
@@ -43,7 +43,7 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception {
 
-//		queue.lock(); 
+		queue.lock(); 
 
 //		 Iterate over nodes and nodes attributes and update changes
 		Iterator<KeyPairs> keyItrN = manager.getDynNodesAttr().getDynTable().keySet().iterator();
@@ -78,57 +78,10 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 			else if (!key.getColumn().equals("name"))
 				view.writeEdgeTable(edge, key.getColumn(), manager.getDynEdgesAttr(edge, key.getColumn(), new DynInterval<T>(low, high)));
 		}
-		
-		
-		// alternative code (throws exception in SimpleNetwork, when iterating over the edges)
-		
-//		List<CyNode> nodeList = view.getNodes();
-//		
-//		for (CyNode node : nodeList)
-//		{
-//			if (manager.checkNode(node, new DynInterval<T>(low, high))!=
-//				view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE))
-//			{
-//				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
-//						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
-//			}
-//
-//			String columnName;
-//			Iterator<String> attrIterator = view.getNodeAttributes(node);
-//			while (attrIterator.hasNext())
-//			{
-//				columnName = attrIterator.next();
-//				if (columnName!="name")
-//					view.writeNodeTable(node, columnName, manager.getDynNodesAttr(node, columnName, new DynInterval<T>(low, high)));
-//			}
-//		}
-//
-//		
-//		
-//		List<CyEdge> edgeList = view.getEdges();
-//		
-//		for (CyEdge edge : edgeList)
-//		{
-//			if (manager.checkEdge(edge, new DynInterval<T>(low, high))!=
-//				view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE))
-//			{
-//				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
-//						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
-//			}
-//			
-//			String columnName;
-//			Iterator<String> attrIterator = view.getEdgeAttributes(edge);
-//			while (attrIterator.hasNext())
-//			{
-//				columnName = attrIterator.next();
-//				if (columnName!="name")
-//					view.writeEdgeTable(edge, columnName, manager.getDynEdgesAttr(edge, columnName, new DynInterval<T>(low, high)));
-//			}
-//		}
 
 		view.updateView();
 
-//		queue.unlock(); 
+		queue.unlock(); 
 
 	}
 

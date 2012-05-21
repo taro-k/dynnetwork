@@ -6,9 +6,9 @@ import org.xml.sax.Attributes;
 
 public interface DynHandler<T> {
 	
-	public void handleStart(String tag, Attributes atts, ParseDynState current);
+	public void handleStart(Attributes atts, ParseDynState current);
 	
-	public void handleEnd(String tag, Attributes atts, ParseDynState current);
+	public void handleEnd(Attributes atts, ParseDynState current);
 	
 	public void setManager(DynNetworkEventManagerImpl<T> manager);
 

@@ -34,9 +34,7 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 			if (this.cancelled==true)
 				break;
 			
-//			slider.setValueIsAdjusting(true);
 			slider.setValue(slider.getValue()+timeStep);
-//			slider.setValueIsAdjusting(false);
 		}
 		
 	}

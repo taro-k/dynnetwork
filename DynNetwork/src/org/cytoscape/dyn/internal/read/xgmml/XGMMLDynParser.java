@@ -12,7 +12,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class XGMMLDynParser<T> extends DefaultHandler {
 	
 	private ParseDynState parseState;
-	private Stack<ParseDynState> stateStack;
+	
+	private Stack<ParseDynState> startStack;
 	
 	private final DynHandlerFactory<T> handler;
 	
@@ -25,7 +26,7 @@ public final class XGMMLDynParser<T> extends DefaultHandler {
 	 */
 	@Override
 	public void startDocument() throws SAXException {
-		stateStack = new Stack<ParseDynState>();
+		startStack = new Stack<ParseDynState>();
 		parseState = ParseDynState.NONE;
 		super.startDocument();
 	}
@@ -34,7 +35,7 @@ public final class XGMMLDynParser<T> extends DefaultHandler {
 	@Override
 	public void startElement(String namespace, String localName, String qName, Attributes atts) throws SAXException {
 		final ParseDynState nextState = handler.handleStartState(parseState, localName, atts);
-		stateStack.push(parseState);
+		startStack.push(parseState);
 		parseState = nextState;
 	}
 
@@ -42,7 +43,7 @@ public final class XGMMLDynParser<T> extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		handler.handleEndState(parseState, localName, null);
-		parseState = stateStack.pop();
+		parseState = startStack.pop();
 	}
 
 
@@ -51,13 +52,5 @@ public final class XGMMLDynParser<T> extends DefaultHandler {
 		String err = "Fatal parsing error on line " + e.getLineNumber() + " -- '" + e.getMessage() + "'";
 		throw new SAXException(err);
 	}
-
-
-	@Override
-	public void error(SAXParseException e) {
-
-	}
-
-
 
 }
