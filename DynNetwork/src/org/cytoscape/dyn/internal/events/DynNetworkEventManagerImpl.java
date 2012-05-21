@@ -21,8 +21,6 @@ import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 
 //TODO: implement listeners to handle graph events
 //TODO: implement event filter, for the moment we do filtering in the handler
-//TODO: find a place to store the dynamic information, not here!
-//TODO: and should be thread safe (currentnode, currentedge, etc. are NOT!)!
 
 /**
  * {@inheritDoc}
