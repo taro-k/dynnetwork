@@ -11,6 +11,9 @@ import java.util.List;
  * @param <T>
  */
 public abstract class DynAttribute<T> {
+	
+	private double minTime = Double.POSITIVE_INFINITY;
+	private double maxTime = Double.NEGATIVE_INFINITY;
 
 	//TODO: intervals should be hold in a tree for fast searching
 	protected List<DynInterval<T>> intervalList;
@@ -51,6 +54,14 @@ public abstract class DynAttribute<T> {
 		return false;
     }
     
+	public double getMinTime() {
+		return minTime;
+	}
+
+	public double getMaxTime() {
+		return maxTime;
+	}
+
 	abstract public Class<?> getType();
 
 }

@@ -51,15 +51,18 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 		{
 			KeyPairs key = keyItrN.next();
 			CyNode node = view.readNodeTable(key.getRow());
-			if(key.getColumn().equals("name") 
-					&& manager.checkNode(node, new DynInterval<T>(low, high))==
-						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE))
+			if (node!=null)
 			{
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
-						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
+				if(key.getColumn().equals("name") 
+						&& manager.checkNode(node, new DynInterval<T>(low, high))==
+							!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE))
+				{
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
+							!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
+				}
+				else if (!key.getColumn().equals("name"))
+					view.writeNodeTable(node, key.getColumn(), manager.getDynNodesAttr(node, key.getColumn(), new DynInterval<T>(low, high)));
 			}
-			else if (!key.getColumn().equals("name"))
-				view.writeNodeTable(node, key.getColumn(), manager.getDynNodesAttr(node, key.getColumn(), new DynInterval<T>(low, high)));
 		}
 
 //		 Iterate over edges and edges attributes and update changes
@@ -68,15 +71,18 @@ public class DynNetworkViewTask<T> extends AbstractTask {
 		{
 			KeyPairs key = keyItrE.next();
 			CyEdge edge = view.readEdgeTable(key.getRow());
-			if(key.getColumn().equals("name") 
-					&& manager.checkEdge(edge, new DynInterval<T>(low, high))==
-						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE))
+			if (edge!=null)
 			{
-				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
-						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
+				if(key.getColumn().equals("name") 
+						&& manager.checkEdge(edge, new DynInterval<T>(low, high))==
+							!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE))
+				{
+					view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
+							!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
+				}
+				else if (!key.getColumn().equals("name"))
+					view.writeEdgeTable(edge, key.getColumn(), manager.getDynEdgesAttr(edge, key.getColumn(), new DynInterval<T>(low, high)));
 			}
-			else if (!key.getColumn().equals("name"))
-				view.writeEdgeTable(edge, key.getColumn(), manager.getDynEdgesAttr(edge, key.getColumn(), new DynInterval<T>(low, high)));
 		}
 
 		view.updateView();

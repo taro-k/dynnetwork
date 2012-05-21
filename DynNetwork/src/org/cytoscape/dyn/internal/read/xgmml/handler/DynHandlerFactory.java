@@ -5,6 +5,7 @@ import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.EDGE_ATT;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.EDGE_GRAPHICS;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.GRAPH;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NET_ATT;
+import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NET_GRAPHICS;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NODE;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NODE_ATT;
 import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NODE_GRAPH;
@@ -59,12 +60,15 @@ public final class DynHandlerFactory<T> {
 				{ GRAPH, "att", NET_ATT, null },
 				{ GRAPH, "node", NODE, null },
 				{ GRAPH, "edge", EDGE, null },
+				{ GRAPH, "graphics", NET_GRAPHICS, null },
+				{ NET_GRAPHICS, "att", NET_GRAPHICS, null },
 				
 				// Handle subgraphs
-				{ NODE, "graph", NODE_GRAPH, null },
+				{ NODE_ATT, "graph", NODE_GRAPH, null },
 				{ NODE_GRAPH, "att", NET_ATT, null },
 				{ NODE_GRAPH, "node", NODE, null },
 				{ NODE_GRAPH, "edge", EDGE, null },
+				{ NODE_GRAPH, "graphics", NET_GRAPHICS, null },
 				
 				// Handle nodes
 				{ NODE, "att", NODE_ATT, null },

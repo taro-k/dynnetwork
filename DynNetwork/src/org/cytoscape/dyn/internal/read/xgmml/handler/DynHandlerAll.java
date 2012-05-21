@@ -1,11 +1,17 @@
 package org.cytoscape.dyn.internal.read.xgmml.handler;
 
+import java.util.Stack;
+
 import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
+import org.cytoscape.group.CyGroup;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.xml.sax.Attributes;
 
 /**
- * Class to handle all the events coming from the parsing of the XGMML
+ * Class to handle all the events coming from the parsing of the XGMML.
  * @author sabina
  *
  * @param <T>
@@ -13,6 +19,13 @@ import org.xml.sax.Attributes;
 public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 
 	private DynNetworkEventManagerImpl<T> manager;
+	
+	private CyNetwork currentNetwork;
+	private CyGroup currentGroup;
+	private CyNode currentNode;
+	private CyEdge currentEdge;
+	
+	private final Stack<CyGroup> groupStack;
 	
 	private String directed;
 	private String id;
@@ -28,12 +41,13 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager) {
 		super();
 		this.manager = manager;
+		groupStack = new Stack<CyGroup>();
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
-		System.out.println("START: " + current);
+//		System.out.println("START: " + current);
 		switch(current)
 		{
 		case NONE:
@@ -45,7 +59,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			directed = atts.getValue("directed");
-			manager.addGraph(id==null?label:id, label, start, end, directed==null?"1":directed);
+			currentNetwork = manager.addGraph(id==null?label:id, label, start, end, directed==null?"1":directed);
+			groupStack.push(null);
 			break;
 			
 		case NODE_GRAPH:
@@ -53,7 +68,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			label = atts.getValue("label");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addMetaNode(id==null?label:id, label, start, end);
+			currentGroup = manager.addGroup(currentNetwork, currentNode);
+			groupStack.push(currentGroup);
 			break;
 			
 		case NODE:
@@ -61,7 +77,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			label = atts.getValue("label");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addNode(id==null?label:id, label, start, end);
+			currentNode = manager.addNode(currentNetwork, currentGroup, id==null?label:id, label, start, end);
 			break;
 			
 		case EDGE:
@@ -71,7 +87,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			target = atts.getValue("target");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addEdge(id==null?source+"-"+target:id, label, source, target, start, end);
+			currentEdge = manager.addEdge(currentNetwork, id==null?source+"-"+target:id, label, source, target, start, end);
 			break;
 			
 		case NET_ATT:
@@ -80,7 +96,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addGraphAttribute(name, value, type, start, end);
+			if (name!=null && value!=null && type!=null)
+				manager.addGraphAttribute(currentNetwork, name, value, type, start, end);
 			break;
 			
 		case NODE_ATT:
@@ -89,7 +106,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addNodeAttribute(name, value, type, start, end);
+			if (name!=null && value!=null && type!=null)
+				manager.addNodeAttribute(currentNetwork, currentNode, name, value, type, start, end);
 			break;
 			
 		case EDGE_ATT:
@@ -98,7 +116,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			manager.addEdgeAttribute(name, value, type, start, end);
+			if (name!=null && value!=null && type!=null)
+				manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
 			break;
 		}
 
@@ -107,15 +126,16 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	@Override
 	public void handleEnd(Attributes atts, ParseDynState current)
 	{
-		System.out.println("END: " + current);
+//		System.out.println("END: " + current);
 		switch(current)
 		{
 		case NODE_GRAPH:
-			manager.exitMetaNode();
+			currentNode = groupStack.pop().getGroupNode();
+			currentGroup = groupStack.peek();
 			break;
 			
 		case GRAPH:
-			manager.exitGraph();
+//			manager.collapseAllGroups(currentNetwork);
 			break;
 		}
 	}

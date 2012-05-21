@@ -3,7 +3,6 @@ package org.cytoscape.dyn.internal.events;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynAttribute;
 import org.cytoscape.dyn.internal.model.DynData;
@@ -26,13 +25,13 @@ import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 //TODO: and should be thread safe (currentnode, currentedge, etc. are NOT!)!
 
 /**
- * Tentative Class for managing dynamical data
- * @author sabina
- *
- * @param <T>
+ * {@inheritDoc}
  */
 public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManager<T>
 {
+	private final CyGroupManager groupManager;
+	private final CyGroupFactory groupFactory;
+	
 	private final Map<String, Long> cyNodes;
 	private final Map<String, Long> cyEdges;
 
@@ -40,18 +39,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	private final DynData<T> dynNodesAttr;
 	private final DynData<T> dynEdgesAttr;
 	
-	private final Stack<CyGroup> groupNodeStack;
-	
-	private final CyGroupManager groupManager;
-	private final CyGroupFactory groupFactory;
-	
-	protected CyRootNetwork parentNetwork;
-	protected CyNetwork currentNetwork;
-	protected CyGroup currentGroup;
-	protected CyNode currentNode;
-	protected CyEdge currentEdge;
-	
-	private boolean isDirected = true;
+	private boolean isDirected;
 	
 	public DynNetworkEventManagerImpl(
 			CyNetworkFactory networkFactory,
@@ -67,125 +55,111 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		dynGraphsAttr = new DynData<T>();
 		dynNodesAttr = new DynData<T>();
 		dynEdgesAttr = new DynData<T>();
-		groupNodeStack = new Stack<CyGroup>();
 	}
 	
-	/**
-	 * Handle graphs
-	 * **/
 	@Override
-	public void addGraph(String id, String label, String start, String end, String directed)
+	public CyNetwork addGraph(String id, String label, String start, String end, String directed)
 	{
-		parentNetwork = createRootNetwork(directed);
-		currentNetwork = createGraph(parentNetwork, id, label, start, end);
+		CyNetwork currentNetwork = createGraph(createRootNetwork(directed), id, label, start, end);
 		setElement(currentNetwork, id, label, null, start, end);
+		return currentNetwork;
 	}
 
-	/**
-	 * Handle nodes
-	 * **/
 	@Override
-	public void addNode(String id, String label, String start, String end)
+	public CyNode addNode(CyNetwork currentNetwork, CyGroup group, String id, String label, String start, String end)
 	{
-		currentNode = createNode(currentNetwork, id, label, start, end);
-		setElement(currentNode, id, label, null, start, end);
+		CyNode currentNode = createNode(currentNetwork, group, id, label, start, end);
+		setElement(currentNetwork, currentNode, id, label, null, start, end);
+		return currentNode;
 	}
 	
-	/**
-	 * Handle meta-nodes
-	 * **/
 	@Override
-	public void addMetaNode(String id, String label, String start, String end)
+	public CyGroup addGroup(CyNetwork currentNetwork, CyNode currentNode)
 	{
-		currentGroup = groupFactory.createGroup(currentNetwork, currentNode, true);
-		groupNodeStack.push(currentGroup);
+		CyGroup currentGroup = groupFactory.createGroup(currentNetwork, currentNode, true);
 		groupManager.addGroup(currentGroup);
+		return currentGroup;
 	}
 	
-	/**
-	 * Handle edges
-	 * **/
 	@Override
-	public void addEdge(String id, String label, String source, String target, String start, String end)
+	public CyEdge addEdge(CyNetwork currentNetwork, String id, String label, String source, String target, String start, String end)
 	{
 		if(cyNodes.containsKey(source) && cyNodes.containsKey(target))
 		{
-			currentEdge = createEdge(currentNetwork, id, label, source, target, start, end);
-			setElement(currentEdge, id, label, null, start, end);
+			CyEdge currentEdge = createEdge(currentNetwork, id, label, source, target, start, end);
+			setElement(currentNetwork, currentEdge, id, label, null, start, end);
+			return currentEdge;
 		}
 		else
+		{
 			System.out.println("XGMML Parser Warning: edge " + id==null?label:id + " was ignored (unidentified nodes)!");
+			return null;
+		}
 	}
 	
-	public void addEdgeToGroup(String id, String label, String source, String target, String start, String end)
-	{
-		currentEdge = createEdge(currentNetwork, id, label, source, target, start, end);
-		setElement(currentEdge, id, label, null, start, end);
-	}
-	
-	/**
-	 * Handle graph attributes
-	 * **/
 	@Override
-	public void addGraphAttribute(String attName, String attValue, String attType, String start, String end)
+	public void addGraphAttribute(CyNetwork currentNetwork, String attName, String attValue, String attType, String start, String end)
 	{
 		setAttributes(currentNetwork, attName, attValue, attType, start, end);
 	}
 	
-	/**
-	 * Handle node attributes
-	 * **/
 	@Override
-	public void addNodeAttribute(String attName, String attValue, String attType, String start, String end)
+	public void addNodeAttribute(CyNetwork currentNetwork, CyNode currentNode, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(currentNode, attName, attValue, attType, start, end);
+		setAttributes(currentNetwork, currentNode, attName, attValue, attType, start, end);
 	}
 	
-	/**
-	 * Handle edge attributes
-	 * **/
 	@Override
-	public void addEdgeAttribute(String attName, String attValue, String attType, String start, String end)
+	public void addEdgeAttribute(CyNetwork currentNetwork, CyEdge currentEdge, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(currentEdge, attName, attValue, attType, start, end);
+		setAttributes(currentNetwork, currentEdge, attName, attValue, attType, start, end);
 	}
 
 	@Override
-	public void deleteEdge(CyEdge edge) {}
+	public void deleteEdge(CyNetwork currentNetwork, CyEdge edge) {}
 
 	@Override
-	public void deleteEdgeAttribute(CyEdge edge, String label) {}
+	public void deleteEdgeAttribute(CyNetwork currentNetwork, CyEdge edge, String label) {}
 
 	@Override
 	public void deleteGraph(CyNetwork netwrok) {}
+
+	@Override
+	public void deleteGraphAttribute(CyNetwork currentNetwork, CyNetwork netwrok, String label) {}
+
+	@Override
+	public void deleteNode(CyNetwork currentNetwork, CyNode node) {}
+
+	@Override
+	public void deleteNodeAttribute(CyNetwork currentNetwork, CyNode node, String label) {}
 	
-	@Override
-	public void deleteSubGraph(CyNetwork netwrok) {}
-
-	@Override
-	public void deleteGraphAttribute(CyNetwork netwrok, String label) {}
-
-	@Override
-	public void deleteNode(CyNode node) {}
-
-	@Override
-	public void deleteNodeAttribute(CyNode node, String label) {}
+	public void collapseAllGroups(CyNetwork currentNetwork)
+	{
+		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
+			group.collapse(currentNetwork);
+	}
+	
+	public void cexpandAllGroups(CyNetwork currentNetwork)
+	{
+		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
+			group.expand(currentNetwork);
+	}
 
 	private void setElement(CyNetwork network, String id, String label, String value, String start, String end)
 	{
-		currentNetwork.getRow(network).set(CyNetwork.NAME, label);
+		network.getRow(network).set(CyNetwork.NAME, label);
 		dynGraphsAttr.add(getInterval(null,start,end), "none", network.getSUID(), CyNetwork.NAME);
 	}
 	
-	private void setElement(CyNode node, String id, String label, String value, String start, String end)
+	private void setElement(CyNetwork network, CyNode node, String id, String label, String value, String start, String end)
 	{
-		currentNetwork.getRow(node).set(CyNetwork.NAME, label);
+		network.getRow(node).set(CyNetwork.NAME, label);
 		dynNodesAttr.add(getInterval(null,start,end), "none", node.getSUID(), CyNetwork.NAME);
 	}
 	
-	private void setElement(CyEdge edge, String id, String label, String value, String start, String end)
+	private void setElement(CyNetwork network, CyEdge edge, String id, String label, String value, String start, String end)
 	{
-		currentNetwork.getRow(edge).set(CyNetwork.NAME, label);
+		network.getRow(edge).set(CyNetwork.NAME, label);
 		dynEdgesAttr.add(getInterval(null,start,end), "none", edge.getSUID(), CyNetwork.NAME);
 	}
 
@@ -193,30 +167,30 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	private void setAttributes(CyNetwork network, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		addRow(currentNetwork.getDefaultNetworkTable(), network, attName, attr);
+		addRow(network, network.getDefaultNetworkTable(), network, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynGraphsAttr.add(getInterval((T)attr ,start, end), attribute, network.getSUID(), attName);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setAttributes(CyNode node, String attName, String attValue, String attType, String start, String end)
+	private void setAttributes(CyNetwork network, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		addRow(currentNetwork.getDefaultNodeTable(), node, attName, attr);
+		addRow(network, network.getDefaultNodeTable(), node, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynNodesAttr.add(getInterval((T)attr, start, end), attribute, node.getSUID(), attName);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setAttributes(CyEdge edge, String attName, String attValue, String attType, String start, String end)
+	private void setAttributes(CyNetwork network, CyEdge edge, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		addRow(currentNetwork.getDefaultEdgeTable(), edge, attName, attr);
+		addRow(network, network.getDefaultEdgeTable(), edge, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynEdgesAttr.add(getInterval((T)attr, start, end), attribute, edge.getSUID(), attName);
 	}
 
-	private void addRow(CyTable table, CyIdentifiable ci, String attName, Object attr)
+	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
 	{
 		if (table.getColumn(attName)==null)
 			table.createColumn(attName, attr.getClass(), false);
@@ -236,7 +210,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		return network;
 	}
 
-	private CyNode createNode(CyNetwork network, String id, String label, String start, String end)
+	private CyNode createNode(CyNetwork network, CyGroup group, String id, String label, String start, String end)
 	{
 		CyNode node;
 		if (!cyNodes.containsKey(id))
@@ -245,11 +219,11 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			node = network.getNode(cyNodes.get(id));
 		cyNodes.put(id, node.getSUID());
 		
-		if (!groupNodeStack.isEmpty())
+		if (group!=null)
 		{
 			ArrayList<CyNode> groupNodes = new ArrayList<CyNode>();
 			groupNodes.add(node);
-			currentGroup.addNodes(groupNodes);
+			group.addNodes(groupNodes);
 		}
 		
 		return node;
@@ -262,32 +236,28 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 
 			CyEdge edge;
 			if (!cyEdges.containsKey(id))
-				edge = this.currentNetwork.addEdge(nodeSource, nodeTarget, isDirected);
+				edge = network.addEdge(nodeSource, nodeTarget, isDirected);
 			else
-				edge = currentNetwork.getEdge(cyEdges.get(id));
+				edge = network.getEdge(cyEdges.get(id));
 			cyEdges.put(id, edge.getSUID());
 
-			if (!groupNodeStack.isEmpty())
+			for (CyGroup group : groupManager.getGroupsForNode(nodeSource))
 			{
 				ArrayList<CyEdge> groupEdges = new ArrayList<CyEdge>();
 				groupEdges.add(edge);
-				currentGroup.addEdges(groupEdges);
+				group.addEdges(groupEdges);
+			}
+			
+			for (CyGroup group : groupManager.getGroupsForNode(nodeTarget))
+			{
+				ArrayList<CyEdge> groupEdges = new ArrayList<CyEdge>();
+				groupEdges.add(edge);
+				group.addEdges(groupEdges);
 			}
 
 			return edge;
 	}
-	
-	public void exitMetaNode()
-	{
-		groupNodeStack.pop();
-		if (!groupNodeStack.isEmpty()) 
-			currentGroup = groupNodeStack.peek();
-	}
-	
-	public void exitGraph()
-	{
-	}
-	
+
 	private DynInterval<T> getInterval(T value, String start, String end)
 	{
 		return new DynInterval<T>(value, parseStart(start), parseEnd(end));
@@ -344,7 +314,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	{
 		return dynEdgesAttr;
 	}
-	
+
 	private double min(double a, double b)
 	{
 		if (a>b)

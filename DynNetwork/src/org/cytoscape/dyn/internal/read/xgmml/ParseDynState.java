@@ -4,26 +4,28 @@ public enum ParseDynState {
 	
 	// Graph elements
     NONE("none"),
+    GRAPH("Graph Element"),
+    NODE_GRAPH("Node Graph"),
+    NODE("Node Element"),
+    EDGE("Edge Element"),
+    
+    // Graph attributes
     NET_ATT("Network Attribute"),
     NODE_ATT("Node Attribute"),
     EDGE_ATT("Edge Attribute"),
 
-    // Elements that require special handling
-    LIST_ATT("List Attribute"),
-    LIST_ELEMENT("List Element"),
+    // Graphical attribute
     NET_GRAPHICS("Network Graphics"),
-    NODE_GRAPH("Node Graph"),
     NODE_GRAPHICS("Node Graphics"),
     EDGE_GRAPHICS("Edge Graphics"),
     LOCKED_VISUAL_PROP_ATT("Bypass Attribute"),
-
-    // Handle edge handles
+    
+    // Others (not implemented yet)
     EDGE_BEND("Edge Bend"),
     EDGE_HANDLE("Edge Handle"),
     EDGE_HANDLE_ATT("Edge Handle Attribute"),
-    NODE("Node Element"),
-    EDGE("Edge Element"),
-    GRAPH("Graph Element"),
+    RDF("RDF"),
+    RDF_DESC("RDF Description"),
     ANY("any");
 
     private String name;
