@@ -85,7 +85,7 @@ public abstract class AbstractDynNetworkEventManager<T> {
 	abstract public void deleteNode(CyNetwork currentNetwork, CyNode node);
 	
 	/**
-	 * Delete adge
+	 * Delete edge
 	 * **/
 	abstract public void deleteEdge(CyNetwork currentNetwork, CyEdge edge);
 	

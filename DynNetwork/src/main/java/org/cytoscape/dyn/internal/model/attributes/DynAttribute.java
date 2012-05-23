@@ -1,19 +1,18 @@
-package org.cytoscape.dyn.internal.model;
+package org.cytoscape.dyn.internal.model.attributes;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cytoscape.dyn.internal.model.DynInterval;
+
 /**
- * This Class represents all dynamical attributes, i.e. a list of intervals containing the value of type
+ * <code> DynAttribute </code> is the abstract class to set/request represents all dynamical attributes, i.e. a list of intervals containing the value of type
  * T and the time interval.
  * @author sabina
  *
  * @param <T>
  */
 public abstract class DynAttribute<T> {
-	
-	private double minTime = Double.POSITIVE_INFINITY;
-	private double maxTime = Double.NEGATIVE_INFINITY;
 
 	//TODO: intervals should be hold in a tree for fast searching
 	protected List<DynInterval<T>> intervalList;
@@ -54,11 +53,19 @@ public abstract class DynAttribute<T> {
 		return false;
     }
     
-	public double getMinTime() {
+	public double getMinTime()
+	{
+		double minTime = Double.POSITIVE_INFINITY;
+		for (DynInterval<T> i : intervalList)
+			minTime = Math.min(minTime, i.getStart());
 		return minTime;
 	}
 
-	public double getMaxTime() {
+	public double getMaxTime()
+	{
+		double maxTime = Double.NEGATIVE_INFINITY;
+		for (DynInterval<T> i : intervalList)
+			maxTime = Math.max(maxTime, i.getEnd());
 		return maxTime;
 	}
 

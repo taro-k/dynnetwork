@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.cytoscape.dyn.LoadDynNetworkFileTaskFactory;
 import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
 import org.cytoscape.io.read.InputStreamTaskFactory;
 import org.cytoscape.io.util.StreamUtil;

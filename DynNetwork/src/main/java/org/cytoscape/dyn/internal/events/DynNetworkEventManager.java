@@ -1,4 +1,4 @@
-package org.cytoscape.dyn;
+package org.cytoscape.dyn.internal.events;
 
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;

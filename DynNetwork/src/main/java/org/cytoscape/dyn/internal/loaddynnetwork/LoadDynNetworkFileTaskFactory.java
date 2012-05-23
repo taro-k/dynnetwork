@@ -1,4 +1,4 @@
-package org.cytoscape.dyn;
+package org.cytoscape.dyn.internal.loaddynnetwork;
 
 import java.io.File;
 

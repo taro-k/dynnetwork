@@ -1,4 +1,6 @@
-package org.cytoscape.dyn.internal.model;
+package org.cytoscape.dyn.internal.model.attributes;
+
+import org.cytoscape.dyn.internal.model.DynInterval;
 
 /**
  * {@inheritDoc}

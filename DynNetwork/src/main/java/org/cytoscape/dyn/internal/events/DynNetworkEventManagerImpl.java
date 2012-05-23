@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.model.DynAttribute;
 import org.cytoscape.dyn.internal.model.DynData;
 import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
@@ -261,11 +261,11 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		return new DynInterval<T>(value, parseStart(start), parseEnd(end));
 	}
 	
-	private DynInterval<T> getInterval(DynInterval<T> parentInterval, T value, String start, String end)
+	private DynInterval<T> getInterval(T value, String start, String end, DynAttribute<T> parentAttribute)
 	{
 		return new DynInterval<T>(value, 
-				max(parentInterval.getStart(), parseStart(start)) ,
-				min(parentInterval.getEnd(), parseEnd(end)) );
+				max(parentAttribute.getMinTime(), parseStart(start)) ,
+				min(parentAttribute.getMaxTime(), parseEnd(end)) );
 	}
 
 	public boolean checkGraph(CyNetwork c, DynInterval<T> interval)

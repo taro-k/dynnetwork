@@ -3,10 +3,10 @@ package org.cytoscape.dyn.internal.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.model.DynBooleanAttribute;
-import org.cytoscape.dyn.internal.model.DynDoubleAttribute;
-import org.cytoscape.dyn.internal.model.DynIntegerAttribute;
-import org.cytoscape.dyn.internal.model.DynStringAttribute;
+import org.cytoscape.dyn.internal.model.attributes.DynBooleanAttribute;
+import org.cytoscape.dyn.internal.model.attributes.DynDoubleAttribute;
+import org.cytoscape.dyn.internal.model.attributes.DynIntegerAttribute;
+import org.cytoscape.dyn.internal.model.attributes.DynStringAttribute;
 
 public final class DynIntervalTypeMap {
 

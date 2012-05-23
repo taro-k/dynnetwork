@@ -3,6 +3,7 @@ package org.cytoscape.dyn.internal.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
 import org.cytoscape.dyn.internal.util.DynIntervalTypeMap;
 import org.cytoscape.dyn.internal.util.KeyPairs;
 

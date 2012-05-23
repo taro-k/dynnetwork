@@ -30,23 +30,19 @@ import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TunableSetter;
 
-
-// TODO: make bundle?
-
 /**
- * Launch the App from the menu "File/Dynamic XGMML Loader"
+ * Launch from the menu "File/Dynamic XGMML Loader"
  */
 public class MenuActionLoadXGMML<T> extends AbstractCyAction
 {
-
 	private final CySwingAppAdapter adapter;
     private List<FileChooserFilter> filters;
 
     public MenuActionLoadXGMML(CySwingAppAdapter adapter)
     {
         super("Dynamic XGMML Loader");
-        this.adapter = adapter;
         setPreferredMenu("File");
+        this.adapter = adapter;
     }
 
     public void actionPerformed(ActionEvent e)

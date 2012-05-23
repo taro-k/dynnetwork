@@ -1,7 +1,11 @@
 package org.cytoscape.dyn.internal.model;
 
 /**
- * This Class represent a value and its interval in time
+ * This Class represent a value and its right half-open interval. Intervals are convenient 
+ * for representing events that each occupy a continuous period of time. A half-open interval 
+ * is an ordered pair of real numbers [startTime, endTime[ with startTime =< endTime, where 
+ * startTime is included and endTime is excluded.
+ *  
  * @author sabina
  *
  * @param <T>
@@ -30,6 +34,11 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public DynInterval(double start, double end)
 	{
 		this(null, start, end);
+	}
+	
+	public DynInterval<T> deepCopy()
+	{
+		return new DynInterval<T>(this.value, this.start, this.end);
 	}
 
 	@Override
