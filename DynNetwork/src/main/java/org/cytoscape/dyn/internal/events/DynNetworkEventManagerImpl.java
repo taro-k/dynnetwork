@@ -67,7 +67,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	public CyNode addNode(CyNetwork currentNetwork, CyGroup group, String id, String label, String start, String end)
 	{
 		CyNode currentNode = createNode(currentNetwork, group, id, label, start, end);
-		setElement(currentNetwork, currentNode, id, label, null, start, end);
+		setElement(currentNetwork, currentNode, group, id, label, null, start, end);
 		return currentNode;
 	}
 	
@@ -149,16 +149,19 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		dynGraphsAttr.add(getInterval(null,start,end), "none", network.getSUID(), CyNetwork.NAME);
 	}
 	
-	private void setElement(CyNetwork network, CyNode node, String id, String label, String value, String start, String end)
+	private void setElement(CyNetwork network, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
 	{
 		network.getRow(node).set(CyNetwork.NAME, label);
-		dynNodesAttr.add(getInterval(null,start,end), "none", node.getSUID(), CyNetwork.NAME);
+		if (group==null)
+			dynNodesAttr.add(getInterval(network,null,start,end), "none", node.getSUID(), CyNetwork.NAME);
+		else
+			dynNodesAttr.add(getInterval(group.getGroupNode(),null,start,end), "none", node.getSUID(), CyNetwork.NAME);
 	}
 	
 	private void setElement(CyNetwork network, CyEdge edge, String id, String label, String value, String start, String end)
 	{
 		network.getRow(edge).set(CyNetwork.NAME, label);
-		dynEdgesAttr.add(getInterval(null,start,end), "none", edge.getSUID(), CyNetwork.NAME);
+		dynEdgesAttr.add(getInterval(edge.getSource(),edge.getTarget(),null,start,end), "none", edge.getSUID(), CyNetwork.NAME);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -167,7 +170,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		addRow(network, network.getDefaultNetworkTable(), network, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
-		dynGraphsAttr.add(getInterval((T)attr ,start, end), attribute, network.getSUID(), attName);
+		dynGraphsAttr.add(getInterval(network, (T)attr ,start, end), attribute, network.getSUID(), attName);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -176,7 +179,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		addRow(network, network.getDefaultNodeTable(), node, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
-		dynNodesAttr.add(getInterval((T)attr, start, end), attribute, node.getSUID(), attName);
+		dynNodesAttr.add(getInterval(node, (T)attr, start, end), attribute, node.getSUID(), attName);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -185,7 +188,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		addRow(network, network.getDefaultEdgeTable(), edge, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
-		dynEdgesAttr.add(getInterval((T)attr, start, end), attribute, edge.getSUID(), attName);
+		dynEdgesAttr.add(getInterval(edge, (T)attr, start, end), attribute, edge.getSUID(), attName);
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
@@ -260,12 +263,38 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	{
 		return new DynInterval<T>(value, parseStart(start), parseEnd(end));
 	}
-	
-	private DynInterval<T> getInterval(T value, String start, String end, DynAttribute<T> parentAttribute)
+
+	private DynInterval<T> getInterval(CyNetwork network, T value, String start, String end)
 	{
+		DynAttribute<T> parentAttr = dynGraphsAttr.getDynAttribute(network.getSUID(), CyNetwork.NAME);
 		return new DynInterval<T>(value, 
-				max(parentAttribute.getMinTime(), parseStart(start)) ,
-				min(parentAttribute.getMaxTime(), parseEnd(end)) );
+				max(parentAttr.getMinTime(), parseStart(start)) ,
+				min(parentAttr.getMaxTime(), parseEnd(end)) );
+	}
+	
+	private DynInterval<T> getInterval(CyNode node, T value, String start, String end)
+	{
+		DynAttribute<T> parentAttr = dynNodesAttr.getDynAttribute(node.getSUID(), CyNetwork.NAME);
+		return new DynInterval<T>(value, 
+				max(parentAttr.getMinTime(), parseStart(start)) ,
+				min(parentAttr.getMaxTime(), parseEnd(end)) );
+	}
+	
+	private DynInterval<T> getInterval(CyNode souce, CyNode target, T value, String start, String end)
+	{
+		DynAttribute<T> parentAttrSoruce = dynNodesAttr.getDynAttribute(souce.getSUID(), CyNetwork.NAME);
+		DynAttribute<T> parentAttrTarget = dynNodesAttr.getDynAttribute(target.getSUID(), CyNetwork.NAME);
+		return new DynInterval<T>(value, 
+				max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) ,
+				min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)) );
+	}
+	
+	private DynInterval<T> getInterval(CyEdge edge, T value, String start, String end)
+	{
+		DynAttribute<T> parentAttr = dynEdgesAttr.getDynAttribute(edge.getSUID(), CyNetwork.NAME);
+		return new DynInterval<T>(value, 
+				max(parentAttr.getMinTime(), parseStart(start)) ,
+				min(parentAttr.getMaxTime(), parseEnd(end)) );
 	}
 
 	public boolean checkGraph(CyNetwork c, DynInterval<T> interval)

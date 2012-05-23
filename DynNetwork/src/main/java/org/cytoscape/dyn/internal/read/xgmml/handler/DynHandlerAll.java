@@ -38,7 +38,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	private String start;
 	private String end;
 
-	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager) {
+	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager)
+	{
 		super();
 		this.manager = manager;
 		groupStack = new Stack<CyGroup>();
@@ -129,14 +130,14 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 //		System.out.println("END: " + current);
 		switch(current)
 		{
+		case GRAPH:
+			break;
+			
 		case NODE_GRAPH:
 			currentNode = groupStack.pop().getGroupNode();
 			currentGroup = groupStack.peek();
 			break;
-			
-		case GRAPH:
-//			manager.collapseAllGroups(currentNetwork);
-			break;
+
 		}
 	}
 

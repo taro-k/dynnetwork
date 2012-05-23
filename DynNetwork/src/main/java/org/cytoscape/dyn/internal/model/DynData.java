@@ -64,9 +64,18 @@ public final class DynData<T> {
 			return dynTable.get(key).getFirst(interval);
 		return null;
 	}
-
-	public Map<KeyPairs, DynAttribute<T>> getDynTable() {
-		return dynTable;
+	
+	public DynAttribute<T> getDynAttribute(long row, String column)
+	{
+		key = new KeyPairs(column, row);
+		if(dynTable.containsKey(key))
+			return dynTable.get(key);
+		return null;
 	}
+	
+    public Map<KeyPairs, DynAttribute<T>> getDynTable() {
+        return dynTable;
+}
+
 
 }

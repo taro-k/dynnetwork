@@ -53,21 +53,22 @@ public abstract class DynAttribute<T> {
 		return false;
     }
     
-	public double getMinTime()
-	{
-		double minTime = Double.POSITIVE_INFINITY;
-		for (DynInterval<T> i : intervalList)
-			minTime = Math.min(minTime, i.getStart());
-		return minTime;
-	}
+    public double getMinTime()
+    {
+            double minTime = Double.POSITIVE_INFINITY;
+            for (DynInterval<T> i : intervalList)
+                    minTime = Math.min(minTime, i.getStart());
+            return minTime;
+    }
 
-	public double getMaxTime()
-	{
-		double maxTime = Double.NEGATIVE_INFINITY;
-		for (DynInterval<T> i : intervalList)
-			maxTime = Math.max(maxTime, i.getEnd());
-		return maxTime;
-	}
+    public double getMaxTime()
+    {
+            double maxTime = Double.NEGATIVE_INFINITY;
+            for (DynInterval<T> i : intervalList)
+                    maxTime = Math.max(maxTime, i.getEnd());
+            return maxTime;
+    }
+
 
 	abstract public Class<?> getType();
 
