@@ -39,6 +39,8 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	
 	private boolean isDirected;
 	
+	private String spaces = "";
+	
 	public DynNetworkEventManagerImpl(
 			CyNetworkFactory networkFactory,
 			CyRootNetworkManager rootNetworkManager,
@@ -90,7 +92,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		}
 		else
 		{
-			System.out.println("XGMML Parser Warning: edge " + id==null?label:id + " was ignored (unidentified nodes)!");
+			System.out.println("XGMML Parser Warning: edge " + (id==null?label:id) + " was ignored (unidentified nodes)!");
 			return null;
 		}
 	}
@@ -137,10 +139,22 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			group.collapse(currentNetwork);
 	}
 	
-	public void cexpandAllGroups(CyNetwork currentNetwork)
+	public void expandAllGroups(CyNetwork currentNetwork)
 	{
 		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
 			group.expand(currentNetwork);
+	}
+	
+	// TODO: this is a hack!!!!
+	public void setGroupsAttributes(CyNetwork currentNetwork)
+	{
+		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
+		{
+			if(group.isCollapsed(currentNetwork))
+				group.collapse(currentNetwork);
+			else
+				group.expand(currentNetwork);
+		}
 	}
 
 	private void setElement(CyNetwork network, String id, String label, String value, String start, String end)
@@ -261,12 +275,27 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 
 	private DynInterval<T> getInterval(T value, String start, String end)
 	{
+//		System.out.println(
+//				spaces + "    Interval:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + null + " end = " + null);
+//		System.out.println(
+//				spaces + "    Final:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+		
 		return new DynInterval<T>(value, parseStart(start), parseEnd(end));
 	}
 
 	private DynInterval<T> getInterval(CyNetwork network, T value, String start, String end)
 	{
 		DynAttribute<T> parentAttr = dynGraphsAttr.getDynAttribute(network.getSUID(), CyNetwork.NAME);
+		
+//		System.out.println(
+//				spaces + "    Interval:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + parentAttr.getMinTime() + " end = " + parentAttr.getMaxTime());
+//		System.out.println(
+//				spaces + "    Final:" + " start = " + max(parentAttr.getMinTime(), parseStart(start)) + " end = " + min(parentAttr.getMaxTime(), parseEnd(end)));
+		
 		return new DynInterval<T>(value, 
 				max(parentAttr.getMinTime(), parseStart(start)) ,
 				min(parentAttr.getMaxTime(), parseEnd(end)) );
@@ -275,6 +304,14 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	private DynInterval<T> getInterval(CyNode node, T value, String start, String end)
 	{
 		DynAttribute<T> parentAttr = dynNodesAttr.getDynAttribute(node.getSUID(), CyNetwork.NAME);
+		
+//		System.out.println(
+//				spaces + "    Interval:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + parentAttr.getMinTime() + " end = " + parentAttr.getMaxTime());
+//		System.out.println(
+//				spaces + "    Final:" + " start = " + max(parentAttr.getMinTime(), parseStart(start)) + " end = " + min(parentAttr.getMaxTime(), parseEnd(end)));
+		
 		return new DynInterval<T>(value, 
 				max(parentAttr.getMinTime(), parseStart(start)) ,
 				min(parentAttr.getMaxTime(), parseEnd(end)) );
@@ -284,6 +321,16 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	{
 		DynAttribute<T> parentAttrSoruce = dynNodesAttr.getDynAttribute(souce.getSUID(), CyNetwork.NAME);
 		DynAttribute<T> parentAttrTarget = dynNodesAttr.getDynAttribute(target.getSUID(), CyNetwork.NAME);
+		
+//		System.out.println(
+//				spaces + "    Interval:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + parentAttrSoruce.getMinTime() + " end = " + parentAttrSoruce.getMaxTime());
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + parentAttrTarget.getMinTime() + " end = " + parentAttrTarget.getMaxTime());
+//		System.out.println(
+//				spaces + "    Final:" + " start = " + max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) + " end = " + min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)));
+		
 		return new DynInterval<T>(value, 
 				max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) ,
 				min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)) );
@@ -292,6 +339,14 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	private DynInterval<T> getInterval(CyEdge edge, T value, String start, String end)
 	{
 		DynAttribute<T> parentAttr = dynEdgesAttr.getDynAttribute(edge.getSUID(), CyNetwork.NAME);
+		
+//		System.out.println(
+//				spaces + "    Interval:" + " start = " + parseStart(start) + " end = " + parseEnd(end));
+//		System.out.println(
+//				spaces + "    Parent:" + " start = " + parentAttr.getMinTime() + " end = " + parentAttr.getMaxTime());
+//		System.out.println(
+//				spaces + "    Final:" + " start = " + max(parentAttr.getMinTime(), parseStart(start)) + " end = " + min(parentAttr.getMaxTime(), parseEnd(end)));
+		
 		return new DynInterval<T>(value, 
 				max(parentAttr.getMinTime(), parseStart(start)) ,
 				min(parentAttr.getMaxTime(), parseEnd(end)) );
@@ -372,6 +427,10 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			return Double.parseDouble(end);
 		else
 			return Double.POSITIVE_INFINITY;
+	}
+
+	public void setSpaces(String spaces) {
+		this.spaces = spaces;
 	}
 	
 }

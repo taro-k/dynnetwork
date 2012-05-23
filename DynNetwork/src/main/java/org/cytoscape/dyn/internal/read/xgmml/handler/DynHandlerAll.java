@@ -37,18 +37,26 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	private String value;
 	private String start;
 	private String end;
+	
+	private String spaces = " ";
+	private int line = 0;
 
 	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager)
 	{
 		super();
 		this.manager = manager;
 		groupStack = new Stack<CyGroup>();
+		System.out.println("");
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
-//		System.out.println("START: " + current);
+//		line++;
+//		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
+//		spaces = spaces + " ";
+//		manager.setSpaces(spaces);
+		
 		switch(current)
 		{
 		case NONE:
@@ -97,7 +105,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			if (name!=null && value!=null && type!=null)
+			if (currentNetwork!= null && name!=null && value!=null && type!=null)
 				manager.addGraphAttribute(currentNetwork, name, value, type, start, end);
 			break;
 			
@@ -107,7 +115,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			if (name!=null && value!=null && type!=null)
+			if (currentNode!= null && name!=null && value!=null && type!=null)
 				manager.addNodeAttribute(currentNetwork, currentNode, name, value, type, start, end);
 			break;
 			
@@ -117,7 +125,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			if (name!=null && value!=null && type!=null)
+			if (currentEdge!= null && name!=null && value!=null && type!=null)
 				manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
 			break;
 		}
@@ -127,7 +135,10 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	@Override
 	public void handleEnd(Attributes atts, ParseDynState current)
 	{
-//		System.out.println("END: " + current);
+//		line++;
+//		spaces = spaces.substring(1);
+//		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
+		
 		switch(current)
 		{
 		case GRAPH:
@@ -135,7 +146,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			
 		case NODE_GRAPH:
 			currentNode = groupStack.pop().getGroupNode();
-			currentGroup = groupStack.peek();
+            currentGroup = groupStack.peek();
 			break;
 
 		}

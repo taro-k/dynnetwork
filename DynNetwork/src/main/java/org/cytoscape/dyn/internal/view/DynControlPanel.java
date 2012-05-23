@@ -106,19 +106,12 @@ public class DynControlPanel<T> extends JPanel implements ChangeListener, Action
 		this.setLayout(new GridLayout(4,1));
 		this.setSize(150, 50);
 		
-		minTime = DynInterval.minTime;
-		maxTime = DynInterval.maxTime;
-		if (Double.isInfinite(minTime) && Double.isInfinite(maxTime))
-			{minTime = -1; maxTime = 1;}
-		else if (Double.isInfinite(maxTime))
-			maxTime = minTime+1;
-		else if (Double.isInfinite(minTime))
-			minTime = maxTime-1;
+		minTime = DynInterval.getMinTime();
+		maxTime = DynInterval.getMaxTime();
 
 		Hashtable<Integer, JLabel> labelTable =
 			new Hashtable<Integer, JLabel>();
 		labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );
-		labelTable.put(new Integer( 50 ),new JLabel(formatter.format((minTime+maxTime)/2)) );
 		labelTable.put(new Integer( 100 ),new JLabel(formatter.format(maxTime)) );
 		slider.setLabelTable(labelTable);
 		slider.setMajorTickSpacing(25);

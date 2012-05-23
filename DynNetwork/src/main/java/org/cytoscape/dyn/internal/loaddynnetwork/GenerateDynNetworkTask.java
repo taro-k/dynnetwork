@@ -52,8 +52,6 @@ public class GenerateDynNetworkTask<T> extends AbstractTask {
 
 			view = viewReader.buildCyNetworkView(network);
 			networkViewManager.addNetworkView(view);
-//			view.fitContent();
-			
 			manager.collapseAllGroups(network);
 			view.fitContent();
 

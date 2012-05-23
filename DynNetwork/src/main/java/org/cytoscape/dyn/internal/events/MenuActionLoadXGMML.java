@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
+import org.cytoscape.dyn.internal.model.DynInterval;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
@@ -67,6 +68,12 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	XGMMLDynNetworkReaderFactory<T> xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory<T>(xgmmlFilter,cyNetworkViewFactoryServiceRef,cyNetworkFactoryServiceRef,manager,xgmmlParser,renderingEngineMgr);
     	filters = new ArrayList<FileChooserFilter>();
     	filters.add(new FileChooserFilter("XGMML", "xgmml"));
+    	
+    	// TODO: fix static variables
+    	DynInterval.minStartTime = Double.POSITIVE_INFINITY;
+    	DynInterval.maxStartTime = Double.NEGATIVE_INFINITY;
+    	DynInterval.minEndTime = Double.POSITIVE_INFINITY;
+    	DynInterval.maxEndTime = Double.NEGATIVE_INFINITY;
 
     	// load file
     	LoadDynNetworkFileTaskFactoryImpl<T> loadFactory = new LoadDynNetworkFileTaskFactoryImpl<T>(xgmmlNetworkReaderFactory,cyNetworkManagerServiceRef,cyNetworkViewManagerServiceRef,manager,cyPropertyServiceRef,cyNetworkNamingServiceRef, tunableSetterServiceRef, streamUtil);

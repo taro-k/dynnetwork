@@ -16,9 +16,11 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	private double start;
 	private double end;
 	
-	public static double minTime = Double.POSITIVE_INFINITY;
-	public static double maxTime = Double.NEGATIVE_INFINITY;
-
+	public static double minStartTime = Double.POSITIVE_INFINITY;
+	public static double maxStartTime = Double.NEGATIVE_INFINITY;
+	public static double minEndTime = Double.POSITIVE_INFINITY;
+	public static double maxEndTime = Double.NEGATIVE_INFINITY;
+	
 	public DynInterval(T value, double start, double end)
 	{
 		this.value = value;
@@ -26,9 +28,15 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		this.end = end;
 		
 		if (!Double.isInfinite(start))
-			minTime = Math.min(minTime, start);
+		{
+			minStartTime = Math.min(minStartTime, start);
+			maxStartTime = Math.max(maxStartTime, start);
+		}
 		if (!Double.isInfinite(end))
-			maxTime = Math.max(maxTime, end);
+		{
+			maxEndTime = Math.max(maxEndTime, end);
+			minEndTime = Math.min(minEndTime, end);
+		}
 	}
 
 	public DynInterval(double start, double end)
@@ -72,6 +80,28 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public double getEnd()
 	{
 		return end;
+	}
+
+	public static double getMinTime()
+	{
+		if (Double.isInfinite(minStartTime))
+			if (Double.isInfinite(minEndTime))
+				return -1;
+			else
+				return minEndTime;
+		else
+			return minStartTime;
+	}
+
+	public static double getMaxTime()
+	{
+		if (Double.isInfinite(maxEndTime))
+			if (Double.isInfinite(maxStartTime))
+				return 1;
+			else
+				return maxStartTime;
+		else
+			return maxEndTime;
 	}
     
 }

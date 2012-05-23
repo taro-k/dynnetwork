@@ -163,4 +163,8 @@ public class DynNetworkViewSync<T> {
 		}
 	}
 
+	public CyNetwork getNetwork() {
+		return network;
+	}
+
 }
