@@ -91,10 +91,7 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			return currentEdge;
 		}
 		else
-		{
-			System.out.println("XGMML Parser Warning: edge " + (id==null?label:id) + " was ignored (unidentified nodes)!");
 			return null;
-		}
 	}
 	
 	@Override
@@ -331,7 +328,18 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 //		System.out.println(
 //				spaces + "    Final:" + " start = " + max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) + " end = " + min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)));
 		
-		return new DynInterval<T>(value, 
+		if (parentAttrSoruce==null && parentAttrTarget==null)
+			return new DynInterval<T>(value, parseStart(start), parseEnd(end));
+		else if (parentAttrSoruce==null)
+			return new DynInterval<T>(value, 
+					max(parentAttrTarget.getMinTime(), parseStart(start)) ,
+					min(parentAttrTarget.getMaxTime(), parseEnd(end)) );
+		else if (parentAttrTarget==null)
+			return new DynInterval<T>(value, 
+					max(parentAttrSoruce.getMinTime(), parseStart(start)) ,
+					min(parentAttrSoruce.getMaxTime(), parseEnd(end)) );
+		else	
+			return new DynInterval<T>(value, 
 				max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) ,
 				min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)) );
 	}

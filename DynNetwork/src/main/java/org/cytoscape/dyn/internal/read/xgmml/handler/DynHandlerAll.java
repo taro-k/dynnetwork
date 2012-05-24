@@ -3,6 +3,7 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.events.OrphanEdge;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -26,6 +27,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 	private CyEdge currentEdge;
 	
 	private final Stack<CyGroup> groupStack;
+	private final Stack<OrphanEdge<T>> orphanEdgeList;
 	
 	private String directed;
 	private String id;
@@ -46,6 +48,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 		super();
 		this.manager = manager;
 		groupStack = new Stack<CyGroup>();
+		orphanEdgeList = new Stack<OrphanEdge<T>>();
 		System.out.println("");
 	}
 
@@ -97,6 +100,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			currentEdge = manager.addEdge(currentNetwork, id==null?source+"-"+target:id, label, source, target, start, end);
+			if (currentEdge==null)
+				orphanEdgeList.push(new OrphanEdge(currentNetwork, id, label, source, target, start, end));
 			break;
 			
 		case NET_ATT:
@@ -127,6 +132,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			end = atts.getValue("end");
 			if (currentEdge!= null && name!=null && value!=null && type!=null)
 				manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
+			else
+				orphanEdgeList.peek().addAttribute(currentNetwork, name, value, type, start, end);
 			break;
 		}
 
@@ -142,6 +149,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 		switch(current)
 		{
 		case GRAPH:
+			while (!orphanEdgeList.isEmpty())
+				orphanEdgeList.pop().addToManager(manager);
 			break;
 			
 		case NODE_GRAPH:
