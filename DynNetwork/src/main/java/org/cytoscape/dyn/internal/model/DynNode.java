@@ -134,16 +134,17 @@ public final class DynNode<T>
 		return nodeList;
 	}
 
-	public void print()
+	public String toString(String string)
 	{
 		if(!this.isLeaf())	
 		{
-			this.getLeft().print();
-			System.out.println("NODE " + " " + this.isBlack + " " + interval.getStart() + " " + interval.getEnd() + " " + this.max);
-			this.getRight().print();
+			if (!this.getLeft().isLeaf())
+				string = this.getLeft().toString(string + "\n <left ");
+			string = string + "\n node " + " " + this.isBlack + " " + interval.getStart() + " " + interval.getEnd() + " " + this.max + " >";
+			if (!this.getRight().isLeaf())
+				string = this.getRight().toString(string + "\n <right ");
 		}
-		else
-			System.out.println("LEAF " + this.isBlack);
+		return string;
 	}
 	
 

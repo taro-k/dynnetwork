@@ -69,7 +69,7 @@ public final class DynIntervalTreeImpl<T> implements DynIntervalTree<T>
 	@Override
 	public void print(DynNode<T> node)
 	{
-		node.print();
+		System.out.print(node.toString(""));
 	}
 	
 	private void insert(DynNode<T> z)

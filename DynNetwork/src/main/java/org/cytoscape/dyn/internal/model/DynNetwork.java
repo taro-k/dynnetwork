@@ -1,5 +1,6 @@
 package org.cytoscape.dyn.internal.model;
 
+import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
@@ -17,13 +18,33 @@ import org.cytoscape.model.CyNode;
  */
 public interface DynNetwork<T>
 {
-	public CyNetwork getNetwork();
+	public DynAttribute<T> getDynAtribute(CyNetwork network);
+	
+	public DynAttribute<T> getDynAtribute(CyNode node); 
+	
+	public DynAttribute<T> getDynAtribute(CyEdge ede);
+	
+	public DynAttribute<T> getDynAtribute(CyNetwork network, String attName);
+	
+	public DynAttribute<T> getDynAtribute(CyNode node, String attName); 
+	
+	public DynAttribute<T> getDynAtribute(CyEdge ede, String attName);
+	
+	public void insert(CyNetwork network, DynInterval<T> interval);
+	
+	public void insert(CyNode node, DynInterval<T> interval);
+	
+	public void insert(CyEdge ede, DynInterval<T> interval);
+	
+	public void remove(CyNetwork network, DynInterval<T> interval);
+	
+	public void remove(CyNode node, DynInterval<T> interval);
+	
+	public void remove(CyEdge ede, DynInterval<T> interval);
 	
 	public DynIntervalTree<T> getIntervalTree();
 	
-	public void insert(DynInterval<T> interval);
-	
-	public void remove(DynInterval<T> interval);
+	public CyNetwork getNetwork();
 	
 	public void print();
 
