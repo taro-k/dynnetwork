@@ -1,7 +1,7 @@
 package org.cytoscape.dyn.internal.model;
 
 /**
- * This Class represent a value and its right half-open interval. Intervals are convenient 
+ * <code> DynInterval </code> represent a value and its right half-open interval. Intervals are convenient 
  * for representing events that each occupy a continuous period of time. A half-open interval 
  * is an ordered pair of real numbers [startTime, endTime[ with startTime =< endTime, where 
  * startTime is included and endTime is excluded.

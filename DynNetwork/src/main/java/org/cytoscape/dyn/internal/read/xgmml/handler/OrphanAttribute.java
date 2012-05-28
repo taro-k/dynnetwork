@@ -1,5 +1,6 @@
-package org.cytoscape.dyn.internal.events;
+package org.cytoscape.dyn.internal.read.xgmml.handler;
 
+import org.cytoscape.dyn.internal.events.DynNetworkEventManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 
@@ -23,7 +24,6 @@ public final class OrphanAttribute<T>
 	public OrphanAttribute(CyNetwork currentNetwork, String name, String value,
 			String type, String start, String end)
 	{
-		super();
 		this.currentNetwork = currentNetwork;
 		this.name = name;
 		this.value = value;
@@ -32,7 +32,7 @@ public final class OrphanAttribute<T>
 		this.end = end;
 	}
 	
-	public void addToManager(AbstractDynNetworkEventManager<T> manager, CyEdge currentEdge)
+	public void addToManager(DynNetworkEventManager manager, CyEdge currentEdge)
 	{
 		if (currentEdge!= null && name!=null && value!=null && type!=null)
 			manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);

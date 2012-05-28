@@ -3,7 +3,6 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
-import org.cytoscape.dyn.internal.events.OrphanEdge;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -101,7 +100,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			end = atts.getValue("end");
 			currentEdge = manager.addEdge(currentNetwork, id==null?source+"-"+target:id, label, source, target, start, end);
 			if (currentEdge==null)
-				orphanEdgeList.push(new OrphanEdge(currentNetwork, id, label, source, target, start, end));
+				orphanEdgeList.push(new OrphanEdge<T>(currentNetwork, id, label, source, target, start, end));
 			break;
 			
 		case NET_ATT:
@@ -151,6 +150,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 		case GRAPH:
 			while (!orphanEdgeList.isEmpty())
 				orphanEdgeList.pop().addToManager(manager);
+			manager.finalize();
 			break;
 			
 		case NODE_GRAPH:

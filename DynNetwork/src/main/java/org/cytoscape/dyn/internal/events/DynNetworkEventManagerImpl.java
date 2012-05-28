@@ -2,11 +2,18 @@ package org.cytoscape.dyn.internal.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
-import org.cytoscape.dyn.internal.model.DynData;
 import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.DynNetworkFactory;
+import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
+import org.cytoscape.dyn.internal.model.old.DynData;
+import org.cytoscape.dyn.internal.util.DynIntervalTypeMap;
+import org.cytoscape.dyn.internal.util.ObjectTypeMap;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
@@ -23,12 +30,23 @@ import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 //TODO: implement event filter, for the moment we do filtering in the handler
 
 /**
- * {@inheritDoc}
+ * Tentative Class for managing dynamical events and generate the data structure
+ * @author sabina
+ *
+ * @param <T>
  */
-public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManager<T>
+public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 {
+	private final ObjectTypeMap typeMap;
+	private final DynIntervalTypeMap typeIntervalMap;
+	
 	private final CyGroupManager groupManager;
 	private final CyGroupFactory groupFactory;
+	private final Set<CyNetwork> networks;
+	private final CyNetworkFactory networkFactory;
+	private final CyRootNetworkManager rootNetworkManager;
+	
+	private final DynNetworkFactory<T> dynNetworkFactory;
 	
 	private final Map<String, Long> cyNodes;
 	private final Map<String, Long> cyEdges;
@@ -36,6 +54,8 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	private final DynData<T> dynGraphsAttr;
 	private final DynData<T> dynNodesAttr;
 	private final DynData<T> dynEdgesAttr;
+
+	private DynNetwork<T> dynNet;
 	
 	private boolean isDirected;
 	
@@ -47,7 +67,11 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			CyGroupManager groupManager,
 			CyGroupFactory groupFactory)
 	{
-		super(networkFactory, rootNetworkManager);
+		this.networkFactory = networkFactory;
+		this.rootNetworkManager = rootNetworkManager;
+		networks = new LinkedHashSet<CyNetwork>();
+		typeMap = new ObjectTypeMap();
+		typeIntervalMap = new DynIntervalTypeMap();
 		this.groupManager = groupManager;
 		this.groupFactory = groupFactory;
 		cyNodes = new HashMap<String, Long>();
@@ -55,6 +79,9 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		dynGraphsAttr = new DynData<T>();
 		dynNodesAttr = new DynData<T>();
 		dynEdgesAttr = new DynData<T>();
+		
+		// TODO: fix this
+		dynNetworkFactory = new DynNetworkFactoryImpl<T>();
 	}
 	
 	@Override
@@ -62,6 +89,10 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	{
 		CyNetwork currentNetwork = createGraph(createRootNetwork(directed), id, label, start, end);
 		setElement(currentNetwork, id, label, null, start, end);
+		
+		// TODO: hack
+		dynNet = dynNetworkFactory.createDynNetwork(currentNetwork);
+		
 		return currentNetwork;
 	}
 
@@ -143,21 +174,28 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 	}
 	
 	// TODO: this is a hack!!!!
-	public void setGroupsAttributes(CyNetwork currentNetwork)
+//	public void setGroupsAttributes(CyNetwork currentNetwork)
+//	{
+//		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
+//		{
+//			if(group.isCollapsed(currentNetwork))
+//				group.collapse(currentNetwork);
+//			else
+//				group.expand(currentNetwork);
+//		}
+//	}
+	
+	public void finalize()
 	{
-		for (CyGroup group : groupManager.getGroupSet(currentNetwork))
-		{
-			if(group.isCollapsed(currentNetwork))
-				group.collapse(currentNetwork);
-			else
-				group.expand(currentNetwork);
-		}
+		dynNet.print();
 	}
 
 	private void setElement(CyNetwork network, String id, String label, String value, String start, String end)
 	{
 		network.getRow(network).set(CyNetwork.NAME, label);
 		dynGraphsAttr.add(getInterval(null,start,end), "none", network.getSUID(), CyNetwork.NAME);
+		
+//		dynNet.insert(getInterval(null,start,end));
 	}
 	
 	private void setElement(CyNetwork network, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
@@ -167,12 +205,17 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			dynNodesAttr.add(getInterval(network,null,start,end), "none", node.getSUID(), CyNetwork.NAME);
 		else
 			dynNodesAttr.add(getInterval(group.getGroupNode(),null,start,end), "none", node.getSUID(), CyNetwork.NAME);
+		
+		dynNet.insert(getInterval(network,null,start,end));
+
 	}
 	
 	private void setElement(CyNetwork network, CyEdge edge, String id, String label, String value, String start, String end)
 	{
 		network.getRow(edge).set(CyNetwork.NAME, label);
 		dynEdgesAttr.add(getInterval(edge.getSource(),edge.getTarget(),null,start,end), "none", edge.getSUID(), CyNetwork.NAME);
+	
+//		dynNet.insert(getInterval(edge.getSource(),edge.getTarget(),null,start,end));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -182,6 +225,8 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		addRow(network, network.getDefaultNetworkTable(), network, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynGraphsAttr.add(getInterval(network, (T)attr ,start, end), attribute, network.getSUID(), attName);
+		
+//		dynNet.insert(getInterval(network, (T)attr ,start, end));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -191,6 +236,8 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		addRow(network, network.getDefaultNodeTable(), node, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynNodesAttr.add(getInterval(node, (T)attr, start, end), attribute, node.getSUID(), attName);
+		
+//		dynNet.insert(getInterval(network, (T)attr ,start, end));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -200,6 +247,8 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 		addRow(network, network.getDefaultEdgeTable(), edge, attName, attr);
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynEdgesAttr.add(getInterval(edge, (T)attr, start, end), attribute, edge.getSUID(), attName);
+		
+//		dynNet.insert(getInterval(edge, (T)attr, start, end));
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
@@ -328,17 +377,6 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 //		System.out.println(
 //				spaces + "    Final:" + " start = " + max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) + " end = " + min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)));
 		
-		if (parentAttrSoruce==null && parentAttrTarget==null)
-			return new DynInterval<T>(value, parseStart(start), parseEnd(end));
-		else if (parentAttrSoruce==null)
-			return new DynInterval<T>(value, 
-					max(parentAttrTarget.getMinTime(), parseStart(start)) ,
-					min(parentAttrTarget.getMaxTime(), parseEnd(end)) );
-		else if (parentAttrTarget==null)
-			return new DynInterval<T>(value, 
-					max(parentAttrSoruce.getMinTime(), parseStart(start)) ,
-					min(parentAttrSoruce.getMaxTime(), parseEnd(end)) );
-		else	
 			return new DynInterval<T>(value, 
 				max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) ,
 				min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)) );
@@ -437,8 +475,14 @@ public class DynNetworkEventManagerImpl<T> extends AbstractDynNetworkEventManage
 			return Double.POSITIVE_INFINITY;
 	}
 
+	public Set<CyNetwork> getNetworks() {
+		return networks;
+	}
+	
 	public void setSpaces(String spaces) {
 		this.spaces = spaces;
 	}
+	
+	
 	
 }
