@@ -206,7 +206,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		else
 			dynNodesAttr.add(getInterval(group.getGroupNode(),null,start,end), "none", node.getSUID(), CyNetwork.NAME);
 		
-		dynNet.insert(getInterval(network,null,start,end));
+		dynNet.insert(node, getInterval(network,null,start,end));
 
 	}
 	

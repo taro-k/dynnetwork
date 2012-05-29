@@ -13,8 +13,7 @@ import java.util.List;
 public final class DynNode<T>
 {
 	private DynNode<T> parent;
-	private DynNode<T> left;
-	private DynNode<T> right;
+	private DynNode<T>[] children = new DynNode[2];
 	
 	private boolean isBlack = true;	
 	private DynInterval<T> interval;
@@ -23,16 +22,17 @@ public final class DynNode<T>
 	public DynNode()
 	{
 		this.parent = this;
-		this.left = this;
-		this.right = this;
+		this.children[0] = this;
+		this.children[1] = this;
 	}
 	
 	public DynNode(DynInterval<T> interval, DynNode<T> nil)
 	{
 		this.parent = nil;
-		this.left = nil;
-		this.right = nil;
+		this.children[0] = nil;
+		this.children[1] = nil;
 		this.interval = interval;
+		this.max = interval.getEnd();
 	}
 	
 	public DynNode(DynNode<T> template)
@@ -68,35 +68,45 @@ public final class DynNode<T>
 	
 	public DynNode<T> getLeft()
 	{
-		return left;
+		return this.children[0];
 	}
 
 	public DynNode<T> getRight()
 	{
-		return right;
+		return this.children[1];
+	}
+	
+	public DynNode<T> getChildren(int i)
+	{
+		return this.children[i];
 	}
 	
 	public void setLeft(DynNode<T> left)
 	{
-		this.left = left;
+		this.children[0] = left;
 		left.parent = this;
 	}	
 
 	public void setRight(DynNode<T> right)
 	{
-		this.right = right;
+		this.children[1] = right;
 		right.parent = this;
+	}
+	
+	public void setChildren(int i, DynNode<T> children)
+	{
+		this.children[i] = children;
+		children.parent = this;
+	}
+
+	public void setMax(double max)
+	{
+		this.max = max;
 	}
 	
 	public double getMax()
 	{
 		return max;
-	}
-	
-	public void computeMax()
-	{
-		if (this.interval!=null)
-			this.max = Math.max(Math.max(this.left.max, this.right.max),this.interval.getEnd());
 	}
 	
 	public boolean isBlack()
@@ -114,8 +124,8 @@ public final class DynNode<T>
 		if (!this.isLeaf())
 		{
 			DynNode<T> copy = new DynNode<T>(this);
-			copy.setLeft(this.getLeft().deepCopy());
-			copy.setRight(this.getRight().deepCopy());
+			copy.setChildren(0,this.children[0].deepCopy());
+			copy.setChildren(1,this.children[1].deepCopy());
 			return copy;
 		}
 		else
@@ -126,10 +136,10 @@ public final class DynNode<T>
 	{
 		if (!this.isLeaf() && interval.getStart()<=this.getMax())
 		{
-			this.left.searchNodes(interval, nodeList);
+			this.children[0].searchNodes(interval, nodeList);
 			if (this.getInterval().compareTo(interval)>0)
 				nodeList.add(this);
-			this.right.searchNodes(interval, nodeList);
+			this.children[1].searchNodes(interval, nodeList);
 		}
 		return nodeList;
 	}
@@ -138,11 +148,15 @@ public final class DynNode<T>
 	{
 		if(!this.isLeaf())	
 		{
-			if (!this.getLeft().isLeaf())
-				string = this.getLeft().toString(string + "\n <left ");
-			string = string + "\n node " + " " + this.isBlack + " " + interval.getStart() + " " + interval.getEnd() + " " + this.max + " >";
-			if (!this.getRight().isLeaf())
-				string = this.getRight().toString(string + "\n <right ");
+			string = this.children[0].toString(string  + "\n");
+			string = string + " node " + " " + this.isBlack + " " + interval.getStart() + " " + interval.getEnd() + " " + this.max + " >";
+			if (!this.getParent().isLeaf())
+				string = string + " parent " + " " + this.parent.interval.getStart() + " " + this.parent.interval.getEnd();
+			if (!this.children[0].isLeaf())
+				string = string + " left  " + " " + this.children[0].interval.getStart() + " " + this.children[0].interval.getEnd();
+			if (!this.children[1].isLeaf())
+				string = string + " right " + " " + this.children[1].interval.getStart() + " " + this.children[1].interval.getEnd();
+			string = this.children[1].toString(string  + "\n");	
 		}
 		return string;
 	}
