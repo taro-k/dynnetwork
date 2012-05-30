@@ -51,8 +51,8 @@ public final class DynIntervalTreeImpl<T> implements DynIntervalTree<T>
 	@Override
 	public void remove(DynInterval<T> interval)
 	{
-//		for (DynNode<T> n : searchNodes(interval))
-//			remove(n);
+		for (DynNode<T> n : searchNodes(interval))
+			remove(n);
 	}
 	
 	@Override
@@ -110,25 +110,12 @@ public final class DynIntervalTreeImpl<T> implements DynIntervalTree<T>
 		}
 		
 		this.root.getLeft().isBlack(true);
-		
 	}
 	
-	private DynNode<T> singleRotation(DynNode<T> root, int dir)
+	private void remove(DynNode<T> z)
 	{
-    	DynNode<T> pivot = root.getChildren(1-dir);
-    	root.setChildren(1-dir,pivot.getChildren(dir));
-    	if (root == root.getParent().getChildren(dir))
-    		root.getParent().setChildren(dir,pivot);
-    	else
-    		root.getParent().setChildren(1-dir,pivot);
-    	pivot.setChildren(dir,root);
-    	root.isBlack(false);
-    	pivot.isBlack(true);
-    	
-    	pivot.setMax(root.getMax());
-    	root.setMax(max(root.getLeft(),root.getRight(),root));
-    	return pivot;
-    }
+	
+	}
 	
 //	private void remove(DynNode<T> z)
 //	{
@@ -263,7 +250,24 @@ public final class DynIntervalTreeImpl<T> implements DynIntervalTree<T>
 //    		right = right.getLeft();
 //    	return right;
 //    }
-
+	
+	private DynNode<T> singleRotation(DynNode<T> root, int dir)
+	{
+    	DynNode<T> pivot = root.getChildren(1-dir);
+    	root.setChildren(1-dir,pivot.getChildren(dir));
+    	if (root == root.getParent().getChildren(dir))
+    		root.getParent().setChildren(dir,pivot);
+    	else
+    		root.getParent().setChildren(1-dir,pivot);
+    	pivot.setChildren(dir,root);
+    	root.isBlack(false);
+    	pivot.isBlack(true);
+    	
+    	pivot.setMax(root.getMax());
+    	root.setMax(max(root.getLeft(),root.getRight(),root));
+    	return pivot;
+    }
+	
     private List<DynInterval<T>> searchIntervals(DynInterval<T> interval, List<DynInterval<T>> intervalList)
     {
     	for (DynNode<T> node : searchNodes(interval))
@@ -280,7 +284,5 @@ public final class DynIntervalTreeImpl<T> implements DynIntervalTree<T>
     {
     	return Math.max(Math.max(a.getMax(), b.getMax()), c.getInterval().getEnd());
     }
-
-
 		
 }

@@ -8,12 +8,16 @@ import java.util.Properties;
 
 import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanel;
+import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynInterval;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
-import org.cytoscape.dyn.internal.view.DynControlPanelTask;
+import org.cytoscape.dyn.internal.view.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.DynCytoPanelTask;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.io.DataCategory;
@@ -36,14 +40,24 @@ import org.cytoscape.work.TunableSetter;
  */
 public class MenuActionLoadXGMML<T> extends AbstractCyAction
 {
+	private CySwingApplication desktopApp;
+	private final CytoPanel cytoPanelWest;
 	private final CySwingAppAdapter adapter;
+	
+	private DynCytoPanel<T> myDynPanel;
     private List<FileChooserFilter> filters;
 
-    public MenuActionLoadXGMML(CySwingAppAdapter adapter)
+    public MenuActionLoadXGMML(
+    		CySwingApplication desktopApp,
+    		CySwingAppAdapter adapter,
+    		DynCytoPanel<T> myDynPanel)
     {
         super("Dynamic XGMML Loader");
         setPreferredMenu("File");
+        this.desktopApp = desktopApp;
         this.adapter = adapter;
+        this.cytoPanelWest = this.desktopApp.getCytoPanel(CytoPanelName.WEST);
+        this.myDynPanel = myDynPanel;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -79,8 +93,8 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	LoadDynNetworkFileTaskFactoryImpl<T> loadFactory = new LoadDynNetworkFileTaskFactoryImpl<T>(xgmmlNetworkReaderFactory,cyNetworkManagerServiceRef,cyNetworkViewManagerServiceRef,manager,cyPropertyServiceRef,cyNetworkNamingServiceRef, tunableSetterServiceRef, streamUtil);
     	File file = fileUtil.getFile(adapter.getCySwingApplication().getJFrame(), "Load Dynamic Network", FileUtil.LOAD, filters);
 
-    	// dynamic viewer
-    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next(), new DynControlPanelTask<T>(adapter, manager));
+    	// Internal dynamic viewer
+    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next(), new DynCytoPanelTask<T>(myDynPanel, cytoPanelWest, adapter, manager));
     	adapter.getTaskManager().execute(iterator);
     }
 }
