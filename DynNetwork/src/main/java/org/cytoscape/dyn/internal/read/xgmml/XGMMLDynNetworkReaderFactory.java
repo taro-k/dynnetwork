@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal.read.xgmml;
 
 import java.io.InputStream;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.AbstractDynNetworkReaderFactory;
 import org.cytoscape.io.CyFileFilter;
 import org.cytoscape.model.CyNetworkFactory;

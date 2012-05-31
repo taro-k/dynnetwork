@@ -1,6 +1,6 @@
 package org.cytoscape.dyn.internal.read.xgmml.handler;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManager;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 

@@ -1,6 +1,6 @@
 package org.cytoscape.dyn.internal.read.xgmml.handler;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.xml.sax.Attributes;
 

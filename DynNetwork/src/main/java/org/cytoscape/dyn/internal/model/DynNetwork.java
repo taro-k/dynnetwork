@@ -1,6 +1,8 @@
 package org.cytoscape.dyn.internal.model;
 
 import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;

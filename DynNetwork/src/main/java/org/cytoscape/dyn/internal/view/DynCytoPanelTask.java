@@ -3,7 +3,7 @@ package org.cytoscape.dyn.internal.view;
 import org.cytoscape.app.CyAppAdapter;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelState;
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;

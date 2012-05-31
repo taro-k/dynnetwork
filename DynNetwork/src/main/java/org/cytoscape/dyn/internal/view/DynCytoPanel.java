@@ -24,8 +24,8 @@ import javax.swing.event.ChangeListener;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
-import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;

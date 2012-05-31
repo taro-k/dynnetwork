@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 
 import java.util.Stack;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -16,8 +16,8 @@ import org.xml.sax.Attributes;
  *
  * @param <T>
  */
-public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
-
+public final class DynHandlerAll<T> extends AbstractDynHandler<T>
+{
 	private DynNetworkEventManagerImpl<T> manager;
 	
 	private CyNetwork currentNetwork;
@@ -48,7 +48,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 		this.manager = manager;
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
-		System.out.println("");
+//		System.out.println("");
 	}
 
 	@Override
@@ -70,7 +70,9 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			directed = atts.getValue("directed");
-			currentNetwork = manager.addGraph(id==null?label:id, label, start, end, directed==null?"1":directed);
+			id = id==null?label:id;
+			directed = directed==null?"1":directed;
+			currentNetwork = manager.addGraph(id, label, start, end, directed);
 			groupStack.push(null);
 			break;
 			
@@ -88,7 +90,8 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			label = atts.getValue("label");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			currentNode = manager.addNode(currentNetwork, currentGroup, id==null?label:id, label, start, end);
+			id = id==null?label:id;
+			currentNode = manager.addNode(currentNetwork, currentGroup, id, label, start, end);
 			break;
 			
 		case EDGE:
@@ -98,7 +101,9 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 			target = atts.getValue("target");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			currentEdge = manager.addEdge(currentNetwork, id==null?source+"-"+target:id, label, source, target, start, end);
+			label = label==null?source+"-"+target:label;
+			id = id==null?label:id;
+			currentEdge = manager.addEdge(currentNetwork, id, label, source, target, start, end);
 			if (currentEdge==null)
 				orphanEdgeList.push(new OrphanEdge<T>(currentNetwork, id, label, source, target, start, end));
 			break;
@@ -150,7 +155,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>{
 		case GRAPH:
 			while (!orphanEdgeList.isEmpty())
 				orphanEdgeList.pop().addToManager(manager);
-			manager.finalize();
+			manager.finalize(currentNetwork);
 			break;
 			
 		case NODE_GRAPH:

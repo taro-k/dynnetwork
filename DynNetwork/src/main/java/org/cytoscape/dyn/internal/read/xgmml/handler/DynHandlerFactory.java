@@ -15,7 +15,7 @@ import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NONE;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

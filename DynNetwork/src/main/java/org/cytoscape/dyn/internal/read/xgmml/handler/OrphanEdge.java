@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 
 import java.util.ArrayList;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManager;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 
@@ -45,6 +45,10 @@ public final class OrphanEdge<T>
 		CyEdge currentEdge = manager.addEdge(currentNetwork, id, label, source, target, start,  end);
 		for (OrphanAttribute<T> attr : attributes)
 			attr.addToManager(manager, currentEdge);
+		
+		if (currentEdge==null)
+			System.out.println("\nXGMML Parser Warning: skipped edge id=" + id + 
+					" label=" + label + " source=" + source + " target=" + target + " (missing nodes)");
 	}
 	
 	public void addAttribute(CyNetwork currentNetwork, String name, String value, String type, String start, String end)

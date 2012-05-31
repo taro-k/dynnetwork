@@ -11,6 +11,7 @@
 		<cytoscape.api.version>[3.0.0-alpha8,4.0)</cytoscape.api.version>
 		<osgi.api.version>4.2.0</osgi.api.version>
 		<ops4j.api.version>1.5.2</ops4j.api.version>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 	
 	<modelVersion>4.0.0</modelVersion>

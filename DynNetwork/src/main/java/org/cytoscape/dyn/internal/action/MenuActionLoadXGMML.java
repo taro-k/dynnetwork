@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.events;
+package org.cytoscape.dyn.internal.action;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -12,7 +12,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
-import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;

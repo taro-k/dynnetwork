@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.model;
+package org.cytoscape.dyn.internal.model.tree;
 
 /**
  * <code> DynInterval </code> represent a value and its right half-open interval. Intervals are convenient 

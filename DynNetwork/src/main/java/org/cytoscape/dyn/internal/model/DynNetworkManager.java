@@ -1,6 +1,6 @@
 package org.cytoscape.dyn.internal.model;
 
-import org.cytoscape.dyn.internal.stream.Sink;
+import org.cytoscape.dyn.internal.stream.GraphEventSink;
 
 /**
  * <code> DynNetworkManager </code> extends <code> Sink </code> and is responsible
@@ -9,7 +9,7 @@ import org.cytoscape.dyn.internal.stream.Sink;
  * @author sabina
  * 
  */
-public interface DynNetworkManager extends Sink
+public interface DynNetworkManager extends GraphEventSink
 {
 
 }

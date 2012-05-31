@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.events;
+package org.cytoscape.dyn.internal.action;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,12 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.cytoscape.dyn.internal.model.DynInterval;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
 import org.cytoscape.dyn.internal.model.old.DynData;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.util.DynIntervalTypeMap;
 import org.cytoscape.dyn.internal.util.ObjectTypeMap;
 import org.cytoscape.group.CyGroup;
@@ -185,8 +185,9 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 //		}
 //	}
 	
-	public void finalize()
+	public void finalize(CyNetwork net)
 	{
+		System.out.println("**" + net.getNodeCount() +" : " + net.getEdgeCount());
 		dynNet.print();
 	}
 
@@ -195,7 +196,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		network.getRow(network).set(CyNetwork.NAME, label);
 		dynGraphsAttr.add(getInterval(null,start,end), "none", network.getSUID(), CyNetwork.NAME);
 		
-//		dynNet.insert(getInterval(null,start,end));
+//		dynNet.insert(network, getInterval(null,start,end));
 	}
 	
 	private void setElement(CyNetwork network, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
@@ -207,7 +208,6 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 			dynNodesAttr.add(getInterval(group.getGroupNode(),null,start,end), "none", node.getSUID(), CyNetwork.NAME);
 		
 		dynNet.insert(node, getInterval(network,null,start,end));
-
 	}
 	
 	private void setElement(CyNetwork network, CyEdge edge, String id, String label, String value, String start, String end)
@@ -215,7 +215,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		network.getRow(edge).set(CyNetwork.NAME, label);
 		dynEdgesAttr.add(getInterval(edge.getSource(),edge.getTarget(),null,start,end), "none", edge.getSUID(), CyNetwork.NAME);
 	
-//		dynNet.insert(getInterval(edge.getSource(),edge.getTarget(),null,start,end));
+//		dynNet.insert(edge, getInterval(edge.getSource(),edge.getTarget(),null,start,end));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -226,7 +226,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynGraphsAttr.add(getInterval(network, (T)attr ,start, end), attribute, network.getSUID(), attName);
 		
-//		dynNet.insert(getInterval(network, (T)attr ,start, end));
+//		dynNet.insert(network, getInterval(network, (T)attr ,start, end));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -237,7 +237,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynNodesAttr.add(getInterval(node, (T)attr, start, end), attribute, node.getSUID(), attName);
 		
-//		dynNet.insert(getInterval(network, (T)attr ,start, end));
+//		dynNet.insert(node, getInterval(network, (T)attr ,start, end));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -248,7 +248,7 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		DynAttribute<T> attribute = (DynAttribute<T>) typeIntervalMap.getTypedValue(typeIntervalMap.getType(attType));
 		dynEdgesAttr.add(getInterval(edge, (T)attr, start, end), attribute, edge.getSUID(), attName);
 		
-//		dynNet.insert(getInterval(edge, (T)attr, start, end));
+//		dynNet.insert(edge, getInterval(edge, (T)attr, start, end));
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
@@ -277,7 +277,10 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 		if (!cyNodes.containsKey(id))
 			node = network.addNode();
 		else
+		{
+			System.out.println("\nXGMML Parser Warning: updated node id=" + id + " label=" + label + " (duplicate)");
 			node = network.getNode(cyNodes.get(id));
+		}
 		cyNodes.put(id, node.getSUID());
 		
 		if (group!=null)
@@ -299,7 +302,11 @@ public class DynNetworkEventManagerImpl<T> implements DynNetworkEventManager
 			if (!cyEdges.containsKey(id))
 				edge = network.addEdge(nodeSource, nodeTarget, isDirected);
 			else
+			{
+				System.out.println("\nXGMML Parser Warning: updated edge id=" + id + " label=" + label 
+						+ " source=" + source + " target=" + target + " (duplicate)");
 				edge = network.getEdge(cyEdges.get(id));
+			}
 			cyEdges.put(id, edge.getSUID());
 
 			for (CyGroup group : groupManager.getGroupsForNode(nodeSource))

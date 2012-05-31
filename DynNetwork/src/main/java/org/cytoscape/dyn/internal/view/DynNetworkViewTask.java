@@ -2,8 +2,8 @@ package org.cytoscape.dyn.internal.view;
 
 import java.util.Iterator;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
-import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.util.KeyPairs;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;

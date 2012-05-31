@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.AbstractLoadDynNetworkTask;
 import org.cytoscape.io.read.CyNetworkReader;
 import org.cytoscape.io.read.InputStreamTaskFactory;

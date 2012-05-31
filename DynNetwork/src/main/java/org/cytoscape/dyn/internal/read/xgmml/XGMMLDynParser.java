@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal.read.xgmml;
 
 import java.util.Stack;
 
-import org.cytoscape.dyn.internal.events.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.handler.DynHandlerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

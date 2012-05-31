@@ -3,8 +3,8 @@ package org.cytoscape.dyn.internal.model.old;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.model.DynInterval;
 import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.util.DynIntervalTypeMap;
 import org.cytoscape.dyn.internal.util.KeyPairs;
 

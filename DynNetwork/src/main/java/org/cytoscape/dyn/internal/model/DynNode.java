@@ -2,6 +2,8 @@ package org.cytoscape.dyn.internal.model;
 
 import java.util.List;
 
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
+
 /**
  * <code> DynNode </code> represent a node in the red-black interval tree <code> IntervalTree </code>.
  * To each node is associated an interval <code> DynInterval </code> and a color (black or red). 
@@ -62,7 +64,8 @@ public final class DynNode<T>
 		return parent;
 	}
 	
-	public void setParent(DynNode<T> parent) {
+	public void setParent(DynNode<T> parent)
+	{
 		this.parent = parent;
 	}
 	
@@ -139,7 +142,8 @@ public final class DynNode<T>
 			this.children[0].searchNodes(interval, nodeList);
 			if (this.getInterval().compareTo(interval)>0)
 				nodeList.add(this);
-			this.children[1].searchNodes(interval, nodeList);
+			if (interval.getEnd()>this.interval.getStart())
+				this.children[1].searchNodes(interval, nodeList);
 		}
 		return nodeList;
 	}

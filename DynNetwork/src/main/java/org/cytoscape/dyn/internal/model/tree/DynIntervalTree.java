@@ -1,6 +1,8 @@
-package org.cytoscape.dyn.internal.model;
+package org.cytoscape.dyn.internal.model.tree;
 
 import java.util.List;
+
+import org.cytoscape.dyn.internal.model.DynNode;
 
 
 /**
@@ -44,7 +46,11 @@ public interface DynIntervalTree<T>
 	 * @return list of nodes
 	 */
 	public List<DynNode<T>> searchNodes(DynInterval<T> interval);
-	
+
+    /**
+     * Print list of current nodes.
+	 * @param root
+	 */
 	public void print(DynNode<T> node);
 
        

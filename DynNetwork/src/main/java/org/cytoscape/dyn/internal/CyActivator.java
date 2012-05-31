@@ -6,7 +6,7 @@ import org.cytoscape.app.swing.CySwingAppAdapter;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
-import org.cytoscape.dyn.internal.events.MenuActionLoadXGMML;
+import org.cytoscape.dyn.internal.action.MenuActionLoadXGMML;
 import org.cytoscape.dyn.internal.view.DynCytoPanel;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.osgi.framework.BundleContext;

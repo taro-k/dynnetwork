@@ -1,22 +1,26 @@
 package org.cytoscape.dyn.internal.model.attributes;
 
-import org.cytoscape.dyn.internal.model.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 
 /**
  * {@inheritDoc}
  */
-public class DynIntegerAttribute extends DynAttribute<Integer> {
+public class DynIntegerAttribute extends DynAttribute<Integer>
+{
 
-	public DynIntegerAttribute() {
+	public DynIntegerAttribute()
+	{
 		super();
 	}
 	
-	public DynIntegerAttribute(DynInterval<Integer> interval){
+	public DynIntegerAttribute(DynInterval<Integer> interval)
+	{
 		super(interval);
 	}
 
 	@Override
-	public Class<Integer> getType() {
+	public Class<Integer> getType()
+	{
 		return Integer.class;
 	}
 
