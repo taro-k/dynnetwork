@@ -49,7 +49,7 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
 		root.getParent().setChildren(dir, z);
 		insertFixUp(z, dir);
 	}
-	
+		
 	private void insertFixUp(DynNode<T> z, int dir)
 	{
 		z.isBlack(false);
@@ -181,9 +181,9 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
     		right = right.getLeft();
     	return right;
     }
-	
-	private DynNode<T> rotate(DynNode<T> root, int dir)
-	{
+
+    private DynNode<T> rotate(DynNode<T> root, int dir)
+    {
     	DynNode<T> pivot = root.getChildren(1-dir);
     	root.setChildren(1-dir,pivot.getChildren(dir));
     	root.getParent().setChildren(getThisDirection(root, dir),pivot);
@@ -194,21 +194,13 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
     	root.setMax(max(root.getLeft(),root.getRight(),root));
     	return pivot;
     }
-    
-    private int getThisDirection(DynNode<T> z)
-    {
-    	if (z == z.getParent().getLeft())
-			return 0;
-		else
-			return 1;
-    }
-    
+
     private int getThisDirection(DynNode<T> z, int dir)
     {
     	if (z == z.getParent().getChildren(dir))
-			return 0;
+			return dir;
 		else
-			return 1;
+			return 1-dir;
     }
     
     private int getParentDirection(DynNode<T> z)

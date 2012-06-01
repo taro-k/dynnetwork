@@ -1,0 +1,97 @@
+package org.cytoscape.dyn.internal.model.tree;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.cytoscape.dyn.internal.model.DynNode;
+
+/**
+ * <code> AbstractDynIntervalTree </code> abstract class for the implementation of a the interval tree.
+ *  
+ * @author sabina
+ *
+ * @param <T>
+ */
+public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
+{
+	protected final DynNode<T> root;
+	protected final DynNode<T> nil;
+	
+	public AbstractDynIntervalTree()
+	{
+		this.nil = new DynNode<T>();
+		this.root = new DynNode<T>();
+	}
+	
+	public AbstractDynIntervalTree(DynNode<T> root)
+	{
+		this();
+		this.root.setLeft(root);
+	}
+
+	@Override
+	public DynNode<T> getRoot()
+	{
+		return root.getLeft();
+	}
+	
+	@Override
+	public void insert(DynInterval<T> interval)
+	{	
+		insert(new DynNode<T>(interval, nil), root.getLeft());
+	}
+	
+	abstract protected void insert(DynNode<T> z, DynNode<T> root);
+	
+	@Override
+	public void remove(DynInterval<T> interval)
+	{
+		for (DynNode<T> n : searchNodes(interval))
+			remove(n);
+	}
+	
+	abstract protected void remove(DynNode<T> z);
+	
+	@Override
+	public List<DynInterval<T>> searchIntervals(DynInterval<T> interval)
+	{
+		return searchIntervals(interval, new ArrayList<DynInterval<T>>());
+	}
+	
+	protected List<DynInterval<T>> searchIntervals(DynInterval<T> interval, List<DynInterval<T>> intervalList)
+    {
+    	for (DynNode<T> node : searchNodes(interval))
+    		intervalList.add(node.getInterval());
+    	return intervalList;
+    }
+	
+	@Override
+	public List<DynNode<T>> searchNodes(DynInterval<T> interval)
+	{
+		return root.getLeft().searchNodes(interval, new ArrayList<DynNode<T>>());
+	}
+	
+	@Override
+	public void print(DynNode<T> node)
+	{
+		System.out.print(root.getLeft().toString(""));
+//		System.out.println("\nINTERVLAS #1");
+//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(2,16)))
+//			System.out.println(interval.getStart() + " " + interval.getEnd());
+//		
+//		System.out.println("\nINTERVLAS #2");
+//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(8,8)))
+//			System.out.println(interval.getStart() + " " + interval.getEnd());
+//		
+//		System.out.println("\nINTERVLAS #3");
+//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(30,30)))
+//			System.out.println(interval.getStart() + " " + interval.getEnd());
+//		
+//		this.remove(new DynInterval<T>(2,16));
+//		
+//		System.out.println("\nREMOVE #1");
+//		System.out.print(root.getLeft().toString(""));
+	}
+	
+
+}
