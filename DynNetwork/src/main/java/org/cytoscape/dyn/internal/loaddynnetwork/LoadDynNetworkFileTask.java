@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.cytoscape.dyn.internal.read.AbstractLoadDynNetworkTask;
-import org.cytoscape.io.read.CyNetworkReader;
+import org.cytoscape.dyn.internal.read.DynNetworkReader;
 import org.cytoscape.io.read.InputStreamTaskFactory;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.work.ProvidesTitle;
@@ -41,7 +41,7 @@ public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask
 		if (!stream.markSupported())
 			stream = new BufferedInputStream(stream);
 
-		reader = (CyNetworkReader) factory.createTaskIterator(stream, file.getName()).next();
+		reader = (DynNetworkReader) factory.createTaskIterator(stream, file.getName()).next();
 
 		if (cancelled)
 			return;

@@ -21,7 +21,7 @@ public class DynCytoPanelTask<T> extends AbstractTask
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception
 	{
-		panel.update();
+		panel.reset();
 
 		if (cytoPanelWest.getState() == CytoPanelState.HIDE)
 		{

@@ -2,12 +2,9 @@ package org.cytoscape.dyn.internal.read;
 
 import java.io.InputStream;
 
-import org.cytoscape.io.read.CyNetworkReader;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.work.AbstractTask;
 
-public abstract class AbstractDynNetworkReader extends AbstractTask implements CyNetworkReader
+public abstract class AbstractDynNetworkReader extends AbstractTask implements DynNetworkReader
 {
 	protected InputStream inputStream;
 
@@ -15,18 +12,5 @@ public abstract class AbstractDynNetworkReader extends AbstractTask implements C
 	{
 		this.inputStream = inputStream;
 	}
-	
-	// this methods are not used anymore
-	
-	@Override
-	public CyNetworkView buildCyNetworkView(CyNetwork network) 
-	{
-		return null;
-	}
 
-	@Override
-	public CyNetwork[] getNetworks() 
-	{
-		return null;
-	}
 }

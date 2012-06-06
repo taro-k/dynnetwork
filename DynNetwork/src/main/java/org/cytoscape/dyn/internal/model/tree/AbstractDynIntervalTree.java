@@ -54,7 +54,10 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	public void remove(DynInterval<T> interval)
 	{
 		for (DynNode<T> n : searchNodes(interval))
-			remove(n);
+			if (n.getIntervalList().size()>1)
+				n.getIntervalList().remove(interval);
+			else
+				remove(n);
 	}
 	
 	abstract protected void remove(DynNode<T> z);
@@ -64,21 +67,6 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	{
 		return searchIntervals(interval, new ArrayList<DynInterval<T>>());
 	}
-	
-//	@Override
-//	public List<DynInterval<T>> searchChanged(DynInterval<T> interval)
-//	{
-//		List<DynInterval<T>> tempList = searchIntervals(interval, new ArrayList<DynInterval<T>>());
-//		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentIntervals, tempList));
-//		System.out.println("*****************");
-//		print(currentIntervals);
-//		System.out.println("-----------------");
-//		print(tempList);
-//		System.out.println("-----------------");
-//		print(changedList);
-//		currentIntervals = tempList;
-//		return changedList;
-//	}
 	
 	protected List<DynInterval<T>> searchIntervals(DynInterval<T> interval, List<DynInterval<T>> intervalList)
     {
@@ -107,18 +95,10 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	{
 //		System.out.print(root.getLeft().toString(""));
 //		System.out.println("\nINTERVLAS #1");
-//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(2,16)))
+//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(4,7)))
 //			System.out.println(interval.getStart() + " " + interval.getEnd());
 //		
-//		System.out.println("\nINTERVLAS #2");
-//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(8,8)))
-//			System.out.println(interval.getStart() + " " + interval.getEnd());
-//		
-//		System.out.println("\nINTERVLAS #3");
-//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(30,30)))
-//			System.out.println(interval.getStart() + " " + interval.getEnd());
-//		
-//		this.remove(new DynInterval<T>(2,16));
+//		this.remove(new DynInterval<T>(4,7));
 //		
 //		System.out.println("\nREMOVE #1");
 //		System.out.print(root.getLeft().toString(""));

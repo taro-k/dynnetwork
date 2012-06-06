@@ -23,6 +23,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.events.SetCurrentNetworkEvent;
+import org.cytoscape.application.events.SetCurrentNetworkListener;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -34,7 +36,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
-public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener
+public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener, SetCurrentNetworkListener
 {
 	private final TaskManager taskManager;
 	private final BlockingQueue queue;
@@ -48,6 +50,7 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 	private DynNetworkView<T> view;
 	
 	private double time;
+	private double offset;
 	private double minTime;
 	private double maxTime;
 	
@@ -87,9 +90,10 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 			JSlider source = (JSlider)event.getSource();
 			if (!source.getValueIsAdjusting())
 			{
-				time = source.getValue()*((maxTime-minTime)/100)+(minTime);
+				offset = source.getValue()!=100?source.getValue():source.getValue()-0.000000001;
+				time = offset*((maxTime-minTime)/100)+(minTime);
 				currentTime.setText("Current time = " + formatter.format(time));
-				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
+				taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time, time)));
 			}
 		}
 	}
@@ -142,43 +146,6 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 	public Icon getIcon() 
 	{
 		return null;
-	}
-	
-	public void update()
-	{
-		network = networkManager.getDynNetwork(appManager.getCurrentNetwork());
-		if (viewManager.getDynNetworkView(network)==null)
-			view = dynNetworkViewFactory.createView(network);
-		else
-			view = viewManager.getDynNetworkView(network);
-//		view.fitContent();
-		view.updateView();
-		
-		dispatchOnSwingThread(new Runnable()
-		{
-		    public void run()
-		    {
-		    	minTime = DynInterval.getMinTime();
-				maxTime = DynInterval.getMaxTime();
-				
-				labelTable.clear();
-				labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );
-				labelTable.put(new Integer( 100 ),new JLabel(formatter.format(maxTime)) );
-				slider.setLabelTable(labelTable);
-				slider.setMajorTickSpacing(25);
-				slider.setMinorTickSpacing(5);
-				slider.setPaintTicks(true);
-				slider.setPaintLabels(true);
-
-				time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
-				currentTime.setText("Current time = " + formatter.format(time));
-				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
-				
-//				slider.validate();
-//				slider.repaint();
-//				revalidate();
-//                repaint();
-		    }});
 	}
 	
 	private void initComponents()
@@ -246,19 +213,56 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 
 		this.setVisible(true);
 	}
-	
-	private void dispatchOnSwingThread(Runnable r)
+
+	public void reset() 
 	{
-		if (SwingUtilities.isEventDispatchThread())
-			r.run();
+		network = networkManager.getDynNetwork(appManager.getCurrentNetwork());
+		if (viewManager.getDynNetworkView(network)==null)
+			view = dynNetworkViewFactory.createView(network);
 		else
-			try
+			view = viewManager.getDynNetworkView(network);
+		view.updateView();
+		updateGui();
+	}
+
+	// TODO: register listener
+	
+	@Override
+	public void handleEvent(SetCurrentNetworkEvent e) 
+	{
+		System.out.println("netwrok selected");
+		network = networkManager.getDynNetwork(e.getNetwork());
+		if (viewManager.getDynNetworkView(network)==null)
+			view = dynNetworkViewFactory.createView(network);
+		else
+			view = viewManager.getDynNetworkView(network);
+		view.updateView();
+		updateGui();
+	}
+	
+	private void updateGui()
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
 			{
-				SwingUtilities.invokeLater(r);
-			} catch (Exception e1)
-			{
-				e1.printStackTrace();
+		    	minTime = DynInterval.getMinTime();
+				maxTime = DynInterval.getMaxTime();
+				
+				labelTable.clear();
+				labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );
+				labelTable.put(new Integer( 100 ),new JLabel(formatter.format(maxTime)) );
+				slider.setLabelTable(labelTable);
+				slider.setMajorTickSpacing(25);
+				slider.setMinorTickSpacing(5);
+				slider.setPaintTicks(true);
+				slider.setPaintLabels(true);
+
+				time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
+				currentTime.setText("Current time = " + formatter.format(time));
+				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
 			}
+		});
 	}
 
 }

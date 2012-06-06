@@ -22,17 +22,29 @@ import org.cytoscape.model.CyNode;
  */
 public interface DynNetwork<T>
 {
-	public void insert(String column, DynInterval<T> interval);
+	public void insertGraph(String column, DynInterval<T> interval);
 	
-	public void insert(CyNode node, String column, DynInterval<T> interval);
+	public void insertNode(CyNode node, String column, DynInterval<T> interval);
 	
-	public void insert(CyEdge ede, String column, DynInterval<T> interval);
+	public void insertEdge(CyEdge ede, String column, DynInterval<T> interval);
 	
-	public void remove();
+	public void insertGraphAttr(String column, DynInterval<T> interval);
 	
-	public void remove(CyNode node);
+	public void insertNodeAttr(CyNode node, String column, DynInterval<T> interval);
 	
-	public void remove(CyEdge edge);
+	public void insertEdgeAttr(CyEdge ede, String column, DynInterval<T> interval);
+	
+	public void removeGraph();
+	
+	public void removeNode(CyNode node);
+	
+	public void removeEdge(CyEdge edge);
+	
+	public void removeGraphAttr();
+	
+	public void removeNodeAttr(CyNode node);
+	
+	public void removeEdgeAttr(CyEdge edge);
 	
 	public List<DynInterval<T>> searchGraphs(DynInterval<T> interval);
 	
@@ -40,9 +52,17 @@ public interface DynNetwork<T>
 	
 	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval);
 	
+	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
+	
 	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval);
 	
-	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
+	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval);
+	
+	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval);
+	
+	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval);
+	
+	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval);
 	
 	public DynAttribute<T> getDynAttribute(CyNetwork network, String column);
 	
@@ -55,6 +75,18 @@ public interface DynNetwork<T>
     public void expandAllGroups();
 	
 	public CyNetwork getNetwork();
+	
+	public long getCyNode(String id);
+	
+	public long getCyEdge(String id);
+	
+	public boolean containsCyNode(String id);
+	
+	public boolean containsCyEdge(String id);
+	
+	public void setCyNode(String id, long value);
+	
+	public void setCyEdge(String id, long value);
 	
 	public CyNode readNodeTable(long key);
 	

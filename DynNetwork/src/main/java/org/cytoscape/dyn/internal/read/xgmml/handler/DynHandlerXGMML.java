@@ -3,10 +3,13 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.read.AbstractDynNetworkReader;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 
 public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements DynHandler 
