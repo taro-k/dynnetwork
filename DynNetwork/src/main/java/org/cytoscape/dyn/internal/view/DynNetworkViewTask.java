@@ -44,35 +44,41 @@ public class DynNetworkViewTask<T> extends AbstractTask
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
 		queue.lock(); 
-
-		List<DynInterval<T>> nodeList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
+		
+		List<DynInterval<T>> nodeList = dynNetwork.searchChangedNodes(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : nodeList)
 		{
 			KeyPairs key = interval.getAttribute().getKey();
 			CyNode node = dynNetwork.readNodeTable(key.getRow());
 
-			if(key.getColumn().equals("name"))
+			if (node!=null)
 			{
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
-						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
+				if(key.getColumn().equals("name"))
+				{
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
+							!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
+				}
+				else
+					dynNetwork.writeNodeTable(node, key.getColumn(), interval.getValue());
 			}
-			else
-				dynNetwork.writeNodeTable(node, key.getColumn(), interval.getValue());
 		}
 		
-		List<DynInterval<T>> edgeList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
+		List<DynInterval<T>> edgeList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : edgeList)
 		{
 			KeyPairs key = interval.getAttribute().getKey();
 			CyEdge edge = dynNetwork.readEdgeTable(key.getRow());
 
-			if(key.getColumn().equals("name"))
+			if (edge!=null)
 			{
-				view.writeVisualProperty(edge, BasicVisualLexicon.NODE_VISIBLE, 
-						!view.readVisualProperty(edge, BasicVisualLexicon.NODE_VISIBLE));
+				if(key.getColumn().equals("name"))
+				{
+					view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
+							!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
+				}
+				else
+					dynNetwork.writeEdgeTable(edge, key.getColumn(), interval.getValue());
 			}
-			else
-				dynNetwork.writeEdgeTable(edge, key.getColumn(), interval.getValue());
 		}
 
 		view.updateView();

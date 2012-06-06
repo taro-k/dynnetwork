@@ -151,6 +151,8 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 			view = dynNetworkViewFactory.createView(network);
 		else
 			view = viewManager.getDynNetworkView(network);
+//		view.fitContent();
+		view.updateView();
 		
 		dispatchOnSwingThread(new Runnable()
 		{
@@ -174,8 +176,8 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 				
 //				slider.validate();
 //				slider.repaint();
-				revalidate();
-                repaint();
+//				revalidate();
+//                repaint();
 		    }});
 	}
 	

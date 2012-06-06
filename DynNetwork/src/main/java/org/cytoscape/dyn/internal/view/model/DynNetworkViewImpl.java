@@ -9,7 +9,9 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 public class DynNetworkViewImpl<T> implements DynNetworkView<T>
 {
@@ -32,9 +34,8 @@ public class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.dynNetwork = dynNetwork;
 		this.view = cyNetworkViewFactory.createNetworkView(this.dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
-		
 		this.dynNetwork.collapseAllGroups();
-		view.fitContent();
+		setVisibility();
 	}
 	
 	@Override
@@ -106,6 +107,14 @@ public class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		} finally {
 			read.unlock();
 		}
+	}
+	
+	private void setVisibility()
+	{
+		for (View<CyNode> v : this.view.getNodeViews())
+			v.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+		for (View<CyEdge> v : this.view.getEdgeViews())
+			v.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
 	}
 	
 }

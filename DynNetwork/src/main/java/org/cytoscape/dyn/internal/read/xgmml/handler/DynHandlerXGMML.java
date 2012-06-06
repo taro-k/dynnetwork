@@ -40,15 +40,15 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		super();
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
-		System.out.println("");
+//		System.out.println("");
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
 		line++;
-		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
-		spaces = spaces + " ";
+//		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
+//		spaces = spaces + " ";
 		
 		switch(current)
 		{
@@ -138,9 +138,9 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	@Override
 	public void handleEnd(Attributes atts, ParseDynState current)
 	{
-		line++;
-		spaces = spaces.substring(1);
-		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
+//		line++;
+//		spaces = spaces.substring(1);
+//		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
 		
 		switch(current)
 		{

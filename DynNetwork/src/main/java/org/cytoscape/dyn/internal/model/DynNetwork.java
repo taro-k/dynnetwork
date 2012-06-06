@@ -38,6 +38,10 @@ public interface DynNetwork<T>
 	
 	public List<DynInterval<T>> searchNodes(DynInterval<T> interval);
 	
+	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval);
+	
+	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval);
+	
 	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
 	
 	public DynAttribute<T> getDynAttribute(CyNetwork network, String column);

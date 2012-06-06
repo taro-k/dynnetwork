@@ -13,9 +13,11 @@ import java.util.List;
  * @param <T>
  */
 public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
-{
+{	
 	protected final DynNode<T> root;
 	protected final DynNode<T> nil;
+	
+	protected List<DynInterval<T>> currentIntervals = new ArrayList<DynInterval<T>>();
 	
 	public AbstractDynIntervalTree()
 	{
@@ -63,6 +65,21 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 		return searchIntervals(interval, new ArrayList<DynInterval<T>>());
 	}
 	
+//	@Override
+//	public List<DynInterval<T>> searchChanged(DynInterval<T> interval)
+//	{
+//		List<DynInterval<T>> tempList = searchIntervals(interval, new ArrayList<DynInterval<T>>());
+//		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentIntervals, tempList));
+//		System.out.println("*****************");
+//		print(currentIntervals);
+//		System.out.println("-----------------");
+//		print(tempList);
+//		System.out.println("-----------------");
+//		print(changedList);
+//		currentIntervals = tempList;
+//		return changedList;
+//	}
+	
 	protected List<DynInterval<T>> searchIntervals(DynInterval<T> interval, List<DynInterval<T>> intervalList)
     {
     	for (DynNode<T> node : searchNodes(interval))
@@ -88,7 +105,7 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	@Override
 	public void print(DynNode<T> node)
 	{
-		System.out.print(root.getLeft().toString(""));
+//		System.out.print(root.getLeft().toString(""));
 //		System.out.println("\nINTERVLAS #1");
 //		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(2,16)))
 //			System.out.println(interval.getStart() + " " + interval.getEnd());
@@ -106,6 +123,5 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 //		System.out.println("\nREMOVE #1");
 //		System.out.print(root.getLeft().toString(""));
 	}
-	
 
 }

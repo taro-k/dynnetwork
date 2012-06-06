@@ -19,6 +19,7 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
+import org.cytoscape.session.CyNetworkNaming;
 
 
 public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
@@ -30,6 +31,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private final CyNetworkFactory networkFactory;
 	private final CyRootNetworkManager rootNetworkManager;
 	private final DynNetworkManagerImpl<T> manager;
+	private final CyNetworkNaming nameUtil;
 	
 	private final Map<String, Long> cyNodes;
 	private final Map<String, Long> cyEdges;
@@ -43,13 +45,15 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			final CyRootNetworkManager rootNetworkManager,
 			final CyGroupManager groupManager,
 			final CyGroupFactory groupFactory,
-			DynNetworkManagerImpl<T> manager)
+			final DynNetworkManagerImpl<T> manager,
+			final CyNetworkNaming nameUtil)
 	{
 		this.networkFactory = networkFactory;
 		this.rootNetworkManager = rootNetworkManager;
 		this.groupManager = groupManager;
 		this.groupFactory = groupFactory;
 		this.manager = manager;
+		this.nameUtil = nameUtil;
 		
 		typeMap = new ObjectTypeMap();
 		cyNodes = new HashMap<String, Long>();
@@ -63,6 +67,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		DynNetwork<T> dynNetwork = createGraph(createRootNetwork(directed), id, label, start, end);
 		setElement(dynNetwork, id, label, null, start, end);
+		manager.addDynNetwork(dynNetwork);
 		return dynNetwork;
 	}
 
@@ -143,7 +148,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private void setElement(DynNetwork<T> dynNetwork, String id, String label, String value, String start, String end)
 	{
 		CyNetwork network = dynNetwork.getNetwork();
-		network.getRow(network).set(CyNetwork.NAME, label);
+		network.getRow(network).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
 		dynNetwork.insert(CyNetwork.NAME, getInterval(null,null,start,end));
 	}
 	
@@ -208,7 +213,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		CyNetwork network = rootNetwork.getBaseNetwork();
 		DynNetworkImpl<T> dynNet = new DynNetworkImpl<T>(network, groupManager);
-		manager.addDynNetwork(dynNet);
 		return dynNet;
 	}
 

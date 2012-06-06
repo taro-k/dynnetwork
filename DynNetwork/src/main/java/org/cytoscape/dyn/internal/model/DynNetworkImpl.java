@@ -1,9 +1,12 @@
 package org.cytoscape.dyn.internal.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -26,6 +29,9 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private CyNetwork network;
 	private final CyGroupManager groupManager;
 	
+	protected List<DynInterval<T>> currentNodes;
+	protected List<DynInterval<T>> currentEdges;
+	
 	private final DynIntervalTreeImpl<T> graphTree;
 	private final DynIntervalTreeImpl<T> nodeTree;
 	private final DynIntervalTreeImpl<T> edgeTree;
@@ -40,6 +46,9 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		this.network = network;
 		this.groupManager = groupManager;
+		
+		this.currentNodes = new ArrayList<DynInterval<T>>();
+		this.currentEdges = new ArrayList<DynInterval<T>>();
 		
 		this.graphTree = new DynIntervalTreeImpl<T>();
 		this.nodeTree = new DynIntervalTreeImpl<T>();
@@ -233,6 +242,34 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
+	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
+	{
+		write.lock();
+		try{
+			List<DynInterval<T>> tempList = nodeTree.search(interval);
+			List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentNodes, tempList));
+			currentNodes = tempList;
+			return changedList;
+		} finally {
+			write.unlock();
+		}
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval)
+	{
+		write.lock();
+		try{
+			List<DynInterval<T>> tempList = edgeTree.search(interval);
+			List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentEdges, tempList));
+			currentEdges = tempList;
+			return changedList;
+		} finally {
+			write.unlock();
+		}
+	}
+	
+	@Override
 	public DynAttribute<T> getDynAttribute(CyNetwork network, String column)
 	{
 		read.lock();
@@ -289,6 +326,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		} 
     }
 	
+	@Override
+	public void print()
+	{
+		this.nodeTree.print(this.nodeTree.getRoot());
+	}
+	
 	private void setDynAttribute(String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
@@ -327,11 +370,26 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
 	}
-
-	@Override
-	public void print()
+	
+	private Collection<DynInterval<T>> union(Collection<DynInterval<T>> coll1, Collection<DynInterval<T>> coll2) 
 	{
-		this.nodeTree.print(this.nodeTree.getRoot());
+	    Set<DynInterval<T>> union = new HashSet<DynInterval<T>>(coll1);
+	    union.addAll(new HashSet<DynInterval<T>>(coll2));
+	    return union;
+	}
+
+	private Collection<DynInterval<T>> intersect(Collection<DynInterval<T>> coll1, Collection<DynInterval<T>> coll2) 
+	{
+	    Set<DynInterval<T>> intersection = new HashSet<DynInterval<T>>(coll1);
+	    intersection.retainAll(new HashSet<DynInterval<T>>(coll2));
+	    return intersection;
+	}
+
+	private Collection<DynInterval<T>> nonOverLap(Collection<DynInterval<T>> coll1, Collection<DynInterval<T>> coll2) 
+	{
+	   Collection<DynInterval<T>> result = union(coll1, coll2);
+	   result.removeAll(intersect(coll1, coll2));
+	   return result;
 	}
 	
 }

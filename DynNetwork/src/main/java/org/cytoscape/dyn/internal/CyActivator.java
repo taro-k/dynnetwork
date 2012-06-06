@@ -49,7 +49,7 @@ public class CyActivator<T> extends AbstractCyActivator
     	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
 		
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
-		DynNetworkFactoryImpl<T> dynNetFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager);
+		DynNetworkFactoryImpl<T> dynNetFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef);
 		
