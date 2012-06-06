@@ -9,7 +9,7 @@ package org.cytoscape.dyn.internal.stream;
  * @author sabina
  * 
  */
-public interface GraphEventSink
+public interface Sink
 {
 
 }

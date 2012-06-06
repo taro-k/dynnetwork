@@ -2,31 +2,22 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 
 import java.util.Stack;
 
-import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.xml.sax.Attributes;
 
-/**
- * Class to handle all the events coming from the parsing of the XGMML.
- * @author sabina
- *
- * @param <T>
- */
-public final class DynHandlerAll<T> extends AbstractDynHandler<T>
+public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements DynHandler 
 {
-	private DynNetworkEventManagerImpl<T> manager;
+	private final Stack<CyGroup> groupStack;
+	private final Stack<OrphanEdge<T>> orphanEdgeList;
 	
-	private CyNetwork currentNetwork;
+	private DynNetwork<T> currentNetwork;
 	private CyGroup currentGroup;
 	private CyNode currentNode;
 	private CyEdge currentEdge;
-	
-	private final Stack<CyGroup> groupStack;
-	private final Stack<OrphanEdge<T>> orphanEdgeList;
 	
 	private String directed;
 	private String id;
@@ -39,25 +30,25 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 	private String start;
 	private String end;
 	
+	private int ID = 0;
+	
 	private String spaces = " ";
 	private int line = 0;
 
-	public DynHandlerAll(DynNetworkEventManagerImpl<T> manager)
+	public DynHandlerXGMML()
 	{
 		super();
-		this.manager = manager;
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
-//		System.out.println("");
+		System.out.println("");
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
-//		line++;
-//		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
-//		spaces = spaces + " ";
-//		manager.setSpaces(spaces);
+		line++;
+		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
+		spaces = spaces + " ";
 		
 		switch(current)
 		{
@@ -70,9 +61,10 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			directed = atts.getValue("directed");
+			label = label==null?"dynamic network ("+(ID++)+")":label;
 			id = id==null?label:id;
 			directed = directed==null?"1":directed;
-			currentNetwork = manager.addGraph(id, label, start, end, directed);
+			currentNetwork = this.addGraph(id, label, start, end, directed);
 			groupStack.push(null);
 			break;
 			
@@ -81,7 +73,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			label = atts.getValue("label");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			currentGroup = manager.addGroup(currentNetwork, currentNode);
+			currentGroup = this.addGroup(currentNetwork, currentNode);
 			groupStack.push(currentGroup);
 			break;
 			
@@ -91,7 +83,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			id = id==null?label:id;
-			currentNode = manager.addNode(currentNetwork, currentGroup, id, label, start, end);
+			currentNode = this.addNode(currentNetwork, currentGroup, id, label, start, end);
 			break;
 			
 		case EDGE:
@@ -103,7 +95,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			end = atts.getValue("end");
 			label = label==null?source+"-"+target:label;
 			id = id==null?label:id;
-			currentEdge = manager.addEdge(currentNetwork, id, label, source, target, start, end);
+			currentEdge = this.addEdge(currentNetwork, id, label, source, target, start, end);
 			if (currentEdge==null)
 				orphanEdgeList.push(new OrphanEdge<T>(currentNetwork, id, label, source, target, start, end));
 			break;
@@ -115,7 +107,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentNetwork!= null && name!=null && value!=null && type!=null)
-				manager.addGraphAttribute(currentNetwork, name, value, type, start, end);
+				this.addGraphAttribute(currentNetwork, name, value, type, start, end);
 			break;
 			
 		case NODE_ATT:
@@ -125,7 +117,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentNode!= null && name!=null && value!=null && type!=null)
-				manager.addNodeAttribute(currentNetwork, currentNode, name, value, type, start, end);
+				this.addNodeAttribute(currentNetwork, currentNode, name, value, type, start, end);
 			break;
 			
 		case EDGE_ATT:
@@ -135,7 +127,7 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentEdge!= null && name!=null && value!=null && type!=null)
-				manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
+				this.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
 			else
 				orphanEdgeList.peek().addAttribute(currentNetwork, name, value, type, start, end);
 			break;
@@ -146,24 +138,38 @@ public final class DynHandlerAll<T> extends AbstractDynHandler<T>
 	@Override
 	public void handleEnd(Attributes atts, ParseDynState current)
 	{
-//		line++;
-//		spaces = spaces.substring(1);
-//		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
+		line++;
+		spaces = spaces.substring(1);
+		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
 		
 		switch(current)
 		{
 		case GRAPH:
 			while (!orphanEdgeList.isEmpty())
-				orphanEdgeList.pop().addToManager(manager);
-			manager.finalize(currentNetwork);
+				orphanEdgeList.pop().add(this);
+			this.finalize(currentNetwork);
 			break;
 			
 		case NODE_GRAPH:
 			currentNode = groupStack.pop().getGroupNode();
             currentGroup = groupStack.peek();
 			break;
-
 		}
 	}
+
+	@Override
+	protected CyEdge addEdge(DynNetwork<T> currentNetwork, String id, String label,
+			String source, String target, String start, String end)
+	{
+		return sinkList.get(0).addedEdge(currentNetwork, id, label, source, target, start, end);
+	}
+
+	@Override
+	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge,
+			String name, String value, String Type, String start, String end)
+	{
+		sinkList.get(0).addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
+	}
+	
 
 }

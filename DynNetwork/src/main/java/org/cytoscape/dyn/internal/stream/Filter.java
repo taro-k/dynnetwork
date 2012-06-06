@@ -8,7 +8,7 @@ package org.cytoscape.dyn.internal.stream;
  * @author sabina
  * 
  */
-public interface GraphEventFilter extends GraphEventSource, GraphEventSink
+public interface Filter extends Source, Sink
 {
 	
 }

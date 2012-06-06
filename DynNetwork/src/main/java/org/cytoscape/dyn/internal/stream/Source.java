@@ -8,10 +8,9 @@ package org.cytoscape.dyn.internal.stream;
  * @author sabina
  * 
  */
-public interface GraphEventSource
+public interface Source
 {
-	void addSink(GraphEventSink sink);
+	void addSink(Sink sink);
 	
-	void removeSink(GraphEventSink sink);
-	
+	void removeSink(Sink sink);
 }

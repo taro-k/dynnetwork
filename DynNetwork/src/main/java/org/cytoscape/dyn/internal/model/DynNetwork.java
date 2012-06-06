@@ -1,6 +1,8 @@
 package org.cytoscape.dyn.internal.model;
 
-import org.cytoscape.dyn.internal.model.attributes.DynAttribute;
+import java.util.List;
+
+import org.cytoscape.dyn.internal.model.tree.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
 import org.cytoscape.model.CyEdge;
@@ -20,33 +22,43 @@ import org.cytoscape.model.CyNode;
  */
 public interface DynNetwork<T>
 {
-	public DynAttribute<T> getDynAtribute(CyNetwork network);
+	public void insert(String column, DynInterval<T> interval);
 	
-	public DynAttribute<T> getDynAtribute(CyNode node); 
+	public void insert(CyNode node, String column, DynInterval<T> interval);
 	
-	public DynAttribute<T> getDynAtribute(CyEdge ede);
+	public void insert(CyEdge ede, String column, DynInterval<T> interval);
 	
-	public DynAttribute<T> getDynAtribute(CyNetwork network, String attName);
+	public void remove();
 	
-	public DynAttribute<T> getDynAtribute(CyNode node, String attName); 
+	public void remove(CyNode node);
 	
-	public DynAttribute<T> getDynAtribute(CyEdge ede, String attName);
+	public void remove(CyEdge edge);
 	
-	public void insert(CyNetwork network, DynInterval<T> interval);
+	public List<DynInterval<T>> searchGraphs(DynInterval<T> interval);
 	
-	public void insert(CyNode node, DynInterval<T> interval);
+	public List<DynInterval<T>> searchNodes(DynInterval<T> interval);
 	
-	public void insert(CyEdge ede, DynInterval<T> interval);
+	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
 	
-	public void remove(CyNetwork network, DynInterval<T> interval);
+	public DynAttribute<T> getDynAttribute(CyNetwork network, String column);
 	
-	public void remove(CyNode node, DynInterval<T> interval);
+	public DynAttribute<T> getDynAttribute(CyNode node, String column);
 	
-	public void remove(CyEdge ede, DynInterval<T> interval);
+	public DynAttribute<T> getDynAttribute(CyEdge edge, String column);
 	
-	public DynIntervalTree<T> getIntervalTree();
+    public void collapseAllGroups();
+    
+    public void expandAllGroups();
 	
 	public CyNetwork getNetwork();
+	
+	public CyNode readNodeTable(long key);
+	
+	public void writeNodeTable(CyNode node, String name, T value);
+	
+	public CyEdge readEdgeTable(long key);
+	
+	public void writeEdgeTable(CyEdge edge, String name, T value);
 	
 	public void print();
 

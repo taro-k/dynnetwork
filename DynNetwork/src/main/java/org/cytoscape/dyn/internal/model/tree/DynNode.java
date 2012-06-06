@@ -1,8 +1,8 @@
-package org.cytoscape.dyn.internal.model;
+package org.cytoscape.dyn.internal.model.tree;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
+
 
 /**
  * <code> DynNode </code> represent a node in the red-black interval tree <code> IntervalTree </code>.
@@ -18,7 +18,7 @@ public final class DynNode<T>
 	private DynNode<T>[] children = new DynNode[2];
 	
 	private boolean isBlack = true;	
-	private DynInterval<T> interval;
+	private List<DynInterval<T>> intervalList;
 	private double max = Double.NEGATIVE_INFINITY;
 
 	public DynNode()
@@ -33,30 +33,23 @@ public final class DynNode<T>
 		this.parent = nil;
 		this.children[0] = nil;
 		this.children[1] = nil;
-		this.interval = interval;
+		this.intervalList.add(interval);
 		this.max = interval.getEnd();
-	}
-	
-	public DynNode(DynNode<T> template)
-	{
-		this.interval = template.interval;
-		this.max = template.max;
-		this.isBlack = template.isBlack;
 	}
 
 	public boolean isLeaf()
 	{
-		return (interval==null);
+		return (intervalList.isEmpty());
 	}
 	
-	public DynInterval<T> getInterval()
+	public List<DynInterval<T>> getIntervalList()
 	{
-		return interval;
+		return intervalList;
 	}
 
-	public void setInterval(DynInterval<T> interval)
+	public void addInterval(DynInterval<T> interval)
 	{
-		this.interval = interval;
+		this.intervalList.add(interval);
 	}
 
 	public DynNode<T> getParent()
@@ -122,17 +115,14 @@ public final class DynNode<T>
 		this.isBlack = isBlack;
 	}
 	
-	public DynNode<T> deepCopy()
+	public double getStart()
 	{
-		if (!this.isLeaf())
-		{
-			DynNode<T> copy = new DynNode<T>(this);
-			copy.setChildren(0,this.children[0].deepCopy());
-			copy.setChildren(1,this.children[1].deepCopy());
-			return copy;
-		}
-		else
-			return this;
+		return this.intervalList.get(0).getStart();
+	}
+	
+	public double getEnd()
+	{
+		return this.intervalList.get(0).getEnd();
 	}
 	
 	public List<DynNode<T>> searchNodes(DynInterval<T> interval, List<DynNode<T>> nodeList)
@@ -140,9 +130,9 @@ public final class DynNode<T>
 		if (!this.isLeaf() && interval.getStart()<=this.getMax())
 		{
 			this.children[0].searchNodes(interval, nodeList);
-			if (this.getInterval().compareTo(interval)>0)
+			if (this.intervalList.get(0).compareTo(interval)>0)
 				nodeList.add(this);
-			if (interval.getEnd()>this.interval.getStart())
+			if (interval.getEnd()>this.intervalList.get(0).getStart())
 				this.children[1].searchNodes(interval, nodeList);
 		}
 		return nodeList;
@@ -153,13 +143,13 @@ public final class DynNode<T>
 		if(!this.isLeaf())	
 		{
 			string = this.children[0].toString(string  + "\n");
-			string = string + " node " + " " + this.isBlack + " " + interval.getStart() + " " + interval.getEnd() + " " + this.max + " >";
+			string = string + " node " + " " + this.isBlack + " " + intervalList.get(0).getStart() + " " + intervalList.get(0).getEnd() + " " + this.max + " >";
 			if (!this.getParent().isLeaf())
-				string = string + " parent " + " " + this.parent.interval.getStart() + " " + this.parent.interval.getEnd();
+				string = string + " parent " + " " + this.parent.intervalList.get(0).getStart() + " " + this.parent.intervalList.get(0).getEnd();
 			if (!this.children[0].isLeaf())
-				string = string + " left  " + " " + this.children[0].interval.getStart() + " " + this.children[0].interval.getEnd();
+				string = string + " left  " + " " + this.children[0].intervalList.get(0).getStart() + " " + this.children[0].intervalList.get(0).getEnd();
 			if (!this.children[1].isLeaf())
-				string = string + " right " + " " + this.children[1].interval.getStart() + " " + this.children[1].interval.getEnd();
+				string = string + " right " + " " + this.children[1].intervalList.get(0).getStart() + " " + this.children[1].intervalList.get(0).getEnd();
 			string = this.children[1].toString(string  + "\n");	
 		}
 		return string;

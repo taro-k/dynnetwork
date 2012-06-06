@@ -1,6 +1,6 @@
 package org.cytoscape.dyn.internal.model.tree;
 
-import org.cytoscape.dyn.internal.model.DynNode;
+
 
 
 /**
@@ -9,6 +9,8 @@ import org.cytoscape.dyn.internal.model.DynNode;
  * with each node <code> DynNode </code> containing an interval <code> DynInterval </code>. 
  * The leaf nodes do not contain data, and reference to a dummy sentinel node (nil). The root is also a nil
  * sentinel node, whose left reference points to the network root.
+ * 
+ * <code> DynIntervalTreeImpl </code> guarantees O(log n) insertion and deletion of elements.
  *  
  * @author sabina
  *
@@ -27,20 +29,26 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
 		super(root);
 	}
 	
-//	public DynIntervalTreeImpl<T> deepCopy(DynNode<T> root)
-//	{
-//		return new DynIntervalTreeImpl<T>(root.deepCopy());
-//	}
+	public DynIntervalTreeImpl(DynInterval<T> interval)
+	{
+		super(interval);
+	}
 	
 	protected void insert(DynNode<T> z, DynNode<T> root)
 	{
 		int dir = 0;
 		while (!root.isLeaf())
 		{	
-			// TODO: check for duplicates!!
-			dir = (z.getInterval().getStart()<root.getInterval().getStart() || 
-					(z.getInterval().getStart()==root.getInterval().getStart() &&
-					z.getInterval().getEnd()<root.getInterval().getEnd()))?0:1;
+			
+			// If duplicate
+			if (z.getStart()==root.getStart() && z.getEnd()==root.getEnd())
+			{
+				root.addInterval(z.getIntervalList().get(0));
+				return;
+			}
+			
+			// Otherwise check direction
+			dir = (z.getStart()<root.getStart() || (z.getStart()==root.getStart() && z.getEnd()<root.getEnd()))?0:1;
 			
 			root.getChildren(dir).setParent(root);
 			root.setMax(max(z,root));
@@ -174,14 +182,6 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
     	return left;
     }
 
-    private DynNode<T> getTreeMaximum(DynNode<T> root)
-    {
-    	DynNode<T> right = root;
-    	while (!root.getRight().isLeaf())
-    		right = right.getLeft();
-    	return right;
-    }
-
     private DynNode<T> rotate(DynNode<T> root, int dir)
     {
     	DynNode<T> pivot = root.getChildren(1-dir);
@@ -218,7 +218,7 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
     
     private double max(DynNode<T> a, DynNode<T> b, DynNode<T> c)
     {
-    	return Math.max(Math.max(a.getMax(), b.getMax()), c.getInterval().getEnd());
+    	return Math.max(Math.max(a.getMax(), b.getMax()), c.getEnd());
     }
 		
 }

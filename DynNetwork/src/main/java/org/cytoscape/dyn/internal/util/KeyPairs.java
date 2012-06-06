@@ -5,26 +5,31 @@ package org.cytoscape.dyn.internal.util;
  * @author sabina
  *
  */
-public class KeyPairs {
+public class KeyPairs 
+{
 	
 	private String column;
 	private Long row;
 	
-	public KeyPairs(String column, Long row) {
+	public KeyPairs(String column, Long row) 
+	{
 		this.column = column;
 		this.row = row;
 	}
 	
-	public String getColumn() {
+	public String getColumn() 
+	{
 		return column;
 	}
 
-	public Long getRow() {
+	public Long getRow() 
+	{
 		return row;
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode() 
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((column == null) ? 0 : column.hashCode());
@@ -33,7 +38,8 @@ public class KeyPairs {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) 
+	{
 		KeyPairs o = (KeyPairs) obj;
 		if (this.row==o.row && this.column.equals(o.column))
 			return true;

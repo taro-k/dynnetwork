@@ -15,7 +15,6 @@ import static org.cytoscape.dyn.internal.read.xgmml.ParseDynState.NONE;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -27,33 +26,38 @@ import org.xml.sax.SAXException;
  *
  * @param <T>
  */
-public final class DynHandlerFactory<T> {
+public final class DynHandlerXGMMLFactory<T>
+{
 	
 	private Map<ParseDynState, Map<String, ParseDynState>> startParseMap;
 	
-	private DynHandlerAll<T> handler;
+	private DynHandlerXGMML<T> handler;
 	
-	public DynHandlerFactory(DynNetworkEventManagerImpl<T> manager)
+	public DynHandlerXGMMLFactory()
 	{
-		handler = new DynHandlerAll<T>(manager);
+		handler = new DynHandlerXGMML<T>();
 		startParseMap = new HashMap<ParseDynState, Map<String, ParseDynState>>();
 		buildMap(createStartParseTable(), startParseMap);
 	}
 	
-	public ParseDynState handleStartState(ParseDynState current, String tag, Attributes atts) throws SAXException {
+	public ParseDynState handleStartState(ParseDynState current, String tag, Attributes atts) throws SAXException
+	{
 		current = startParseMap.get(current).get(tag);
 		handler.handleStart(atts, current);
 		return current;
 	}
 	
-	public ParseDynState handleEndState(ParseDynState current, String tag, Attributes atts) throws SAXException {
+	public ParseDynState handleEndState(ParseDynState current, String tag, Attributes atts) throws SAXException
+	{
 		handler.handleEnd(atts, current);
 		return current;
 	}
 
-	private Object[][] createStartParseTable() {
+	private Object[][] createStartParseTable()
+	{
 
-		final Object[][] tbl = {
+		final Object[][] tbl =
+		{
 				
 				// Handle graphs
 				{ NONE, "graph", GRAPH, null },
@@ -83,11 +87,13 @@ public final class DynHandlerFactory<T> {
 		return tbl;
 	}
 
-	private void buildMap(Object[][] table, Map<ParseDynState, Map<String, ParseDynState>> map) {
+	private void buildMap(Object[][] table, Map<ParseDynState, Map<String, ParseDynState>> map)
+	{
 		int size = table.length;
 		Map<String, ParseDynState> internalMap = null;
 
-		for (int i = 0; i < size; i++) {
+		for (int i = 0; i < size; i++)
+		{
 			internalMap = map.get((ParseDynState) table[i][0]);
 			if (internalMap == null)
 			{

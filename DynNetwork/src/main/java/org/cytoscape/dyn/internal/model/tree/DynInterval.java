@@ -1,5 +1,7 @@
 package org.cytoscape.dyn.internal.model.tree;
 
+
+
 /**
  * <code> DynInterval </code> represent a value and its right half-open interval. Intervals are convenient 
  * for representing events that each occupy a continuous period of time. A half-open interval 
@@ -12,16 +14,20 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public final class DynInterval<T> implements Comparable<DynInterval<T>>
 {
+	private Class<T> type;
+	
 	private T value;
 	private double start;
 	private double end;
+	
+	private DynAttribute<T> attribute;
 	
 	public static double minStartTime = Double.POSITIVE_INFINITY;
 	public static double maxStartTime = Double.NEGATIVE_INFINITY;
 	public static double minEndTime = Double.POSITIVE_INFINITY;
 	public static double maxEndTime = Double.NEGATIVE_INFINITY;
 	
-	public DynInterval(T value, double start, double end)
+	public DynInterval(Class<T> type, T value, double start, double end)
 	{
 		this.value = value;
 		this.start = start;
@@ -41,12 +47,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 
 	public DynInterval(double start, double end)
 	{
-		this(null, start, end);
-	}
-	
-	public DynInterval<T> deepCopy()
-	{
-		return new DynInterval<T>(this.value, this.start, this.end);
+		this(null, null, start, end);
 	}
 
 	@Override
@@ -57,8 +58,9 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		else
 			return -1;
 	}
-
-	public T getValue() {
+	
+	public T getValue()
+	{
 		return value;
 	}
 
@@ -81,6 +83,16 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	{
 		return end;
 	}
+	
+	public DynAttribute<T> getAttribute()
+	{
+		return attribute;
+	}
+
+	public void setAttribute(DynAttribute<T> attribute) 
+	{
+		this.attribute = attribute;
+	}
 
 	public static double getMinTime()
 	{
@@ -102,6 +114,11 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 				return maxStartTime;
 		else
 			return maxEndTime;
+	}
+	
+	public Class<T> getType()
+	{
+		return type;
 	}
     
 }

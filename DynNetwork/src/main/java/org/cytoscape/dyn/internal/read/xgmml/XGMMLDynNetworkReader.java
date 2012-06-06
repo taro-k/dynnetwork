@@ -2,20 +2,14 @@ package org.cytoscape.dyn.internal.read.xgmml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.read.AbstractDynNetworkReader;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.CyNetworkViewFactory;
-import org.cytoscape.view.model.VisualLexicon;
-import org.cytoscape.view.presentation.RenderingEngineManager;
 import org.cytoscape.work.TaskMonitor;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -23,38 +17,38 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.ParserAdapter;
 
-public final class XGMMLDynNetworkReader<T> extends AbstractDynNetworkReader {
-
-	protected static final String CY_NAMESPACE = "http://www.cytoscape.org";
-	protected final DynNetworkEventManagerImpl<T> manager;
-	
+/**
+ * <code> XGMMLDynNetworkReader </code> extends {@link AbstractDynNetworkReader}. 
+ * It imports and reads static and dynamic XGMML files into {@link DynNetwork} 
+ * (dynamic) and {@link CyNetwork} (static) data structures by generating graph
+ * events.
+ *
+ * @author sabina
+ *
+ */
+public final class XGMMLDynNetworkReader extends AbstractDynNetworkReader
+{
 	protected final DefaultHandler parser;
-	
-	protected final VisualLexicon visualLexicon;
 
-	public XGMMLDynNetworkReader(final InputStream inputStream,
-							  final CyNetworkViewFactory cyNetworkViewFactory,
-							  final CyNetworkFactory cyNetworkFactory,
-							  final DynNetworkEventManagerImpl<T> manager,
-							  final DefaultHandler parser,
-							  final RenderingEngineManager renderingEngineMgr) {
-		super(inputStream, cyNetworkViewFactory, cyNetworkFactory);
+	public XGMMLDynNetworkReader(
+			final InputStream inputStream,
+			final DefaultHandler parser)
+	{
+		super(inputStream);
 		this.parser = parser;
-		this.manager = manager;
-		this.visualLexicon = renderingEngineMgr.getDefaultVisualLexicon();
 	}
 
 	@Override
-	public void run(TaskMonitor tm) throws Exception {
+	public void run(TaskMonitor tm) throws Exception
+	{
 		tm.setProgress(0.0);
+		
+		System.out.println("parse xgmml");
+		
 		try {
 			readXGMML(tm);
 		} catch (Exception e) {
 			throw new IOException("Could not parse XGMML file.", e);
-		} finally
-		{
-			Set<CyNetwork> netSet = manager.getNetworks();
-			this.cyNetworks = netSet.toArray(new CyNetwork[netSet.size()]);
 		}
 		tm.setProgress(1.0);
 	}
@@ -83,16 +77,6 @@ public final class XGMMLDynNetworkReader<T> extends AbstractDynNetworkReader {
 				inputStream = null;
 			}
 		}
-	}
-	
-	
-	//TODO: ????????? This part of the code should be somewhere else!!!
-	
-	@Override
-	public CyNetworkView buildCyNetworkView(final CyNetwork network) {
-		final CyNetworkView netView = cyNetworkViewFactory.createNetworkView(network);
-		netView.updateView();
-		return netView;
 	}
 
 }

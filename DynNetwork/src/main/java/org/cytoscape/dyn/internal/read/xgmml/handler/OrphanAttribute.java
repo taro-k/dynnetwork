@@ -1,27 +1,25 @@
 package org.cytoscape.dyn.internal.read.xgmml.handler;
 
-import org.cytoscape.dyn.internal.action.DynNetworkEventManager;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 
 /**
  * <code> OrphanAttribute </code> is used to store attributes of 
  * <code> OrphanEdge </code>.
  * 
  * @author sabina
- *
- * @param <T>
+ * 
  */
 public final class OrphanAttribute<T>
 {
-	private final CyNetwork currentNetwork;
+	private final DynNetwork<T> currentNetwork;
 	private final String name;
 	private final String value;
 	private final String type;
 	private final String start;
 	private final String end;
 	
-	public OrphanAttribute(CyNetwork currentNetwork, String name, String value,
+	public OrphanAttribute(DynNetwork<T> currentNetwork, String name, String value,
 			String type, String start, String end)
 	{
 		this.currentNetwork = currentNetwork;
@@ -32,10 +30,10 @@ public final class OrphanAttribute<T>
 		this.end = end;
 	}
 	
-	public void addToManager(DynNetworkEventManager manager, CyEdge currentEdge)
+	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!= null && name!=null && value!=null && type!=null)
-			manager.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
+			handler.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
 	}
 	
 }

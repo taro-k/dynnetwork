@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal.model.tree;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.DynNode;
+
 
 
 /**
@@ -32,21 +32,19 @@ public interface DynIntervalTree<T>
 	 * @param interval
 	 */
 	public void remove(DynInterval<T> interval);
-   
-    /**
-     * Search intervals in the tree.
-	 * @param interval
-	 * @return list of intervals
-	 */
-	public List<DynInterval<T>> searchIntervals(DynInterval<T> interval);
 	
     /**
-     * Search intervals in the tree.
+     * Search overlapping intervals in the tree.
 	 * @param interval
-	 * @return list of nodes
+	 * @return list of overlapping intervals with the given interval.
 	 */
-	public List<DynNode<T>> searchNodes(DynInterval<T> interval);
+	public List<DynInterval<T>> search(DynInterval<T> interval);
 
+    /**
+     * Clear interval tree.
+	 */
+	public void clear();
+	
     /**
      * Print list of current nodes.
 	 * @param root

@@ -2,9 +2,8 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 
 import java.util.ArrayList;
 
-import org.cytoscape.dyn.internal.action.DynNetworkEventManager;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 
 /**
  * <code> OrphanEdge </code> is used to store edges connected to nodes that 
@@ -13,11 +12,10 @@ import org.cytoscape.model.CyNetwork;
  * 
  * @author sabina
  *
- * @param <T>
  */
 public final class OrphanEdge<T>
 {
-	private final CyNetwork currentNetwork;
+	private final DynNetwork<T> currentNetwork;
 	private final String id;
 	private final String label;
 	private final String source;
@@ -27,7 +25,7 @@ public final class OrphanEdge<T>
 	
 	private final ArrayList<OrphanAttribute<T>> attributes;
 	
-	public OrphanEdge(CyNetwork currentNetwork, String id, String label,
+	public OrphanEdge(DynNetwork<T> currentNetwork, String id, String label,
 			String source, String target, String start, String end)
 	{
 		this.currentNetwork = currentNetwork;
@@ -40,18 +38,18 @@ public final class OrphanEdge<T>
 		attributes = new ArrayList<OrphanAttribute<T>>();
 	}
 	
-	public void addToManager(DynNetworkEventManager manager)
+	public void add(DynHandlerXGMML<T> handler)
 	{
-		CyEdge currentEdge = manager.addEdge(currentNetwork, id, label, source, target, start,  end);
+		CyEdge currentEdge = handler.addEdge(currentNetwork, id, label, source, target, start,  end);
 		for (OrphanAttribute<T> attr : attributes)
-			attr.addToManager(manager, currentEdge);
+			attr.add(handler, currentEdge);
 		
 		if (currentEdge==null)
 			System.out.println("\nXGMML Parser Warning: skipped edge id=" + id + 
 					" label=" + label + " source=" + source + " target=" + target + " (missing nodes)");
 	}
 	
-	public void addAttribute(CyNetwork currentNetwork, String name, String value, String type, String start, String end)
+	public void addAttribute(DynNetwork<T> currentNetwork, String name, String value, String type, String start, String end)
 	{
 		attributes.add(new OrphanAttribute<T>(currentNetwork, name, value, type, start, end));
 	}

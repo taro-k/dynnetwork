@@ -17,7 +17,6 @@ import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.view.DynCytoPanel;
-import org.cytoscape.dyn.internal.view.DynCytoPanelTask;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.io.DataCategory;
@@ -43,8 +42,8 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
 	private CySwingApplication desktopApp;
 	private final CytoPanel cytoPanelWest;
 	private final CySwingAppAdapter adapter;
+	private final DynCytoPanel<T> myDynPanel;
 	
-	private DynCytoPanel<T> myDynPanel;
     private List<FileChooserFilter> filters;
 
     public MenuActionLoadXGMML(
@@ -76,10 +75,9 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	RenderingEngineManager renderingEngineMgr = adapter.getRenderingEngineManager();
     	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
     	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
-    	DynNetworkEventManagerImpl<T> manager = new DynNetworkEventManagerImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef);
-    	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(manager);
+    	XGMMLDynParser xgmmlParser = new XGMMLDynParser();
     	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml"}, new String[]{"text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
-    	XGMMLDynNetworkReaderFactory<T> xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory<T>(xgmmlFilter,cyNetworkViewFactoryServiceRef,cyNetworkFactoryServiceRef,manager,xgmmlParser,renderingEngineMgr);
+    	XGMMLDynNetworkReaderFactory xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory(xgmmlFilter,xgmmlParser);
     	filters = new ArrayList<FileChooserFilter>();
     	filters.add(new FileChooserFilter("XGMML", "xgmml"));
     	
@@ -90,11 +88,9 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	DynInterval.maxEndTime = Double.NEGATIVE_INFINITY;
 
     	// load file
-    	LoadDynNetworkFileTaskFactoryImpl<T> loadFactory = new LoadDynNetworkFileTaskFactoryImpl<T>(xgmmlNetworkReaderFactory,cyNetworkManagerServiceRef,cyNetworkViewManagerServiceRef,manager,cyPropertyServiceRef,cyNetworkNamingServiceRef, tunableSetterServiceRef, streamUtil);
+    	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
     	File file = fileUtil.getFile(adapter.getCySwingApplication().getJFrame(), "Load Dynamic Network", FileUtil.LOAD, filters);
-
-    	// Internal dynamic viewer
-    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next(), new DynCytoPanelTask<T>(myDynPanel, cytoPanelWest, adapter, manager));
+    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next());
     	adapter.getTaskManager().execute(iterator);
     }
 }

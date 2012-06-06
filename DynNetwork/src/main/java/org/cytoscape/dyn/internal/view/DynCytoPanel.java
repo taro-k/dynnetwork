@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -22,11 +23,15 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.dyn.internal.action.DynNetworkEventManagerImpl;
+import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -35,8 +40,13 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 	private final TaskManager taskManager;
 	private final BlockingQueue queue;
 	
-	private DynNetworkEventManagerImpl<T> eventManager;
-	private DynNetworkViewSync<T> syncView;
+	private final CyApplicationManager appManager;
+	private final DynNetworkManager<T> networkManager;
+	private final DynNetworkViewManager<T> viewManager;
+	private final DynNetworkViewFactory<T> dynNetworkViewFactory;
+	
+	private DynNetwork<T> network;
+	private DynNetworkView<T> view;
 	
 	private double time;
 	private double minTime;
@@ -53,24 +63,34 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter = new DecimalFormat("#0.00");
 
-	public DynCytoPanel(final TaskManager taskManager)
+	public DynCytoPanel(
+			final TaskManager taskManager,
+			final CyApplicationManager appManager,
+			final DynNetworkManager<T> networkManager,
+			final DynNetworkViewManager<T> viewManager,
+			final DynNetworkViewFactory<T> dynNetworkViewFactory)
 	{
 		super();
 		this.taskManager = taskManager;
+		this.appManager = appManager;
+		this.networkManager = networkManager;
+		this.viewManager = viewManager;
+		this.dynNetworkViewFactory = dynNetworkViewFactory;
 		this.queue = new BlockingQueue();
 		initComponents();
 	}
 
 	public synchronized void stateChanged(ChangeEvent event)
 	{
-		if (syncView!=null)
+		// TODO: check current network
+		if (view!=null)
 		{
 			JSlider source = (JSlider)event.getSource();
 			if (!source.getValueIsAdjusting())
 			{
 				time = source.getValue()*((maxTime-minTime)/100)+(minTime);
 				currentTime.setText("Current time = " + formatter.format(time));
-				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(syncView, eventManager, queue, time, time)));
+				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
 			}
 		}
 	}
@@ -102,30 +122,37 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 		}
 	}
 	
-	public Component getComponent() {
+	public Component getComponent() 
+	{
 		return this;
 	}
 
 
-	public CytoPanelName getCytoPanelName() {
+	public CytoPanelName getCytoPanelName() 
+	{
 		return CytoPanelName.WEST;
 	}
 
 
-	public String getTitle() {
+	public String getTitle() 
+	{
 		return "Dynamic Network";
 	}
 
 
-	public Icon getIcon() {
+	public Icon getIcon() 
+	{
 		return null;
 	}
 	
-	public void update(DynNetworkEventManagerImpl<T> eventManager, CyNetworkView view)
+	public void update()
 	{
-		this.eventManager = eventManager;
-		this.syncView = new DynNetworkViewSync<T>(view, view.getModel());
-
+		network = networkManager.getDynNetwork(appManager.getCurrentNetwork());
+		if (viewManager.getDynNetworkView(network)==null)
+			view = dynNetworkViewFactory.createView(network);
+		else
+			view = viewManager.getDynNetworkView(network);
+		
 		dispatchOnSwingThread(new Runnable()
 		{
 		    public void run()
@@ -144,6 +171,7 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 
 				time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
 				currentTime.setText("Current time = " + formatter.format(time));
+				taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
 				
 //				slider.validate();
 //				slider.repaint();
