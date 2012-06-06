@@ -88,13 +88,16 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 		if (view!=null)
 		{
 			JSlider source = (JSlider)event.getSource();
+			offset = source.getValue()!=100?source.getValue():source.getValue()-0.000000001;
+			time = offset*((maxTime-minTime)/100)+(minTime);
+			currentTime.setText("Current time = " + formatter.format(time));
 			if (!source.getValueIsAdjusting())
-			{
-				offset = source.getValue()!=100?source.getValue():source.getValue()-0.000000001;
-				time = offset*((maxTime-minTime)/100)+(minTime);
-				currentTime.setText("Current time = " + formatter.format(time));
-				taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time, time)));
-			}
+				taskManager.execute(new TaskIterator(1,
+						new DynNetworkViewTask<T>(view, network, queue, time, time)));
+			else
+				taskManager.execute(new TaskIterator(2,
+						new DynNetworkViewTask<T>(view, network, queue, time, time),
+						new DynNetworkViewAttrTask<T>(view, network, queue, time, time)));
 		}
 	}
 	

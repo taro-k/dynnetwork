@@ -22,27 +22,11 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	
 	private DynAttribute<T> attribute;
 	
-//	public static double minStartTime = Double.POSITIVE_INFINITY;
-//	public static double maxStartTime = Double.NEGATIVE_INFINITY;
-//	public static double minEndTime = Double.POSITIVE_INFINITY;
-//	public static double maxEndTime = Double.NEGATIVE_INFINITY;
-	
 	public DynInterval(Class<T> type, T value, double start, double end)
 	{
 		this.value = value;
 		this.start = start;
 		this.end = end;
-		
-//		if (!Double.isInfinite(start))
-//		{
-//			minStartTime = Math.min(minStartTime, start);
-//			maxStartTime = Math.max(maxStartTime, start);
-//		}
-//		if (!Double.isInfinite(end))
-//		{
-//			maxEndTime = Math.max(maxEndTime, end);
-//			minEndTime = Math.min(minEndTime, end);
-//		}
 	}
 
 	public DynInterval(double start, double end)
@@ -93,28 +77,6 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	{
 		this.attribute = attribute;
 	}
-
-//	public static double getMinTime()
-//	{
-//		if (Double.isInfinite(minStartTime))
-//			if (Double.isInfinite(minEndTime))
-//				return -1;
-//			else
-//				return minEndTime;
-//		else
-//			return minStartTime;
-//	}
-//
-//	public static double getMaxTime()
-//	{
-//		if (Double.isInfinite(maxEndTime))
-//			if (Double.isInfinite(maxStartTime))
-//				return 1;
-//			else
-//				return maxStartTime;
-//		else
-//			return maxEndTime;
-//	}
 	
 	public Class<T> getType()
 	{
