@@ -3,6 +3,7 @@ package org.cytoscape.dyn.internal;
 import java.util.Properties;
 
 import org.cytoscape.app.swing.CySwingAppAdapter;
+import org.cytoscape.application.events.SetCurrentNetworkViewListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
@@ -20,7 +21,6 @@ import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
-import org.cytoscape.property.CyProperty;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CyNetworkNaming;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -43,7 +43,6 @@ public class CyActivator<T> extends AbstractCyActivator
     	CyNetworkViewFactory cyNetworkViewFactoryServiceRef = adapter.getCyNetworkViewFactory();
     	CyNetworkFactory cyNetworkFactoryServiceRef = adapter.getCyNetworkFactory();
     	CyRootNetworkManager cyRootNetworkManagerServiceRef = adapter.getCyRootNetworkFactory();
-    	CyProperty<Properties> cyPropertyServiceRef = adapter.getCoreProperties();
     	CyNetworkNaming cyNetworkNamingServiceRef = adapter.getCyServiceRegistrar().getService(CyNetworkNaming.class);
     	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
     	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
@@ -53,15 +52,16 @@ public class CyActivator<T> extends AbstractCyActivator
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef);
 		
-    	DynCytoPanel<T> dyncytoPanel = new DynCytoPanel<T>(adapter.getTaskManager(),adapter.getCyApplicationManager(),dynNetManager,dynNetViewManager,dynNetViewFactory);
-    	MenuActionLoadXGMML<T> action = new MenuActionLoadXGMML<T>(cytoscapeDesktopService,adapter,dyncytoPanel,dynNetFactory);
+    	DynCytoPanel<T> dynCytoPanel = new DynCytoPanel<T>(adapter.getTaskManager(),adapter.getCyApplicationManager(),dynNetManager,dynNetViewManager,dynNetViewFactory);
+    	MenuActionLoadXGMML<T> action = new MenuActionLoadXGMML<T>(cytoscapeDesktopService,adapter,dynCytoPanel,dynNetFactory);
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());
 		registerService(context,dynNetFactory,DynNetworkFactory.class, new Properties());
 		registerService(context,dynNetViewManager,DynNetworkViewManager.class, new Properties());
 		registerService(context,dynNetViewFactory,DynNetworkViewFactoryImpl.class, new Properties());
-		registerService(context,dyncytoPanel,CytoPanelComponent.class, new Properties());
+		registerService(context,dynCytoPanel,CytoPanelComponent.class, new Properties());
     	registerService(context,action,CyAction.class, new Properties());
+    	registerService(context, dynCytoPanel, SetCurrentNetworkViewListener.class, new Properties());
 	}
 }
 

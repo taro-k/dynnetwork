@@ -96,6 +96,10 @@ public interface DynNetwork<T>
 	
 	public void writeEdgeTable(CyEdge edge, String name, T value);
 	
+	public double getMinTime();
+	
+	public double getMaxTime();
+	
 	public void print();
 
 }

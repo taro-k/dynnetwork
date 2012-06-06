@@ -23,21 +23,22 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.events.SetCurrentNetworkEvent;
-import org.cytoscape.application.events.SetCurrentNetworkListener;
+import org.cytoscape.application.events.SetCurrentNetworkViewEvent;
+import org.cytoscape.application.events.SetCurrentNetworkViewListener;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
-public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener, SetCurrentNetworkListener
+public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener, SetCurrentNetworkViewListener
 {
+	private static final long serialVersionUID = 1L;
+	
 	private final TaskManager taskManager;
 	private final BlockingQueue queue;
 	
@@ -84,7 +85,6 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 
 	public synchronized void stateChanged(ChangeEvent event)
 	{
-		// TODO: check current network
 		if (view!=null)
 		{
 			JSlider source = (JSlider)event.getSource();
@@ -224,18 +224,12 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 		view.updateView();
 		updateGui();
 	}
-
-	// TODO: register listener
 	
 	@Override
-	public void handleEvent(SetCurrentNetworkEvent e) 
+	public void handleEvent(SetCurrentNetworkViewEvent e) 
 	{
-		System.out.println("netwrok selected");
-		network = networkManager.getDynNetwork(e.getNetwork());
-		if (viewManager.getDynNetworkView(network)==null)
-			view = dynNetworkViewFactory.createView(network);
-		else
-			view = viewManager.getDynNetworkView(network);
+		network = networkManager.getDynNetwork(e.getNetworkView().getModel());
+		view = viewManager.getDynNetworkView(network);
 		view.updateView();
 		updateGui();
 	}
@@ -246,8 +240,8 @@ public class DynCytoPanel<T> extends JPanel implements CytoPanelComponent, Chang
 		{
 			public void run()
 			{
-		    	minTime = DynInterval.getMinTime();
-				maxTime = DynInterval.getMaxTime();
+		    	minTime = network.getMinTime();
+				maxTime = network.getMaxTime();
 				
 				labelTable.clear();
 				labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );

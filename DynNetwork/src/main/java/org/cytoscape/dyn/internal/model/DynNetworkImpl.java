@@ -43,7 +43,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	
 	private final Map<KeyPairs,DynAttribute<T>> graphTable;
 	private final Map<KeyPairs,DynAttribute<T>> nodeTable;
-	private final Map<KeyPairs,DynAttribute<T>> edgeTable;;
+	private final Map<KeyPairs,DynAttribute<T>> edgeTable;
+	
+	private double minStartTime = Double.POSITIVE_INFINITY;
+	private double maxStartTime = Double.NEGATIVE_INFINITY;
+	private double minEndTime = Double.POSITIVE_INFINITY;
+	private double maxEndTime = Double.NEGATIVE_INFINITY;
 	
 	public DynNetworkImpl(
 			CyNetwork network,
@@ -136,6 +141,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(column, interval);
 			graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			graphTree.insert(interval);
@@ -149,6 +155,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(node, column, interval);
 			nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			nodeTree.insert(interval);
@@ -162,6 +169,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(edge, column, interval);
 			edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			edgeTree.insert(interval);
@@ -175,6 +183,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(column, interval);
 			graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			graphTreeAttr.insert(interval);
@@ -188,6 +197,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(node, column, interval);
 			nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			nodeTreeAttr.insert(interval);
@@ -201,6 +211,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		write.lock();
 		try {
+			setMinMaxTime(interval);
 			setDynAttribute(edge, column, interval);
 			edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 			edgeTreeAttr.insert(interval);
@@ -488,6 +499,30 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.nodeTree.print(this.nodeTree.getRoot());
 	}
 	
+	@Override
+	public double getMinTime()
+	{
+		if (Double.isInfinite(minStartTime))
+			if (Double.isInfinite(minEndTime))
+				return -1;
+			else
+				return minEndTime;
+		else
+			return minStartTime;
+	}
+
+	@Override
+	public double getMaxTime()
+	{
+		if (Double.isInfinite(maxEndTime))
+			if (Double.isInfinite(maxStartTime))
+				return 1;
+			else
+				return maxStartTime;
+		else
+			return maxEndTime;
+	}
+	
 	private void setDynAttribute(String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
@@ -538,5 +573,23 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				diff.add(i);
 		return diff;
 	}
+	
+	private void setMinMaxTime(DynInterval<T> interval)
+	{
+		double start = interval.getStart();
+		double end = interval.getEnd();
+		if (!Double.isInfinite(start))
+		{
+			minStartTime = Math.min(minStartTime, start);
+			maxStartTime = Math.max(maxStartTime, start);
+		}
+		if (!Double.isInfinite(end))
+		{
+			maxEndTime = Math.max(maxEndTime, end);
+			minEndTime = Math.min(minEndTime, end);
+		}
+	}
+	
+	
 	
 }

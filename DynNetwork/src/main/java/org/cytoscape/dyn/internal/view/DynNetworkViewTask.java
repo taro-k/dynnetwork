@@ -56,8 +56,6 @@ public class DynNetworkViewTask<T> extends AbstractTask
 						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
 		}
 
-		//		dynNetwork.writeNodeTable(node, key.getColumn(), interval.getValue());
-
 		List<DynInterval<T>> edgeList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : edgeList)
 		{
@@ -68,8 +66,6 @@ public class DynNetworkViewTask<T> extends AbstractTask
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
 						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
 		}
-
-		//		dynNetwork.writeEdgeTable(edge, key.getColumn(), interval.getValue());
 
 		view.updateView();
 
