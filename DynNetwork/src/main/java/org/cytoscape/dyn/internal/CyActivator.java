@@ -48,13 +48,13 @@ public class CyActivator<T> extends AbstractCyActivator
     	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
     	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
 		
-    	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>();
+    	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
 		DynNetworkFactoryImpl<T> dynNetFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager);
-		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>();
+		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef);
 		
     	DynCytoPanel<T> dyncytoPanel = new DynCytoPanel<T>(adapter.getTaskManager(),adapter.getCyApplicationManager(),dynNetManager,dynNetViewManager,dynNetViewFactory);
-    	MenuActionLoadXGMML<T> action = new MenuActionLoadXGMML<T>(cytoscapeDesktopService,adapter,dyncytoPanel);
+    	MenuActionLoadXGMML<T> action = new MenuActionLoadXGMML<T>(cytoscapeDesktopService,adapter,dyncytoPanel,dynNetFactory);
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());
 		registerService(context,dynNetFactory,DynNetworkFactory.class, new Properties());

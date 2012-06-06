@@ -1,5 +1,6 @@
 package org.cytoscape.dyn.internal.model.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +19,7 @@ public final class DynNode<T>
 	private DynNode<T>[] children = new DynNode[2];
 	
 	private boolean isBlack = true;	
-	private List<DynInterval<T>> intervalList;
+	private List<DynInterval<T>> intervalList = new ArrayList<DynInterval<T>>();
 	private double max = Double.NEGATIVE_INFINITY;
 
 	public DynNode()

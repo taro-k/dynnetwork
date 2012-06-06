@@ -37,6 +37,17 @@ public class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		view.fitContent();
 	}
 	
+	@Override
+	public CyNetworkView getNetworkView() 
+	{
+		read.lock();
+		try{
+			return this.view;
+		} finally {
+			read.unlock();
+		}
+	}
+	
 	public boolean readVisualProperty(CyNode node, VisualProperty<Boolean> vp) 
 	{
 		read.lock();

@@ -43,8 +43,6 @@ public final class XGMMLDynNetworkReader extends AbstractDynNetworkReader
 	{
 		tm.setProgress(0.0);
 		
-		System.out.println("parse xgmml");
-		
 		try {
 			readXGMML(tm);
 		} catch (Exception e) {

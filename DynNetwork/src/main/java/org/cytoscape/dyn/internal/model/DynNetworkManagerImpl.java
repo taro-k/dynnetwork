@@ -1,9 +1,10 @@
 package org.cytoscape.dyn.internal.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNetworkManager;
 
 /**
  * <code> DynNetworkManager </code> extends <code> Sink </code> and is responsible
@@ -14,28 +15,26 @@ import org.cytoscape.model.CyNetwork;
  */
 public class DynNetworkManagerImpl<T> implements DynNetworkManager<T>
 {
-	private List<DynNetwork<T>> dynNets;
+	private final CyNetworkManager cyNetworkManager;
+	private final Map<CyNetwork, DynNetwork<T>> dynNetworkMap;
 	
-	public DynNetworkManagerImpl()
+	public DynNetworkManagerImpl(CyNetworkManager cyNetworkManager)
 	{
-		dynNets = new ArrayList<DynNetwork<T>>();
+		this.cyNetworkManager = cyNetworkManager;
+		this.dynNetworkMap = new WeakHashMap<CyNetwork, DynNetwork<T>>();
 	}
 
 	@Override
 	public void addDynNetwork(DynNetwork<T> dynNetwork)
 	{
-		this.dynNets.add(dynNetwork);
+		this.cyNetworkManager.addNetwork(dynNetwork.getNetwork());
+		this.dynNetworkMap.put(dynNetwork.getNetwork(), dynNetwork);
 	}
 
 	@Override
 	public DynNetwork<T> getDynNetwork(CyNetwork network)
 	{
-		for (DynNetwork<T> dynNet : dynNets)
-		{
-			if (dynNet.getNetwork()==network)
-				return dynNet;
-		}
-		return null;
+		return dynNetworkMap.get(network);
 	}	
 	
 }

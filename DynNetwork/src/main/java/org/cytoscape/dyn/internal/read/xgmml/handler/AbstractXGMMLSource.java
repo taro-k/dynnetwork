@@ -16,6 +16,8 @@ public abstract class AbstractXGMMLSource<T> implements Source
 	// TODO: in the future we can easely implement events and listeners. 
 	//       for the moment I keep it like this since it's faster.
 	
+	//FIXME: iterate over list
+	
 	protected ArrayList<DynNetworkFactory<T>> sinkList = new ArrayList<DynNetworkFactory<T>>();
 	
 	protected DynNetwork<T> addGraph(

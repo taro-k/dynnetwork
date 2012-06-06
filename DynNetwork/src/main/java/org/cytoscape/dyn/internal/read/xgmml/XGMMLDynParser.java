@@ -2,22 +2,23 @@ package org.cytoscape.dyn.internal.read.xgmml;
 
 import java.util.Stack;
 
+import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.handler.DynHandlerXGMMLFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public final class XGMMLDynParser extends DefaultHandler
+public final class XGMMLDynParser<T> extends DefaultHandler
 {
-	private final DynHandlerXGMMLFactory handler;
+	private final DynHandlerXGMMLFactory<T> handler;
 	
 	private ParseDynState parseState;
 	private Stack<ParseDynState> startStack;
 
-	public XGMMLDynParser()
+	public XGMMLDynParser(DynNetworkFactory<T> sink)
 	{
-		this.handler = new DynHandlerXGMMLFactory();
+		this.handler = new DynHandlerXGMMLFactory<T>(sink);
 	}
 
 	@Override

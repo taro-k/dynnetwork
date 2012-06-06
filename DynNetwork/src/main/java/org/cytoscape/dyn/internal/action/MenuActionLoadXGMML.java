@@ -12,11 +12,13 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
+import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.view.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.DynCytoPanelTask;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.io.DataCategory;
@@ -43,13 +45,15 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
 	private final CytoPanel cytoPanelWest;
 	private final CySwingAppAdapter adapter;
 	private final DynCytoPanel<T> myDynPanel;
+	private final DynNetworkFactory<T> dynNetworkFactory;
 	
     private List<FileChooserFilter> filters;
 
     public MenuActionLoadXGMML(
     		CySwingApplication desktopApp,
     		CySwingAppAdapter adapter,
-    		DynCytoPanel<T> myDynPanel)
+    		DynCytoPanel<T> myDynPanel,
+    		DynNetworkFactory<T> dynNetworkFactory)
     {
         super("Dynamic XGMML Loader");
         setPreferredMenu("File");
@@ -57,6 +61,7 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
         this.adapter = adapter;
         this.cytoPanelWest = this.desktopApp.getCytoPanel(CytoPanelName.WEST);
         this.myDynPanel = myDynPanel;
+        this.dynNetworkFactory = dynNetworkFactory;
     }
 
     public void actionPerformed(ActionEvent e)
@@ -75,7 +80,7 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	RenderingEngineManager renderingEngineMgr = adapter.getRenderingEngineManager();
     	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
     	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
-    	XGMMLDynParser xgmmlParser = new XGMMLDynParser();
+    	XGMMLDynParser xgmmlParser = new XGMMLDynParser(dynNetworkFactory);
     	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml"}, new String[]{"text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
     	XGMMLDynNetworkReaderFactory xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory(xgmmlFilter,xgmmlParser);
     	filters = new ArrayList<FileChooserFilter>();
@@ -90,7 +95,7 @@ public class MenuActionLoadXGMML<T> extends AbstractCyAction
     	// load file
     	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
     	File file = fileUtil.getFile(adapter.getCySwingApplication().getJFrame(), "Load Dynamic Network", FileUtil.LOAD, filters);
-    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next());
+    	TaskIterator iterator = new TaskIterator(loadFactory.creatTaskIterator(file).next(), new DynCytoPanelTask<T>(myDynPanel, cytoPanelWest));
     	adapter.getTaskManager().execute(iterator);
     }
 }
