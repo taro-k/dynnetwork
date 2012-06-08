@@ -12,6 +12,14 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 
+/**
+ * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
+ * dynamic networks {@link DynNetworkView}.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 {
 	private final DynNetwork<T> dynNetwork;

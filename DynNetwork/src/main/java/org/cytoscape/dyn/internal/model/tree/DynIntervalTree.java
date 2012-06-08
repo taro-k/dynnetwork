@@ -2,9 +2,6 @@ package org.cytoscape.dyn.internal.model.tree;
 
 import java.util.List;
 
-
-
-
 /**
  * <code> DynIntervalTree </code> is the interface for the red-black 
  * interval tree.

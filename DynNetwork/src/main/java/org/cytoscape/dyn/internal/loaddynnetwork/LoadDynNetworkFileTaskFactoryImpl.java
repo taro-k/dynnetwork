@@ -10,6 +10,13 @@ import org.cytoscape.work.AbstractTaskFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TunableSetter;
 
+/**
+ * <code> LoadDynNetworkFileTaskFactoryImpl </code> implements the interface 
+ * {@link LoadDynNetworkFileTaskFactory}.
+ * 
+ * @author rozagh
+ *
+ */
 public final class LoadDynNetworkFileTaskFactoryImpl extends AbstractTaskFactory implements LoadDynNetworkFileTaskFactory {
 
 	private InputStreamTaskFactory factory;

@@ -2,13 +2,15 @@ package org.cytoscape.dyn.internal.event;
 
 
 /**
- * <code> Filter </code> filters event that pass between a graph event <code> Source </code> and
- * a <code> Sink </code>.
+ * <code> Filter </code> filters event that pass between a 
+ * a {@link Source} and a {@link Sink}.
  *  
  * @author sabina
  * 
+ * @param <T>
+ * 
  */
-public interface Filter extends Source, Sink
+public interface Filter<T> extends Source<T>, Sink<T>
 {
 	
 }

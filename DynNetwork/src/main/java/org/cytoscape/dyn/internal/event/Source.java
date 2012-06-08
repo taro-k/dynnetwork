@@ -7,10 +7,20 @@ package org.cytoscape.dyn.internal.event;
  *  
  * @author sabina
  * 
+ * @param <T>
+ * 
  */
 public interface Source<T>
 {
+	/**
+	 * Add a {@link Sink}.
+	 * @param sink
+	 */
 	void addSink(Sink<T> sink);
 	
+	/**
+	 * Remove a {@link Sink}.
+	 * @param sink
+	 */
 	void removeSink(Sink<T> sink);
 }

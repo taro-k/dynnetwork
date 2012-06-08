@@ -6,8 +6,8 @@ import java.util.List;
 
 
 /**
- * <code> DynNode </code> represent a node in the red-black interval tree <code> IntervalTree </code>.
- * To each node is associated an interval <code> DynInterval </code> and a color (black or red). 
+ * <code> DynNode </code> represent a node in the red-black interval tree {@link IntervalTree}.
+ * To each node is associated an interval {@link DynInterval} and a color (black or red). 
  *  
  * @author sabina
  *

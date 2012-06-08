@@ -7,6 +7,13 @@ import org.cytoscape.io.CyFileFilter;
 import org.cytoscape.work.TaskIterator;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * <code> XGMMLDynNetworkReaderFactory </code> extends {@link AbstractDynNetworkReaderFactory}. 
+ * Is used to create instance of the file reader {@link XGMMLDynNetworkReader}.
+ * 
+ * @author sabina
+ *
+ */
 public final class XGMMLDynNetworkReaderFactory extends AbstractDynNetworkReaderFactory
 {
 	private final DefaultHandler parser;

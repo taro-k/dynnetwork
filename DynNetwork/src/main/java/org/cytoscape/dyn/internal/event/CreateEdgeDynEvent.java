@@ -2,6 +2,14 @@ package org.cytoscape.dyn.internal.event;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 
+/**
+ * <code> CreateEdgeDynEvent </code> implements the interface {@link DynEvent}
+ * for the generation of edge events.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class CreateEdgeDynEvent<T> implements DynEvent
 {
 	private final DynNetwork<T> network;

@@ -2,6 +2,14 @@ package org.cytoscape.dyn.internal.event;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 
+/**
+ * <code> CreateGraphAttrDynEvent </code> implements the interface {@link DynEvent}
+ * for the generation of graph attribute events.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class CreateGraphAttrDynEvent<T> implements DynEvent
 {
 	private final DynNetwork<T> network;

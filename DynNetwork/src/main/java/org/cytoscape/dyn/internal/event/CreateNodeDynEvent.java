@@ -3,6 +3,14 @@ package org.cytoscape.dyn.internal.event;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.group.CyGroup;
 
+/**
+ * <code> CreateNodeDynEvent </code> implements the interface {@link DynEvent}
+ * for the generation of node events.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class CreateNodeDynEvent<T> implements DynEvent
 {
 	private final DynNetwork<T> network;

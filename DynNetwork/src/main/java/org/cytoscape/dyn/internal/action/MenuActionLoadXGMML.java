@@ -30,7 +30,13 @@ import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 
 /**
- * Launch from the menu "File/Dynamic XGMML Loader"
+ * <code> MenuActionLoadXGMML </code> launches an ActionEvent from the 
+ * menu "File/Dynamic XGMML Loader".
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
  */
 public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 {

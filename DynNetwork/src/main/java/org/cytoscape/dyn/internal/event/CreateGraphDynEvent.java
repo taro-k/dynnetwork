@@ -1,6 +1,13 @@
 package org.cytoscape.dyn.internal.event;
 
-
+/**
+ * <code> CreateGraphDynEvent </code> implements the interface {@link DynEvent}
+ * for the generation of graph events.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class CreateGraphDynEvent<T> implements DynEvent
 {
 	private final String id;

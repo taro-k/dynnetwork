@@ -1,13 +1,10 @@
 package org.cytoscape.dyn.internal.model.tree;
 
-
-
-
 /**
  * <code> DynIntervalTreeImpl </code> implements the interval tree for fast searching of intervals 
- * in a given time range. An interval tree is a red-black tree that maintains a dynamic set of elements,
- * with each node <code> DynNode </code> containing an interval <code> DynInterval </code>. 
- * The leaf nodes do not contain data, and reference to a dummy sentinel node (nil). The root is also a nil
+ * in a given time range. An interval tree is a red-black tree that maintains a dynamic set of 
+ * elements, with each node {@link DynNode} containing an interval {@link DynInterval}.  The leaf 
+ * nodes do not contain data, and reference to a dummy sentinel node (nil). The root is also a nil 
  * sentinel node, whose left reference points to the network root.
  * 
  * <code> DynIntervalTreeImpl </code> guarantees O(log n) insertion and deletion of elements.

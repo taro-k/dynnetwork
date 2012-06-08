@@ -11,6 +11,14 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
+/**
+ * <code> AbstractXGMMLSource </code> is an abstract class to generates 
+ * graph events from file parsing.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public abstract class AbstractXGMMLSource<T> implements Source<T>
 {
 	// Note: i don't implement generation of events, since xgmml reading is almost sequential 
@@ -89,15 +97,9 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 //		sinkList.get(0).deletedEdgeAttribute(currentNetwork, edge, label);
 	}
 	
-	protected void finalizeNetwork(DynNetwork<T> dynNetwork) throws InterruptedException
-	{
-		
-	}
+	abstract protected void finalizeNetwork(DynNetwork<T> dynNetwork);
 	
-	protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork) throws InterruptedException
-	{
-		return null;
-	}
+	abstract protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
 
 	@Override
 	public void addSink(Sink<T> sink) 

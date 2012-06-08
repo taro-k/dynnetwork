@@ -13,8 +13,9 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
 /**
- * This Class is used to update the network structure and the visualization depending on the
- * desired time range
+ * <code> DynNetworkViewTask </code> is the task that is responsible for updating
+ * all attributes.
+ * 
  * @author sabina
  *
  * @param <T>

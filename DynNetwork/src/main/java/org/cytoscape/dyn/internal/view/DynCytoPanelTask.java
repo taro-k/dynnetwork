@@ -5,6 +5,14 @@ import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
+/**
+ * <code> DynCytoPanelTask </code> updates the visualization by resetting the view.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
+ */
 public class DynCytoPanelTask<T,C> extends AbstractTask 
 {
 	private final DynCytoPanel<T,C> panel;

@@ -4,19 +4,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public final class ObjectTypeMap {
+/**
+ * <code> ObjectTypeMap </code> used to convert string types into the 
+ * corresponding classes.
+ * 
+ * @author sabina
+ *
+ */
+public final class ObjectTypeMap
+{
 
     private Map<String, ObjectType> typeMap;
 
-    public ObjectTypeMap() {
+    public ObjectTypeMap()
+    {
         typeMap = new HashMap<String, ObjectType>();
 
         for (ObjectType type : ObjectType.values())
             typeMap.put(type.getName(), type);
     }
 
-    public ObjectType getType(String name) {
+    public ObjectType getType(String name)
+    {
         final ObjectType type = typeMap.get(name);
         
         if (type != null)
@@ -25,7 +34,8 @@ public final class ObjectTypeMap {
             return ObjectType.NONE;
     }
 
-    public Object getTypedValue(ObjectType type, String value) {
+    public Object getTypedValue(ObjectType type, String value)
+    {
 
         switch (type) {
             case BOOLEAN:
@@ -52,13 +62,15 @@ public final class ObjectTypeMap {
         return null;
     }
     
-    public static boolean fromXGMMLBoolean(String s) {
+    public static boolean fromXGMMLBoolean(String s)
+    {
     	// should be only "1", but let's be nice and also accept "true"
     	// http://www.cs.rpi.edu/research/groups/pb/punin/public_html/XGMML/draft-xgmml-20001006.html#BT
     	return s != null && s.matches("(?i)1|true");
     }
 
-    public static String toXGMMLBoolean(boolean value) {
+    public static String toXGMMLBoolean(boolean value)
+    {
     	return value ? "1" : "0";
     }
 }

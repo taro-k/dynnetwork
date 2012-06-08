@@ -15,6 +15,15 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
+/**
+ * <code> DynNetworkImpl </code> implements the interface {@link DynNetwork}
+ * and provides method and data structures to record and retrieve network dynamic 
+ * information
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
 	//TODO shynchronize this class
@@ -193,7 +202,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		edgeTable.remove(key);
 	}
 
-	@Override
 	public List<DynInterval<T>> searchGraphs(DynInterval<T> interval)
 	{
 		return graphTree.search(interval);
@@ -217,13 +225,11 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 
 	}
 
-	@Override
 	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval)
 	{
 		return nodeTreeAttr.search(interval);
 	}
 
-	@Override
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval)
 	{
 		return edgeTreeAttr.search(interval);
@@ -247,13 +253,11 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		return changedList;
 	}
 
-	@Override
 	public List<DynInterval<T>> searchNodes(DynInterval<T> interval)
 	{
 		return nodeTree.search(interval);
 	}
 
-	@Override
 	public List<DynInterval<T>> searchEdges(DynInterval<T> interval)
 	{
 		return edgeTree.search(interval);

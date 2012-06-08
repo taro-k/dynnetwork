@@ -1,7 +1,13 @@
 package org.cytoscape.dyn.internal.util;
 
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNode;
+
 /**
- * Class to implement hash map with two keys
+ * <code> KeyPairs </code> implements hash map with two keys to store information
+ * about {@link CyNode}s, connecting {@link CyEdge}s, and the respective attributes.
+ * Each pair is identified by an id long value and by a String column.
+ * 
  * @author sabina
  *
  */

@@ -8,6 +8,13 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.ProvidesTitle;
 import org.cytoscape.work.TaskMonitor;
 
+/**
+ * <code> AbstractLoadDynNetworkTask </code> abstract class for the implementation of a 
+ * the load network task.
+ * 
+ * @author sabina
+ *
+ */
 public abstract class AbstractLoadDynNetworkTask extends AbstractTask
 {	
 	protected DynNetworkReader reader;

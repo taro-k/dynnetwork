@@ -3,10 +3,9 @@ package org.cytoscape.dyn.internal.model.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 /**
- * <code> AbstractDynIntervalTree </code> abstract class for the implementation of a the interval tree.
+ * <code> AbstractDynIntervalTree </code> abstract class for the implementation of a 
+ * the interval tree.
  *  
  * @author sabina
  *

@@ -6,12 +6,14 @@ import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskIterator;
 
 /**
- * This interface provides a task iterator for loading dynamic networks from files.
+ * <code> LoadDynNetworkFileTaskFactory </code> is interface that provides 
+ * a task iterator for loading dynamic networks from files.
+ * 
  * @author rozagh
  *
  */
-public interface LoadDynNetworkFileTaskFactory extends TaskFactory{
-	
+public interface LoadDynNetworkFileTaskFactory extends TaskFactory
+{
 	/**
 	 * Create a task iterator for loading a network from a file.
 	 * The created task runs synchronously in the current thread and does not

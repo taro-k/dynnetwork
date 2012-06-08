@@ -7,7 +7,7 @@ import org.cytoscape.dyn.internal.util.KeyPairs;
 
 /**
  * <code> DynAttribute </code> is the abstract class to set/request represents all 
- * dynamical attributes, i.e. a list of intervals containing the value of type T 
+ * dynamic attributes, i.e. a list of intervals containing the value of type T 
  * and the time interval.
  * 
  * @author sabina
@@ -16,7 +16,6 @@ import org.cytoscape.dyn.internal.util.KeyPairs;
  */
 public class DynAttribute<T>
 {
-
 	private Class<T> type;
 	
 	private List<DynInterval<T>> intervalList;

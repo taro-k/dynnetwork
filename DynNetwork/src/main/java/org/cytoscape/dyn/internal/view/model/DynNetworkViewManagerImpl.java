@@ -7,6 +7,13 @@ import java.util.WeakHashMap;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
+/**
+ * <code> DynNetworkManagerImpl </code> implements the interface
+ * {@link DynNetworkViewManager} for managing multiple {@link DynNetworkView}s.
+ *  
+ * @author sabina
+ * 
+ */
 public final class DynNetworkViewManagerImpl<T> implements DynNetworkViewManager<T>
 {
 	private final CyNetworkViewManager cyNetworkViewManager;

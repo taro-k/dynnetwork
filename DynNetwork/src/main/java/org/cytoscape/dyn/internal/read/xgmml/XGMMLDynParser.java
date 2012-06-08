@@ -4,12 +4,18 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.handler.DynHandlerXGMMLFactory;
-import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * <code> XGMMLDynParser </code> is used to parse XGMML files.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class XGMMLDynParser<T> extends DefaultHandler
 {
 	private final DynHandlerXGMMLFactory<T> handler;

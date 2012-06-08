@@ -3,19 +3,30 @@ package org.cytoscape.dyn.internal.view;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class BlockingQueue {
+/**
+ * <code> BlockingQueue </code> implements a simple blocking queue used to 
+ * process visualization updates sequentially.
+ * 
+ * @author sabina
+ *
+ */
+public class BlockingQueue
+{
 
 	private final Lock lock;
 
-    public BlockingQueue() {
+    public BlockingQueue()
+    {
     	lock = new ReentrantLock();
     }
 
-    public void lock() {
+    public void lock()
+    {
     	lock.lock();
     }
 
-    public void unlock() {
+    public void unlock()
+    {
     	lock.unlock();
     }
 

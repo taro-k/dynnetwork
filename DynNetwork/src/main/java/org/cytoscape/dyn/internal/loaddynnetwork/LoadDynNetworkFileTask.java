@@ -9,9 +9,18 @@ import org.cytoscape.dyn.internal.read.DynNetworkReader;
 import org.cytoscape.io.read.InputStreamTaskFactory;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.work.ProvidesTitle;
+import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
 
+
+/**
+ * <code> LoadDynNetworkFileTask </code> implements {@link Task} and is responsible
+ * for loading the network from a given file.
+ * 
+ * @author rozagh, sabina
+ *
+ */
 public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask 
 {
 	@Tunable(description = "Network file to load", params = "fileCategory=network;input=true")

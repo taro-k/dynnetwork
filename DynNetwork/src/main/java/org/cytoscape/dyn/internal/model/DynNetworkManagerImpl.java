@@ -8,8 +8,8 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 
 /**
- * <code> DynNetworkManager </code> extends <code> Sink </code> and is responsible
- * for updating <code> DynNetwork </code>.
+ * <code> DynNetworkManagerImpl </code> implements the interface
+ * {@link DynNetworkManager} for managing multiple {@link DynNetwork}s.
  *  
  * @author sabina
  * 

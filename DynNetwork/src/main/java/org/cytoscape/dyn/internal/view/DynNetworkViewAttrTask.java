@@ -11,6 +11,14 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
+/**
+ * <code> DynNetworkViewAttrTask </code> is the task that is responsible for updating
+ * all attributes.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class DynNetworkViewAttrTask<T> extends AbstractTask 
 {
 	private final DynNetworkView<T> view;

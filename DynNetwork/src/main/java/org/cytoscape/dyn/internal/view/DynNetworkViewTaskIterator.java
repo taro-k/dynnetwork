@@ -3,6 +3,14 @@ package org.cytoscape.dyn.internal.view;
 
 import javax.swing.JSlider;
 
+/**
+ * <code> DynNetworkViewTaskIterator </code> implements a task iterator to update
+ * the visualization sequentially.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class DynNetworkViewTaskIterator<T> implements Runnable 
 {
 

@@ -25,6 +25,7 @@ import javax.swing.event.ChangeListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkViewEvent;
 import org.cytoscape.application.events.SetCurrentNetworkViewListener;
+import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -34,6 +35,15 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
+/**
+ * <code> DynCytoPanel </code> implements the a JPanel component in {@link CytoPanel} 
+ * west to provide a time slider for controlling the dynamic visualization.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
+ */
 public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener, SetCurrentNetworkViewListener
 {
 	private static final long serialVersionUID = 1L;

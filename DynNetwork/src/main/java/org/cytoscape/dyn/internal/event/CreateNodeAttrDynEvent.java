@@ -3,6 +3,14 @@ package org.cytoscape.dyn.internal.event;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyNode;
 
+/**
+ * <code> CreateNodeAttrDynEvent </code> implements the interface {@link DynEvent}
+ * for the generation of node attribute events.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public class CreateNodeAttrDynEvent<T> implements DynEvent
 {
 	private final DynNetwork<T> network;

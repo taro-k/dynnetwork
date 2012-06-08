@@ -5,7 +5,7 @@ import org.cytoscape.model.CyEdge;
 
 /**
  * <code> OrphanAttribute </code> is used to store attributes of 
- * <code> OrphanEdge </code>.
+ * {@link OrphanEdge}.
  * 
  * @author sabina
  * 
