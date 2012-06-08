@@ -33,11 +33,13 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		networkViewManager.addNetworkView(view);
 		vmm.setVisualStyle(style, view);
 		style.apply(view);
-		System.out.println("collapse");
+		
+		// TODO: FIXME
+		
+		this.dynNetwork.expandAllGroups();
 		this.dynNetwork.collapseAllGroups();
-		System.out.println("finish collapse");
-//		initNodes();
-//		initEdges();
+		initNodes();
+		initEdges();
 //		view.updateView();
 //		view.fitContent();
 	}

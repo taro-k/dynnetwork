@@ -257,8 +257,6 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 			});
 			
 			slider.setValue(view.getCurrentTime());
-			view.updateView();
-			
 			time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
 			currentTime.setText("Current time = " + formatter.format(time));
 			taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));

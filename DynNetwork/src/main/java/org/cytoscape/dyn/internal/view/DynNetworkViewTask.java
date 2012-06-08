@@ -63,7 +63,7 @@ public class DynNetworkViewTask<T> extends AbstractTask
 			KeyPairs key = interval.getAttribute().getKey();
 			CyEdge edge = dynNetwork.readEdgeTable(key.getRow());
 
-			if (edge!=null)
+			if (edge!=null && edge.getSource()!=null && edge.getTarget()!=null)
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
 						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
 		}
