@@ -225,10 +225,13 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 	{
 		if (recursiveTask!=null)
 			recursiveTask.cancel();
-		
-		network = networkManager.getDynNetwork(e.getNetworkView().getModel());
-        view = viewManager.getDynNetworkView(network);
-		update();
+
+		if (e.getNetworkView()!=null)
+		{
+			network = networkManager.getDynNetwork(e.getNetworkView().getModel());
+			view = viewManager.getDynNetworkView(network);
+			update();
+		}
 	}
 	
 	private void update()

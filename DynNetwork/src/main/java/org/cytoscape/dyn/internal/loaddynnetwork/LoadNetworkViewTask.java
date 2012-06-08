@@ -22,9 +22,11 @@ public final class LoadNetworkViewTask<T> extends AbstractTask
 		this.dynNetworkViewFactory = dynNetworkViewFactory;
 	}
 	
-	public void run(TaskMonitor taskMonitor) throws Exception
+	public void run(TaskMonitor tm) throws Exception
 	{
+		tm.setProgress(0.0);
 		dynNetworkViewFactory.createView(dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork()));
+		tm.setProgress(1.0);
 	}
 	
 }

@@ -33,25 +33,17 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	
 	private int ID = 0;
 	
-//	private String spaces = " ";
-//	private int line = 0;
-
 	public DynHandlerXGMML(DynNetworkFactory<T> sink)
 	{
 		super();
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
 		this.sinkList.add(sink);
-//		System.out.println("");
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
-//		line++;
-//		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
-//		spaces = spaces + " ";
-		
 		switch(current)
 		{
 		case NONE:
@@ -140,10 +132,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	@Override
 	public void handleEnd(Attributes atts, ParseDynState current)
 	{
-//		line++;
-//		spaces = spaces.substring(1);
-//		System.out.println(spaces + "<" + current + "/> (Line " + line + ")");
-		
 		switch(current)
 		{
 		case GRAPH:

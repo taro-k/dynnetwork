@@ -1,7 +1,5 @@
 package org.cytoscape.dyn.internal.view.model;
 
-import java.util.Collection;
-
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
@@ -30,13 +28,16 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
-		this.style = vmm.getCurrentVisualStyle();
+		this.style = vmm.getDefaultVisualStyle();
 		this.view = cyNetworkViewFactory.createNetworkView(this.dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
 		vmm.setVisualStyle(style, view);
 		style.apply(view);
-//		this.dynNetwork.collapseAllGroups();
-		init();
+		System.out.println("collapse");
+		this.dynNetwork.collapseAllGroups();
+		System.out.println("finish collapse");
+//		initNodes();
+//		initEdges();
 //		view.updateView();
 //		view.fitContent();
 	}
@@ -50,6 +51,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	public boolean readVisualProperty(CyNode node, VisualProperty<Boolean> vp) 
 	{
 		return view.getNodeView(node).getVisualProperty(vp).booleanValue();
+		
 	}
 
 	public void writeVisualProperty(CyNode node, VisualProperty<Boolean> vp, boolean value) 
@@ -76,19 +78,17 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		return this.dynNetwork;
 	}
-	
-	private void init()
+
+	private void initNodes()
 	{
-		if (view.getModel().getNodeCount() > 0) 
-		{
-			final Collection<View<CyNode>> nodes = view.getNodeViews();
-			final Collection<View<CyEdge>> edges = view.getEdgeViews();
-			
-			for (final View<CyNode> nodeView : nodes)
-				nodeView.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
-			for (final View<CyEdge> edgeView : edges)
-				edgeView.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
-		}
+		for (final View<CyNode> nodeView : view.getNodeViews())
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+	}
+
+	private void initEdges()
+	{
+		for (final View<CyEdge> edgeView : view.getEdgeViews())
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
 	}
 
 	public int getCurrentTime() 

@@ -51,7 +51,7 @@ public class DynNetworkViewAttrTask<T> extends AbstractTask
 		for (DynInterval<T> interval : edgeList)
 		{
 			KeyPairs key = interval.getAttribute().getKey();
-			CyEdge edge = dynNetwork.readEdgeTable(key.getRow());
+			CyEdge edge = dynNetwork.readEdgeTable(key.getRow());;
 
 			if (edge!=null)
 				dynNetwork.writeEdgeTable(edge, key.getColumn(), interval.getValue());

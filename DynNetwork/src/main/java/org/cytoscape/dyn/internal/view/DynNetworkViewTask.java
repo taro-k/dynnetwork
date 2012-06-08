@@ -56,6 +56,7 @@ public class DynNetworkViewTask<T> extends AbstractTask
 						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
 		}
 
+		
 		List<DynInterval<T>> edgeList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : edgeList)
 		{
@@ -68,7 +69,6 @@ public class DynNetworkViewTask<T> extends AbstractTask
 		}
 
 		view.updateView();
-
 		queue.unlock(); 
 
 	}

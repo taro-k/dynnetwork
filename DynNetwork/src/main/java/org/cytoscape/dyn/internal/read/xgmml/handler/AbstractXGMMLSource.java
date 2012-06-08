@@ -1,13 +1,7 @@
 package org.cytoscape.dyn.internal.read.xgmml.handler;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import org.cytoscape.dyn.internal.event.CreateEdgeAttrDynEvent;
-import org.cytoscape.dyn.internal.event.CreateGraphAttrDynEvent;
-import org.cytoscape.dyn.internal.event.CreateNodeAttrDynEvent;
 import org.cytoscape.dyn.internal.event.Sink;
 import org.cytoscape.dyn.internal.event.Source;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -19,16 +13,10 @@ import org.cytoscape.model.CyNode;
 
 public abstract class AbstractXGMMLSource<T> implements Source<T>
 {
-	// Note: for events that require an object reference, the methods in the sink
-	// interface are called directly, since we have anyway to wait until the object is created
-	// and returned. This is true for the creation of graphs, nodes, and edges. For the creation
-	// of attributes we can generate events to be processes in another thread, since we don't
-	// have to wait for them to finish.
+	// Note: i don't implement generation of events, since xgmml reading is almost sequential 
+	// and direct calling of sink methods is much faster.
 
 	protected ArrayList<Sink<T>> sinkList = new ArrayList<Sink<T>>(2);
-	
-	final ExecutorService producers = Executors.newFixedThreadPool(10);
-	final ExecutorService consumers = Executors.newFixedThreadPool(10);
 
 	protected DynNetwork<T> addGraph(
 			String id, String label, String start, String end, String directed)
@@ -56,22 +44,19 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	protected void addGraphAttribute(DynNetwork<T> currentNetwork, 
 			String name, String value, String type, String start, String end)
 	{
-		producers.submit(new CreateGraphAttrDynEvent<T>(currentNetwork, name, value, type, start, end, sinkList.get(0)));
-//		sinkList.get(0).addedGraphAttribute(currentNetwork, name, value, type, start, end);
+		sinkList.get(0).addedGraphAttribute(currentNetwork, name, value, type, start, end);
 	}
 	
 	protected void addNodeAttribute(DynNetwork<T> network, CyNode currentNode, 
 			String name, String value, String type, String start, String end)
 	{
-		producers.submit(new CreateNodeAttrDynEvent<T>(network, currentNode, name, value, type, start, end, sinkList.get(0)));
-//		sinkList.get(0).addedNodeAttribute(network, currentNode, name, value, type, start, end);
+		sinkList.get(0).addedNodeAttribute(network, currentNode, name, value, type, start, end);
 	}
 	
 	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge, 
 			String name, String value, String type, String start, String end)
 	{
-		producers.submit(new CreateEdgeAttrDynEvent<T>(network, currentEdge, name, value, type, start, end, sinkList.get(0)));
-//		sinkList.get(0).addedEdgeAttribute(network, currentEdge, name, value, type, start, end);
+		sinkList.get(0).addedEdgeAttribute(network, currentEdge, name, value, type, start, end);
 	}
 	
 	protected void deleteGraph(DynNetwork<T> netwrok)
@@ -106,12 +91,7 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	
 	protected void finalizeNetwork(DynNetwork<T> dynNetwork) throws InterruptedException
 	{
-		producers.shutdown();
-		producers.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
-		consumers.shutdown();
-		consumers.awaitTermination(Long.MAX_VALUE, TimeUnit.MINUTES);
-
-//		sinkList.get(0).finalizeNetwork(dynNetwork);
+		
 	}
 	
 	protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork) throws InterruptedException
