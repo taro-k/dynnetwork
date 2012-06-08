@@ -1,8 +1,8 @@
 package org.cytoscape.dyn.internal.view.model;
 
-import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.event.Sink;
 
-public interface DynNetworkViewFactory<T> 
+public interface DynNetworkViewFactory<T> extends Sink<T>
 {
-	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
+
 }

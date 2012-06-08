@@ -8,5 +8,4 @@ public interface DynHandler
 	public void handleStart(Attributes atts, ParseDynState current);
 	
 	public void handleEnd(Attributes atts, ParseDynState current);
-	
 }

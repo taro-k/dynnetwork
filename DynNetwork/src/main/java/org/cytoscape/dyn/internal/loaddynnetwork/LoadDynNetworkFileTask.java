@@ -50,7 +50,6 @@ public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask
 			throw new NullPointerException("Failed to find appropriate reader for file: " + file);
 		
 		insertTasksAfterCurrentTask(reader);
-
 	}
 	
 }

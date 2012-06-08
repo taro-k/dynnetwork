@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.stream;
+package org.cytoscape.dyn.internal.event;
 
 
 /**

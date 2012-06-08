@@ -4,6 +4,7 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.handler.DynHandlerXGMMLFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

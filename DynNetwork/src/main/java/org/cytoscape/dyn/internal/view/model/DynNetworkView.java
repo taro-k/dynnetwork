@@ -21,5 +21,8 @@ public interface DynNetworkView<T>
 	public void updateView();
 
 	public DynNetwork<T> getNetwork();
-
+	
+	public int getCurrentTime();
+	
+	public void setCurrentTime(int currentTime);
 }

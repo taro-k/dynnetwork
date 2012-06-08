@@ -5,13 +5,13 @@ import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
-public class DynCytoPanelTask<T> extends AbstractTask 
+public class DynCytoPanelTask<T,C> extends AbstractTask 
 {
-	private final DynCytoPanel<T> panel;
+	private final DynCytoPanel<T,C> panel;
 	private final CytoPanel cytoPanelWest;
 	
 	public DynCytoPanelTask(
-			final DynCytoPanel<T> panel,
+			final DynCytoPanel<T,C> panel,
 			final CytoPanel cytoPanelWest)
 	{
 		this.panel = panel;

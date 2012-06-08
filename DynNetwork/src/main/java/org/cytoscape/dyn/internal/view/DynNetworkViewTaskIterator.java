@@ -20,7 +20,6 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 	@Override
 	public void run() 
 	{
-		
 		slider.setValueIsAdjusting(true);
 		
 		while((timeStep==1 && slider.getValue()<100) || (timeStep==-1 && slider.getValue()>0))

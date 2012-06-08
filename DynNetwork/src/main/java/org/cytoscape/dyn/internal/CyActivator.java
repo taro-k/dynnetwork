@@ -2,7 +2,7 @@ package org.cytoscape.dyn.internal;
 
 import java.util.Properties;
 
-import org.cytoscape.app.swing.CySwingAppAdapter;
+import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkViewListener;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -18,16 +18,21 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
+import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.TunableSetter;
 import org.osgi.framework.BundleContext;
 
-public class CyActivator<T> extends AbstractCyActivator
+public class CyActivator<T,C> extends AbstractCyActivator
 {
 	public CyActivator()
 	{
@@ -36,32 +41,38 @@ public class CyActivator<T> extends AbstractCyActivator
 
 	public void start(BundleContext context)
 	{
-		CySwingAppAdapter adapter = (CySwingAppAdapter) getService(context,CySwingAppAdapter.class);
 		CySwingApplication cytoscapeDesktopService = getService(context,CySwingApplication.class);
-		CyNetworkManager cyNetworkManagerServiceRef = adapter.getCyNetworkManager();
-    	CyNetworkViewManager cyNetworkViewManagerServiceRef = adapter.getCyNetworkViewManager();
-    	CyNetworkViewFactory cyNetworkViewFactoryServiceRef = adapter.getCyNetworkViewFactory();
-    	CyNetworkFactory cyNetworkFactoryServiceRef = adapter.getCyNetworkFactory();
-    	CyRootNetworkManager cyRootNetworkManagerServiceRef = adapter.getCyRootNetworkFactory();
-    	CyNetworkNaming cyNetworkNamingServiceRef = adapter.getCyServiceRegistrar().getService(CyNetworkNaming.class);
-    	CyGroupManager groupManagerServiceRef = adapter.getCyGroupManager();
-    	CyGroupFactory groupFactoryServiceRef = adapter.getCyGroupFactory();
-		
+		CyApplicationManager cyApplicationManagerServiceRef = getService(context,CyApplicationManager.class);
+		CyNetworkManager cyNetworkManagerServiceRef = getService(context,CyNetworkManager.class);
+    	CyNetworkViewManager cyNetworkViewManagerServiceRef = getService(context,CyNetworkViewManager.class);
+    	CyNetworkViewFactory cyNetworkViewFactoryServiceRef = getService(context,CyNetworkViewFactory.class);
+    	CyNetworkFactory cyNetworkFactoryServiceRef = getService(context,CyNetworkFactory.class);
+    	CyRootNetworkManager cyRootNetworkManagerServiceRef = getService(context,CyRootNetworkManager.class);
+    	CyNetworkNaming cyNetworkNamingServiceRef = getService(context,CyNetworkNaming.class);
+    	CyGroupManager groupManagerServiceRef = getService(context,CyGroupManager.class);
+    	CyGroupFactory groupFactoryServiceRef = getService(context,CyGroupFactory.class);
+    	TaskManager<T,C> taskManager = getService(context,TaskManager.class);
+    	VisualMappingManager visualMappingServiceRef = getService(context,VisualMappingManager.class);
+    	FileUtil fileUtil = getService(context,FileUtil.class);
+    	StreamUtil streamUtil = getService(context,StreamUtil.class);
+    	TunableSetter tunableSetterServiceRef = getService(context,TunableSetter.class);
+    	
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
-		DynNetworkFactoryImpl<T> dynNetFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
+		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
-    	DynNetworkViewFactoryImpl<T> dynNetViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef);
-		
-    	DynCytoPanel<T> dynCytoPanel = new DynCytoPanel<T>(adapter.getTaskManager(),adapter.getCyApplicationManager(),dynNetManager,dynNetViewManager,dynNetViewFactory);
-    	MenuActionLoadXGMML<T> action = new MenuActionLoadXGMML<T>(cytoscapeDesktopService,adapter,dynCytoPanel,dynNetFactory);
+    	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
+
+    	DynCytoPanel<T,C> dynCytoPanel = new DynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetManager,dynNetViewManager);
+    	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());
-		registerService(context,dynNetFactory,DynNetworkFactory.class, new Properties());
+		registerService(context,dynNetworkFactory,DynNetworkFactory.class, new Properties());
 		registerService(context,dynNetViewManager,DynNetworkViewManager.class, new Properties());
-		registerService(context,dynNetViewFactory,DynNetworkViewFactoryImpl.class, new Properties());
+		registerService(context,dynNetworkViewFactory,DynNetworkViewFactoryImpl.class, new Properties());
 		registerService(context,dynCytoPanel,CytoPanelComponent.class, new Properties());
     	registerService(context,action,CyAction.class, new Properties());
-    	registerService(context, dynCytoPanel, SetCurrentNetworkViewListener.class, new Properties());
+    	registerService(context,dynCytoPanel, SetCurrentNetworkViewListener.class, new Properties());
 	}
+	
 }
 

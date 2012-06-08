@@ -1,5 +1,6 @@
 package org.cytoscape.dyn.internal.model;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -13,7 +14,7 @@ import org.cytoscape.model.CyNetworkManager;
  * @author sabina
  * 
  */
-public class DynNetworkManagerImpl<T> implements DynNetworkManager<T>
+public final class DynNetworkManagerImpl<T> implements DynNetworkManager<T>
 {
 	private final CyNetworkManager cyNetworkManager;
 	private final Map<CyNetwork, DynNetwork<T>> dynNetworkMap;
@@ -35,7 +36,13 @@ public class DynNetworkManagerImpl<T> implements DynNetworkManager<T>
 	public DynNetwork<T> getDynNetwork(CyNetwork network)
 	{
 		return dynNetworkMap.get(network);
-	}	
+	}
+	
+	@Override
+	public Collection<DynNetwork<T>> getDynNetworks() 
+	{
+		return dynNetworkMap.values();
+	}
 	
 }
 

@@ -36,8 +36,7 @@ public final class DynHandlerXGMMLFactory<T>
 	
 	public DynHandlerXGMMLFactory(DynNetworkFactory<T> sink)
 	{
-		handler = new DynHandlerXGMML<T>();
-		handler.addSink(sink);
+		handler = new DynHandlerXGMML<T>(sink);
 		startParseMap = new HashMap<ParseDynState, Map<String, ParseDynState>>();
 		buildMap(createStartParseTable(), startParseMap);
 	}

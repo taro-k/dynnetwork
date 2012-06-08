@@ -17,6 +17,8 @@ import org.cytoscape.model.CyNode;
 
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
+	//TODO shynchronize this class
+	
 	private CyNetwork network;
 	private final CyGroupManager groupManager;
 
@@ -102,7 +104,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertGraph(String column, DynInterval<T> interval)
+	public synchronized void insertGraph(String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
@@ -111,7 +113,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertNode(CyNode node, String column, DynInterval<T> interval)
+	public synchronized void insertNode(CyNode node, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
@@ -120,7 +122,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertEdge(CyEdge edge, String column, DynInterval<T> interval)
+	public synchronized void insertEdge(CyEdge edge, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
@@ -129,7 +131,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertGraphAttr(String column, DynInterval<T> interval)
+	public synchronized void insertGraphAttr(String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
@@ -138,7 +140,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertNodeAttr(CyNode node, String column, DynInterval<T> interval)
+	public synchronized void insertNodeAttr(CyNode node, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
@@ -147,7 +149,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void insertEdgeAttr(CyEdge edge, String column, DynInterval<T> interval)
+	public synchronized void insertEdgeAttr(CyEdge edge, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
@@ -156,7 +158,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void removeGraph() 
+	public synchronized void removeGraph() 
 	{
 		this.network = null;
 		this.graphTree.clear();
@@ -168,7 +170,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void removeNode(CyNode node) 
+	public synchronized void removeNode(CyNode node) 
 	{
 		Iterable<CyEdge> edgeList = this.network.getAdjacentEdgeIterable(node, CyEdge.Type.ANY);
 		while (edgeList.iterator().hasNext())
@@ -182,7 +184,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public void removeEdge(CyEdge edge)
+	public synchronized void removeEdge(CyEdge edge)
 	{
 		KeyPairs key = new KeyPairs(CyNetwork.NAME, edge.getSUID());
 		for (DynInterval<T> interval : edgeTable.get(key).
@@ -373,7 +375,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			return maxEndTime;
 	}
 
-	private void setDynAttribute(String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
 		if (this.graphTable.containsKey(key))
@@ -386,7 +388,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.graphTable.get(key));
 	}
 
-	private void setDynAttribute(CyNode node, String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(CyNode node, String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, node.getSUID());
 		if (this.nodeTable.containsKey(key))
@@ -399,7 +401,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.nodeTable.get(key));
 	}
 
-	private void setDynAttribute(CyEdge edge, String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(CyEdge edge, String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, edge.getSUID());
 		if (this.edgeTable.containsKey(key))
@@ -424,7 +426,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		return diff;
 	}
 
-	private void setMinMaxTime(DynInterval<T> interval)
+	private synchronized void setMinMaxTime(DynInterval<T> interval)
 	{
 		double start = interval.getStart();
 		double end = interval.getEnd();

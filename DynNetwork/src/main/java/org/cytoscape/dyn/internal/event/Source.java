@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.stream;
+package org.cytoscape.dyn.internal.event;
 
 
 /**
@@ -8,9 +8,9 @@ package org.cytoscape.dyn.internal.stream;
  * @author sabina
  * 
  */
-public interface Source
+public interface Source<T>
 {
-	void addSink(Sink sink);
+	void addSink(Sink<T> sink);
 	
-	void removeSink(Sink sink);
+	void removeSink(Sink<T> sink);
 }

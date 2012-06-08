@@ -3,13 +3,11 @@ package org.cytoscape.dyn.internal.read.xgmml.handler;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.read.AbstractDynNetworkReader;
+import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 
 public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements DynHandler 
@@ -35,21 +33,22 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	
 	private int ID = 0;
 	
-	private String spaces = " ";
-	private int line = 0;
+//	private String spaces = " ";
+//	private int line = 0;
 
-	public DynHandlerXGMML()
+	public DynHandlerXGMML(DynNetworkFactory<T> sink)
 	{
 		super();
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
+		this.sinkList.add(sink);
 //		System.out.println("");
 	}
 
 	@Override
 	public void handleStart(Attributes atts, ParseDynState current)
 	{
-		line++;
+//		line++;
 //		System.out.println(spaces + "<" + current + "> (Line " + line + ")");
 //		spaces = spaces + " ";
 		
@@ -150,7 +149,11 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		case GRAPH:
 			while (!orphanEdgeList.isEmpty())
 				orphanEdgeList.pop().add(this);
-			this.finalize(currentNetwork);
+			try {
+				this.finalizeNetwork(currentNetwork);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			break;
 			
 		case NODE_GRAPH:

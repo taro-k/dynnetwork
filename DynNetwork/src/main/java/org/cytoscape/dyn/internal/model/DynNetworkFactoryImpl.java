@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.cytoscape.dyn.internal.model.tree.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.util.ObjectTypeMap;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
@@ -54,7 +55,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	@Override
 	public DynNetwork<T> addedGraph(String id, String label, String start, String end, String directed)
 	{
-		DynNetwork<T> dynNetwork = createGraph(createRootNetwork(directed), id, label, start, end);
+		DynNetwork<T> dynNetwork = createGraph(directed, id, label, start, end);
 		setElement(dynNetwork, id, label, null, start, end);
 		manager.addDynNetwork(dynNetwork);
 		return dynNetwork;
@@ -111,7 +112,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public void deletedGraph(DynNetwork<T> dynNetwork)
 	{
 		dynNetwork.removeGraph();
-		this.getRootNetwork(dynNetwork).removeSubNetwork(this.getRootNetwork(dynNetwork).getBaseNetwork());
+		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(dynNetwork.getNetwork());
+		rootNetwork.removeSubNetwork(rootNetwork.getBaseNetwork());
 	}
 
 	@Override
@@ -129,7 +131,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	}
 	
 	@Override
-	public void finalize(DynNetwork<T> dynNetwork) 
+	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
 		dynNetwork.print();
 	}
@@ -191,15 +193,11 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			table.createColumn(attName, attr.getClass(), false);
 		currentNetwork.getRow(ci).set(attName, attr);
 	}
-	
-	private CyRootNetwork createRootNetwork(String directed)
+
+	private DynNetwork<T> createGraph(String directed, String id, String label, String start, String end)
 	{
 		this.isDirected = directed.equals("1")?true:false;
-		return this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
-	}
-
-	private DynNetwork<T> createGraph(CyRootNetwork rootNetwork, String id, String label, String start, String end)
-	{
+		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
 		CyNetwork network = rootNetwork.getBaseNetwork();
 		DynNetworkImpl<T> dynNet = new DynNetworkImpl<T>(network, groupManager);
 		return dynNet;
@@ -278,11 +276,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		list.add(edge);
 		return list;
 	}
-	
-	private CyRootNetwork getRootNetwork(DynNetwork<T> dynNetwork)
-	{
-		return 	this.rootNetworkManager.getRootNetwork(dynNetwork.getNetwork());
-	}
 
 	private DynInterval<T> getInterval(Class<T> type, T value, String start, String end)
 	{
@@ -353,5 +346,14 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		else
 			return Double.POSITIVE_INFINITY;
 	}
+
+	@Override
+	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork) 
+	{
+		return null;
+	}
+
+	
+	
 
 }
