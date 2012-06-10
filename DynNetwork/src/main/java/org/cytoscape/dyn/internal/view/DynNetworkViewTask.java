@@ -20,7 +20,7 @@ import org.cytoscape.work.TaskMonitor;
  *
  * @param <T>
  */
-public class DynNetworkViewTask<T> extends AbstractTask 
+public final class DynNetworkViewTask<T> extends AbstractTask 
 {
 	private final DynNetworkView<T> view;
 	private final DynNetwork<T> dynNetwork;

@@ -225,9 +225,9 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 	
 	public void reset() 
 	{
-		network = networkManager.getDynNetwork(appManager.getCurrentNetwork());
-		view = viewManager.getDynNetworkView(network);
-		update();
+		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
+		if (view!=null)
+			update();
 	}
 	
 	@Override
@@ -238,39 +238,37 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 
 		if (e.getNetworkView()!=null)
 		{
-			network = networkManager.getDynNetwork(e.getNetworkView().getModel());
-			view = viewManager.getDynNetworkView(network);
-			update();
+			view = viewManager.getDynNetworkView(e.getNetworkView());
+			if (view!=null)
+				update();
 		}
 	}
-	
+
 	private void update()
 	{
-		if (view!=null)
+		network = view.getNetwork();
+		minTime = network.getMinTime();
+		maxTime = network.getMaxTime();
+
+		SwingUtilities.invokeLater(new Runnable()
 		{
-			minTime = network.getMinTime();
-			maxTime = network.getMaxTime();
-			
-			SwingUtilities.invokeLater(new Runnable()
+			public void run()
 			{
-				public void run()
-				{
-					labelTable.clear();
-					labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );
-					labelTable.put(new Integer( 100 ),new JLabel(formatter.format(maxTime)) );
-					slider.setLabelTable(labelTable);
-					slider.setMajorTickSpacing(25);
-					slider.setMinorTickSpacing(5);
-					slider.setPaintTicks(true);
-					slider.setPaintLabels(true);
-				}
-			});
-			
-			slider.setValue(view.getCurrentTime());
-			time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
-			currentTime.setText("Current time = " + formatter.format(time));
-			taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
-		}
+				labelTable.clear();
+				labelTable.put(new Integer( 0 ),new JLabel(formatter.format(minTime)) );
+				labelTable.put(new Integer( 100 ),new JLabel(formatter.format(maxTime)) );
+				slider.setLabelTable(labelTable);
+				slider.setMajorTickSpacing(25);
+				slider.setMinorTickSpacing(5);
+				slider.setPaintTicks(true);
+				slider.setPaintLabels(true);
+			}
+		});
+
+		slider.setValue(view.getCurrentTime());
+		time = slider.getValue()*((maxTime-minTime)/100)+(minTime);
+		currentTime.setText("Current time = " + formatter.format(time));
+		taskManager.execute(new TaskIterator(1, new DynNetworkViewTask<T>(view, network, queue, time, time)));
 	}
 
 }

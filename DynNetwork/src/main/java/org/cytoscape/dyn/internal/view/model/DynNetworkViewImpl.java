@@ -37,7 +37,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
 		this.style = vmm.getDefaultVisualStyle();
-		this.view = cyNetworkViewFactory.createNetworkView(this.dynNetwork.getNetwork());
+		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
 		vmm.setVisualStyle(style, view);
 		style.apply(view);

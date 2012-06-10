@@ -14,7 +14,7 @@ import org.cytoscape.work.TunableSetter;
  * <code> LoadDynNetworkFileTaskFactoryImpl </code> implements the interface 
  * {@link LoadDynNetworkFileTaskFactory}.
  * 
- * @author rozagh
+ * @author sabina
  *
  */
 public final class LoadDynNetworkFileTaskFactoryImpl extends AbstractTaskFactory implements LoadDynNetworkFileTaskFactory {

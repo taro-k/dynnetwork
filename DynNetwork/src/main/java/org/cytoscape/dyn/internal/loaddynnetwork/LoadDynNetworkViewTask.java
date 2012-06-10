@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.dyn.internal.event.Sink;
 import org.cytoscape.dyn.internal.event.Source;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.Task;
@@ -18,14 +20,14 @@ import org.cytoscape.work.TaskMonitor;
  * @author sabina
  *
  */
-public final class LoadNetworkViewTask<T> extends AbstractTask implements Source<T> 
+public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Source<T> 
 {
 	private final CyApplicationManager appManager;
 	private final DynNetworkManager<T> dynNetworkManager;
 	
 	private ArrayList<Sink<T>> sinkList = new ArrayList<Sink<T>>(1);
 	
-	public LoadNetworkViewTask(
+	public LoadDynNetworkViewTask(
 			final CyApplicationManager appManager,
 			final DynNetworkManager<T> dynNetworkManager,
 			final DynNetworkViewFactory<T> dynNetworkViewFactory)

@@ -11,7 +11,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
-import org.cytoscape.dyn.internal.loaddynnetwork.LoadNetworkViewTask;
+import org.cytoscape.dyn.internal.loaddynnetwork.LoadDynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynFileFilter;
@@ -89,9 +89,10 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     	XGMMLDynNetworkReaderFactory xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory(xgmmlFilter,xgmmlParser);
     	File file = fileUtil.getFile(desktopApp.getJFrame(), "Load Dynamic Network", FileUtil.LOAD, getFilters());
     	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
+    	LoadDynNetworkViewFactoryImpl<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
 
     	Task loadTask = loadFactory.creatTaskIterator(file).next();
-    	Task loadViewTask = new LoadNetworkViewTask<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
+    	Task loadViewTask = loadViewFactory.creatTaskIterator().next();
     	Task loadPanelTask = new DynCytoPanelTask<T,C>(myDynPanel, cytoPanelWest);
     	TaskIterator iterator = new TaskIterator(loadTask,loadViewTask,loadPanelTask);
     	taskManager.execute(iterator);

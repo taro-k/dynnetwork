@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
 /**
@@ -17,25 +17,25 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 public final class DynNetworkViewManagerImpl<T> implements DynNetworkViewManager<T>
 {
 	private final CyNetworkViewManager cyNetworkViewManager;
-	private final Map<DynNetwork<T>, DynNetworkView<T>> dynNetworkViewMap;
+	private final Map<CyNetworkView, DynNetworkView<T>> dynNetworkViewMap;
 
 	public DynNetworkViewManagerImpl(final CyNetworkViewManager cyNetworkViewManager) 
 	{
 		this.cyNetworkViewManager = cyNetworkViewManager;
-		this.dynNetworkViewMap = new WeakHashMap<DynNetwork<T>, DynNetworkView<T>>();
+		this.dynNetworkViewMap = new WeakHashMap<CyNetworkView, DynNetworkView<T>>();
 	}
 	
 	@Override
-	public void addDynNetworkView(DynNetwork<T> dynNetwork, DynNetworkView<T> dynNetworkView)
+	public void addDynNetworkView(CyNetworkView view, DynNetworkView<T> dynNetworkView)
 	{
 		this.cyNetworkViewManager.addNetworkView(dynNetworkView.getNetworkView());
-		this.dynNetworkViewMap.put(dynNetwork, dynNetworkView);
+		this.dynNetworkViewMap.put(view, dynNetworkView);
 	}
 
 	@Override
-	public DynNetworkView<T> getDynNetworkView(DynNetwork<T> dynNetwork)
+	public DynNetworkView<T> getDynNetworkView(CyNetworkView view)
 	{
-		return dynNetworkViewMap.get(dynNetwork);
+		return dynNetworkViewMap.get(view);
 	}
 
 	@Override
