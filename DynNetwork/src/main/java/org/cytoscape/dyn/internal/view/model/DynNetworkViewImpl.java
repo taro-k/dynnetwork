@@ -26,7 +26,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final CyNetworkView view;
 	private final VisualStyle style;
 	
-	private int currentTime;
+	private double currentTime;
 
 	public DynNetworkViewImpl(
 			DynNetwork<T> dynNetwork,
@@ -101,12 +101,12 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
 	}
 
-	public int getCurrentTime() 
+	public double getCurrentTime() 
 	{
 		return currentTime;
 	}
 
-	public void setCurrentTime(int currentTime) 
+	public void setCurrentTime(double currentTime) 
 	{
 		this.currentTime = currentTime;
 	}

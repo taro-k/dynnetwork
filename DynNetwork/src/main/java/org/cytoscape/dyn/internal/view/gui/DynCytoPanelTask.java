@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.view;
+package org.cytoscape.dyn.internal.view.gui;
 
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelState;

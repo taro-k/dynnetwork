@@ -69,11 +69,11 @@ public interface DynNetworkView<T>
 	 * Get current visualization time.
 	 * @return time
 	 */
-	public int getCurrentTime();
+	public double getCurrentTime();
 	
 	/**
 	 * Set current visualization time.
 	 * @param currentTime
 	 */
-	public void setCurrentTime(int currentTime);
+	public void setCurrentTime(double currentTime);
 }

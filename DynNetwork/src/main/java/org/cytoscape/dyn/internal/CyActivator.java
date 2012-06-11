@@ -12,7 +12,7 @@ import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.model.DynNetworkManagerImpl;
-import org.cytoscape.dyn.internal.view.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;

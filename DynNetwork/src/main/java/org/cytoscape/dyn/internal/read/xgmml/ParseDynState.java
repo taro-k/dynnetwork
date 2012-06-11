@@ -1,6 +1,7 @@
 package org.cytoscape.dyn.internal.read.xgmml;
 
-public enum ParseDynState {
+public enum ParseDynState 
+{
 	
 	// Graph elements
     NONE("none"),
@@ -30,11 +31,13 @@ public enum ParseDynState {
 
     private String name;
 
-    private ParseDynState(String str) {
+    private ParseDynState(String str) 
+    {
         name = str;
     }
 
-    public String toString() {
+    public String toString() 
+    {
         return name;
     }
 }
