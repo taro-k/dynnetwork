@@ -7,6 +7,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
@@ -63,6 +64,42 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 			if (edge!=null && edge.getSource()!=null && edge.getTarget()!=null)
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
 						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
+		}
+		
+		//update graph attributes
+		intervalList = dynNetwork.searchChangedGraphsAttr(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
+		{
+			dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue());
+//			System.out.println("time " + low + " set " + interval.getValue());
+		}
+
+		//update selected node attributes
+		List<CyNode> nodeListSelected = CyTableUtil.getNodesInState(dynNetwork.getNetwork(),"selected",true);
+		if (!nodeListSelected.isEmpty())
+		{
+			intervalList = dynNetwork.searchNodesAttr(new DynInterval<T>(low, high));
+			for (CyNode node : nodeListSelected)
+				for (DynInterval<T> interval : intervalList)
+					if (nodeListSelected.contains(dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow())))
+					{	
+						dynNetwork.writeNodeTable(node, interval.getAttribute().getKey().getColumn(), interval.getValue());
+//						System.out.println("time " + low + " set " + interval.getValue());
+					}
+		}
+
+		//update selected edge attributes
+		List<CyEdge> edgeListSelected = CyTableUtil.getEdgesInState(dynNetwork.getNetwork(),"selected",true);
+		if (!edgeListSelected.isEmpty())
+		{
+			intervalList = dynNetwork.searchEdgesAttr(new DynInterval<T>(low, high));
+			for (CyEdge edge : edgeListSelected)
+				for (DynInterval<T> interval : intervalList)
+					if (edgeListSelected.contains(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow())))
+					{
+						dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue());
+//						System.out.println("time " + low + " set " + interval.getValue());
+					}
 		}
 
 		view.updateView();

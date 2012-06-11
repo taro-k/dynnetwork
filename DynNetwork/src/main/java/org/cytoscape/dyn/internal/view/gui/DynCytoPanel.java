@@ -33,7 +33,6 @@ import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.view.BlockingQueue;
 import org.cytoscape.dyn.internal.view.DynNetworkViewTask;
 import org.cytoscape.dyn.internal.view.DynNetworkViewTaskIterator;
-import org.cytoscape.dyn.internal.view.DynNetwrokViewAttrTaskSelected;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
@@ -282,9 +281,7 @@ public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponen
 		offset = slider.getValue()!=100?slider.getValue():slider.getValue()-0.000000001;
 		time = offset*((maxTime-minTime)/sliderMax)+(minTime);
 		currentTime.setText("Current time = " + formatter.format(time));
-		taskManager.execute(new TaskIterator(2,
-					new DynNetworkViewTask<T>(view, network, queue, time, time),
-					new DynNetwrokViewAttrTaskSelected<T>(view, network, queue, time, time)));
+		taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time, time)));
 	}
 	
 	private void updateGui()

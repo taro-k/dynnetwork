@@ -36,11 +36,11 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 				break;
 			}
 			
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			
 			if (this.cancelled==true)
 				break;
