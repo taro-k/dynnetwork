@@ -35,6 +35,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 
 	protected List<DynInterval<T>> currentNodes;
 	protected List<DynInterval<T>> currentEdges;
+	protected List<DynInterval<T>> currentGraphsAttr;
 	protected List<DynInterval<T>> currentNodesAttr;
 	protected List<DynInterval<T>> currentEdgesAttr;
 
@@ -66,6 +67,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 
 		this.currentNodes = new ArrayList<DynInterval<T>>();
 		this.currentEdges = new ArrayList<DynInterval<T>>();
+		this.currentGraphsAttr = new ArrayList<DynInterval<T>>();
 		this.currentNodesAttr = new ArrayList<DynInterval<T>>();
 		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
 
@@ -85,6 +87,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public CyNetwork getNetwork() 
 	{
 		return this.network;
+	}
+	
+	@Override
+	public void writeGraphTable(String name, T value) 
+	{
+		network.getRow(this.network).set(name, value);
 	}
 
 	@Override
@@ -201,11 +209,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		edgeTable.remove(key);
 	}
 
-	public List<DynInterval<T>> searchGraphs(DynInterval<T> interval)
-	{
-		return graphTree.search(interval);
-	}
-
 	@Override
 	public void removeGraphAttr() 
 	{
@@ -253,6 +256,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		currentEdges = tempList;
 		return changedList;
 	}
+	
+	@Override
+	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval)
+	{
+		return graphTreeAttr.search(interval);
+	}
 
 	@Override
 	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval)
@@ -264,6 +273,15 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval)
 	{
 		return edgeTreeAttr.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = graphTreeAttr.search(interval);
+		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverlap(currentGraphsAttr, tempList));
+		currentGraphsAttr = tempList;
+		return changedList;
 	}
 
 	@Override

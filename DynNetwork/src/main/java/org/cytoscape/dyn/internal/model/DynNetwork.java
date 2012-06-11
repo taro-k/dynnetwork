@@ -101,7 +101,7 @@ public interface DynNetwork<T>
 	 * @param edge
 	 */
 	public void removeEdgeAttr(CyEdge edge);
-
+	
 	/**
 	 * Search overlapping intervals for nodes given an interval
 	 * from the last search.
@@ -119,6 +119,13 @@ public interface DynNetwork<T>
 	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
 	
 	/**
+	 * Search overlapping intervals for graph attributes given an interval
+	 * @param interval
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval);
+	
+	/**
 	 * Search overlapping intervals for node attributes given an interval
 	 * from the last search.
 	 * @param interval
@@ -133,6 +140,13 @@ public interface DynNetwork<T>
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for graphs given an interval that changed
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval);
 	
 	/**
 	 * Search overlapping intervals for nodes given an interval that changed
@@ -247,6 +261,13 @@ public interface DynNetwork<T>
 	 * @param value
 	 */
 	public void setCyEdge(String id, long value);
+	
+	/**
+	 * Write to graph.
+	 * @param name
+	 * @param value
+	 */
+	public void writeGraphTable(String name, T value);
 	
 	/**
 	 * Get node.

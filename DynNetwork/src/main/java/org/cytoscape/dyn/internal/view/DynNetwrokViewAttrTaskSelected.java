@@ -36,12 +36,20 @@ public class DynNetwrokViewAttrTaskSelected<T> extends AbstractTask
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
 		queue.lock(); 
+		
+		//update graph attributes
+		List<DynInterval<T>> intervalList = dynNetwork.searchChangedGraphsAttr(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
+		{
+			dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue());
+//			System.out.println("time " + low + " set " + interval.getValue());
+		}
 
 		//update selected node attributes
 		List<CyNode> nodeListSelected = CyTableUtil.getNodesInState(dynNetwork.getNetwork(),"selected",true);
 		if (!nodeListSelected.isEmpty())
 		{
-			List<DynInterval<T>> intervalList = dynNetwork.searchNodesAttr(new DynInterval<T>(low, high));
+			intervalList = dynNetwork.searchNodesAttr(new DynInterval<T>(low, high));
 			for (CyNode node : nodeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (nodeListSelected.contains(dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow())))
@@ -55,7 +63,7 @@ public class DynNetwrokViewAttrTaskSelected<T> extends AbstractTask
 		List<CyEdge> edgeListSelected = CyTableUtil.getEdgesInState(dynNetwork.getNetwork(),"selected",true);
 		if (!edgeListSelected.isEmpty())
 		{
-			List<DynInterval<T>> intervalList = dynNetwork.searchEdgesAttr(new DynInterval<T>(low, high));
+			intervalList = dynNetwork.searchEdgesAttr(new DynInterval<T>(low, high));
 			for (CyEdge edge : edgeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (edgeListSelected.contains(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow())))
