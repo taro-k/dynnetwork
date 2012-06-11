@@ -26,8 +26,7 @@ import org.cytoscape.model.CyNode;
  */
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
-	//TODO shynchronize this class
-	
+
 	private CyNetwork network;
 	private final CyGroupManager groupManager;
 
@@ -224,12 +223,44 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 
 	}
+	
+	@Override
+	public List<DynInterval<T>> searchNodes(DynInterval<T> interval)
+	{
+		return nodeTree.search(interval);
+	}
 
+	@Override
+	public List<DynInterval<T>> searchEdges(DynInterval<T> interval)
+	{
+		return edgeTree.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = nodeTree.search(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
+		currentNodes = tempList;
+		return changedList;
+	}
+
+	@Override
+	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = edgeTree.search(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
+		currentEdges = tempList;
+		return changedList;
+	}
+
+	@Override
 	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval)
 	{
 		return nodeTreeAttr.search(interval);
 	}
 
+	@Override
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval)
 	{
 		return edgeTreeAttr.search(interval);
@@ -239,7 +270,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval)
 	{
 		List<DynInterval<T>> tempList = nodeTreeAttr.search(interval);
-		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentNodesAttr, tempList));
+		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverlap(currentNodesAttr, tempList));
 		currentNodesAttr = tempList;
 		return changedList;
 	}
@@ -248,36 +279,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval)
 	{
 		List<DynInterval<T>> tempList = edgeTreeAttr.search(interval);
-		List<DynInterval<T>> changedList = nonOverLap(currentEdgesAttr, tempList);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdgesAttr, tempList);
 		currentEdgesAttr = tempList;
-		return changedList;
-	}
-
-	public List<DynInterval<T>> searchNodes(DynInterval<T> interval)
-	{
-		return nodeTree.search(interval);
-	}
-
-	public List<DynInterval<T>> searchEdges(DynInterval<T> interval)
-	{
-		return edgeTree.search(interval);
-	}
-
-	@Override
-	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = nodeTree.search(interval);
-		List<DynInterval<T>> changedList = new ArrayList<DynInterval<T>>(nonOverLap(currentNodes, tempList));
-		currentNodes = tempList;
-		return changedList;
-	}
-
-	@Override
-	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = edgeTree.search(interval);
-		List<DynInterval<T>> changedList = nonOverLap(currentEdges, tempList);
-		currentEdges = tempList;
 		return changedList;
 	}
 
@@ -418,7 +421,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.edgeTable.get(key));
 	}
 
-	private List<DynInterval<T>> nonOverLap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
+	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
 	{
 		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
 		for (DynInterval<T> i : list1)

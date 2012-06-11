@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.util.KeyPairs;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
@@ -46,30 +45,28 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	{
 		queue.lock(); 
 
-		List<DynInterval<T>> nodeList = dynNetwork.searchChangedNodes(new DynInterval<T>(low, high));
-		for (DynInterval<T> interval : nodeList)
+		// update nodes
+		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
 		{
-			KeyPairs key = interval.getAttribute().getKey();
-			CyNode node = dynNetwork.readNodeTable(key.getRow());
-
+			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
 			if (node!=null)
 				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
 						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
 		}
 
-		
-		List<DynInterval<T>> edgeList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
-		for (DynInterval<T> interval : edgeList)
+		// update edges
+		intervalList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
 		{
-			KeyPairs key = interval.getAttribute().getKey();
-			CyEdge edge = dynNetwork.readEdgeTable(key.getRow());
-
+			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
 			if (edge!=null && edge.getSource()!=null && edge.getTarget()!=null)
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
 						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
 		}
 
 		view.updateView();
+		
 		queue.unlock(); 
 
 	}

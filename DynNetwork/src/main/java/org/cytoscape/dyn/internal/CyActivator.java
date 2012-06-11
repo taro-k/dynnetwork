@@ -62,7 +62,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
 
-    	DynCytoPanel<T,C> dynCytoPanel = new DynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetManager,dynNetViewManager);
+    	DynCytoPanel<T,C> dynCytoPanel = new DynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager);
     	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());

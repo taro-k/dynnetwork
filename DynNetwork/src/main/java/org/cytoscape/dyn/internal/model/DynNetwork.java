@@ -101,6 +101,38 @@ public interface DynNetwork<T>
 	 * @param edge
 	 */
 	public void removeEdgeAttr(CyEdge edge);
+
+	/**
+	 * Search overlapping intervals for nodes given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchNodes(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for edges given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for node attributes given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for edge attributes given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval);
 	
 	/**
 	 * Search overlapping intervals for nodes given an interval that changed

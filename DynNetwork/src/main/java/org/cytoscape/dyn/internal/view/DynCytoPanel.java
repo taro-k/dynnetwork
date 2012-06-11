@@ -29,7 +29,6 @@ import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
@@ -51,7 +50,6 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 	private final TaskManager<T,C> taskManager;
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
-	private final DynNetworkManager<T> networkManager;
 	private final DynNetworkViewManager<T> viewManager;
 	
 	private DynNetwork<T> network;
@@ -76,13 +74,11 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 	public DynCytoPanel(
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
-			final DynNetworkManager<T> networkManager,
 			final DynNetworkViewManager<T> viewManager)
 	{
 		super();
 		this.taskManager = taskManager;
 		this.appManager = appManager;
-		this.networkManager = networkManager;
 		this.viewManager = viewManager;
 		this.queue = new BlockingQueue();
 		initComponents();
@@ -97,16 +93,12 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 			offset = source.getValue()!=100?source.getValue():source.getValue()-0.000000001;
 			time = offset*((maxTime-minTime)/100)+(minTime);
 			currentTime.setText("Current time = " + formatter.format(time));
-			if (!source.getValueIsAdjusting())
-				taskManager.execute(new TaskIterator(1,
-						new DynNetworkViewTask<T>(view, network, queue, time, time)));
-			else
 				taskManager.execute(new TaskIterator(2,
 						new DynNetworkViewTask<T>(view, network, queue, time, time),
-						new DynNetworkViewAttrTask<T>(view, network, queue, time, time)));
+						new DynNetwrokViewAttrTaskSelected<T>(view, network, queue, time, time)));
 		}
 	}
-	
+
 	@Override
 	public synchronized void actionPerformed(ActionEvent event)
 	{
@@ -116,7 +108,7 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 			if (recursiveTask!=null)
 				recursiveTask.cancel();
 			
-			recursiveTask = new DynNetworkViewTaskIterator<T>(slider, 1);
+			recursiveTask = new DynNetworkViewTaskIterator<T>(slider, +1);
 			new Thread(recursiveTask).start();
 		}
 		else if (source.equals(backwardButton))
@@ -180,7 +172,7 @@ public class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, Cha
 		buttonPanel.add(stopButton);
 		buttonPanel.add(forwardButton);
 		
-		dynVizPanel.setLayout(new GridLayout(4,1));
+		dynVizPanel.setLayout(new GridLayout(3,1));
 		dynVizPanel.add(currentTime);
 		dynVizPanel.add(slider);
 		dynVizPanel.add(buttonPanel);
