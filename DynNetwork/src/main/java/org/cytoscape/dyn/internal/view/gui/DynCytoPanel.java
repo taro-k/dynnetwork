@@ -32,9 +32,12 @@ import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.view.BlockingQueue;
 import org.cytoscape.dyn.internal.view.DynNetworkViewTask;
+import org.cytoscape.dyn.internal.view.DynNetworkViewTaskAll;
 import org.cytoscape.dyn.internal.view.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
+import org.cytoscape.group.events.GroupCollapsedEvent;
+import org.cytoscape.group.events.GroupCollapsedListener;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -47,7 +50,8 @@ import org.cytoscape.work.TaskManager;
  * @param <T>
  * @param <C>
  */
-public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, ChangeListener, ActionListener, SetCurrentNetworkViewListener
+public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, 
+ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -130,6 +134,35 @@ public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponen
 			updateSliderMax((double) slider.getValue()/sliderMax, ((NameIDObj)source.getSelectedItem()).id);
 			updateGui();
 		}
+	}
+	
+	@Override
+	public void handleEvent(SetCurrentNetworkViewEvent e) 
+	{
+		if (recursiveTask!=null)
+			recursiveTask.cancel();
+
+		if (e.getNetworkView()!=null)
+		{
+			if (view!=null)
+				view.setCurrentTime((double) slider.getValue()/sliderMax);
+			view = viewManager.getDynNetworkView(e.getNetworkView());
+			if (view!=null)
+			{
+				network = view.getNetwork();
+				minTime = network.getMinTime();
+				maxTime = network.getMaxTime();
+				updateSliderMax(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
+				updateGui();
+				updateView();
+			}
+		}
+	}
+	
+	@Override
+	public void handleEvent(GroupCollapsedEvent e)
+	{
+		taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskAll<T>(view, network, queue, time, time, e.getSource())));
 	}
 	
 	public Component getComponent() 
@@ -253,29 +286,6 @@ public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponen
 		}
 	}
 	
-	@Override
-	public void handleEvent(SetCurrentNetworkViewEvent e) 
-	{
-		if (recursiveTask!=null)
-			recursiveTask.cancel();
-
-		if (e.getNetworkView()!=null)
-		{
-			if (view!=null)
-				view.setCurrentTime((double) slider.getValue()/sliderMax);
-			view = viewManager.getDynNetworkView(e.getNetworkView());
-			if (view!=null)
-			{
-				network = view.getNetwork();
-				minTime = network.getMinTime();
-				maxTime = network.getMaxTime();
-				updateSliderMax(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
-				updateGui();
-				updateView();
-			}
-		}
-	}
-	
 	private void updateView()
 	{
 		offset = slider.getValue()!=100?slider.getValue():slider.getValue()-0.000000001;
@@ -309,6 +319,7 @@ public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponen
 		slider.setMaximum(value);
 		slider.setValue((int) (absoluteTime*(double) sliderMax));
 	}
+
 }
 
 final class NameIDObj

@@ -43,13 +43,10 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		style.apply(view);
 		
 		// TODO: FIXME
-		
-		this.dynNetwork.expandAllGroups();
-		this.dynNetwork.collapseAllGroups();
 		initNodes();
 		initEdges();
-//		view.updateView();
-//		view.fitContent();
+		this.dynNetwork.expandAllGroups();
+		this.dynNetwork.collapseAllGroups();
 	}
 
 	@Override
