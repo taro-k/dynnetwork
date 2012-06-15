@@ -1,6 +1,7 @@
 package org.cytoscape.dyn.internal.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +27,19 @@ import org.cytoscape.model.CyNode;
  */
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
-
-	private CyNetwork network;
+	private final CyNetwork network;
 	private final CyGroupManager groupManager;
+	
+	private final boolean isDirected;
 
 	private final Map<String, Long> cyNodes;
 	private final Map<String, Long> cyEdges;
 
-	protected List<DynInterval<T>> currentNodes;
-	protected List<DynInterval<T>> currentEdges;
-	protected List<DynInterval<T>> currentGraphsAttr;
-	protected List<DynInterval<T>> currentNodesAttr;
-	protected List<DynInterval<T>> currentEdgesAttr;
+	private List<DynInterval<T>> currentNodes;
+	private List<DynInterval<T>> currentEdges;
+	private List<DynInterval<T>> currentGraphsAttr;
+	private List<DynInterval<T>> currentNodesAttr;
+	private List<DynInterval<T>> currentEdgesAttr;
 
 	private final DynIntervalTreeImpl<T> graphTree;
 	private final DynIntervalTreeImpl<T> nodeTree;
@@ -49,6 +51,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private final Map<KeyPairs,DynAttribute<T>> graphTable;
 	private final Map<KeyPairs,DynAttribute<T>> nodeTable;
 	private final Map<KeyPairs,DynAttribute<T>> edgeTable;
+	
+	private final Map<Long,Long> metaEdges;
 
 	private double minStartTime = Double.POSITIVE_INFINITY;
 	private double maxStartTime = Double.NEGATIVE_INFINITY;
@@ -56,11 +60,13 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private double maxEndTime = Double.NEGATIVE_INFINITY;
 
 	public DynNetworkImpl(
-			CyNetwork network,
-			final CyGroupManager groupManager)
+			final CyNetwork network,
+			final CyGroupManager groupManager,
+			final boolean isDirected)
 	{
 		this.network = network;
 		this.groupManager = groupManager;
+		this.isDirected = isDirected;
 
 		cyNodes = new HashMap<String, Long>();
 		cyEdges = new HashMap<String, Long>();
@@ -81,6 +87,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.nodeTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.edgeTable = new HashMap<KeyPairs,DynAttribute<T>>();
+		
+		this.metaEdges = new HashMap<Long, Long>();
 	}
 
 	@Override
@@ -176,7 +184,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	@Override
 	public synchronized void removeGraph() 
 	{
-		this.network = null;
 		this.graphTree.clear();
 		this.nodeTree.clear();
 		this.edgeTree.clear();
@@ -324,7 +331,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public void collapseAllGroups()
 	{
 		for (CyGroup group : this.groupManager.getGroupSet(this.network))
-			group.collapse(this.network); 
+			group.collapse(this.network);
 	}
 
 	@Override
@@ -332,6 +339,30 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		for (CyGroup group : this.groupManager.getGroupSet(this.network))
 			group.expand(this.network);
+	}
+	
+	@Override
+	public void removeMetaNodes()
+	{
+		for (CyGroup group : this.groupManager.getGroupSet(this.network))
+			updateMetaEdges(group);
+			
+		Collection<CyNode> metaNodes = new ArrayList<CyNode>();
+		for (CyGroup group : this.groupManager.getGroupSet(this.network))
+			metaNodes.add(group.getGroupNode());
+		this.network.removeNodes(metaNodes);
+	}
+	
+	private void updateMetaEdges(CyGroup group)
+	{
+		List<CyEdge> edgeMetaList = this.network.getAdjacentEdgeList(group.getGroupNode(), CyEdge.Type.ANY);
+		for (CyEdge metaEdge : edgeMetaList)
+			for (CyEdge edge : group.getExternalEdgeList())
+			{
+				CyNode outer = metaEdge.getSource()==group.getGroupNode()?metaEdge.getTarget():metaEdge.getSource();
+				if (edge.getSource()==outer || edge.getTarget()==outer)
+					this.metaEdges.put(edge.getSUID(), metaEdge.getSUID());
+			}
 	}
 
 	@Override
@@ -371,6 +402,18 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
+	public boolean isMetaEdge(long suid) 
+	{
+		return this.metaEdges.containsKey(suid);
+	}
+	
+	@Override
+	public CyEdge getMetaEdge(long suid) 
+	{
+		return this.network.getEdge(this.metaEdges.get(suid));
+	}
+
+	@Override
 	public void print()
 	{
 		this.nodeTree.print(this.nodeTree.getRoot());
@@ -398,6 +441,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				return maxStartTime;
 		else
 			return maxEndTime;
+	}
+	
+	@Override
+	public boolean isDirected() 
+	{
+		return this.isDirected;
 	}
 
 	private synchronized void setDynAttribute(String column, DynInterval<T> interval)
@@ -438,7 +487,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
 	}
-
+	
 	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
 	{
 		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();

@@ -18,6 +18,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
+import org.cytoscape.group.events.GroupCollapsedListener;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -71,7 +72,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		registerService(context,dynNetworkViewFactory,DynNetworkViewFactoryImpl.class, new Properties());
 		registerService(context,dynCytoPanel,CytoPanelComponent.class, new Properties());
     	registerService(context,action,CyAction.class, new Properties());
+    	
     	registerService(context,dynCytoPanel, SetCurrentNetworkViewListener.class, new Properties());
+    	registerService(context,dynCytoPanel, GroupCollapsedListener.class, new Properties());
 	}
 	
 }

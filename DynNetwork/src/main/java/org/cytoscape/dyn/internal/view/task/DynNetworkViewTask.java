@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.view;
+package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
@@ -45,9 +45,27 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
 		queue.lock(); 
+		
+		DynInterval<T> timeInterval = new DynInterval<T>(low, high);
+
+		// update edges
+		List<DynInterval<T>> intervalList = dynNetwork.searchChangedEdges(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
+			if (edge!=null)
+				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
+						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
+			else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()))
+			{
+				CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
+				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE, 
+						!view.readVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE));
+			}
+		}
 
 		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(new DynInterval<T>(low, high));
+		intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
@@ -56,35 +74,25 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
 		}
 
-		// update edges
-		intervalList = dynNetwork.searchChangedEdges(new DynInterval<T>(low, high));
-		for (DynInterval<T> interval : intervalList)
-		{
-			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
-			if (edge!=null && edge.getSource()!=null && edge.getTarget()!=null)
-				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
-						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
-		}
-		
-		//update graph attributes
-		intervalList = dynNetwork.searchChangedGraphsAttr(new DynInterval<T>(low, high));
+		// update graph attributes
+		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
 			dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue());
-//			System.out.println("time " + low + " set " + interval.getValue());
+//			System.out.println("t	ime " + low + " set " + interval.getValue());
 		}
 
 		//update selected node attributes
 		List<CyNode> nodeListSelected = CyTableUtil.getNodesInState(dynNetwork.getNetwork(),"selected",true);
 		if (!nodeListSelected.isEmpty())
 		{
-			intervalList = dynNetwork.searchNodesAttr(new DynInterval<T>(low, high));
+			intervalList = dynNetwork.searchNodesAttr(timeInterval);
 			for (CyNode node : nodeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (nodeListSelected.contains(dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow())))
 					{	
 						dynNetwork.writeNodeTable(node, interval.getAttribute().getKey().getColumn(), interval.getValue());
-//						System.out.println("time " + low + " set " + interval.getValue());
+						System.out.println("node attr time " + low + " set " + interval.getValue());
 					}
 		}
 
@@ -92,13 +100,20 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 		List<CyEdge> edgeListSelected = CyTableUtil.getEdgesInState(dynNetwork.getNetwork(),"selected",true);
 		if (!edgeListSelected.isEmpty())
 		{
-			intervalList = dynNetwork.searchEdgesAttr(new DynInterval<T>(low, high));
+			intervalList = dynNetwork.searchEdgesAttr(timeInterval);
 			for (CyEdge edge : edgeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (edgeListSelected.contains(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow())))
 					{
 						dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue());
-//						System.out.println("time " + low + " set " + interval.getValue());
+						System.out.println("edge attr time " + low + " set " + interval.getValue());
+					}
+					else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
+							edgeListSelected.contains(dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow())))
+					{
+						CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
+						dynNetwork.writeEdgeTable(metaEdge, interval.getAttribute().getKey().getColumn(), interval.getValue());
+						System.out.println("metaedge attr time " + low + " set " + interval.getValue());
 					}
 		}
 

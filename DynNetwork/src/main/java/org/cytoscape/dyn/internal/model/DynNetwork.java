@@ -213,6 +213,11 @@ public interface DynNetwork<T>
      * Expand all Groups.
      */
     public void expandAllGroups();
+    
+    /**
+     * Remove metaNodes
+     */
+    public void removeMetaNodes();
 	
     /**
      * Get network.
@@ -310,6 +315,26 @@ public interface DynNetwork<T>
 	 * @return maximum time
 	 */
 	public double getMaxTime();
+	
+	/**
+	 * Get if the network is directed
+	 * @return boolean
+	 */
+	public boolean isDirected();
+	
+	/**
+	 * Check if it's metaEdge
+	 * @param suid
+	 * @return is metaEdge
+	 */
+	public boolean isMetaEdge(long suid); 
+	
+	/**
+	 * Get meta edge corresponding to this edge
+	 * @param edge SUID
+	 * @return metaEdge
+	 */
+	public CyEdge getMetaEdge(long suid);
 	
 	/**
 	 * Print out.

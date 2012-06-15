@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.view;
+package org.cytoscape.dyn.internal.view.task;
 
 
 import javax.swing.JSlider;
@@ -28,19 +28,16 @@ public class DynNetworkViewTaskIterator<T> implements Runnable
 	@Override
 	public void run() 
 	{
-		while((timeStep>0 && slider.getValue()<100) || (timeStep<0 && slider.getValue()>0))
-		{
+		while((timeStep>0 && slider.getValue()<slider.getMaximum()) || (timeStep<0 && slider.getValue()>0))
+		{			
 			if (this.cancelled==true)
-			{
-				slider.setValueIsAdjusting(false);
 				break;
-			}
 			
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			if (this.cancelled==true)
 				break;

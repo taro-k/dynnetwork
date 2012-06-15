@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.view;
+package org.cytoscape.dyn.internal.view.task;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;

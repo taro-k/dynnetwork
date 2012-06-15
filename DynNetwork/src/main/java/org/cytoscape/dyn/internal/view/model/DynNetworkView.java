@@ -48,6 +48,8 @@ public interface DynNetworkView<T>
 	 */
 	public void writeVisualProperty(CyEdge edge, VisualProperty<Boolean> vp, boolean value);
 	
+	public void viewNestedImage();
+	
 	/**
 	 * Get network view.
 	 * @return view

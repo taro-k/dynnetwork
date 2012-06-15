@@ -30,12 +30,12 @@ import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.view.BlockingQueue;
-import org.cytoscape.dyn.internal.view.DynNetworkViewTask;
-import org.cytoscape.dyn.internal.view.DynNetworkViewTaskAll;
-import org.cytoscape.dyn.internal.view.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
+import org.cytoscape.dyn.internal.view.task.BlockingQueue;
+import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
+import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskGroup;
+import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
 import org.cytoscape.work.TaskIterator;
@@ -52,6 +52,7 @@ import org.cytoscape.work.TaskManager;
  */
 public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, 
 ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
+//GraphViewChangeListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -110,7 +111,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			{
 				if (recursiveTask!=null)
 					recursiveTask.cancel();
-
 				recursiveTask = new DynNetworkViewTaskIterator<T>(slider, +1);
 				new Thread(recursiveTask).start();
 			}
@@ -118,7 +118,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			{
 				if (recursiveTask!=null)
 					recursiveTask.cancel();
-
 				recursiveTask = new DynNetworkViewTaskIterator<T>(slider, -1);
 				new Thread(recursiveTask).start();
 			}
@@ -162,7 +161,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	@Override
 	public void handleEvent(GroupCollapsedEvent e)
 	{
-		taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskAll<T>(view, network, queue, time, time, e.getSource())));
+		if (view!=null)
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(view, network, queue, time, time, e.getSource())));
 	}
 	
 	public Component getComponent() 
@@ -319,6 +319,23 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		slider.setMaximum(value);
 		slider.setValue((int) (absoluteTime*(double) sliderMax));
 	}
+	
+//	public void graphViewChanged(GraphViewChangeEvent event){
+//
+//        if(event.isEdgesSelectedType()){
+//                Edge[] selectedEdges = event.getSelectedEdges();
+//
+//                //some code to process the edges
+//        }
+//
+//        if(event.isNodesSelectedType()){
+//                
+//                Node[] selectedNodes = event.getSelectedNodes();
+//                
+//                //some code to process the nodes
+//        
+//        }
+//}
 
 }
 

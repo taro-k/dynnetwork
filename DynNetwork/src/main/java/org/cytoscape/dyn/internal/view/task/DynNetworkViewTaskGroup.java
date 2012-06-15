@@ -1,5 +1,6 @@
-package org.cytoscape.dyn.internal.view;
+package org.cytoscape.dyn.internal.view.task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -12,7 +13,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
-public class DynNetworkViewTaskAll<T> extends AbstractTask 
+public class DynNetworkViewTaskGroup<T> extends AbstractTask 
 {
 	private final DynNetworkView<T> view;
 	private final DynNetwork<T> dynNetwork;
@@ -21,7 +22,7 @@ public class DynNetworkViewTaskAll<T> extends AbstractTask
 	private final double high;
 	private final CyGroup group;
 
-	public DynNetworkViewTaskAll(
+	public DynNetworkViewTaskGroup(
 			final DynNetworkView<T> view,
 			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
@@ -40,35 +41,52 @@ public class DynNetworkViewTaskAll<T> extends AbstractTask
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
 		queue.lock(); 
-		
-		// reset node and edges
-		List<CyNode> nodeList = group.getNodeList();
-		nodeList.add(group.getGroupNode());
-		List<CyEdge> edgeList = group.getInternalEdgeList();
-		edgeList.addAll(group.getExternalEdgeList());
+
+		List<CyNode> nodeList = new ArrayList<CyNode>();
+		List<CyEdge> edgeList = new ArrayList<CyEdge>();
+		if (group.isCollapsed(dynNetwork.getNetwork()))
+		{
+			nodeList.add(group.getGroupNode());
+			edgeList = dynNetwork.getNetwork().getAdjacentEdgeList(group.getGroupNode(), CyEdge.Type.ANY);
+		}
+		else
+		{
+			nodeList = group.getNodeList();
+			edgeList = group.getInternalEdgeList();
+			edgeList.addAll(group.getExternalEdgeList());
+		}
 
 		for (CyNode node : nodeList)
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, false);
 		for (CyEdge edge : edgeList)
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, false);
 
-		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
-		for (DynInterval<T> interval : intervalList)
-		{
-			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
-			if (node!=null)
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, true);
-		}
-
 		// update edges
-		intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
+		List<DynInterval<T>> intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
-			if (edge!=null && edge.getSource()!=null && edge.getTarget()!=null)
+			if (edge!=null && edgeList.contains(edge))
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, true);
+			else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
+					edgeList.contains(dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow())))
+			{
+				CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
+				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE, true);
+			}
 		}
+		
+		// update nodes
+		intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
+			if (node!=null && nodeList.contains(node))
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, true);
+		}
+		
+//		if (group.isCollapsed(dynNetwork.getNetwork()))
+//			view.viewNestedImage();
 
 		view.updateView();
 		

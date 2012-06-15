@@ -49,7 +49,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		super();
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
-		this.sinkList.add(sink);
+		this.sink = sink;
 	}
 
 	@Override
@@ -137,7 +137,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 				orphanEdgeList.peek().addAttribute(currentNetwork, name, value, type, start, end);
 			break;
 		}
-
 	}
 
 	@Override
@@ -160,14 +159,14 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	protected CyEdge addEdge(DynNetwork<T> currentNetwork, String id, String label,
 			String source, String target, String start, String end)
 	{
-		return sinkList.get(0).addedEdge(currentNetwork, id, label, source, target, start, end);
+		return sink.addedEdge(currentNetwork, id, label, source, target, start, end);
 	}
 
 	@Override
 	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge,
 			String name, String value, String Type, String start, String end)
 	{
-		sinkList.get(0).addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
+		sink.addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
 	}
 	
 	@Override

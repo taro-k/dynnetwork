@@ -25,6 +25,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final DynNetwork<T> dynNetwork;
 	private final CyNetworkView view;
 	private final VisualStyle style;
+	final VisualMappingManager vmm;
 	
 	private double currentTime;
 
@@ -37,6 +38,9 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
 		this.style = vmm.getDefaultVisualStyle();
+		this.dynNetwork.removeMetaNodes();
+		this.vmm = vmm;
+		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
 		vmm.setVisualStyle(style, view);
@@ -45,8 +49,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		// TODO: FIXME
 		initNodes();
 		initEdges();
-		this.dynNetwork.expandAllGroups();
-		this.dynNetwork.collapseAllGroups();
+		view.updateView();
 	}
 
 	@Override
@@ -55,37 +58,63 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		return this.view;
 	}
 
+	@Override
 	public boolean readVisualProperty(CyNode node, VisualProperty<Boolean> vp) 
 	{
 		return view.getNodeView(node).getVisualProperty(vp).booleanValue();
 		
 	}
 
+	@Override
 	public void writeVisualProperty(CyNode node, VisualProperty<Boolean> vp, boolean value) 
 	{
 		view.getNodeView(node).setVisualProperty(vp,value);
 	}
 
+	@Override
 	public boolean readVisualProperty(CyEdge edge, VisualProperty<Boolean> vp) 
 	{
 		return view.getEdgeView(edge).getVisualProperty(vp).booleanValue();
 	}
 
+	@Override
 	public void writeVisualProperty(CyEdge edge, VisualProperty<Boolean> vp, boolean value) 
 	{
 		view.getEdgeView(edge).setVisualProperty(vp,value);
 	}
 
+	@Override
 	public void updateView() 
 	{
 		view.updateView();
 	}
+	
+	@Override
+	public void viewNestedImage() 
+	{
+		view.setLockedValue(BasicVisualLexicon.NODE_NESTED_NETWORK_IMAGE_VISIBLE,true);
+		VisualStyle viewStyle = vmm.getVisualStyle(view);
+		viewStyle.apply(view);
+	}
 
+	@Override
 	public DynNetwork<T> getNetwork() 
 	{
 		return this.dynNetwork;
 	}
 
+	@Override
+	public double getCurrentTime() 
+	{
+		return currentTime;
+	}
+
+	@Override
+	public void setCurrentTime(double currentTime) 
+	{
+		this.currentTime = currentTime;
+	}
+	
 	private void initNodes()
 	{
 		for (final View<CyNode> nodeView : view.getNodeViews())
@@ -96,15 +125,5 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		for (final View<CyEdge> edgeView : view.getEdgeViews())
 			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
-	}
-
-	public double getCurrentTime() 
-	{
-		return currentTime;
-	}
-
-	public void setCurrentTime(double currentTime) 
-	{
-		this.currentTime = currentTime;
 	}
 }

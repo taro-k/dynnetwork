@@ -1,7 +1,5 @@
 package org.cytoscape.dyn.internal.loaddynnetwork;
 
-import java.util.ArrayList;
-
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.dyn.internal.event.Sink;
 import org.cytoscape.dyn.internal.event.Source;
@@ -25,7 +23,7 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 	private final CyApplicationManager appManager;
 	private final DynNetworkManager<T> dynNetworkManager;
 	
-	private ArrayList<Sink<T>> sinkList = new ArrayList<Sink<T>>(1);
+	private Sink<T> sink;
 	
 	public LoadDynNetworkViewTask(
 			final CyApplicationManager appManager,
@@ -40,21 +38,21 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 	public void run(TaskMonitor tm) throws Exception
 	{
 		tm.setProgress(0.0);
-		sinkList.get(0).createView(dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork()));
+		sink.createView(dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork()));
 		tm.setProgress(1.0);
 	}
 
 	@Override
 	public void addSink(Sink<T> sink) 
 	{
-		sinkList.add(sink);
+		this.sink = sink;
 	}
 	
 	@Override
 	public void removeSink(Sink<T> sink) 
 	{
-		if (sinkList.contains(sink))
-			sinkList.remove(sink);
+		if (this.sink == sink)
+			this.sink = null;
 	}
 	
 }
