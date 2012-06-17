@@ -60,9 +60,18 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, false);
 		for (CyEdge edge : edgeList)
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, false);
-
+		
+		// update nodes
+		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
+			if (node!=null && nodeList.contains(node))
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, true);
+		}
+		
 		// update edges
-		List<DynInterval<T>> intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
+		intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
@@ -75,18 +84,6 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE, true);
 			}
 		}
-		
-		// update nodes
-		intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
-		for (DynInterval<T> interval : intervalList)
-		{
-			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
-			if (node!=null && nodeList.contains(node))
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, true);
-		}
-		
-//		if (group.isCollapsed(dynNetwork.getNetwork()))
-//			view.viewNestedImage();
 
 		view.updateView();
 		
