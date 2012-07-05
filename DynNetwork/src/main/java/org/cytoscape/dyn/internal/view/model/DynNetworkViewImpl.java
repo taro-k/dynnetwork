@@ -59,26 +59,26 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	}
 
 	@Override
-	public boolean readVisualProperty(CyNode node, VisualProperty<Boolean> vp) 
+	public int readVisualProperty(CyNode node, VisualProperty<Integer> vp) 
 	{
-		return view.getNodeView(node).getVisualProperty(vp).booleanValue();
+		return view.getNodeView(node).getVisualProperty(vp).intValue();
 		
 	}
 
 	@Override
-	public void writeVisualProperty(CyNode node, VisualProperty<Boolean> vp, boolean value) 
+	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value) 
 	{
 		view.getNodeView(node).setVisualProperty(vp,value);
 	}
 
 	@Override
-	public boolean readVisualProperty(CyEdge edge, VisualProperty<Boolean> vp) 
+	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp) 
 	{
-		return view.getEdgeView(edge).getVisualProperty(vp).booleanValue();
+		return view.getEdgeView(edge).getVisualProperty(vp).intValue();
 	}
 
 	@Override
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Boolean> vp, boolean value) 
+	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value) 
 	{
 		view.getEdgeView(edge).setVisualProperty(vp,value);
 	}
@@ -89,13 +89,13 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		view.updateView();
 	}
 	
-	@Override
-	public void viewNestedImage() 
-	{
-		view.setLockedValue(BasicVisualLexicon.NODE_NESTED_NETWORK_IMAGE_VISIBLE,true);
-		VisualStyle viewStyle = vmm.getVisualStyle(view);
-		viewStyle.apply(view);
-	}
+//	@Override
+//	public void viewNestedImage() 
+//	{
+//		view.setLockedValue(BasicVisualLexicon.NODE_NESTED_NETWORK_IMAGE_VISIBLE,true);
+//		VisualStyle viewStyle = vmm.getVisualStyle(view);
+//		viewStyle.apply(view);
+//	}
 
 	@Override
 	public DynNetwork<T> getNetwork() 
@@ -118,12 +118,16 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private void initNodes()
 	{
 		for (final View<CyNode> nodeView : view.getNodeViews())
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_VISIBLE, false);
+		{
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
+//			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, 0);
+		}
 	}
 
 	private void initEdges()
 	{
 		for (final View<CyEdge> edgeView : view.getEdgeViews())
-			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_VISIBLE, false);
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, 0);
 	}
 }

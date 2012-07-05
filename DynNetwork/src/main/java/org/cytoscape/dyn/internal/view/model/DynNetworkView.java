@@ -22,7 +22,7 @@ public interface DynNetworkView<T>
 	 * @param vp
 	 * @return visual property
 	 */
-	public boolean readVisualProperty(CyNode node, VisualProperty<Boolean> vp);
+	public int readVisualProperty(CyNode node, VisualProperty<Integer> vp);
 
 	/**
 	 * Write visual property of node.
@@ -30,7 +30,7 @@ public interface DynNetworkView<T>
 	 * @param vp
 	 * @param value
 	 */
-	public void writeVisualProperty(CyNode node, VisualProperty<Boolean> vp, boolean value);
+	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
 
 	/**
 	 * Read visual property of edge.
@@ -38,7 +38,7 @@ public interface DynNetworkView<T>
 	 * @param vp
 	 * @return visual property
 	 */
-	public boolean readVisualProperty(CyEdge edge, VisualProperty<Boolean> vp);
+	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp);
 	
 	/**
 	 * Write visual property of edge.
@@ -46,9 +46,9 @@ public interface DynNetworkView<T>
 	 * @param vp
 	 * @param value
 	 */
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Boolean> vp, boolean value);
+	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
 	
-	public void viewNestedImage();
+//	public void viewNestedImage();
 	
 	/**
 	 * Get network view.

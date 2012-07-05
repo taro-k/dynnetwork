@@ -57,9 +57,9 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		}
 
 		for (CyNode node : nodeList)
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, false);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 0);
 		for (CyEdge edge : edgeList)
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, false);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 0);
 		
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
@@ -67,7 +67,7 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		{
 			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
 			if (node!=null && nodeList.contains(node))
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, true);
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
 		}
 		
 		// update edges
@@ -76,12 +76,12 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		{
 			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
 			if (edge!=null && edgeList.contains(edge))
-				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, true);
+				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 			else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
 					edgeList.contains(dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow())))
 			{
 				CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
-				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE, true);
+				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 			}
 		}
 

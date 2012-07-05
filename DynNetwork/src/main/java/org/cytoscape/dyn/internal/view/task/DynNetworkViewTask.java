@@ -51,40 +51,17 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-		{
-			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
-			if (node!=null)
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE, 
-						!view.readVisualProperty(node, BasicVisualLexicon.NODE_VISIBLE));
-		}
+			switchTransparency(dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow()));
 		
 		// update edges
 		intervalList = dynNetwork.searchChangedEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-		{
-			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
-			if (edge!=null)
-			{
-				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE, 
-						!view.readVisualProperty(edge, BasicVisualLexicon.EDGE_VISIBLE));
-			}
-			else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()))
-			{
-				CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
-				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE, 
-						!view.readVisualProperty(metaEdge, BasicVisualLexicon.EDGE_VISIBLE));
-			}
-		}
-
-
+			switchTransparency(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow()),interval);
 
 		// update graph attributes
 		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-		{
 			dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue());
-//			System.out.println("t	ime " + low + " set " + interval.getValue());
-		}
 
 		//update selected node attributes
 		List<CyNode> nodeListSelected = CyTableUtil.getNodesInState(dynNetwork.getNetwork(),"selected",true);
@@ -94,10 +71,7 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 			for (CyNode node : nodeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (nodeListSelected.contains(dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow())))
-					{	
 						dynNetwork.writeNodeTable(node, interval.getAttribute().getKey().getColumn(), interval.getValue());
-//						System.out.println("node attr time " + low + " set " + interval.getValue());
-					}
 		}
 
 		//update selected edge attributes
@@ -108,16 +82,12 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 			for (CyEdge edge : edgeListSelected)
 				for (DynInterval<T> interval : intervalList)
 					if (edgeListSelected.contains(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow())))
-					{
 						dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue());
-//						System.out.println("edge attr time " + low + " set " + interval.getValue());
-					}
 					else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
 							edgeListSelected.contains(dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow())))
 					{
 						CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
 						dynNetwork.writeEdgeTable(metaEdge, interval.getAttribute().getKey().getColumn(), interval.getValue());
-//						System.out.println("metaedge attr time " + low + " set " + interval.getValue());
 					}
 		}
 
@@ -125,6 +95,26 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 		
 		queue.unlock(); 
 
+	}
+
+	private void switchTransparency(CyNode node)
+	{
+		if (node!=null)
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255));
+	}
+
+	private void switchTransparency(CyEdge edge, DynInterval<T> interval)
+	{
+		if (edge!=null)
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255));
+		else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()))
+		{
+			CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
+			view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255));
+		}
 	}
 
 }
