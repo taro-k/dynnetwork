@@ -21,12 +21,14 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 	private final double low;
 	private final double high;
 	private final CyGroup group;
+	private final int visibility;
 
 	public DynNetworkViewTaskGroup(
 			final DynNetworkView<T> view,
 			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
 			double low, double high,
+			final int visibility,
 			final CyGroup group) 
 	{
 		this.view = view;
@@ -35,12 +37,15 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		this.low = low;
 		this.high = high;
 		this.group = group;
+		this.visibility = visibility;
 	}
 
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
-		queue.lock(); 
+		queue.lock();
+		
+		view.updateView();
 
 		List<CyNode> nodeList = new ArrayList<CyNode>();
 		List<CyEdge> edgeList = new ArrayList<CyEdge>();
@@ -57,9 +62,13 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		}
 
 		for (CyNode node : nodeList)
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 0);
+		{
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+		}
 		for (CyEdge edge : edgeList)
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 0);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
 		
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
@@ -67,7 +76,9 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		{
 			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
 			if (node!=null && nodeList.contains(node))
+			{
 				view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
+			}
 		}
 		
 		// update edges
@@ -77,12 +88,6 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
 			if (edge!=null && edgeList.contains(edge))
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
-			else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
-					edgeList.contains(dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow())))
-			{
-				CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
-				view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
-			}
 		}
 
 		view.updateView();

@@ -138,6 +138,18 @@ public final class DynNode<T>
 		}
 		return nodeList;
 	}
+	
+	public List<DynNode<T>> searchNodesNot(DynInterval<T> interval, List<DynNode<T>> nodeList)
+	{
+		if (!this.isLeaf())
+		{
+			this.children[0].searchNodesNot(interval, nodeList);
+			if (this.intervalList.get(0).compareTo(interval)<0)
+				nodeList.add(this);
+			this.children[1].searchNodesNot(interval, nodeList);
+		}
+		return nodeList;
+	}
 
 	public String toString(String string)
 	{

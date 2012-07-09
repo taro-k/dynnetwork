@@ -12,7 +12,7 @@ import org.cytoscape.work.TaskMonitor;
 
 /**
  * <code> DynNetworkViewAttrTask </code> is the task that is responsible for updating
- * all attributes.
+ * all attributes when the current time interval is changed.
  * 
  * @author sabina
  *

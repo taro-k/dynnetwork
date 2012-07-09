@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -26,6 +27,8 @@ import javax.swing.event.ChangeListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkViewEvent;
 import org.cytoscape.application.events.SetCurrentNetworkViewListener;
+import org.cytoscape.application.events.SetSelectedNetworksEvent;
+import org.cytoscape.application.events.SetSelectedNetworksListener;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
@@ -36,8 +39,17 @@ import org.cytoscape.dyn.internal.view.task.BlockingQueue;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskGroup;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
+import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
+import org.cytoscape.model.CyTable;
+import org.cytoscape.model.events.RowSetRecord;
+import org.cytoscape.model.events.RowsSetEvent;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -65,9 +77,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private DynNetworkView<T> view;
 	
 	private double time;
-	private double offset;
 	private double minTime;
 	private double maxTime;
+	
+	private int visibility = 0;
 	
 	private int sliderMax;
 	private DynNetworkViewTaskIterator<T> recursiveTask;
@@ -79,6 +92,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
 	private JButton forwardButton, backwardButton,stopButton;
+	private JCheckBox seeAllCheck;
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter;
 
@@ -127,6 +141,15 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 					recursiveTask.cancel();
 			}
 		}
+		else if (event.getSource() instanceof JCheckBox)
+		{
+			JCheckBox source = (JCheckBox)event.getSource();
+			if (source.isSelected())
+				visibility = 30;
+			else
+				visibility = 0;
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTransparencyTask<T>(view, network, queue, time, time, visibility)));
+		}
 		else if (event.getSource() instanceof JComboBox)
 		{
 			JComboBox source = (JComboBox)event.getSource();
@@ -145,7 +168,9 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		{
 			if (view!=null)
 				view.setCurrentTime((double) slider.getValue()/sliderMax);
+			
 			view = viewManager.getDynNetworkView(e.getNetworkView());
+			
 			if (view!=null)
 			{
 				network = view.getNetwork();
@@ -162,26 +187,48 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	public void handleEvent(GroupCollapsedEvent e)
 	{
 		if (view!=null)
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(view, network, queue, time, time, e.getSource())));
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(view, network, queue, time, time, visibility, e.getSource())));
 	}
+	
+//	void handleEvent(RowsSetEvent e)
+//	{
+//	    if (!e.containsColumn(CyNetwork.SELECTED))
+//	        return;
+//	    
+//	    
+//
+//	    for (RowSetRecord record : e.getColumnRecords(CyNetwork.SELECTED))
+//	    {
+//	    	if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
+//	    	{
+//	    		CyTable table = (CyTable) e.getSource();
+//	    		
+//	    	}
+//	    	else if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
+//	    	{
+//	    		
+//	    	}
+//	    	else if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
+//	    	{
+//	    		
+//	    	}
+//	    }
+//	}
 	
 	public Component getComponent() 
 	{
 		return this;
 	}
 
-
 	public CytoPanelName getCytoPanelName() 
 	{
 		return CytoPanelName.WEST;
 	}
 
-
 	public String getTitle() 
 	{
 		return "Dynamic Network";
 	}
-
 
 	public Icon getIcon() 
 	{
@@ -225,12 +272,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		buttonPanel.add(stopButton);
 		buttonPanel.add(forwardButton);
 		
+		seeAllCheck = new JCheckBox("Display all",false);
+		seeAllCheck.addActionListener(this);
+		
 		dynVizPanel = new JPanel();
-		dynVizPanel.setLayout(new GridLayout(5,1));
+		dynVizPanel.setLayout(new GridLayout(6,1));
 		dynVizPanel.add(currentTime);
 		dynVizPanel.add(slider);
 		dynVizPanel.add(new JLabel("Time resolution"));
 		dynVizPanel.add(resolutionComboBox);
+		dynVizPanel.add(seeAllCheck);
 		dynVizPanel.add(buttonPanel);
 		
 		featurePanel = new JPanel();
@@ -263,10 +314,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				);
 				layout.setVerticalGroup(
 				   layout.createSequentialGroup()
-				      .addComponent(dynVizPanel, 250,
-				    		  GroupLayout.DEFAULT_SIZE, 250)
+				      .addComponent(dynVizPanel, 270,
+				    		  GroupLayout.DEFAULT_SIZE, 270)
 				      .addComponent(featurePanel, GroupLayout.DEFAULT_SIZE,
-				    		  550 , Short.MAX_VALUE)
+				    		  530 , Short.MAX_VALUE)
 				);
 
 		this.setVisible(true);
@@ -278,6 +329,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		if (view!=null)
 		{
 			network = view.getNetwork();
+			initTransparency();
+			
 			minTime = network.getMinTime();
 			maxTime = network.getMaxTime();
 			updateSliderMax(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
@@ -288,10 +341,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	
 	private void updateView()
 	{
-		offset = slider.getValue()!=100?slider.getValue():slider.getValue()-0.000000001;
-		time = offset*((maxTime-minTime)/sliderMax)+(minTime);
+		time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
 		currentTime.setText("Current time = " + formatter.format(time));
-		taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time, time)));
+		if (time==this.network.getMaxTime())
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time-0.0000001, time+0.0000001, visibility)));
+		else
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(view, network, queue, time, time, visibility)));
 	}
 	
 	private void updateGui()
@@ -336,6 +391,39 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 //        
 //        }
 //}
+	
+	private void initTransparency()
+	{
+		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
+		{
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+		}
+		
+		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+	}
+	
+//	void handleEvent(RowsSetEvent e) {
+//		
+//		
+//
+//	    if (e.getSource() != tableICareAbout)
+//
+//	        return;
+//
+//	    if (!e.containsColumn(CyNetwork.SELECTED)
+//
+//	        return;
+//
+//	    for (RowSetRecord record : e.getColumnRecords(CyNetwork.SELECTED)) {
+//
+//	        // do something for the nodes you care about!
+//
+//	    }
+//
+//	}
 
 }
 

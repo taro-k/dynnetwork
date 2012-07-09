@@ -2,6 +2,7 @@ package org.cytoscape.dyn.internal.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.cytoscape.dyn.internal.model.tree.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -32,6 +33,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private final DynNetworkManagerImpl<T> manager;
 	private final CyNetworkNaming nameUtil;
 	
+	private final List<CyNode> metaNodes;
+	
 	public DynNetworkFactoryImpl(
 			final CyNetworkFactory networkFactory,
 			final CyRootNetworkManager rootNetworkManager,
@@ -47,7 +50,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		this.manager = manager;
 		this.nameUtil = nameUtil;
 		
-		typeMap = new ObjectTypeMap();
+		this.typeMap = new ObjectTypeMap();
+		this.metaNodes = new ArrayList<CyNode>();
 	}
 
 	@Override
@@ -72,6 +76,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		CyGroup currentGroup = groupFactory.createGroup(dynNetwork.getNetwork(), currentNode, true);
 		groupManager.addGroup(currentGroup);
+		metaNodes.add(currentNode);
 		return currentGroup;
 	}
 	
@@ -127,12 +132,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		dynNetwork.removeEdge(edge);
 		dynNetwork.getNetwork().removeEdges(getEdgeRemoveList(edge));
 	}
-	
-	@Override
-	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
-	{
-		dynNetwork.print();
-	}
 
 	private void setElement(DynNetwork<T> dynNetwork, String id, String label, String value, String start, String end)
 	{
@@ -177,6 +176,19 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
 		dynNetwork.insertEdgeAttr(edge, attName, getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end));
+	}
+	
+	@Override
+	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
+	{
+		dynNetwork.getNetwork().removeNodes(metaNodes);
+	}
+	
+	@Override
+	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork) 
+	{
+		// do nothing
+		return null;
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
@@ -335,12 +347,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			return Double.parseDouble(end);
 		else
 			return Double.POSITIVE_INFINITY;
-	}
-
-	@Override
-	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork) 
-	{
-		return null;
 	}
 
 }

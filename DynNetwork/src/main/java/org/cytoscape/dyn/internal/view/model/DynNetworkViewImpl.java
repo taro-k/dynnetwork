@@ -6,9 +6,7 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualProperty;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
 
@@ -16,7 +14,7 @@ import org.cytoscape.view.vizmap.VisualStyle;
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
  * dynamic networks {@link DynNetworkView}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */
@@ -25,7 +23,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final DynNetwork<T> dynNetwork;
 	private final CyNetworkView view;
 	private final VisualStyle style;
-	final VisualMappingManager vmm;
 	
 	private double currentTime;
 
@@ -33,23 +30,16 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 			DynNetwork<T> dynNetwork,
 			final CyNetworkViewManager networkViewManager,
 			final CyNetworkViewFactory cyNetworkViewFactory,
-			final VisualMappingManager vmm)
+			final VisualMappingManager cyStyleManager)
 	{
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
-		this.style = vmm.getDefaultVisualStyle();
-		this.dynNetwork.removeMetaNodes();
-		this.vmm = vmm;
+		this.style = cyStyleManager.getDefaultVisualStyle();
 		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
-		vmm.setVisualStyle(style, view);
+		cyStyleManager.setVisualStyle(style, view);
 		style.apply(view);
-		
-		// TODO: FIXME
-		initNodes();
-		initEdges();
-		view.updateView();
 	}
 
 	@Override
@@ -88,14 +78,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		view.updateView();
 	}
-	
-//	@Override
-//	public void viewNestedImage() 
-//	{
-//		view.setLockedValue(BasicVisualLexicon.NODE_NESTED_NETWORK_IMAGE_VISIBLE,true);
-//		VisualStyle viewStyle = vmm.getVisualStyle(view);
-//		viewStyle.apply(view);
-//	}
 
 	@Override
 	public DynNetwork<T> getNetwork() 
@@ -113,21 +95,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	public void setCurrentTime(double currentTime) 
 	{
 		this.currentTime = currentTime;
-	}
+	}	
 	
-	private void initNodes()
-	{
-		for (final View<CyNode> nodeView : view.getNodeViews())
-		{
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, 0);
-//			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 0);
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, 0);
-		}
-	}
-
-	private void initEdges()
-	{
-		for (final View<CyEdge> edgeView : view.getEdgeViews())
-			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, 0);
-	}
 }

@@ -181,6 +181,22 @@ public interface DynNetwork<T>
 	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval);
 	
 	/**
+	 * Search not overlapping intervals for nodes given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of not overlapping intervals
+	 */
+	public List<DynInterval<T>> searchNodesNot(DynInterval<T> interval);
+	
+	/**
+	 * Search not overlapping intervals for edges given an interval
+	 * from the last search.
+	 * @param interval
+	 * @return list of not overlapping intervals
+	 */
+	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval);
+	
+	/**
 	 * Get dynamic attribute for given network and name.
 	 * @param network
 	 * @param column
@@ -203,21 +219,6 @@ public interface DynNetwork<T>
 	 * @return dynamic attribute
 	 */
 	public DynAttribute<T> getDynAttribute(CyEdge edge, String column);
-	
-	/**
-	 * Collapse all Groups.
-	 */
-    public void collapseAllGroups();
-    
-    /**
-     * Expand all Groups.
-     */
-    public void expandAllGroups();
-    
-    /**
-     * Remove metaNodes
-     */
-    public void removeMetaNodes();
 	
     /**
      * Get network.
@@ -305,6 +306,11 @@ public interface DynNetwork<T>
 	public void writeEdgeTable(CyEdge edge, String name, T value);
 	
 	/**
+	 * Finalize network.
+	 */
+	public void finalizeNetwork();
+	
+	/**
 	 * Get minimum time.
 	 * @return minimum time
 	 */
@@ -321,20 +327,6 @@ public interface DynNetwork<T>
 	 * @return boolean
 	 */
 	public boolean isDirected();
-	
-	/**
-	 * Check if it's metaEdge
-	 * @param suid
-	 * @return is metaEdge
-	 */
-	public boolean isMetaEdge(long suid); 
-	
-	/**
-	 * Get meta edge corresponding to this edge
-	 * @param edge SUID
-	 * @return metaEdge
-	 */
-	public CyEdge getMetaEdge(long suid);
 	
 	/**
 	 * Print out.

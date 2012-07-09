@@ -95,7 +95,10 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 //		sink.deletedEdgeAttribute(currentNetwork, edge, label);
 	}
 	
-	abstract protected void finalizeNetwork(DynNetwork<T> dynNetwork);
+	protected void finalize(DynNetwork<T> currentNetwork)
+	{
+		sink.finalizeNetwork(currentNetwork);
+	}
 	
 	abstract protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
 

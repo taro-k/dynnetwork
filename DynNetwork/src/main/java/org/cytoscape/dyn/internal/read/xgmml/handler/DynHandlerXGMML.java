@@ -145,7 +145,9 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		switch(current)
 		{
 		case GRAPH:
-			this.finalizeNetwork(currentNetwork);
+			while (!orphanEdgeList.isEmpty())
+				orphanEdgeList.pop().add(this);
+			finalize(currentNetwork);
 			break;
 			
 		case NODE_GRAPH:
@@ -167,13 +169,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			String name, String value, String Type, String start, String end)
 	{
 		sink.addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
-	}
-	
-	@Override
-	protected void finalizeNetwork(DynNetwork<T> dynNetwork)
-	{
-		while (!orphanEdgeList.isEmpty())
-			orphanEdgeList.pop().add(this);
 	}
 	
 	@Override

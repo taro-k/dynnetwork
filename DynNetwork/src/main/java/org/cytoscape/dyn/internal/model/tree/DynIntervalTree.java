@@ -36,6 +36,13 @@ public interface DynIntervalTree<T>
 	 * @return list of overlapping intervals with the given interval.
 	 */
 	public List<DynInterval<T>> search(DynInterval<T> interval);
+	
+    /**
+     * Search not overlapping intervals in the tree.
+	 * @param interval
+	 * @return list of not overlapping intervals with the given interval.
+	 */
+	public List<DynInterval<T>> searchNot(DynInterval<T> interval);
 
     /**
      * Clear interval tree.

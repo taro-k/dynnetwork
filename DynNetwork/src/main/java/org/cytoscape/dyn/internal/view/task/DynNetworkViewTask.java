@@ -14,7 +14,9 @@ import org.cytoscape.work.TaskMonitor;
 
 /**
  * <code> DynNetworkViewTask </code> is the task that is responsible for updating
- * all attributes.
+ * all elements when the current time interval is changed. In order to increase speed 
+ * performance, only elements that changed from the last visualization are updated,
+ * and only attributes of selected elements are updated.
  * 
  * @author sabina
  *
@@ -27,18 +29,20 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	private final BlockingQueue queue;
 	private final double low;
 	private final double high;
+	private final int visibility;
 
 	public DynNetworkViewTask(
 			final DynNetworkView<T> view,
 			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
-			double low, double high) 
+			final double low, final double high, final int visibility) 
 	{
 		this.view = view;
 		this.dynNetwork = dynNetwork;
 		this.queue = queue;
 		this.low = low;
 		this.high = high;
+		this.visibility = visibility;
 	}
 
 	@Override
@@ -83,12 +87,6 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 				for (DynInterval<T> interval : intervalList)
 					if (edgeListSelected.contains(dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow())))
 						dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue());
-					else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()) &&
-							edgeListSelected.contains(dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow())))
-					{
-						CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
-						dynNetwork.writeEdgeTable(metaEdge, interval.getAttribute().getKey().getColumn(), interval.getValue());
-					}
 		}
 
 		view.updateView();
@@ -100,21 +98,21 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	private void switchTransparency(CyNode node)
 	{
 		if (node!=null)
+		{
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255));
+					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255)+visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)-255)+visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)-255)+visibility);
+		}
 	}
 
 	private void switchTransparency(CyEdge edge, DynInterval<T> interval)
 	{
 		if (edge!=null)
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255));
-		else if (dynNetwork.isMetaEdge(interval.getAttribute().getKey().getRow()))
-		{
-			CyEdge metaEdge = dynNetwork.getMetaEdge(interval.getAttribute().getKey().getRow());
-			view.writeVisualProperty(metaEdge, BasicVisualLexicon.EDGE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255));
-		}
+					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255)+visibility);
 	}
 
 }

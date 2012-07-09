@@ -81,6 +81,25 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	}
 	
 	@Override
+	public List<DynInterval<T>> searchNot(DynInterval<T> interval)
+	{
+		return searchIntervalsNot(interval, new ArrayList<DynInterval<T>>());
+	}
+	
+	protected List<DynInterval<T>> searchIntervalsNot(DynInterval<T> interval, List<DynInterval<T>> intervalList)
+    {
+    	for (DynNode<T> node : searchNodesNot(interval))
+    		for (DynInterval<T> i : node.getIntervalList())
+    			intervalList.add(i);
+    	return intervalList;
+    }
+	
+	protected List<DynNode<T>> searchNodesNot(DynInterval<T> interval)
+	{
+		return root.getLeft().searchNodesNot(interval, new ArrayList<DynNode<T>>());
+	}
+	
+	@Override
 	public void clear()
 	{
 		this.nil.setParent(this.nil);

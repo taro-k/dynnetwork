@@ -106,7 +106,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	@Override
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
-
+		
 	}
 	
 
