@@ -1,3 +1,22 @@
+/*
+ * DynNetwork plugin for Cytoscape 3.0 (http://www.cytoscape.org/).
+ * Copyright (C) 2012 Sabina Sara Pfister
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.cytoscape.dyn.internal.model;
 
 import java.util.ArrayList;
@@ -9,7 +28,6 @@ import org.cytoscape.dyn.internal.model.tree.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
 import org.cytoscape.dyn.internal.util.KeyPairs;
-import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -108,6 +126,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	@Override
 	public void writeNodeTable(CyNode node, String name, T value) 
 	{
+//		System.out.println(name + " set = " + value.toString());
+//		System.out.println(name + " " + CyNetwork.SELECTED);
 		network.getRow(node).set(name, value);
 	}
 
@@ -243,6 +263,18 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
+	public List<DynInterval<T>> searchNodesNot(DynInterval<T> interval)
+	{
+		return nodeTree.searchNot(interval);
+	}
+
+	@Override
+	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval)
+	{
+		return edgeTree.searchNot(interval);
+	}
+	
+	@Override
 	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
 	{
 		List<DynInterval<T>> tempList = nodeTree.search(interval);
@@ -303,18 +335,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		List<DynInterval<T>> changedList = nonOverlap(currentEdgesAttr, tempList);
 		currentEdgesAttr = tempList;
 		return changedList;
-	}
-	
-	@Override
-	public List<DynInterval<T>> searchNodesNot(DynInterval<T> interval)
-	{
-		return nodeTree.searchNot(interval);
-	}
-
-	@Override
-	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval)
-	{
-		return edgeTree.searchNot(interval);
 	}
 
 	@Override
