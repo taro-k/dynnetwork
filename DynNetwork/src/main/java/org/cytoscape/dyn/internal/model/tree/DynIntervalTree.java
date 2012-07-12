@@ -40,14 +40,29 @@ public interface DynIntervalTree<T>
     /**
      * Insert new interval to the tree.
 	 * @param interval
+	 * @param object id
 	 */
-	public void insert(DynInterval<T> interval);
+	public void insert(DynInterval<T> interval, long id);
    
     /**
      * Removes interval from the tree if exists.
 	 * @param interval
+	 * @param object id
 	 */
-	public void remove(DynInterval<T> interval);
+	public void remove(DynInterval<T> interval, long id);
+	
+	/**
+	 * Get all intervals contained in this interval tree.
+	 * @return list of intervals in this interval tree.
+	 */
+	public List<DynInterval<T>> searchAll();
+	
+	/**
+	 * Get all intervals corresponding to this object id
+	 * @param object id
+	 * @return
+	 */
+	public List<DynInterval<T>> getIntervals(long id);
 	
     /**
      * Search overlapping intervals in the tree.
@@ -68,11 +83,10 @@ public interface DynIntervalTree<T>
 	 */
 	public void clear();
 	
-    /**
-     * Print list of current nodes.
-	 * @param root
+	/**
+	 * Print interval tree.
 	 */
-	public void print(DynNode<T> node);
+	public void print();
 
        
 }

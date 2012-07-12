@@ -32,6 +32,7 @@ import java.util.List;
  *
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 public final class DynNode<T>
 {
 	private DynNode<T> parent;
@@ -145,6 +146,47 @@ public final class DynNode<T>
 		return this.intervalList.get(0).getEnd();
 	}
 	
+	public List<DynInterval<T>> searchAll(List<DynInterval<T>> intervalList)
+	{
+		if (!this.isLeaf())
+		{
+			this.children[0].searchAll(intervalList);
+			for (DynInterval<T> interval : this.intervalList)
+				intervalList.add(interval);
+			this.children[1].searchAll(intervalList);
+		}
+		return intervalList;
+	}
+	
+	public List<DynInterval<T>> searchNot(List<DynInterval<T>> intervalList, DynInterval<T> interval)
+	{
+		if (!this.isLeaf())
+		{
+			this.children[0].searchNot(intervalList, interval);
+			if (this.intervalList.get(0).compareTo(interval)<0)
+				for (DynInterval<T> i : this.intervalList)
+					intervalList.add(i);
+			this.children[1].searchNot(intervalList,interval);
+		}
+		
+		return intervalList;
+	}
+	
+	public List<DynInterval<T>> search(List<DynInterval<T>> intervalList, DynInterval<T> interval)
+	{
+		if (!this.isLeaf() && interval.getStart()<=this.getMax())
+		{
+			this.children[0].search(intervalList, interval);
+			if (this.intervalList.get(0).compareTo(interval)>0)
+				for (DynInterval<T> i : this.intervalList)
+					intervalList.add(i);
+			if (interval.getEnd()>this.intervalList.get(0).getStart() ||
+					(this.intervalList.get(0).getStart()==this.intervalList.get(0).getEnd() && interval.getEnd()>=this.intervalList.get(0).getStart()))
+				this.children[1].search(intervalList, interval);
+		}
+		return intervalList;
+	}
+	
 	public List<DynNode<T>> searchNodes(DynInterval<T> interval, List<DynNode<T>> nodeList)
 	{
 		if (!this.isLeaf() && interval.getStart()<=this.getMax())
@@ -152,37 +194,26 @@ public final class DynNode<T>
 			this.children[0].searchNodes(interval, nodeList);
 			if (this.intervalList.get(0).compareTo(interval)>0)
 				nodeList.add(this);
-			if (interval.getEnd()>this.intervalList.get(0).getStart())
+			if (interval.getEnd()>this.intervalList.get(0).getStart() ||
+					(this.intervalList.get(0).getStart()==this.intervalList.get(0).getEnd() && interval.getEnd()>=this.intervalList.get(0).getStart()))
 				this.children[1].searchNodes(interval, nodeList);
 		}
 		return nodeList;
 	}
-	
-	public List<DynNode<T>> searchNodesNot(DynInterval<T> interval, List<DynNode<T>> nodeList)
-	{
-		if (!this.isLeaf())
-		{
-			this.children[0].searchNodesNot(interval, nodeList);
-			if (this.intervalList.get(0).compareTo(interval)<0)
-				nodeList.add(this);
-			this.children[1].searchNodesNot(interval, nodeList);
-		}
-		return nodeList;
-	}
 
-	public String toString(String string)
+	public String print(String string)
 	{
 		if(!this.isLeaf())	
 		{
-			string = this.children[0].toString(string  + "\n");
-			string = string + " node " + " " + this.isBlack + " " + intervalList.get(0).getStart() + " " + intervalList.get(0).getEnd() + " " + this.max + " >";
+			string = this.children[0].print(string  + "\n");
+			string = string + " node " + " " + intervalList.get(0).getStart() + " " + intervalList.get(0).getEnd() + " " + this.max + " >";
 			if (!this.getParent().isLeaf())
 				string = string + " parent " + " " + this.parent.intervalList.get(0).getStart() + " " + this.parent.intervalList.get(0).getEnd();
 			if (!this.children[0].isLeaf())
 				string = string + " left  " + " " + this.children[0].intervalList.get(0).getStart() + " " + this.children[0].intervalList.get(0).getEnd();
 			if (!this.children[1].isLeaf())
 				string = string + " right " + " " + this.children[1].intervalList.get(0).getStart() + " " + this.children[1].intervalList.get(0).getEnd();
-			string = this.children[1].toString(string  + "\n");	
+			string = this.children[1].print(string  + "\n");	
 		}
 		return string;
 	}

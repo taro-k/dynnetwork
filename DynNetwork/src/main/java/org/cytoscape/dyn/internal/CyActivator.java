@@ -50,7 +50,6 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
-import org.cytoscape.work.undo.UndoSupport;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -68,6 +67,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		super();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void start(BundleContext context)
 	{
 		CySwingApplication cytoscapeDesktopService = getService(context,CySwingApplication.class);
@@ -85,7 +85,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	FileUtil fileUtil = getService(context,FileUtil.class);
     	StreamUtil streamUtil = getService(context,StreamUtil.class);
     	TunableSetter tunableSetterServiceRef = getService(context,TunableSetter.class);
-    	UndoSupport undo = getService(context,UndoSupport.class);
+//    	UndoSupport undo = getService(context,UndoSupport.class);
     	
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
 		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);

@@ -45,9 +45,9 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
 		super(root);
 	}
 	
-	public DynIntervalTreeImpl(DynInterval<T> interval)
+	public DynIntervalTreeImpl(DynInterval<T> interval, long id)
 	{
-		super(interval);
+		super(interval, id);
 	}
 	
 	protected void insert(DynNode<T> z, DynNode<T> root)

@@ -93,7 +93,7 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : intervalList)
 		{
-			CyNode node = dynNetwork.readNodeTable(interval.getAttribute().getKey().getRow());
+			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
 			if (node!=null && nodeList.contains(node))
 			{
 				view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
@@ -104,7 +104,7 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 		intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
 		for (DynInterval<T> interval : intervalList)
 		{
-			CyEdge edge = dynNetwork.readEdgeTable(interval.getAttribute().getKey().getRow());
+			CyEdge edge = dynNetwork.getEdge(interval.getAttribute().getKey().getRow());
 			if (edge!=null && edgeList.contains(edge))
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 		}

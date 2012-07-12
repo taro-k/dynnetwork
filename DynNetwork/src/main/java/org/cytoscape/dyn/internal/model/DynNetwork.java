@@ -122,6 +122,26 @@ public interface DynNetwork<T>
 	public void removeEdgeAttr(CyEdge edge);
 	
 	/**
+	 * Get all intervals belonging to this network.
+	 * @return
+	 */
+	public List<DynInterval<T>> getIntervals();
+
+	/**
+	 * Get all intervals belonging to this node.
+	 * @param node
+	 * @return
+	 */
+	public List<DynInterval<T>> getIntervals(CyNode node);
+
+	/**
+	 * Get all intervals belonging to this edge.
+	 * @param edge
+	 * @return
+	 */
+	public List<DynInterval<T>> getIntervals(CyEdge edge);
+	
+	/**
 	 * Search overlapping intervals for nodes given an interval
 	 * from the last search.
 	 * @param interval
@@ -253,11 +273,25 @@ public interface DynNetwork<T>
 	public long getCyNode(String id);
 	
 	/**
+	 * Get node.
+	 * @param key
+	 * @return node
+	 */
+	public CyNode getNode(long key);
+	
+	/**
 	 * Get edge.
 	 * @param id
 	 * @return edge
 	 */
 	public long getCyEdge(String id);
+	
+	/**
+	 * Get edge
+	 * @param key
+	 * @return edge
+	 */
+	public CyEdge getEdge(long key);
 	
 	/**
 	 * Contains node.
@@ -288,21 +322,22 @@ public interface DynNetwork<T>
 	public void setCyEdge(String id, long value);
 	
 	/**
-	 * Write to graph.
+	 * Write to graph table.
 	 * @param name
 	 * @param value
 	 */
 	public void writeGraphTable(String name, T value);
 	
 	/**
-	 * Get node.
-	 * @param key
-	 * @return node
+	 * Read graph table.
+	 * @param name
+	 * @param value
+	 * @return
 	 */
-	public CyNode readNodeTable(long key);
+	public T readGraphTable(String name, T value);
 	
 	/**
-	 * Write to node.
+	 * Write to node table.
 	 * @param node
 	 * @param name
 	 * @param value
@@ -310,19 +345,30 @@ public interface DynNetwork<T>
 	public void writeNodeTable(CyNode node, String name, T value);
 	
 	/**
-	 * Get edge
-	 * @param key
-	 * @return edge
+	 * Read node table.
+	 * @param node
+	 * @param name
+	 * @param value
+	 * @return
 	 */
-	public CyEdge readEdgeTable(long key);
+	public T readNodeTable(CyNode node, String name, T value);
 	
 	/**
-	 * Write to edge.
+	 * Write to edge table.
 	 * @param edge
 	 * @param name
 	 * @param value
 	 */
 	public void writeEdgeTable(CyEdge edge, String name, T value);
+	
+	/**
+	 * Read edge table.
+	 * @param edge
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	public T readEdgeTable(CyEdge edge, String name, T value);
 	
 	/**
 	 * Finalize network.
@@ -346,10 +392,5 @@ public interface DynNetwork<T>
 	 * @return boolean
 	 */
 	public boolean isDirected();
-	
-	/**
-	 * Print out.
-	 */
-	public void print();
 
 }

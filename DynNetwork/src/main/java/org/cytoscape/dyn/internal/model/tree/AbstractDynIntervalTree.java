@@ -20,7 +20,9 @@
 package org.cytoscape.dyn.internal.model.tree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <code> AbstractDynIntervalTree </code> abstract class for the implementation of a 
@@ -35,12 +37,16 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	protected final DynNode<T> root;
 	protected final DynNode<T> nil;
 	
-	protected List<DynInterval<T>> currentIntervals = new ArrayList<DynInterval<T>>();
+	protected final Map<Long,List<DynInterval<T>>> intervalMap;
+	protected List<DynInterval<T>> currentIntervals;
 	
 	public AbstractDynIntervalTree()
 	{
 		this.nil = new DynNode<T>();
 		this.root = new DynNode<T>();
+		
+		this.intervalMap = new HashMap<Long,List<DynInterval<T>>>();
+		this.currentIntervals = new ArrayList<DynInterval<T>>();
 	}
 	
 	public AbstractDynIntervalTree(DynNode<T> root)
@@ -49,9 +55,10 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 		this.root.setLeft(root);
 	}
 	
-	public AbstractDynIntervalTree(DynInterval<T> interval)
+	public AbstractDynIntervalTree(DynInterval<T> interval, long id)
 	{
 		this(new DynNode<T>(interval, new DynNode<T>()));
+		addInterval(id, interval);
 	}
 
 	@Override
@@ -61,61 +68,48 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	}
 	
 	@Override
-	public void insert(DynInterval<T> interval)
+	public void insert(DynInterval<T> interval, long id)
 	{	
 		insert(new DynNode<T>(interval, nil), root.getLeft());
+		addInterval(id, interval);
 	}
 	
 	abstract protected void insert(DynNode<T> z, DynNode<T> root);
 	
 	@Override
-	public void remove(DynInterval<T> interval)
+	public void remove(DynInterval<T> interval, long id)
 	{
 		for (DynNode<T> n : searchNodes(interval))
 			if (n.getIntervalList().size()>1)
 				n.getIntervalList().remove(interval);
 			else
 				remove(n);
+		removeInterval(id, interval);
 	}
 	
 	abstract protected void remove(DynNode<T> z);
 	
 	@Override
-	public List<DynInterval<T>> search(DynInterval<T> interval)
+	public List<DynInterval<T>> searchAll()
 	{
-		return searchIntervals(interval, new ArrayList<DynInterval<T>>());
-	}
-	
-	protected List<DynInterval<T>> searchIntervals(DynInterval<T> interval, List<DynInterval<T>> intervalList)
-    {
-    	for (DynNode<T> node : searchNodes(interval))
-    		for (DynInterval<T> i : node.getIntervalList())
-    			intervalList.add(i);
-    	return intervalList;
-    }
-	
-	protected List<DynNode<T>> searchNodes(DynInterval<T> interval)
-	{
-		return root.getLeft().searchNodes(interval, new ArrayList<DynNode<T>>());
+		return root.getLeft().searchAll(new ArrayList<DynInterval<T>>());
 	}
 	
 	@Override
 	public List<DynInterval<T>> searchNot(DynInterval<T> interval)
 	{
-		return searchIntervalsNot(interval, new ArrayList<DynInterval<T>>());
+		return root.getLeft().searchNot(new ArrayList<DynInterval<T>>(), interval);
 	}
 	
-	protected List<DynInterval<T>> searchIntervalsNot(DynInterval<T> interval, List<DynInterval<T>> intervalList)
-    {
-    	for (DynNode<T> node : searchNodesNot(interval))
-    		for (DynInterval<T> i : node.getIntervalList())
-    			intervalList.add(i);
-    	return intervalList;
-    }
-	
-	protected List<DynNode<T>> searchNodesNot(DynInterval<T> interval)
+	@Override
+	public List<DynInterval<T>> search(DynInterval<T> interval)
 	{
-		return root.getLeft().searchNodesNot(interval, new ArrayList<DynNode<T>>());
+		return root.getLeft().search(new ArrayList<DynInterval<T>>(), interval);
+	}
+
+	protected List<DynNode<T>> searchNodes(DynInterval<T> interval)
+	{
+		return root.getLeft().searchNodes(interval, new ArrayList<DynNode<T>>());
 	}
 	
 	@Override
@@ -128,17 +122,37 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	}
 	
 	@Override
-	public void print(DynNode<T> node)
+	public List<DynInterval<T>> getIntervals(long id)
 	{
-//		System.out.print(root.getLeft().toString(""));
-//		System.out.println("\nINTERVLAS #1");
-//		for (DynInterval<T> interval : searchIntervals(new DynInterval<T>(4,7)))
-//			System.out.println(interval.getStart() + " " + interval.getEnd());
-//		
-//		this.remove(new DynInterval<T>(4,7));
-//		
-//		System.out.println("\nREMOVE #1");
-//		System.out.print(root.getLeft().toString(""));
+		if (this.intervalMap.containsKey(id))
+			return this.intervalMap.get(id);
+		else
+			return new ArrayList<DynInterval<T>>();
+	}
+	
+	protected void addInterval(long id, DynInterval<T> interval)
+	{
+		if (!this.intervalMap.containsKey(id))
+			this.intervalMap.put(id, new ArrayList<DynInterval<T>>());
+		this.intervalMap.get(id).add(interval);	
+	}
+	
+	protected void removeInterval(long id, DynInterval<T> interval)
+	{
+		if (this.intervalMap.containsKey(id))
+			if (this.intervalMap.get(id).contains(interval))
+				this.intervalMap.get(id).remove(interval);	
+	}
+	
+	protected void removeInterval(long id)
+	{
+		this.intervalMap.remove(id);
+	}
+	
+	@Override
+	public void print()
+	{
+		System.out.println(this.root.getLeft().print(""));
 	}
 
 }

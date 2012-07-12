@@ -159,25 +159,45 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		dynNetwork.getNetwork().removeEdges(getEdgeRemoveList(edge));
 	}
 
+	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
-		dynNetwork.insertGraph(CyNetwork.NAME, getInterval(null,null,start,end));
+		DynInterval<T> interval = getInterval((Class<T>) String.class,(T)label,start,end);
+		dynNetwork.insertGraph(CyNetwork.NAME, interval);
+		
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "start", interval.getStart());
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "end", interval.getEnd());
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(node).set(CyNetwork.NAME, label);
 		if (group==null)
-			dynNetwork.insertNode(node, CyNetwork.NAME, getInterval(null,dynNetwork,null,start,end));
+		{
+			DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,(T)label,start,end);
+			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "start", interval.getStart());
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "end", interval.getEnd());
+		}
 		else
-			dynNetwork.insertNode(node, CyNetwork.NAME, getInterval(null,dynNetwork,group.getGroupNode(),null,start,end));
+		{
+			DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,group.getGroupNode(),(T)label,start,end);
+			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "start", interval.getStart());
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "end", interval.getEnd());
+		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, CyEdge edge, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(edge).set(CyNetwork.NAME, label);
-		dynNetwork.insertEdge(edge, CyNetwork.NAME, getInterval(null,dynNetwork,edge.getSource(),edge.getTarget(),null,start,end));
+		DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,edge.getSource(),edge.getTarget(),(T)label,start,end);
+		dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "start", interval.getStart());
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "end", interval.getEnd());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -208,6 +228,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
 		dynNetwork.getNetwork().removeNodes(metaNodes);
+		dynNetwork.finalizeNetwork();
 	}
 	
 	@Override
@@ -227,6 +248,9 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private DynNetwork<T> createGraph(String directed, String id, String label, String start, String end)
 	{
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
+		
+		rootNetwork.getRow(rootNetwork).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
+		
 		DynNetworkImpl<T> dynNet = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
 		return dynNet;
 	}

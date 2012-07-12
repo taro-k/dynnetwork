@@ -78,7 +78,6 @@ import org.cytoscape.work.TaskManager;
  */
 public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, 
 ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
-//RowsSetListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -93,7 +92,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private double time;
 	private double minTime;
 	private double maxTime;
-	private volatile int visibility;
+	private volatile int visibility = 0;
+	private volatile boolean valueIsAdjusting = false;
 	
 	private int sliderMax;
 	private DynNetworkViewTaskIterator<T,C> recursiveTask;
@@ -119,24 +119,24 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.queue = new BlockingQueue();
-		this.visibility = 0;
 		initComponents();
 	}
 
 	@Override
 	public synchronized void stateChanged(ChangeEvent event)
 	{
-		if (view!=null)
-		{
-			time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
-			currentTime.setText("Current time = " + formatter.format(time));
-			if (!slider.getValueIsAdjusting())
+		if (event.getSource() instanceof JSlider)
+			if (view!=null)
 			{
-				if (recursiveTask!=null)
-					recursiveTask.cancel();
-				updateView();
+				time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
+				currentTime.setText("Current time = " + formatter.format(time));
+				if (!valueIsAdjusting)
+				{
+					if (recursiveTask!=null)
+						recursiveTask.cancel();
+					updateView();
+				}
 			}
-		}
 	}
 
 	@Override
@@ -168,14 +168,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				this.visibility = 30;
 			else
 				this.visibility = 0;
-			if (!slider.getValueIsAdjusting())
-				updateTransparency(this.visibility);
+			if (!valueIsAdjusting)
+				updateTransparency();
 		}
 		else if (event.getSource() instanceof JComboBox)
 		{
 			JComboBox source = (JComboBox)event.getSource();
 			updateGui((double) slider.getValue()/sliderMax, ((NameIDObj)source.getSelectedItem()).id);
-			if (!slider.getValueIsAdjusting())
+			if (!valueIsAdjusting)
 				updateView();
 		}
 	}
@@ -211,31 +211,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		if (view!=null)
 			updateGroup((CyGroup) e.getSource());
 	}
-	
-//	void handleEvent(RowsSetEvent e)
-//	{
-//	    if (!e.containsColumn(CyNetwork.SELECTED))
-//	        return;
-//	    
-//	    
-//
-//	    for (RowSetRecord record : e.getColumnRecords(CyNetwork.SELECTED))
-//	    {
-//	    	if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
-//	    	{
-//	    		CyTable table = (CyTable) e.getSource();
-//	    		
-//	    	}
-//	    	else if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
-//	    	{
-//	    		
-//	    	}
-//	    	else if (e.getSource()==this.network.getNetwork().getDefaultNetworkTable())
-//	    	{
-//	    		
-//	    	}
-//	    }
-//	}
 	
 	public void reset() 
 	{
@@ -287,6 +262,11 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	public Icon getIcon() 
 	{
 		return null;
+	}
+	
+	public void setValueIsAdjusting(boolean valueIsAdjusting)
+	{
+		this.valueIsAdjusting = valueIsAdjusting;
 	}
 	
 	private void initComponents()
@@ -402,7 +382,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	
 	private void updateGroup(CyGroup group)
 	{
-		if (time==this.network.getMaxTime())
+		if (time==maxTime)
 			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(
 					view, network, queue, time-0.0000001, time+0.0000001, visibility, group)));
 		else
@@ -410,9 +390,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 					view, network, queue, time, time, visibility, group)));
 	}
 	
-	private void updateTransparency(int visibility)
+	private void updateTransparency()
 	{
-		this.visibility = visibility;
 		if (time==maxTime)
 			taskManager.execute(new TaskIterator(1,new DynNetworkViewTransparencyTask<T>(
 					view, network, queue, time-0.0000001, time+0.0000001, visibility)));
