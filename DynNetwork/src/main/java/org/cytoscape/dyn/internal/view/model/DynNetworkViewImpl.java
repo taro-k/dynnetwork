@@ -41,7 +41,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 {
 	private final DynNetwork<T> dynNetwork;
 	private final CyNetworkView view;
-	private final VisualStyle style;
+	private final VisualMappingManager cyStyleManager;
 	
 	private double currentTime;
 
@@ -53,12 +53,12 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
-		this.style = cyStyleManager.getDefaultVisualStyle();
+		this.cyStyleManager = cyStyleManager;
 		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
-		cyStyleManager.setVisualStyle(style, view);
-		style.apply(view);
+		cyStyleManager.setVisualStyle(cyStyleManager.getDefaultVisualStyle(), view);
+		cyStyleManager.getDefaultVisualStyle().apply(view);
 	}
 
 	@Override

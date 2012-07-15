@@ -78,6 +78,7 @@ import org.cytoscape.work.TaskManager;
  */
 public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, 
 ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
+//VisualStyleSetListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -210,6 +211,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		if (view!=null)
 			updateGroup((CyGroup) e.getSource());
 	}
+	
+
+//	@Override
+//	public void handleEvent(VisualStyleSetEvent e)
+//	{
+//		visualStyle = e.getSource().getCurrentVisualStyle();
+//	}
 	
 	public void reset() 
 	{
