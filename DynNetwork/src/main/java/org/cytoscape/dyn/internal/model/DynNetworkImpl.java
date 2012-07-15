@@ -602,21 +602,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
-//	private void createAttrIntervalTrees()
-//	{
-//		for (DynAttribute<T> attr : graphTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//				graphTreeAttr.insert(interval, attr.getRow());
-//		
-//		for (DynAttribute<T> attr : nodeTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//				nodeTreeAttr.insert(interval, attr.getRow());
-//
-//		for (DynAttribute<T> attr : edgeTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//				edgeTreeAttr.insert(interval, attr.getRow());
-//	}
-	
 	private void createAttrIntervalTrees()
 	{
 		for (DynAttribute<T> attr : graphTable.values())

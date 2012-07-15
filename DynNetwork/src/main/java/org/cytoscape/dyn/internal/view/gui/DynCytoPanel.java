@@ -406,11 +406,11 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		
 		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
 		{
-			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+//			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+//			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
 			
-//			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-//			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
 		}
 	}
 	

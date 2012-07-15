@@ -82,8 +82,8 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
-//			System.out.println("   " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd());
 			switchTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()));
+//			System.out.println(low + " node " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.NODE_TRANSPARENCY));
 		}
 		
 		// update edges
@@ -91,8 +91,8 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		intervalList = dynNetwork.searchChangedEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
-//			System.out.println("   " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd());
 			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()));
+//			System.out.println(low + " edge " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.EDGE_TRANSPARENCY));
 		}
 
 		// update graph attributes
@@ -143,8 +143,6 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());
-
-		view.updateView();
 		
 		queue.unlock(); 
 	}
@@ -168,7 +166,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		{
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255)+visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)-255)+visibility);
 		}
 	}

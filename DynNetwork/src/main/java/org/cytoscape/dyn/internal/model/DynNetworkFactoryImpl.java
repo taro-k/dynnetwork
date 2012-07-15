@@ -230,8 +230,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	@Override
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
-		dynNetwork.getNetwork().removeNodes(metaNodes);
 		dynNetwork.finalizeNetwork();
+		dynNetwork.getNetwork().removeNodes(metaNodes);
 	}
 	
 	@Override
