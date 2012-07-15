@@ -447,7 +447,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public void finalizeNetwork() 
 	{
 		createAttrIntervalTrees();
-//		printAll();
+//		print();
 //		System.out.println("Interval Edge Tree Order");
 //		this.edgeTree.print();
 //		for (CyGroup group : this.groupManager.getGroupSet(this.network))
@@ -508,6 +508,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.graphTable.get(key).addInterval(interval);
 		else
 			this.graphTable.put(key, new DynAttribute<T>(interval, key));
+		overwriteGraphIntervals(this.graphTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
 			this.graphTable.get(new KeyPairs(CyNetwork.NAME, this.network.getSUID()))
@@ -521,6 +522,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.nodeTable.get(key).addInterval(interval);
 		else
 			this.nodeTable.put(key, new DynAttribute<T>(interval, key));
+		overwriteNodeIntervals(this.nodeTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
 			this.nodeTable.get(new KeyPairs(CyNetwork.NAME, node.getSUID()))
@@ -534,6 +536,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.edgeTable.get(key).addInterval(interval);
 		else
 			this.edgeTable.put(key, new DynAttribute<T>(interval, key));
+		overwriteEdgeIntervals(this.edgeTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
@@ -568,70 +571,120 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		}
 	}
 	
-	private void printAll()
-	{
-		DecimalFormat formatter = new DecimalFormat("#0.000");
-		
-		for (DynAttribute<T> attr : graphTable.values())
-			if (attr.getKey().getColumn().equals("name"))
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				System.out.println("graph\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + 
-						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				graphTreeAttr.insert(interval, attr.getRow());
-			}
-		
-		for (DynAttribute<T> attr : nodeTable.values())
-			if (attr.getKey().getColumn().equals("name"))
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				if (this.getNode(interval.getAttribute().getRow())!=null)
-				System.out.println("node\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + 
-						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				nodeTreeAttr.insert(interval, attr.getRow());
-			}
-
-		for (DynAttribute<T> attr : edgeTable.values())
-			if (attr.getKey().getColumn().equals("name"))
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				if (this.getEdge(interval.getAttribute().getRow())!=null)
-				System.out.println("edge\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + 
-						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				edgeTreeAttr.insert(interval, attr.getRow());
-			}
-	}
-	
 	private void createAttrIntervalTrees()
 	{
 		for (DynAttribute<T> attr : graphTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
+				graphTreeAttr.insert(interval, attr.getRow());	
+
+		for (DynAttribute<T> attr : nodeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+				nodeTreeAttr.insert(interval, attr.getRow());
+
+		for (DynAttribute<T> attr : edgeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+				edgeTreeAttr.insert(interval, attr.getRow());
+	}
+
+	private void overwriteGraphIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	{
+		for (DynInterval<T> i : attr.getIntervalList())
+			if (interval!=i && i.compareTo(interval)>0)
 			{
-				if (interval.getStart() == Double.NEGATIVE_INFINITY)
-					interval.setStart(attr.getMinTime());
-				else if (interval.getStart() == Double.POSITIVE_INFINITY)
-					interval.setEnd(attr.getMaxTime());
-			graphTreeAttr.insert(interval, attr.getRow());
-			}	
+				if (interval.getStart()>i.getStart() && interval.getEnd()>=i.getEnd())
+					i.setEnd(interval.getStart());
+				else if (interval.getStart()==i.getStart() && interval.getEnd()>i.getEnd())
+					interval.setStart(i.getEnd());
+				else if (interval.getEnd()<i.getEnd() && interval.getStart()<=i.getStart())
+					i.setStart(interval.getEnd());
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
+					interval.setEnd(i.getStart());
+				else
+				{
+					String label = this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for graph label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+				}
+			}
+	}
+	
+	private void overwriteNodeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	{
+		for (DynInterval<T> i : attr.getIntervalList())
+			if (interval!=i && i.compareTo(interval)>0)
+			{
+				if (interval.getStart()>i.getStart() && interval.getEnd()>=i.getEnd())
+					i.setEnd(interval.getStart());
+				else if (interval.getStart()==i.getStart() && interval.getEnd()>i.getEnd())
+					interval.setStart(i.getEnd());
+				else if (interval.getEnd()<i.getEnd() && interval.getStart()<=i.getStart())
+					i.setStart(interval.getEnd());
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
+					interval.setEnd(i.getStart());
+				else
+				{
+					String label = this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for node label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+				}
+			}
+	}
+	
+	private void overwriteEdgeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	{
+		for (DynInterval<T> i : attr.getIntervalList())
+			if (interval!=i && i.compareTo(interval)>0)
+			{
+				if (interval.getStart()>i.getStart() && interval.getEnd()>=i.getEnd())
+					i.setEnd(interval.getStart());
+				else if (interval.getStart()==i.getStart() && interval.getEnd()>i.getEnd())
+					interval.setStart(i.getEnd());
+				else if (interval.getEnd()<i.getEnd() && interval.getStart()<=i.getStart())
+					i.setStart(interval.getEnd());
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
+					interval.setEnd(i.getStart());
+				else
+				{   
+					String label = this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+				}
+			}
+	}
+	
+	private void print()
+	{
+		DecimalFormat formatter = new DecimalFormat("#0.000");
+		
+		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
+		
+		for (DynAttribute<T> attr : graphTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				graphTreeAttr.insert(interval, attr.getRow());
+			}
 		
 		for (DynAttribute<T> attr : nodeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
-				if (interval.getStart() == Double.NEGATIVE_INFINITY)
-					interval.setStart(attr.getMinTime());
-				else if (interval.getStart() == Double.POSITIVE_INFINITY)
-					interval.setEnd(attr.getMaxTime());
-			nodeTreeAttr.insert(interval, attr.getRow());
+				if (this.getNode(interval.getAttribute().getRow())!=null)
+				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				nodeTreeAttr.insert(interval, attr.getRow());
 			}
-		
+
 		for (DynAttribute<T> attr : edgeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
-				if (interval.getStart() == Double.NEGATIVE_INFINITY)
-					interval.setStart(attr.getMinTime());
-				else if (interval.getStart() == Double.POSITIVE_INFINITY)
-					interval.setEnd(attr.getMaxTime());
-			edgeTreeAttr.insert(interval, attr.getRow());
+				if (this.getEdge(interval.getAttribute().getRow())!=null)
+				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				edgeTreeAttr.insert(interval, attr.getRow());
 			}
 	}
 	

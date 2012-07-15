@@ -55,12 +55,12 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public int compareTo(DynInterval<T> interval)
 	{
 		if ((start <= interval.end && interval.start < end)
-				|| (start == end && start <= interval.end && interval.start <= end))
+				|| (start == end && interval.start == interval.end && start == interval.start))
 			return 1;
 		else
 			return -1;
 	}
-	
+
 	public T getValue()
 	{
 		return value;

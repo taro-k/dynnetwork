@@ -134,11 +134,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
 				currentTime.setText("Current time = " + formatter.format(time));
 				if (!valueIsAdjusting)
-				{
-					if (recursiveTask!=null)
-						recursiveTask.cancel();
 					updateView();
-				}
 			}
 	}
 

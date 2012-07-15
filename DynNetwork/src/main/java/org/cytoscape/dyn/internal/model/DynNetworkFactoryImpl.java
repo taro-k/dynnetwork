@@ -265,8 +265,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			System.out.println("\nXGMML Parser Warning: updated node label=" + label
-					+ " (duplicate)");
+			System.out.println("\nXGMML Parser Warning: updated node label=" + label + " (duplicate)");
 			node = dynNetwork.getNetwork().getNode(dynNetwork.getCyNode(id));
 		}
 		
