@@ -75,18 +75,18 @@ public class DynAttribute<T>
     		list.add(interval);
     	for (DynAttribute<T> attr : children)
     		attr.getRecursiveIntervalList(list);
-		return list;
-	}
-    
+    	return list;
+    }
+
     public void setKey(long row, String column)
     {
     	this.key = new KeyPairs(column, row);
     }
 
-	public KeyPairs getKey() 
-	{
-		return key;
-	}
+    public KeyPairs getKey() 
+    {
+    	return key;
+    }
 	
 	public String getColumn() 
 	{

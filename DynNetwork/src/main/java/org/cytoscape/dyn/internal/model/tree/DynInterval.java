@@ -54,7 +54,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	@Override
 	public int compareTo(DynInterval<T> interval)
 	{
-		if ((start <= interval.end && interval.start < end) 
+		if ((start <= interval.end && interval.start < end)
 				|| (start == end && start <= interval.end && interval.start <= end))
 			return 1;
 		else

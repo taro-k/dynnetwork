@@ -96,16 +96,19 @@ public final class DynNetworkViewTransparencyTask<T> extends AbstractTask
 	{
 		if (node!=null)
 		{
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
 		}
 	}
 
 	private void setTransparency(CyEdge edge)
 	{
 		if (edge!=null)
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+		{
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+		}
 	}
 
 }

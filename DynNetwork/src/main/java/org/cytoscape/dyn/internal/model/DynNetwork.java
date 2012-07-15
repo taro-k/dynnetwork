@@ -392,5 +392,17 @@ public interface DynNetwork<T>
 	 * @return boolean
 	 */
 	public boolean isDirected();
+	
+	/**
+	 * Get number of currently visible nodes
+	 * @return
+	 */
+	public int getVisibleNodes();
+
+	/**
+	 * Get number of current visible edges.
+	 * @return
+	 */
+	public int getVisibleEdges();
 
 }

@@ -59,7 +59,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private final DynNetworkManagerImpl<T> manager;
 	private final CyNetworkNaming nameUtil;
 	
-	private final List<CyNode> metaNodes;
+	private final List<CyNode> metaNodes; 
 	
 	public DynNetworkFactoryImpl(
 			final CyNetworkFactory networkFactory,
@@ -204,24 +204,27 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
+		DynInterval<T> interval = checkInterval(getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end),dynNetwork,attName);
 		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
-		dynNetwork.insertGraphAttr(attName, getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end));
+		dynNetwork.insertGraphAttr(attName, interval);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
+		DynInterval<T> interval = checkInterval(getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end),dynNetwork,node,attName);
 		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
-		dynNetwork.insertNodeAttr(node, attName, getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end));
+		dynNetwork.insertNodeAttr(node, attName, interval);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setAttributes(DynNetwork<T> dynNetwork, CyEdge edge, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
+		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end);
 		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
-		dynNetwork.insertEdgeAttr(edge, attName, getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end));
+		dynNetwork.insertEdgeAttr(edge, attName, interval);
 	}
 	
 	@Override
@@ -248,9 +251,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private DynNetwork<T> createGraph(String directed, String id, String label, String start, String end)
 	{
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
-		
-		rootNetwork.getRow(rootNetwork).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
-		
 		DynNetworkImpl<T> dynNet = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
 		return dynNet;
 	}
@@ -265,8 +265,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-//			System.out.println("\nXGMML Parser Warning: updated node id=" + id + " label=" + label
-//					+ " (duplicate)");
+			System.out.println("\nXGMML Parser Warning: updated node label=" + label
+					+ " (duplicate)");
 			node = dynNetwork.getNetwork().getNode(dynNetwork.getCyNode(id));
 		}
 		
@@ -293,8 +293,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			}
 			else
 			{
-//				System.out.println("\nXGMML Parser Warning: updated edge id=" + id + " label=" + label 
-//						+ " source=" + source + " target=" + target + " (duplicate)");
+				System.out.println("\nXGMML Parser Warning: updated edge label=" + label 
+						+ " source=" + source + " target=" + target + " (duplicate)");
 				edge = dynNetwork.getNetwork().getEdge(dynNetwork.getCyEdge(id));
 			}
 
@@ -365,6 +365,16 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		return new DynInterval<T>(type, value, 
 				max(parentAttr.getMinTime(), parseStart(start)),
 				min(parentAttr.getMaxTime(), parseEnd(end)) );
+	}
+
+	private DynInterval<T> checkInterval(DynInterval<T> interval, DynNetwork<T> dynNetwork, String attName)
+	{
+		return interval;
+	}
+	
+	private DynInterval<T> checkInterval(DynInterval<T> interval, DynNetwork<T> dynNetwork, CyNode node, String attName)
+	{
+		return interval;
 	}
 
 	private double min(double a, double b)

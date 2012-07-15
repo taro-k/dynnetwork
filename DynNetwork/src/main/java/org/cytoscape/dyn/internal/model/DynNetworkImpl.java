@@ -19,6 +19,7 @@
 
 package org.cytoscape.dyn.internal.model;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,9 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
 	private final CyNetwork network;
 	private final CyGroupManager groupManager;
+	
+	private int visibleNodes;
+	private int visibleEdges;
 	
 	private final boolean isDirected;
 
@@ -81,6 +85,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		this.network = network;
 		this.groupManager = groupManager;
+		
+		this.visibleNodes = 0;
+		this.visibleEdges = 0;
+		
 		this.isDirected = isDirected;
 
 		cyNodes = new HashMap<String, Long>();
@@ -102,7 +110,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.nodeTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.edgeTable = new HashMap<KeyPairs,DynAttribute<T>>();
-		
 	}
 
 	@Override
@@ -138,7 +145,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
 		graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		graphTreeAttr.insert(interval, this.network.getSUID());
+//		graphTreeAttr.insert(interval, this.network.getSUID());
 	}
 
 	@Override
@@ -147,7 +154,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
 		nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		nodeTreeAttr.insert(interval, node.getSUID());
+//		nodeTreeAttr.insert(interval, node.getSUID());
 	}
 
 	@Override
@@ -156,7 +163,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
 		edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		edgeTreeAttr.insert(interval, edge.getSUID());
+//		edgeTreeAttr.insert(interval, edge.getSUID());
 	}
 
 	@Override
@@ -265,6 +272,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		List<DynInterval<T>> tempList = nodeTree.search(interval);
 		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
+		this.visibleNodes = tempList.size();
 		currentNodes = tempList;
 		return changedList;
 	}
@@ -274,6 +282,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		List<DynInterval<T>> tempList = edgeTree.search(interval);
 		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
+		this.visibleEdges = tempList.size();
 		currentEdges = tempList;
 		return changedList;
 	}
@@ -437,6 +446,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	@Override
 	public void finalizeNetwork() 
 	{
+		createAttrIntervalTrees();
+//		printAll();
 //		System.out.println("Interval Edge Tree Order");
 //		this.edgeTree.print();
 //		for (CyGroup group : this.groupManager.getGroupSet(this.network))
@@ -476,6 +487,18 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public boolean isDirected() 
 	{
 		return this.isDirected;
+	}
+	
+	@Override
+	public int getVisibleNodes()
+	{
+		return this.visibleNodes;
+	}
+
+	@Override
+	public int getVisibleEdges()
+	{
+		return this.visibleEdges;
 	}
 
 	private synchronized void setDynAttribute(String column, DynInterval<T> interval)
@@ -544,5 +567,87 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			minEndTime = Math.min(minEndTime, end);
 		}
 	}
+	
+	private void printAll()
+	{
+		DecimalFormat formatter = new DecimalFormat("#0.000");
+		
+		for (DynAttribute<T> attr : graphTable.values())
+			if (attr.getKey().getColumn().equals("name"))
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				System.out.println("graph\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + 
+						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				graphTreeAttr.insert(interval, attr.getRow());
+			}
+		
+		for (DynAttribute<T> attr : nodeTable.values())
+			if (attr.getKey().getColumn().equals("name"))
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (this.getNode(interval.getAttribute().getRow())!=null)
+				System.out.println("node\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + 
+						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				nodeTreeAttr.insert(interval, attr.getRow());
+			}
 
+		for (DynAttribute<T> attr : edgeTable.values())
+			if (attr.getKey().getColumn().equals("name"))
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (this.getEdge(interval.getAttribute().getRow())!=null)
+				System.out.println("edge\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + 
+						"\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				edgeTreeAttr.insert(interval, attr.getRow());
+			}
+	}
+	
+//	private void createAttrIntervalTrees()
+//	{
+//		for (DynAttribute<T> attr : graphTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//				graphTreeAttr.insert(interval, attr.getRow());
+//		
+//		for (DynAttribute<T> attr : nodeTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//				nodeTreeAttr.insert(interval, attr.getRow());
+//
+//		for (DynAttribute<T> attr : edgeTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//				edgeTreeAttr.insert(interval, attr.getRow());
+//	}
+	
+	private void createAttrIntervalTrees()
+	{
+		for (DynAttribute<T> attr : graphTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (interval.getStart() == Double.NEGATIVE_INFINITY)
+					interval.setStart(attr.getMinTime());
+				else if (interval.getStart() == Double.POSITIVE_INFINITY)
+					interval.setEnd(attr.getMaxTime());
+			graphTreeAttr.insert(interval, attr.getRow());
+			}	
+		
+		for (DynAttribute<T> attr : nodeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (interval.getStart() == Double.NEGATIVE_INFINITY)
+					interval.setStart(attr.getMinTime());
+				else if (interval.getStart() == Double.POSITIVE_INFINITY)
+					interval.setEnd(attr.getMaxTime());
+			nodeTreeAttr.insert(interval, attr.getRow());
+			}
+		
+		for (DynAttribute<T> attr : edgeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (interval.getStart() == Double.NEGATIVE_INFINITY)
+					interval.setStart(attr.getMinTime());
+				else if (interval.getStart() == Double.POSITIVE_INFINITY)
+					interval.setEnd(attr.getMaxTime());
+			edgeTreeAttr.insert(interval, attr.getRow());
+			}
+	}
+	
 }

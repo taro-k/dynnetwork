@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -44,8 +45,9 @@ import org.cytoscape.work.TaskMonitor;
  *
  * @param <T>
  */
-public final class DynNetworkViewTask<T> extends AbstractTask 
+public final class DynNetworkViewTask<T,C> extends AbstractTask 
 {
+	private final DynCytoPanel<T,C> panel;
 	private final DynNetworkView<T> view;
 	private final DynNetwork<T> dynNetwork;
 	private final BlockingQueue queue;
@@ -54,11 +56,13 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	private final int visibility;
 
 	public DynNetworkViewTask(
+			final DynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
 			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
 			final double low, final double high, final int visibility) 
 	{
+		this.panel = panel;
 		this.view = view;
 		this.dynNetwork = dynNetwork;
 		this.queue = queue;
@@ -70,7 +74,7 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
-		queue.lock(); 
+		queue.lock();
 		
 		DynInterval<T> timeInterval = new DynInterval<T>(low, high);
 		
@@ -136,6 +140,9 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 				columnList.add(interval.getAttribute().getKey().getColumn());
 			}
 		}
+		
+		panel.setNodes(dynNetwork.getVisibleNodes());
+		panel.setEdges(dynNetwork.getVisibleEdges());
 
 		view.updateView();
 		
@@ -146,11 +153,11 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	{
 		if (node!=null)
 		{
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255)+visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)-255)+visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)-255)+visibility);
 		}
 	}
@@ -158,8 +165,12 @@ public final class DynNetworkViewTask<T> extends AbstractTask
 	private void switchTransparency(CyEdge edge)
 	{
 		if (edge!=null)
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
+		{
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
 					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255)+visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
+					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)-255)+visibility);
+		}
 	}
 
 }

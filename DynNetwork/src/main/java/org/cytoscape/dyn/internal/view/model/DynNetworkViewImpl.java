@@ -79,6 +79,13 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		view.getNodeView(node).setVisualProperty(vp,value);
 	}
+	
+	@Override
+	public void writeLockedVisualProperty(CyNode node, VisualProperty<Integer> vp, int value) 
+	{
+		view.getNodeView(node).setVisualProperty(vp,value);
+//		view.getNodeView(node).setLockedValue(vp, value);
+	}
 
 	@Override
 	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp) 
@@ -90,6 +97,13 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value) 
 	{
 		view.getEdgeView(edge).setVisualProperty(vp,value);
+	}
+	
+	@Override
+	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value) 
+	{
+		view.getEdgeView(edge).setVisualProperty(vp,value);
+//		view.getEdgeView(edge).setLockedValue(vp,value);
 	}
 
 	@Override

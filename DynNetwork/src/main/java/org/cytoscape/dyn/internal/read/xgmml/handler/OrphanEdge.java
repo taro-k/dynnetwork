@@ -64,8 +64,8 @@ public final class OrphanEdge<T>
 			attr.add(handler, currentEdge);
 		
 		if (currentEdge==null)
-			System.out.println("\nXGMML Parser Warning: skipped edge id=" + id + 
-					" label=" + label + " source=" + source + " target=" + target + " (missing nodes)");
+			System.out.println("\nXGMML Parser Warning: skipped edge label=" + label + 
+					" source=" + source + " target=" + target + " (missing nodes)");
 	}
 	
 	public void addAttribute(DynNetwork<T> currentNetwork, String name, String value, String type, String start, String end)

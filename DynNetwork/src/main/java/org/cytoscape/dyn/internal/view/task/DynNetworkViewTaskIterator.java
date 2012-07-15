@@ -267,7 +267,10 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 	private void setTransparency(CyEdge edge, DynInterval<T> interval)
 	{
 		if (edge!=null)
+		{
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+		}
 	}
 	
 }

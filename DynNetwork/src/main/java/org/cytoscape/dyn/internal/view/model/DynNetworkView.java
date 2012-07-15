@@ -50,6 +50,14 @@ public interface DynNetworkView<T>
 	 * @param value
 	 */
 	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
+	
+	/**
+	 * Write locked visual property of node.
+	 * @param node
+	 * @param vp
+	 * @param value
+	 */
+	public void writeLockedVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
 
 	/**
 	 * Read visual property of edge.
@@ -66,6 +74,14 @@ public interface DynNetworkView<T>
 	 * @param value
 	 */
 	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
+	
+	/**
+	 * Write locked visual property of edge.
+	 * @param edge
+	 * @param vp
+	 * @param value
+	 */
+	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
 	
 	/**
 	 * Get network view.

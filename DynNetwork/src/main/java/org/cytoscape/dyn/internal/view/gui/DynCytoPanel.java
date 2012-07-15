@@ -101,13 +101,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private JPanel buttonPanel;
 	private JPanel dynVizPanel;
 	private JPanel featurePanel;
+	private JPanel measurePanel;
 	private JLabel currentTime;
+	private JLabel nodeNumber;
+	private JLabel edgeNumber;
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
 	private JButton forwardButton, backwardButton,stopButton;
 	private JCheckBox seeAllCheck;
 	private Hashtable<Integer, JLabel> labelTable;
-	private DecimalFormat formatter;
+	private DecimalFormat formatter,formatter2;
 
 	public DynCytoPanel(
 			final TaskManager<T,C> taskManager,
@@ -264,6 +267,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		return null;
 	}
 	
+	public void setNodes(int nodes) 
+	{
+		nodeNumber.setText("Current nodes = " + formatter2.format(nodes) + "/" + formatter2.format(network.getNetwork().getNodeCount()));
+	}
+
+	public void setEdges(int edges) 
+	{
+		edgeNumber.setText("Current edges = " + formatter2.format(edges) + "/" + formatter2.format(network.getNetwork().getEdgeCount()));
+	}
+
 	public void setValueIsAdjusting(boolean valueIsAdjusting)
 	{
 		this.valueIsAdjusting = valueIsAdjusting;
@@ -284,15 +297,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
 		slider.addChangeListener(this);
-
-		NameIDObj[] items = { 
-				new NameIDObj(10,"1/10"), 
-				new NameIDObj(100,"1/100"), 
-				new NameIDObj(1000,"1/1000"), 
-				new NameIDObj(10000,"1/10000") };
-		resolutionComboBox  = new JComboBox(items);
-		resolutionComboBox.setSelectedIndex(1);
-		resolutionComboBox.addActionListener(this);
 		
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridBagLayout());
@@ -306,20 +310,38 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		buttonPanel.add(stopButton);
 		buttonPanel.add(forwardButton);
 		
+		dynVizPanel = new JPanel();
+		dynVizPanel.setLayout(new GridLayout(3,1));
+		dynVizPanel.add(currentTime);
+		dynVizPanel.add(slider);
+		dynVizPanel.add(buttonPanel);
+		
+		NameIDObj[] items = { 
+				new NameIDObj(10,"1/10"), 
+				new NameIDObj(100,"1/100"), 
+				new NameIDObj(1000,"1/1000"), 
+				new NameIDObj(10000,"1/10000") };
+		resolutionComboBox  = new JComboBox(items);
+		resolutionComboBox.setSelectedIndex(1);
+		resolutionComboBox.addActionListener(this);
+		
 		seeAllCheck = new JCheckBox("Display all",false);
 		seeAllCheck.addActionListener(this);
 		
-		dynVizPanel = new JPanel();
-		dynVizPanel.setLayout(new GridLayout(6,1));
-		dynVizPanel.add(currentTime);
-		dynVizPanel.add(slider);
-		dynVizPanel.add(new JLabel("Time resolution"));
-		dynVizPanel.add(resolutionComboBox);
-		dynVizPanel.add(seeAllCheck);
-		dynVizPanel.add(buttonPanel);
-		
 		featurePanel = new JPanel();
-		featurePanel.setLayout(new GridBagLayout());
+		featurePanel.setLayout(new GridLayout(3,1));
+		featurePanel.add(new JLabel("Time resolution"));
+		featurePanel.add(resolutionComboBox);
+		featurePanel.add(seeAllCheck);
+		
+		formatter2 = new DecimalFormat("#0");
+		nodeNumber = new JLabel    ("Current nodes = ");
+		edgeNumber = new JLabel    ("Current edges = ");
+		
+		measurePanel = new JPanel();
+		measurePanel.setLayout(new GridLayout(10,1));
+		measurePanel.add(nodeNumber);
+		measurePanel.add(edgeNumber);
 		
 		dynVizPanel
 		.setBorder(BorderFactory.createTitledBorder(null,
@@ -337,6 +359,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				new Font("SansSerif", 1, 12),
 				Color.darkGray));
 		
+		measurePanel
+		.setBorder(BorderFactory.createTitledBorder(null,
+				"Metrics",
+				TitledBorder.DEFAULT_JUSTIFICATION,
+				TitledBorder.DEFAULT_POSITION,
+				new Font("SansSerif", 1, 12),
+				Color.darkGray));
+		
 		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
 		layout.setHorizontalGroup(
@@ -345,13 +375,17 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				        		   280 , Short.MAX_VALUE)
 				           .addComponent(featurePanel, GroupLayout.DEFAULT_SIZE,
 				        		   280, Short.MAX_VALUE)
+				           .addComponent(measurePanel, GroupLayout.DEFAULT_SIZE,
+				        		   280, Short.MAX_VALUE)
 				);
 				layout.setVerticalGroup(
 				   layout.createSequentialGroup()
-				      .addComponent(dynVizPanel, 270,
+				      .addComponent(dynVizPanel, 150,
 				    		  GroupLayout.DEFAULT_SIZE, 270)
-				      .addComponent(featurePanel, GroupLayout.DEFAULT_SIZE,
-				    		  530 , Short.MAX_VALUE)
+				      .addComponent(featurePanel,  GroupLayout.DEFAULT_SIZE,
+				    		  150 , Short.MAX_VALUE)
+				      .addComponent(measurePanel, GroupLayout.DEFAULT_SIZE,
+				    		   400, Short.MAX_VALUE)
 				);
 
 		this.setVisible(true);
@@ -364,20 +398,30 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
 			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
 			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			
+//			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+//			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+//			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
 		}
 		
 		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
+		{
 			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+			
+//			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+//			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+		}
 	}
 	
 	private void updateView()
 	{
 		if (time==this.network.getMaxTime())
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(
-					view, network, queue, time-0.0000001, time+0.0000001, visibility)));
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T,C>(
+					this, view, network, queue, time-0.0000001, time+0.0000001, visibility)));
 		else
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T>(
-					view, network, queue, time, time, visibility)));
+			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T,C>(
+					this, view, network, queue, time, time, visibility)));
 	}
 	
 	private void updateGroup(CyGroup group)
