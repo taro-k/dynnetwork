@@ -447,7 +447,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public void finalizeNetwork() 
 	{
 		createAttrIntervalTrees();
-//		print();
+		print();
 //		System.out.println("Interval Edge Tree Order");
 //		this.edgeTree.print();
 //		for (CyGroup group : this.groupManager.getGroupSet(this.network))

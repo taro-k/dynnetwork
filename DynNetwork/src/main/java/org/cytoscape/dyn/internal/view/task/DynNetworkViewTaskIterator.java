@@ -19,7 +19,6 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JSlider;
@@ -29,9 +28,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 public final class DynNetworkViewTaskIterator<T,C> implements Runnable 
@@ -83,7 +80,6 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		{			
 			timeStart = System.currentTimeMillis();
 			
-			updateTime();
 			updateNetwork();
 			updateTransparency();
 			view.updateView();
@@ -101,9 +97,6 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 				break;
 		}
 		
-		updateAttributes();
-		updateTransparency();
-		view.updateView();
 		panel.setValueIsAdjusting(false);
 		
 		queue.unlock();	
@@ -114,7 +107,7 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		this.cancelled = true;
 	}
 	
-	private void updateTime()
+	private void updateNetwork()
 	{ 
 		slider.setValue(slider.getValue()+timeStep);
 		time = slider.getValue()*((panel.getMaxTime()-panel.getMinTime())/panel.getSliderMax())+(panel.getMinTime());
@@ -122,10 +115,7 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
-	}
-	
-	private void updateNetwork()
-	{ 
+		
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
@@ -135,84 +125,21 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		intervalList = dynNetwork.searchChangedEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
-
-		// update selected graph attributes
-		List<String> columnList = new ArrayList<String>();
-		for (DynInterval<T> interval : dynNetwork.getIntervals())
-		{
-			if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-			{
-				dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(CyNetwork.SELECTED, true);
-				dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-			}
-			columnList.add(interval.getAttribute().getKey().getColumn());
-		}
-
-		// update selected node attributes
-		for (CyNode node : CyTableUtil.getNodesInState(dynNetwork.getNetwork(),"selected",true))
-		{
-			columnList.clear();
-			for (DynInterval<T> interval : dynNetwork.getIntervals(node))
-			{
-				if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-				{
-					dynNetwork.getNetwork().getRow(node).set(CyNetwork.SELECTED, true);
-					dynNetwork.writeNodeTable(node, interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-				}
-				columnList.add(interval.getAttribute().getKey().getColumn());
-			}
-		}
-
-		// update selected edge attributes
-		for (CyEdge edge : CyTableUtil.getEdgesInState(dynNetwork.getNetwork(),"selected",true))
-		{
-			columnList.clear();
-			for (DynInterval<T> interval : dynNetwork.getIntervals(edge))
-			{
-				if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-				{
-					dynNetwork.getNetwork().getRow(edge).set(CyNetwork.SELECTED, true);
-					dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-				}
-				columnList.add(interval.getAttribute().getKey().getColumn());
-			}
-		}
-	}
-	
-	private void updateAttributes()
-	{ 
+		
 		// update graph attributes
-		List<String> columnList = new ArrayList<String>();
-		for (DynInterval<T> interval : dynNetwork.getIntervals())
-		{
-			if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-				dynNetwork.writeGraphTable(interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-			columnList.add(interval.getAttribute().getKey().getColumn());
-		}
+		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			updateAttr(interval);
 		
 		// update node attributes
-		for (CyNode node : dynNetwork.getNetwork().getNodeList())
-		{
-			columnList.clear();
-			for (DynInterval<T> interval : dynNetwork.getIntervals(node))
-			{
-				if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-					dynNetwork.writeNodeTable(node, interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-				columnList.add(interval.getAttribute().getKey().getColumn());
-			}
-		}
+		intervalList = dynNetwork.searchChangedNodesAttr(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			updateAttr(dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval);
 
 		// update edge attributes
-		for (CyEdge edge : dynNetwork.getNetwork().getEdgeList())
-		{
-			columnList.clear();
-			for (DynInterval<T> interval : dynNetwork.getIntervals(edge))
-			{
-				if (interval.getValue(timeInterval)!=null || !columnList.contains(interval.getAttribute().getKey().getColumn()))
-					dynNetwork.writeEdgeTable(edge, interval.getAttribute().getKey().getColumn(), interval.getValue(timeInterval));
-				columnList.add(interval.getAttribute().getKey().getColumn());
-			}
-		}
+		intervalList = dynNetwork.searchChangedEdgesAttr(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
 	}
 	
 	private void updateTransparency() 
@@ -232,6 +159,23 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 			for (DynInterval<T> interval : intervalList)
 				setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
 		}
+	}
+	
+	private void updateAttr(DynInterval<T> interval)
+	{
+		dynNetwork.writeGraphTable(interval.getAttribute().getColumn(), interval.getValue(timeInterval));
+	}
+	
+	private void updateAttr(CyNode node, DynInterval<T> interval)
+	{
+		if (node!=null)
+			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
+	}
+	
+	private void updateAttr(CyEdge edge, DynInterval<T> interval)
+	{
+		if (edge!=null)
+			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
 	
 	private void switchTransparency(CyNode node)
