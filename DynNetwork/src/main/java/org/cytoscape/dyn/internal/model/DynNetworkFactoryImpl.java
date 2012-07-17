@@ -140,7 +140,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	@Override
 	public void deletedGraph(DynNetwork<T> dynNetwork)
 	{
-		dynNetwork.removeGraph();
+		dynNetwork.removeAllIntervals();
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(dynNetwork.getNetwork());
 		rootNetwork.removeSubNetwork(rootNetwork.getBaseNetwork());
 	}
@@ -164,29 +164,38 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
 		DynInterval<T> interval = getInterval((Class<T>) String.class,(T)label,start,end);
-		dynNetwork.insertGraph(CyNetwork.NAME, interval);
-		
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "start", interval.getStart());
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "end", interval.getEnd());
+		if (interval.getStart()<=interval.getEnd())
+		{
+			dynNetwork.insertGraph(CyNetwork.NAME, interval);
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "start", interval.getStart());
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "end", interval.getEnd());
+		}
+		else
+		{
+			System.out.println("\nXGMML Parser Error: invalid interval for graph label=" + label + " start=" + start + " end=" + end);
+			throw new IndexOutOfBoundsException();
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(node).set(CyNetwork.NAME, label);
+		DynInterval<T> interval;
 		if (group==null)
+			interval = getInterval((Class<T>) String.class,dynNetwork,(T)label,start,end);
+		else
+			interval = getInterval((Class<T>) String.class,dynNetwork,group.getGroupNode(),(T)label,start,end);
+		if (interval.getStart()<=interval.getEnd())
 		{
-			DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,(T)label,start,end);
 			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
 			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "start", interval.getStart());
 			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "end", interval.getEnd());
 		}
 		else
 		{
-			DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,group.getGroupNode(),(T)label,start,end);
-			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "start", interval.getStart());
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "end", interval.getEnd());
+			System.out.println("\nXGMML Parser Error: invalid interval for node label=" + label + " start=" + start + " end=" + end);
+			throw new IndexOutOfBoundsException();
 		}
 	}
 	
@@ -195,27 +204,51 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		dynNetwork.getNetwork().getRow(edge).set(CyNetwork.NAME, label);
 		DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,edge.getSource(),edge.getTarget(),(T)label,start,end);
-		dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "start", interval.getStart());
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "end", interval.getEnd());
+		if (interval.getStart()<=interval.getEnd())
+		{
+			dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "start", interval.getStart());
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "end", interval.getEnd());
+		}
+		else
+		{
+			System.out.println("\nXGMML Parser Error: invalid interval for edge label=" + label + " start=" + start + " end=" + end);
+			throw new IndexOutOfBoundsException();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		DynInterval<T> interval = checkInterval(getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end),dynNetwork,attName);
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
-		dynNetwork.insertGraphAttr(attName, interval);
+		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end);
+		if (interval.getStart()<=interval.getEnd())
+		{
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
+			dynNetwork.insertGraphAttr(attName, interval);
+		}
+		else
+		{
+			String label = dynNetwork.readGraphTable(CyNetwork.NAME, (T) "string").toString();
+			System.out.println("\nXGMML Parser Warning: skipped invalid interval for graph label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		DynInterval<T> interval = checkInterval(getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end),dynNetwork,node,attName);
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
-		dynNetwork.insertNodeAttr(node, attName, interval);
+		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end);
+		if (interval.getStart()<=interval.getEnd())
+		{
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
+			dynNetwork.insertNodeAttr(node, attName, interval);
+		}
+		else
+		{
+			String label = dynNetwork.readNodeTable(node, CyNetwork.NAME, (T) "string").toString();
+			System.out.println("\nXGMML Parser Warning: skipped invalid interval for node label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -223,8 +256,16 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end);
-		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
-		dynNetwork.insertEdgeAttr(edge, attName, interval);
+		if (interval.getStart()<=interval.getEnd())
+		{
+			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
+			dynNetwork.insertEdgeAttr(edge, attName, interval);
+		}
+		else
+		{
+			String label = dynNetwork.readEdgeTable(edge, CyNetwork.NAME, (T) "string").toString();
+			System.out.println("\nXGMML Parser Warning: skipped invalid interval for edge label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
+		}
 	}
 	
 	@Override
@@ -251,9 +292,17 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private DynNetwork<T> createGraph(String directed, String id, String label, String start, String end)
 	{
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
-		DynNetworkImpl<T> dynNet = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
-		return dynNet;
+		DynNetworkImpl<T> dynNetwork = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
+//		createDummyGraph(rootNetwork, dynNetwork);
+		return dynNetwork;
 	}
+	
+//	private void createDummyGraph(CyRootNetwork rootNetwork, DynNetwork<T> dynNetwork)
+//	{
+//		CyNode node = rootNetwork.addNode();
+//		addRow(rootNetwork, rootNetwork.getDefaultNodeTable(), node, "name", "test");
+//		addRow(rootNetwork, rootNetwork.getDefaultNodeTable(), node, "size", 100);
+//	}
 
 	private CyNode createNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end)
 	{
@@ -364,16 +413,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		return new DynInterval<T>(type, value, 
 				max(parentAttr.getMinTime(), parseStart(start)),
 				min(parentAttr.getMaxTime(), parseEnd(end)) );
-	}
-
-	private DynInterval<T> checkInterval(DynInterval<T> interval, DynNetwork<T> dynNetwork, String attName)
-	{
-		return interval;
-	}
-	
-	private DynInterval<T> checkInterval(DynInterval<T> interval, DynNetwork<T> dynNetwork, CyNode node, String attName)
-	{
-		return interval;
 	}
 
 	private double min(double a, double b)

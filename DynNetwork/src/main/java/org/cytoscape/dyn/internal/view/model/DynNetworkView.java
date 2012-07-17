@@ -19,7 +19,10 @@
 
 package org.cytoscape.dyn.internal.view.model;
 
+import java.util.List;
+
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -34,7 +37,7 @@ import org.cytoscape.view.model.VisualProperty;
  * @param <T>
  */
 public interface DynNetworkView<T>
-{
+{	
 	/**
 	 * Read visual property of node.
 	 * @param node
@@ -42,6 +45,14 @@ public interface DynNetworkView<T>
 	 * @return visual property
 	 */
 	public int readVisualProperty(CyNode node, VisualProperty<Integer> vp);
+	
+	/**
+	 * Read visual property of node.
+	 * @param node
+	 * @param vp
+	 * @return visual property
+	 */
+	public double readVisualProperty(CyNode node, VisualProperty<Double> vp);
 
 	/**
 	 * Write visual property of node.
@@ -52,12 +63,28 @@ public interface DynNetworkView<T>
 	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
 	
 	/**
+	 * Write visual property of node.
+	 * @param node
+	 * @param vp
+	 * @param value
+	 */
+	public void writeVisualProperty(CyNode node, VisualProperty<Double> vp, double value);
+	
+	/**
 	 * Write locked visual property of node.
 	 * @param node
 	 * @param vp
 	 * @param value
 	 */
 	public void writeLockedVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
+	
+	/**
+	 * Write locked visual property of node.
+	 * @param node
+	 * @param vp
+	 * @param value
+	 */
+	public void writeLockedVisualProperty(CyNode node, VisualProperty<Double> vp, double value);
 
 	/**
 	 * Read visual property of edge.
@@ -68,6 +95,14 @@ public interface DynNetworkView<T>
 	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp);
 	
 	/**
+	 * Read visual property of edge.
+	 * @param edge
+	 * @param vp
+	 * @return visual property
+	 */
+	public double readVisualProperty(CyEdge edge, VisualProperty<Double> vp);
+	
+	/**
 	 * Write visual property of edge.
 	 * @param edge
 	 * @param vp
@@ -76,12 +111,104 @@ public interface DynNetworkView<T>
 	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
 	
 	/**
+	 * Write visual property of edge.
+	 * @param edge
+	 * @param vp
+	 * @param value
+	 */
+	public void writeVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value);
+	
+	/**
 	 * Write locked visual property of edge.
 	 * @param edge
 	 * @param vp
 	 * @param value
 	 */
 	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
+	
+	/**
+	 * Write locked visual property of edge.
+	 * @param edge
+	 * @param vp
+	 * @param value
+	 */
+	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value);
+
+	/**
+	 * Insert node position X.
+	 * @param node
+	 * @param interval
+	 */
+	public void insertNodePositionX(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Insert node position Y.
+	 * @param node
+	 * @param interval
+	 */
+	public void insertNodePositionY(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Insert node position Z.
+	 * @param node
+	 * @param interval
+	 */
+	public void insertNodePositionZ(CyNode node, DynInterval<T> interval);
+
+	/**
+	 * Remove node position X.
+	 * @param node
+	 * @param interval
+	 */
+	public void removeNodePositionX(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Remove node position Y.
+	 * @param node
+	 * @param interval
+	 */
+	public void removeNodePositionY(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Remove node position Z.
+	 * @param node
+	 * @param interval
+	 */
+	public void removeNodePositionZ(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Remove all node position intervals.
+	 */
+	public void removeAllIntervals();
+
+	/**
+	 * Get all position intervals for node.
+	 * @param node
+	 * @return
+	 */
+	public List<DynInterval<T>> getIntervals(CyNode node);
+
+	/**
+	 * Search all positions of visible nodes
+	 * @param interval
+	 * @return
+	 */
+	public List<DynInterval<T>> searchNodePoistions(DynInterval<T> interval);
+
+	/**
+	 * Search positions of not visible nodes.
+	 * @param interval
+	 * @return
+	 */
+	public List<DynInterval<T>> searchNodePoistionsNot(DynInterval<T> interval);
+
+	/**
+	 * Search positions of changed nodes.
+	 * @param interval
+	 * @return
+	 */
+	public List<DynInterval<T>> searchChangedNodePositions(DynInterval<T> interval);
+
 	
 	/**
 	 * Get network view.

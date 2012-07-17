@@ -73,18 +73,12 @@ public final class DynNetworkViewTransparencyTask<T> extends AbstractTask
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-		{
 			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()));
-//			System.out.println(low + " " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.NODE_TRANSPARENCY));
-		}
 		
 		// update edges
 		intervalList = dynNetwork.searchEdgesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-		{
 			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()));
-//			System.out.println(low + " " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.EDGE_TRANSPARENCY));
-		}
 
 		view.updateView();
 		

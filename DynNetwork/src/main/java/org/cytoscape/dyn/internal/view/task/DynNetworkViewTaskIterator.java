@@ -116,15 +116,20 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
+		// update node positions
+		List<DynInterval<T>> intervalList = view.searchChangedNodePositions(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			updatePosition(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), interval);
+		
 		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
+		intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			switchTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()));
 		
 		// update edges
 		intervalList = dynNetwork.searchChangedEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
+			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()));
 		
 		// update graph attributes
 		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
@@ -140,6 +145,9 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		intervalList = dynNetwork.searchChangedEdgesAttr(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
+		
+		panel.setNodes(dynNetwork.getVisibleNodes());
+		panel.setEdges(dynNetwork.getVisibleEdges());
 	}
 	
 	private void updateTransparency() 
@@ -178,24 +186,39 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
 	
+	private void updatePosition(CyNode node, DynInterval<T> interval)
+	{
+		if (node!=null)
+			if (interval.getAttribute().getColumn().equals("node_X_Pos"))
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) interval.getValue());
+			else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) interval.getValue());
+			else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
+				view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, (Double) interval.getValue());
+	}
+	
 	private void switchTransparency(CyNode node)
 	{
 		if (node!=null)
 		{
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)<255?255:visibility);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)<255?255:visibility);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)<255?255:visibility);
 		}
 	}
 
-	private void switchTransparency(CyEdge edge, DynInterval<T> interval)
+	private void switchTransparency(CyEdge edge)
 	{
 		if (edge!=null)
+		{
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)<255?255:visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,
+					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)<255?255:visibility);
+		}
 	}
 	
 	private void setTransparency(CyNode node)

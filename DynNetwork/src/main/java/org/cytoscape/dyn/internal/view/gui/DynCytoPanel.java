@@ -27,6 +27,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
@@ -64,6 +65,10 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.vizmap.VisualMappingFunction;
+import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.events.VisualStyleSetEvent;
+import org.cytoscape.view.vizmap.events.VisualStyleSetListener;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -77,8 +82,8 @@ import org.cytoscape.work.TaskManager;
  * @param <C>
  */
 public final class DynCytoPanel<T,C> extends JPanel implements CytoPanelComponent, 
-ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
-//VisualStyleSetListener
+ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener,
+VisualStyleSetListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -89,11 +94,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
+	private VisualStyle visualStyle;
 	
 	private double time;
 	private double minTime;
 	private double maxTime;
-	private volatile int visibility = 0;
+	private int visibility = 0;
 	private volatile boolean valueIsAdjusting = false;
 	
 	private int sliderMax;
@@ -103,8 +109,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private JPanel dynVizPanel;
 	private JPanel featurePanel;
 	private JPanel measurePanel;
-	private JLabel currentTime;
-	private JLabel nodeNumber;
+	private volatile JLabel currentTime;
+	private volatile JLabel nodeNumber;
 	private JLabel edgeNumber;
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
@@ -181,7 +187,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	}
 	
 	@Override
-	public void handleEvent(SetCurrentNetworkViewEvent e) 
+	public synchronized void handleEvent(SetCurrentNetworkViewEvent e) 
 	{
 		if (recursiveTask!=null)
 			recursiveTask.cancel();
@@ -203,7 +209,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	}
 	
 	@Override
-	public void handleEvent(GroupCollapsedEvent e)
+	public synchronized void handleEvent(GroupCollapsedEvent e)
 	{
 		if (recursiveTask!=null)
 			recursiveTask.cancel();
@@ -213,11 +219,17 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	}
 	
 
-//	@Override
-//	public void handleEvent(VisualStyleSetEvent e)
-//	{
+	@Override
+	public synchronized void handleEvent(VisualStyleSetEvent e)
+	{
 //		visualStyle = e.getSource().getCurrentVisualStyle();
-//	}
+//		Collection<VisualMappingFunction<?, ?>> mappings = visualStyle.getAllVisualMappingFunctions();
+//		for (VisualMappingFunction<?, ?> function : mappings)
+//		{
+//			System.out.println("column " + function.getMappingColumnName()
+//					+ " property " + function.getVisualProperty().getDisplayName());
+//		}
+	}
 	
 	public void reset() 
 	{
@@ -399,20 +411,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	{
 		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
 		{
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
-			
-//			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-//			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-//			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
 		}
 		
 		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
 		{
-//			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-//			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
-			
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
 		}

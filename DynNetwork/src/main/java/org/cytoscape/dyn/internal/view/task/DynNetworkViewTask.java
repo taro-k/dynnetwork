@@ -51,7 +51,9 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 	private final double low;
 	private final double high;
 	private final int visibility;
-	
+	private final double alpha;
+	private final double n;
+
 	private DynInterval<T> timeInterval;
 
 	public DynNetworkViewTask(
@@ -68,6 +70,8 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		this.low = low;
 		this.high = high;
 		this.visibility = visibility;
+		this.alpha = 0.1;
+		this.n = 1/alpha;
 	}
 
 	@Override
@@ -85,7 +89,11 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		// update edges
 		intervalList = dynNetwork.searchChangedEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
+		{
+//			System.out.println(low + " edge " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.EDGE_TRANSPARENCY));
 			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()));
+//			System.out.println("             > edge " + interval.getValue() + " " + interval.getStart() + " " + interval.getEnd() + " " + view.readVisualProperty(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), BasicVisualLexicon.EDGE_TRANSPARENCY));
+		}
 
 		// update graph attributes
 		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
@@ -102,8 +110,14 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		for (DynInterval<T> interval : intervalList)
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
 		
-		panel.setNodes(dynNetwork.getVisibleNodes());
-		panel.setEdges(dynNetwork.getVisibleEdges());
+		// update node positions
+		intervalList = view.searchChangedNodePositions(timeInterval);
+		if (!intervalList.isEmpty())
+			for (int i=0;i<n;i++)
+				updatePosition(i, intervalList);
+		
+//		panel.setNodes(dynNetwork.getVisibleNodes());
+//		panel.setEdges(dynNetwork.getVisibleEdges());
 		
 		view.updateView();
 		
@@ -126,17 +140,36 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		if (edge!=null)
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
+	
+	private void updatePosition(int i, List<DynInterval<T>> intervalList)
+	{
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
+			if (node!=null)
+				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
+							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*i*(Double)interval.getValue()));
+				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
+							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*i*(Double)interval.getValue()));
+				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
+							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*i*(Double)interval.getValue()));
+		}
+		view.updateView();
+	}
 
 	private void switchTransparency(CyNode node)
 	{
 		if (node!=null)
 		{
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)<255?255:visibility);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)<255?255:visibility);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)<255?255:visibility);
 		}
 	}
 
@@ -145,9 +178,9 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		if (edge!=null)
 		{
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)<255?255:visibility);
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,
-					Math.abs(view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)-255)+visibility);
+					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)<255?255:visibility);
 		}
 	}
 

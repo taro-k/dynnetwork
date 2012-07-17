@@ -111,7 +111,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,action,CyAction.class, new Properties());   	
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
-//    	registerService(context,dynCytoPanel,VisualStyleSetListener.class, new Properties());
+    	registerService(context,dynCytoPanel,VisualStyleSetListener.class, new Properties());
     	registerService(context,dynLayout,CyLayoutAlgorithm.class, myLayoutProps);
 
 	}

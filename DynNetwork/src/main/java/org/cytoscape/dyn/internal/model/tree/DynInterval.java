@@ -19,8 +19,9 @@
 
 package org.cytoscape.dyn.internal.model.tree;
 
+
 /**
- * <code> DynInterval </code> represent a value and its right half-open interval. 
+ * <code> DynInterval </code> represent a value list and its right half-open interval. 
  * Intervals are convenient for representing events that each occupy a continuous 
  * period of time. A half-open interval is an ordered pair of real numbers [startTime, 
  * endTime[ with startTime =< endTime, where startTime is included and endTime is excluded.
@@ -42,6 +43,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public DynInterval(Class<T> type, T value, double start, double end)
 	{
 		this.value = value;
+		this.type = type;
 		this.start = start;
 		this.end = end;
 	}
@@ -54,11 +56,21 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	@Override
 	public int compareTo(DynInterval<T> interval)
 	{
-		if ((start <= interval.end && interval.start < end)
-				|| (start == end && interval.start == interval.end && start == interval.start))
+//		System.out.print("compare " + this.start + ":" + this.end + " " + interval.getStart() + ":" + interval.getEnd());
+		if ((start <= interval.end && interval.start <= end) &&	
+				((start < interval.end && interval.start < end) ||
+				 (interval.start == interval.end && (start <= interval.end && interval.start < end)) ||
+				 (start == end && (start < interval.end && interval.start <= end)) ||
+				 (start == end && interval.start == interval.end && start == interval.end)))
+		{
+//			System.out.println(" YES");
 			return 1;
+		}
 		else
+		{
+//			System.out.println(" NO");
 			return -1;
+		}
 	}
 
 	public T getValue()

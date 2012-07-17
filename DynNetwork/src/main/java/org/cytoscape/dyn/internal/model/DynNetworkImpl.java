@@ -118,7 +118,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
 		graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		graphTree.insert(interval, this.network.getSUID());
 	}
 
 	@Override
@@ -127,7 +126,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
 		nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		nodeTree.insert(interval, node.getSUID());
 	}
 
 	@Override
@@ -136,7 +134,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
 		edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-		edgeTree.insert(interval, edge.getSUID());
 	}
 
 	@Override
@@ -145,7 +142,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
 		graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-//		graphTreeAttr.insert(interval, this.network.getSUID());
 	}
 
 	@Override
@@ -154,7 +150,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
 		nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-//		nodeTreeAttr.insert(interval, node.getSUID());
 	}
 
 	@Override
@@ -163,11 +158,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
 		edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
-//		edgeTreeAttr.insert(interval, edge.getSUID());
 	}
 
 	@Override
-	public synchronized void removeGraph() 
+	public synchronized void removeAllIntervals() 
 	{
 		this.graphTree.clear();
 		this.nodeTree.clear();
@@ -175,6 +169,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTable.clear();
 		this.nodeTable.clear();
 		this.edgeTable.clear();
+		currentNodes.clear();
+		currentEdges.clear();
 	}
 
 	@Override
@@ -446,8 +442,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	@Override
 	public void finalizeNetwork() 
 	{
-		createAttrIntervalTrees();
-		print();
+		createIntervalTrees();
+//		print();
 //		System.out.println("Interval Edge Tree Order");
 //		this.edgeTree.print();
 //		for (CyGroup group : this.groupManager.getGroupSet(this.network))
@@ -571,21 +567,34 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		}
 	}
 	
-	private void createAttrIntervalTrees()
+	// For the moment I insert all intervals only at the end of the network creation, since I may need to modify them.
+	// An event based implementation should insert intervals directly, and if there is need for modification, they 
+	// should be removed from the interval tree and the new interval inserted. I use this strategy since for importing 
+	// xgmml files is less computationally expensive.
+	private void createIntervalTrees()
 	{
 		for (DynAttribute<T> attr : graphTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
-				graphTreeAttr.insert(interval, attr.getRow());	
+				if (attr.getColumn().equals("name"))
+					graphTree.insert(interval, attr.getRow());
+				else
+					graphTreeAttr.insert(interval, attr.getRow());	
 
 		for (DynAttribute<T> attr : nodeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
-				nodeTreeAttr.insert(interval, attr.getRow());
+				if (attr.getColumn().equals("name"))
+					nodeTree.insert(interval, attr.getRow());
+				else
+					nodeTreeAttr.insert(interval, attr.getRow());
 
 		for (DynAttribute<T> attr : edgeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
-				edgeTreeAttr.insert(interval, attr.getRow());
+				if (attr.getColumn().equals("name"))
+					edgeTree.insert(interval, attr.getRow());
+				else
+					edgeTreeAttr.insert(interval, attr.getRow());
 	}
-
+	
 	private void overwriteGraphIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())

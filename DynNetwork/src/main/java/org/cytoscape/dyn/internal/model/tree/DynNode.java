@@ -180,8 +180,7 @@ public final class DynNode<T>
 			if (this.intervalList.get(0).compareTo(interval)>0)
 				for (DynInterval<T> i : this.intervalList)
 					intervalList.add(i);
-			if (interval.getEnd()>this.intervalList.get(0).getStart() ||
-					(this.intervalList.get(0).getStart()==this.intervalList.get(0).getEnd() && interval.getEnd()>=this.intervalList.get(0).getStart()))
+			if (interval.getEnd()>=this.intervalList.get(0).getStart())
 				this.children[1].search(intervalList, interval);
 		}
 		return intervalList;

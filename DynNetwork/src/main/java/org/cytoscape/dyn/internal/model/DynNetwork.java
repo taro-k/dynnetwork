@@ -90,7 +90,7 @@ public interface DynNetwork<T>
 	/**
 	 * Remove graph.
 	 */
-	public void removeGraph();
+	public void removeAllIntervals();
 	
 	/**
 	 * Remove node.

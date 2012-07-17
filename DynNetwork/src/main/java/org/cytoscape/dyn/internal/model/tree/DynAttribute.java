@@ -64,6 +64,11 @@ public class DynAttribute<T>
 		interval.setAttribute(this);
 	}
 	
+	public void removeInterval(DynInterval<T> interval)
+	{
+		intervalList.remove(interval);
+	}
+	
     public List<DynInterval<T>> getIntervalList()
     {
 		return intervalList;
@@ -107,6 +112,13 @@ public class DynAttribute<T>
 	{
 		if (this.children.contains(attr))
 			this.children.remove(attr);
+	}
+	
+	public void clear()
+	{
+		this.intervalList.clear();
+		this.children.clear();
+		this.key = null;
 	}
 
 	public Class<T> getType()
