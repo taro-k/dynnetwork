@@ -595,6 +595,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					edgeTreeAttr.insert(interval, attr.getRow());
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void overwriteGraphIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
@@ -618,6 +619,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void overwriteNodeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
@@ -641,6 +643,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void overwriteEdgeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())

@@ -172,7 +172,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			System.out.println("\nXGMML Parser Error: invalid interval for graph label=" + label + " start=" + start + " end=" + end);
+			System.out.println("\nXGMML Parser Error: invalid interval for graph label=" + label + " start=" + start + " end=" + end + "\n");
 			throw new IndexOutOfBoundsException();
 		}
 	}
@@ -194,7 +194,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			System.out.println("\nXGMML Parser Error: invalid interval for node label=" + label + " start=" + start + " end=" + end);
+			System.out.println("\nXGMML Parser Error: invalid interval for node label=" + label + " start=" + start + " end=" + end + "\n");
 			throw new IndexOutOfBoundsException();
 		}
 	}
@@ -212,7 +212,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			System.out.println("\nXGMML Parser Error: invalid interval for edge label=" + label + " start=" + start + " end=" + end);
+			System.out.println("\nXGMML Parser Error: invalid interval for edge label=" + label + " start=" + start + " end=" + end + "\n");
 			throw new IndexOutOfBoundsException();
 		}
 	}

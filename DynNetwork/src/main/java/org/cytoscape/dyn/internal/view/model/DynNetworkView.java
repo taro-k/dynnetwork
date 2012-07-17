@@ -156,25 +156,10 @@ public interface DynNetworkView<T>
 	public void insertNodePositionZ(CyNode node, DynInterval<T> interval);
 
 	/**
-	 * Remove node position X.
+	 * Remove intervals and attributes belonging to node.
 	 * @param node
-	 * @param interval
 	 */
-	public void removeNodePositionX(CyNode node, DynInterval<T> interval);
-	
-	/**
-	 * Remove node position Y.
-	 * @param node
-	 * @param interval
-	 */
-	public void removeNodePositionY(CyNode node, DynInterval<T> interval);
-	
-	/**
-	 * Remove node position Z.
-	 * @param node
-	 * @param interval
-	 */
-	public void removeNodePositionZ(CyNode node, DynInterval<T> interval);
+	public void removeNode(CyNode node);
 	
 	/**
 	 * Remove all node position intervals.

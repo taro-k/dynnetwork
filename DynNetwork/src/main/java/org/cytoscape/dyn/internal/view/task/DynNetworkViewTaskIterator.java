@@ -116,13 +116,8 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
-		// update node positions
-		List<DynInterval<T>> intervalList = view.searchChangedNodePositions(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			updatePosition(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), interval);
-		
 		// update nodes
-		intervalList = dynNetwork.searchChangedNodes(timeInterval);
+		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			switchTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()));
 		
@@ -145,6 +140,11 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		intervalList = dynNetwork.searchChangedEdgesAttr(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
+		
+		// update node positions
+		intervalList = view.searchChangedNodePositions(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			updatePosition(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), interval);
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());

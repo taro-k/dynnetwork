@@ -20,12 +20,15 @@
 package org.cytoscape.dyn.internal.view.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
+import org.cytoscape.dyn.internal.util.KeyPairs;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -38,7 +41,7 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
  * dynamic networks {@link DynNetworkView}.
  * 
- * @author Sabina Sara Pfister
+ * @author sabina
  *
  * @param <T>
  */
@@ -53,9 +56,9 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private List<DynInterval<T>> currentNodes;
 	private final DynIntervalTreeImpl<T> nodePositionsTree;
 	
-	private final DynAttribute<T> node_X_Pos;
-	private final DynAttribute<T> node_Y_Pos;
-	private final DynAttribute<T> node_Z_Pos;
+	private final Map<KeyPairs,DynAttribute<T>> node_X_Pos;
+	private final Map<KeyPairs,DynAttribute<T>> node_Y_Pos;
+	private final Map<KeyPairs,DynAttribute<T>> node_Z_Pos;
 
 	public DynNetworkViewImpl(
 			DynNetwork<T> dynNetwork,
@@ -75,9 +78,9 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentNodes = new ArrayList<DynInterval<T>>();
 		this.nodePositionsTree = new DynIntervalTreeImpl<T>();
 		
-		this.node_X_Pos = new DynAttribute<T>((Class<T>) Double.class);
-		this.node_Y_Pos = new DynAttribute<T>((Class<T>) Double.class);
-		this.node_Z_Pos = new DynAttribute<T>((Class<T>) Double.class);
+		this.node_X_Pos = new HashMap<KeyPairs,DynAttribute<T>>();
+		this.node_Y_Pos = new HashMap<KeyPairs,DynAttribute<T>>();
+		this.node_Z_Pos = new HashMap<KeyPairs,DynAttribute<T>>();
 	}
 	
 	@Override
@@ -155,46 +158,45 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	@Override
 	public synchronized void insertNodePositionX(CyNode node, DynInterval<T> interval)
 	{
-		this.node_X_Pos.addInterval(interval);
-		interval.getAttribute().setKey(node.getSUID(), "node_X_Pos");
+		setDynAttributeX(node,interval);
+		node_X_Pos.put(interval.getAttribute().getKey(), interval.getAttribute());
 		nodePositionsTree.insert(interval, node.getSUID());
 	}
 	
 	@Override
 	public synchronized void insertNodePositionY(CyNode node, DynInterval<T> interval)
 	{
-		this.node_Y_Pos.addInterval(interval);
-		interval.getAttribute().setKey(node.getSUID(), "node_Y_Pos");
+		setDynAttributeY(node,interval);
+		node_Y_Pos.put(interval.getAttribute().getKey(), interval.getAttribute());
 		nodePositionsTree.insert(interval, node.getSUID());
 	}
 	
 	@Override
 	public synchronized void insertNodePositionZ(CyNode node, DynInterval<T> interval)
 	{
-		this.node_Z_Pos.addInterval(interval);
-		interval.getAttribute().setKey(node.getSUID(), "node_Z_Pos");
+		setDynAttributeZ(node,interval);
+		node_Z_Pos.put(interval.getAttribute().getKey(), interval.getAttribute());
 		nodePositionsTree.insert(interval, node.getSUID());
 	}
 	
 	@Override
-	public synchronized void removeNodePositionX(CyNode node, DynInterval<T> interval)
+	public synchronized void removeNode(CyNode node)
 	{
-		this.node_X_Pos.removeInterval(interval);
-		nodePositionsTree.remove(interval, node.getSUID());
-	}
-	
-	@Override
-	public synchronized void removeNodePositionY(CyNode node, DynInterval<T> interval)
-	{
-		this.node_Y_Pos.removeInterval(interval);
-		nodePositionsTree.remove(interval, node.getSUID());
-	}
-	
-	@Override
-	public synchronized void removeNodePositionZ(CyNode node, DynInterval<T> interval)
-	{
-		this.node_Z_Pos.removeInterval(interval);
-		nodePositionsTree.remove(interval, node.getSUID());
+		KeyPairs key = new KeyPairs("node_X_Pos", node.getSUID());
+		for (DynInterval<T> interval : node_X_Pos.get(key).getIntervalList())
+			nodePositionsTree.remove(interval, node.getSUID());
+		node_X_Pos.remove(key);
+		
+		key = new KeyPairs("node_Y_Pos", node.getSUID());
+		for (DynInterval<T> interval : node_Y_Pos.get(key).getIntervalList())
+			nodePositionsTree.remove(interval, node.getSUID());
+		node_Y_Pos.remove(key);
+		
+		key = new KeyPairs("node_Z_Pos", node.getSUID());
+		for (DynInterval<T> interval : node_Z_Pos.get(key).getIntervalList())
+			nodePositionsTree.remove(interval, node.getSUID());
+		node_Z_Pos.remove(key);
+
 	}
 	
 	@Override
@@ -274,5 +276,32 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 			if (!list1.contains(i))
 				diff.add(i);
 		return diff;
+	}
+	
+	private synchronized void setDynAttributeX(CyNode node, DynInterval<T> interval)
+	{
+		KeyPairs key = new KeyPairs("node_X_Pos", node.getSUID());
+		if (this.node_X_Pos.containsKey(key))
+			this.node_X_Pos.get(key).addInterval(interval);
+		else
+			this.node_X_Pos.put(key, new DynAttribute<T>(interval, key));
+	}
+	
+	private synchronized void setDynAttributeY(CyNode node, DynInterval<T> interval)
+	{
+		KeyPairs key = new KeyPairs("node_Y_Pos", node.getSUID());
+		if (this.node_Y_Pos.containsKey(key))
+			this.node_Y_Pos.get(key).addInterval(interval);
+		else
+			this.node_Y_Pos.put(key, new DynAttribute<T>(interval, key));
+	}
+	
+	private synchronized void setDynAttributeZ(CyNode node, DynInterval<T> interval)
+	{
+		KeyPairs key = new KeyPairs("node_Z_Pos", node.getSUID());
+		if (this.node_Z_Pos.containsKey(key))
+			this.node_Z_Pos.get(key).addInterval(interval);
+		else
+			this.node_Z_Pos.put(key, new DynAttribute<T>(interval, key));
 	}
 }

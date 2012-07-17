@@ -56,21 +56,14 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	@Override
 	public int compareTo(DynInterval<T> interval)
 	{
-//		System.out.print("compare " + this.start + ":" + this.end + " " + interval.getStart() + ":" + interval.getEnd());
 		if ((start <= interval.end && interval.start <= end) &&	
 				((start < interval.end && interval.start < end) ||
 				 (interval.start == interval.end && (start <= interval.end && interval.start < end)) ||
 				 (start == end && (start < interval.end && interval.start <= end)) ||
 				 (start == end && interval.start == interval.end && start == interval.end)))
-		{
-//			System.out.println(" YES");
 			return 1;
-		}
 		else
-		{
-//			System.out.println(" NO");
 			return -1;
-		}
 	}
 
 	public T getValue()
