@@ -178,22 +178,33 @@ public interface DynNetworkView<T>
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<T>> searchNodePoistions(DynInterval<T> interval);
+	public List<DynInterval<T>> searchNodePositions(DynInterval<T> interval);
+	
+	/**
+	 * Search all positions of visible nodes that changed from the last time interval.
+	 * @param interval
+	 * @return
+	 */
+	public List<DynInterval<T>> searchChangedNodePositions(DynInterval<T> interval);
 
 	/**
 	 * Search positions of not visible nodes.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<T>> searchNodePoistionsNot(DynInterval<T> interval);
-
+	public List<DynInterval<T>> searchNodePositionsNot(DynInterval<T> interval);
+	
 	/**
-	 * Search positions of changed nodes.
-	 * @param interval
-	 * @return
+	 * Initialize transparency values.
+	 * @param visibility
 	 */
-	public List<DynInterval<T>> searchChangedNodePositions(DynInterval<T> interval);
-
+	public void initTransparency(int visibility);
+	
+	/**
+	 * Initialize node positions.
+	 * @param time
+	 */
+	public void initNodePositions(double time);
 	
 	/**
 	 * Get network view.

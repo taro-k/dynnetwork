@@ -27,7 +27,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
@@ -65,7 +64,6 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.view.vizmap.events.VisualStyleSetEvent;
 import org.cytoscape.view.vizmap.events.VisualStyleSetListener;
@@ -237,7 +235,7 @@ VisualStyleSetListener
 		if (view!=null)
 		{
 			network = view.getNetwork();
-			initTransparency();
+			view.initTransparency(visibility);
 			updateGui(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
 			updateView();
 		}
@@ -407,50 +405,34 @@ VisualStyleSetListener
 		this.setVisible(true);
 	}
 	
-	private void initTransparency()
-	{
-		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
-		{
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
-		}
-		
-		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
-		{
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
-		}
-	}
-	
 	private void updateView()
 	{
 		if (time==this.network.getMaxTime())
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T,C>(
-					this, view, network, queue, time-0.0000001, time+0.0000001, visibility)));
+			new Thread(new DynNetworkViewTask<T,C>(
+					this, view, network, queue, time-0.0000001, time+0.0000001, visibility)).start();
 		else
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTask<T,C>(
-					this, view, network, queue, time, time, visibility)));
+			new Thread(new DynNetworkViewTask<T,C>(
+					this, view, network, queue, time, time, visibility)).start();
 	}
 	
 	private void updateGroup(CyGroup group)
 	{
 		if (time==maxTime)
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(
-					view, network, queue, time-0.0000001, time+0.0000001, visibility, group)));
+			new Thread(new DynNetworkViewTaskGroup<T>(
+					view, network, queue, time-0.0000001, time+0.0000001, visibility, group)).start();
 		else
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTaskGroup<T>(
-					view, network, queue, time, time, visibility, group)));
+			new Thread(new DynNetworkViewTaskGroup<T>(
+					view, network, queue, time, time, visibility, group)).start();
 	}
 	
 	private void updateTransparency()
 	{
 		if (time==maxTime)
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTransparencyTask<T>(
-					view, network, queue, time-0.0000001, time+0.0000001, visibility)));
+			new Thread(new DynNetworkViewTransparencyTask<T>(
+					view, network, queue, time-0.0000001, time+0.0000001, visibility)).start();
 		else
-			taskManager.execute(new TaskIterator(1,new DynNetworkViewTransparencyTask<T>(
-					view, network, queue, time, time, visibility)));
+			new Thread(new DynNetworkViewTransparencyTask<T>(
+					view, network, queue, time, time, visibility)).start();
 	}
 	
 	private void updateGui(double absoluteTime, int value)

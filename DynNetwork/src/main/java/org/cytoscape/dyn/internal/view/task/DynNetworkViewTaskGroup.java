@@ -29,10 +29,8 @@ import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskMonitor;
 
-public class DynNetworkViewTaskGroup<T> extends AbstractTask 
+public class DynNetworkViewTaskGroup<T> implements Runnable 
 {
 	private final DynNetworkView<T> view;
 	private final DynNetwork<T> dynNetwork;
@@ -60,7 +58,7 @@ public class DynNetworkViewTaskGroup<T> extends AbstractTask
 	}
 
 	@Override
-	public void run(TaskMonitor taskMonitor) throws Exception 
+	public void run()
 	{
 		queue.lock();
 		

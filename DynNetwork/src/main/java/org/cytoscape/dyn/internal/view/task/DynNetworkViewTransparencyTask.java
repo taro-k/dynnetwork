@@ -28,8 +28,6 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskMonitor;
 
 /**
  * <code> DynNetworkViewTransparencyTask </code> is responsible for updating the {@link CyNetworkView}
@@ -40,7 +38,7 @@ import org.cytoscape.work.TaskMonitor;
  *
  * @param <T>
  */
-public final class DynNetworkViewTransparencyTask<T> extends AbstractTask
+public final class DynNetworkViewTransparencyTask<T> implements Runnable 
 {
 	private final DynNetworkView<T> view;
 	private final DynNetwork<T> dynNetwork;
@@ -64,7 +62,7 @@ public final class DynNetworkViewTransparencyTask<T> extends AbstractTask
 	}
 
 	@Override
-	public void run(TaskMonitor taskMonitor) throws Exception 
+	public void run() 
 	{
 		queue.lock(); 
 		

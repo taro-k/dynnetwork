@@ -48,20 +48,28 @@ public final class DynLayoutAlgorithmTask<T> extends AbstractLayoutTask
     @Override
     protected void doLayout(TaskMonitor taskMonitor)
     {
-    	double timeMin = 0;
-    	double timeMax = 10;
-    	double timeStep = 1;
-
+    	double timeMin = view.getNetwork().getMinTime();
+    	double timeMax = view.getNetwork().getMaxTime();
+    	double timeStep = (timeMax-timeMin)/10;
+    	
+    	for (View<CyNode> nv : nodesToLayOut)
+		{
+				view.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*500),timeMin,timeMin+timeStep));
+				view.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*500),timeMin,timeMin+timeStep));
+		}
+    	
     	for (double time=timeMin; time<timeMax; time=time+timeStep)
     		for (View<CyNode> nv : nodesToLayOut)
     		{
-    			if (Math.random()>0.2)
-    				view.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*100-50),time,time+timeStep));
-    			if (Math.random()>0.2)
-    				view.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*100-50),time,time+timeStep));
+    			if (Math.random()>0.3)
+    				view.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*500),time+Math.random()*timeStep,time+timeStep));
+    			if (Math.random()>0.3)
+    				view.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*500),time+Math.random()*timeStep,time+timeStep));
     		}
-
-    	//            networkView.fitContent();
+    	
+    	view.initNodePositions(view.getCurrentTime());
+    	view.getNetworkView().fitContent();
+    	view.updateView();
     }
 
 }

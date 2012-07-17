@@ -28,8 +28,6 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskMonitor;
 
 /**
  * <code> DynNetworkViewTask </code> is the task that is responsible for updating
@@ -42,7 +40,7 @@ import org.cytoscape.work.TaskMonitor;
  *
  * @param <T>
  */
-public final class DynNetworkViewTask<T,C> extends AbstractTask 
+public final class DynNetworkViewTask<T,C> implements Runnable 
 {
 	private final DynCytoPanel<T,C> panel;
 	private final DynNetworkView<T> view;
@@ -53,6 +51,9 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 	private final int visibility;
 	private final double alpha;
 	private final double n;
+	
+	private double timeStart;
+	private double timeEnd;
 
 	private DynInterval<T> timeInterval;
 
@@ -71,11 +72,11 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		this.high = high;
 		this.visibility = visibility;
 		this.alpha = 0.2;
-		this.n = 1/alpha;
+		this.n = 15;
 	}
 
 	@Override
-	public void run(TaskMonitor taskMonitor) throws Exception 
+	public void run() 
 	{
 		queue.lock();
 		
@@ -105,12 +106,12 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 		intervalList = dynNetwork.searchChangedEdgesAttr(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
-		
+
 		// update node positions
 		intervalList = view.searchChangedNodePositions(timeInterval);
 		if (!intervalList.isEmpty())
 			for (int i=0;i<n;i++)
-				updatePosition(i, intervalList);
+				updatePosition(intervalList);
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());
@@ -137,27 +138,34 @@ public final class DynNetworkViewTask<T,C> extends AbstractTask
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
 	
-	private void updatePosition(int i, List<DynInterval<T>> intervalList)
+	private void updatePosition(List<DynInterval<T>> intervalList)
 	{
+		timeStart = System.currentTimeMillis();
+		
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
 			if (node!=null)
 				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
-				{
-					System.out.println(i + " node " + interval.getAttribute().getKey().getRow() + " target " + interval.getValue() + " current" + view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION));
 					view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
-							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*i*(Double)interval.getValue()));
-					System.out.println(i + " node " + interval.getAttribute().getKey().getRow() + " target " + interval.getValue() + " current" + view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION));
-				}
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*(Double)interval.getValue()));
 				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
 					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
-							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*i*(Double)interval.getValue()));
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*(Double)interval.getValue()));
 				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
 					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
-							((1-alpha*i)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*i*(Double)interval.getValue()));
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*(Double)interval.getValue()));
 		}
+		
 		view.updateView();
+		timeEnd = System.currentTimeMillis();
+		
+		if (timeEnd-timeStart<50)
+		try {
+			Thread.sleep(50-(int) (timeEnd-timeStart));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void switchTransparency(CyNode node)

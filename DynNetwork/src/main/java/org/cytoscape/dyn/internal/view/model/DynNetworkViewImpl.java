@@ -34,7 +34,9 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 
 /**
@@ -75,7 +77,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		cyStyleManager.setVisualStyle(cyStyleManager.getDefaultVisualStyle(), view);
 		cyStyleManager.getDefaultVisualStyle().apply(view);
 		
-		this.currentNodes = new ArrayList<DynInterval<T>>();
 		this.nodePositionsTree = new DynIntervalTreeImpl<T>();
 		
 		this.node_X_Pos = new HashMap<KeyPairs,DynAttribute<T>>();
@@ -216,15 +217,9 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	}
 	
 	@Override
-	public List<DynInterval<T>> searchNodePoistions(DynInterval<T> interval)
+	public List<DynInterval<T>> searchNodePositions(DynInterval<T> interval)
 	{
 		return nodePositionsTree.search(interval);
-	}
-	
-	@Override
-	public List<DynInterval<T>> searchNodePoistionsNot(DynInterval<T> interval)
-	{
-		return nodePositionsTree.searchNot(interval);
 	}
 	
 	@Override
@@ -234,6 +229,12 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
 		currentNodes = tempList;
 		return changedList;
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchNodePositionsNot(DynInterval<T> interval)
+	{
+		return nodePositionsTree.searchNot(interval);
 	}
 
 	@Override
@@ -266,12 +267,44 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentTime = currentTime;
 	}	
 	
+	@Override
+	public void initTransparency(int visibility) 
+	{
+		for (final View<CyNode> nodeView : this.getNetworkView().getNodeViews())
+		{
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+		}
+		
+		for (final View<CyEdge> edgeView : this.getNetworkView().getEdgeViews())
+		{
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+		}
+	}
+	
+	@Override
+	public void initNodePositions(double time) 
+	{
+		List<DynInterval<T>> intervalList = this.searchChangedNodePositions(new DynInterval<T>(time, time));
+		System.out.println(time + " " + intervalList.size());
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
+			if (node!=null)
+				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
+					this.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) interval.getValue());
+				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
+					this.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) interval.getValue());
+				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
+					this.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, (Double) interval.getValue());
+		}
+	}
+	
 	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
 	{
 		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
-		for (DynInterval<T> i : list1)
-			if (!list2.contains(i))
-				diff.add(i);
 		for (DynInterval<T> i : list2)
 			if (!list1.contains(i))
 				diff.add(i);

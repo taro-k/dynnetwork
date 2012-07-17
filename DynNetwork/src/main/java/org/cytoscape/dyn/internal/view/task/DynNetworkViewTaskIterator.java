@@ -46,6 +46,8 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 	private DynInterval<T> timeInterval;
 	private int visibility;
 	private int oldVisibility;
+	private final double alpha;
+	private final double n;
 	
 	private double timeStart;
 	private double timeEnd;
@@ -67,6 +69,8 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		this.queue = queue;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
+		this.alpha = 0.2;
+		this.n = 15;
 	}
 
 	@Override
@@ -143,8 +147,9 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 		
 		// update node positions
 		intervalList = view.searchChangedNodePositions(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			updatePosition(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), interval);
+		if (!intervalList.isEmpty())
+			for (int i=0;i<n;i++)
+				updatePosition(intervalList);
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());
@@ -186,15 +191,35 @@ public final class DynNetworkViewTaskIterator<T,C> implements Runnable
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
 	
-	private void updatePosition(CyNode node, DynInterval<T> interval)
+	private void updatePosition(List<DynInterval<T>> intervalList)
 	{
-		if (node!=null)
-			if (interval.getAttribute().getColumn().equals("node_X_Pos"))
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) interval.getValue());
-			else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) interval.getValue());
-			else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, (Double) interval.getValue());
+		timeStart = System.currentTimeMillis();
+		
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
+			if (node!=null)
+				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*(Double)interval.getValue()));
+				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*(Double)interval.getValue()));
+				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
+					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
+							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*(Double)interval.getValue()));
+		}
+		
+		updateTransparency();
+		view.updateView();
+		timeEnd = System.currentTimeMillis();
+		
+		if (timeEnd-timeStart<50)
+		try {
+			Thread.sleep(50-(int) (timeEnd-timeStart));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void switchTransparency(CyNode node)
