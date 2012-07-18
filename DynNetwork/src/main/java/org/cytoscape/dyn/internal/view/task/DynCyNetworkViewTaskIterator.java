@@ -58,15 +58,13 @@ public class DynCyNetworkViewTaskIterator<T,C> extends AbstractCyNetworkViewTask
 			final double low, 
 			final double high, 
 			final JSlider slider,
-			final int timestep,
-			final double alpha,
-			final int n) 
+			final int timestep) 
 	{
 		super(panel, view, layout, queue, low, high);
 		this.slider = slider;
 		this.timeStep = timestep;
-		this.alpha = alpha;
-		this.n = n;
+		this.alpha = layout.getAlpha();
+		this.n = layout.getN();
 	}
 
 	@Override

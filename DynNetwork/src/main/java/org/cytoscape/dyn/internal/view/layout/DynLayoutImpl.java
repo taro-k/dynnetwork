@@ -50,6 +50,9 @@ public final class DynLayoutImpl<T> implements DynLayout<T>
 {
 	private final CyNetworkView view;
 	
+	private double alpha = 1;
+	private int n = 1;
+	
 	private List<DynInterval<T>> currentNodes;
 	private final DynIntervalTreeImpl<T> nodePositionsTree;
 	
@@ -210,4 +213,28 @@ public final class DynLayoutImpl<T> implements DynLayout<T>
 			this.node_Z_Pos.put(key, new DynAttribute<T>(interval, key));
 	}
 
+	@Override
+	public double getAlpha() 
+	{
+		return alpha;
+	}
+
+	@Override
+	public void setAlpha(double alpha) 
+	{
+		this.alpha = alpha;
+	}
+
+	@Override
+	public int getN() 
+	{
+		return n;
+	}
+
+	@Override
+	public void setN(int n) 
+	{
+		this.n = n;
+	}
+	
 }

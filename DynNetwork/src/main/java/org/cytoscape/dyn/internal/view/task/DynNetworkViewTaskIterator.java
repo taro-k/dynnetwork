@@ -61,17 +61,15 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			final double low, 
 			final double high,
 			final JSlider slider,
-			final int timestep,
-			final double alpha,
-			final int n)
+			final int timestep)
 	{
 		super(panel, view, layout, queue, low, high);
 		this.slider = slider;
 		this.timeStep = timestep;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
-		this.alpha = alpha;
-		this.n = n;
+		this.alpha = layout.getAlpha();
+		this.n = layout.getN();
 	}
 
 	@Override

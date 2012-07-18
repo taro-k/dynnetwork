@@ -21,7 +21,6 @@ package org.cytoscape.dyn.internal.view.layout.algorithm;
 
 import java.util.Set;
 
-import org.cytoscape.dyn.internal.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
@@ -31,15 +30,15 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> DynLayoutAlgorithmTask </code> is responsible for the generation of random network
- * dynamics by associating to each nodes in the network ransom intervals of node positions,
+ * <code> DynForceLayoutAlgorithmTask </code> is responsible for the generation of force-based network
+ * dynamics by associating to each nodes in the network appropriate intervals of node positions,
  * which are stored in {@link DynLayout}.
  * 
  * @author sabina
  *
  * @param <T>
  */
-public final class DynLayoutAlgorithmTask<T> extends AbstractLayoutTask 
+public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask 
 {
     
 	private final DynLayout<T> layout;
@@ -50,7 +49,7 @@ public final class DynLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	private final double timeMax;
 	private final double timeStep;
 	
-    public DynLayoutAlgorithmTask(
+    public DynForceLayoutAlgorithmTask(
                     final String name,
                     final DynLayout<T> layout,
                     final Set<View<CyNode>> nodesToLayOut, 
@@ -75,27 +74,9 @@ public final class DynLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	@SuppressWarnings("unchecked")
     protected void doLayout(TaskMonitor taskMonitor)
     {	
-		double dist = 2*50*Math.sqrt(nodesToLayOut.size());
-		System.out.println(nodesToLayOut.size() + " dist " + dist);
+		layout.setAlpha(0.2);
+		layout.setN(15);
 		
-    	for (View<CyNode> nv : nodesToLayOut)
-		{
-    		layout.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),timeMin,timeMin+timeStep));
-    		layout.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),timeMin,timeMin+timeStep));
-		}
-    	
-    	for (double time=timeMin; time<timeMax; time=time+timeStep)
-    		for (View<CyNode> nv : nodesToLayOut)
-    		{
-    			if (Math.random()>0.3)
-    				layout.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
-    			if (Math.random()>0.3)
-    				layout.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
-    		}
-    	
-    	layout.initNodePositions(currentTime);
-    	view.fitContent();
-    	view.updateView();
     }
 
 }

@@ -35,7 +35,8 @@ import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactoryImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManagerImpl;
-import org.cytoscape.dyn.internal.view.layout.algorithm.DynLayoutAlgorithm;
+import org.cytoscape.dyn.internal.view.layout.algorithm.DynForceLayoutAlgorithm;
+import org.cytoscape.dyn.internal.view.layout.algorithm.DynRandomLayoutAlgorithm;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
@@ -102,7 +103,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
     	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
     	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynLayout = new DynLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
+    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
+    	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Force Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 
@@ -118,7 +120,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
     	registerService(context,dynCytoPanel,VisualStyleSetListener.class, new Properties());
-    	registerService(context,dynLayout,CyLayoutAlgorithm.class, myLayoutProps);
+    	registerService(context,dynRandomLayout,CyLayoutAlgorithm.class, myLayoutProps);
+    	registerService(context,dynForceLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
 
 	}

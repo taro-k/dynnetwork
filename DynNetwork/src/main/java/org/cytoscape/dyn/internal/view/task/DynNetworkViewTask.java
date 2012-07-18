@@ -53,14 +53,12 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 			final BlockingQueue queue,
 			final double low, 
 			final double high, 
-			final int visibility,
-			final double alpha,
-			final int n) 
+			final int visibility) 
 	{
 		super(panel, view, layout, queue, low, high);
 		this.visibility = visibility;
-		this.alpha = alpha;
-		this.n = n;
+		this.alpha = layout.getAlpha();
+		this.n = layout.getN();
 	}
 
 	@Override

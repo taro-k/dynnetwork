@@ -32,20 +32,20 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> DynLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
- * {@link DynLayoutAlgorithmTask}.
+ * <code> DynForceLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
+ * {@link DynForceLayoutAlgorithmTask}.
  * 
  * @author sabina
  *
  * @param <T>
  * @param <C>
  */
-public class DynLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
+public class DynForceLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory<T> dynLaoutFactory;
     
-    public DynLayoutAlgorithm(
+    public DynForceLayoutAlgorithm(
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
@@ -67,7 +67,7 @@ public class DynLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
     	if (networkView!=null)
     	{
     		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
-            return new TaskIterator(new DynLayoutAlgorithmTask<T>(
+            return new TaskIterator(new DynForceLayoutAlgorithmTask<T>(
             		getName(), layout, nodesToLayOut, layoutAttribute, undoSupport,
             		panel.getTime(),panel.getMinTime(),panel.getMaxTime(),(panel.getMaxTime()-panel.getMinTime())/10));
     	}

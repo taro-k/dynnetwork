@@ -106,4 +106,30 @@ public interface DynLayout<T>
 	 * @return view
 	 */
 	public CyNetworkView getNetworkView();
+
+	/**
+	 * Get constant alpha (position updating speed).
+	 * @return
+	 */
+	double getAlpha();
+
+	/**
+	 * Set constant alpha (position updating speed).
+	 * @param alpha
+	 */
+	void setAlpha(double alpha);
+
+	/**
+	 * Get constant n (position updating iterations).
+	 * @return
+	 */
+	int getN();
+
+	/**
+	 * Set constant n (position updating iterations).
+	 * @param n
+	 */
+	void setN(int n);
+
+	
 }
