@@ -48,14 +48,14 @@ public class DynCytoPanelTask<T,C> extends AbstractTask
 	@Override
 	public void run(TaskMonitor taskMonitor) throws Exception
 	{
-		panel.reset();
+		panel.initView();
 
 		if (cytoPanelWest.getState() == CytoPanelState.HIDE)
 		{
 			cytoPanelWest.setState(CytoPanelState.DOCK);
 		}	
 
-		int index = cytoPanelWest.indexOfComponent(panel);
+		int index = cytoPanelWest.indexOfComponent(panel.getComponent());
 		if (index == -1)
 		{
 			return;

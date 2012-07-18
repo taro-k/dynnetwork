@@ -21,9 +21,9 @@ package org.cytoscape.dyn.internal.model;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.tree.DynAttribute;
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
+import org.cytoscape.dyn.internal.tree.DynAttribute;
+import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.tree.DynIntervalTree;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;

@@ -50,7 +50,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork)
 	{
 		DynNetworkViewImpl<T> dynNetworkView = new DynNetworkViewImpl<T>(dynNetwork, networkViewManager,cyNetworkViewFactory,vmm);
-		viewManager.addDynNetworkView(dynNetworkView.getNetworkView(), dynNetworkView);
+		viewManager.addDynNetworkView(dynNetworkView);
 		return dynNetworkView;
 	}
 
@@ -127,7 +127,5 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	{
 		
 	}
-	
-
 
 }

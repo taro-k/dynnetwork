@@ -38,7 +38,7 @@ public interface DynNetworkViewManager<T>
 	 * @param view
 	 * @param dynNetworkView
 	 */
-	public void addDynNetworkView(CyNetworkView view, DynNetworkView<T> dynNetworkView);
+	public void addDynNetworkView(DynNetworkView<T> dynNetworkView);
 
 	/**
 	 * Get network view.

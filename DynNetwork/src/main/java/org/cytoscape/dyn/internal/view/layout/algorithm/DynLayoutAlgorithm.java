@@ -17,12 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.layout;
+package org.cytoscape.dyn.internal.view.layout.algorithm;
 
 import java.util.Set;
 
-import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.layout.DynLayout;
+import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkView;
@@ -30,18 +31,21 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
-public class DynLayoutAlgorithm<T> extends AbstractLayoutAlgorithm
+public class DynLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
-    private final DynNetworkViewManager<T> networkViewManager;
+	private final DynCytoPanel<T,C> panel;
+    private final DynLayoutFactory<T> dynLaoutFactory;
     
     public DynLayoutAlgorithm(
-                    String computerName, 
-                    String humanName,
-                    UndoSupport undoSupport,
-                    DynNetworkViewManager<T> networkViewManager)
+                    final String computerName, 
+                    final String humanName,
+                    final UndoSupport undoSupport,
+                    final DynCytoPanel<T, C> panel,
+                    final DynLayoutFactory<T> dynLaoutFactory)
     {
             super(computerName, humanName, undoSupport);
-            this.networkViewManager = networkViewManager;
+            this.panel = panel;
+            this.dynLaoutFactory = dynLaoutFactory;
     }
 
     @Override
@@ -51,12 +55,15 @@ public class DynLayoutAlgorithm<T> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
-            DynNetworkView<T> view = networkViewManager.getDynNetworkView(networkView);
-            
-            if (view!=null)
-                    return new TaskIterator(new DynLayoutAlgorithmTask<T>(getName(), view, nodesToLayOut, layoutAttribute, undoSupport));
-            else
-                    return new TaskIterator();
+    	if (networkView!=null)
+    	{
+    		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
+            return new TaskIterator(new DynLayoutAlgorithmTask<T>(
+            		getName(), layout, nodesToLayOut, layoutAttribute, undoSupport,
+            		panel.getTime(),panel.getMinTime(),panel.getMaxTime(),(panel.getMaxTime()-panel.getMinTime())/10));
+    	}
+    	else
+    		return  new TaskIterator();
     }
 
 }

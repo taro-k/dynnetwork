@@ -34,20 +34,20 @@ import org.cytoscape.model.CyNetwork;
 public interface DynNetworkManager<T>
 {
 	/**
-	 * Add network.
+	 * Add a dynamic network.
 	 * @param dynNetwork
 	 */
 	public void addDynNetwork(DynNetwork<T> dynNetwork);
 
 	/**
-	 * Get network.
+	 * Get dynamic network.
 	 * @param network
-	 * @return network
+	 * @return dynNetwork
 	 */
 	public DynNetwork<T> getDynNetwork(CyNetwork network);
 	
 	/**
-	 * Add all networks.
+	 * Get all dynamic networks.
 	 * @return networks
 	 */
 	public Collection<DynNetwork<T>> getDynNetworks();

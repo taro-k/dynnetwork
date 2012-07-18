@@ -22,8 +22,8 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
+import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -36,7 +36,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 	private final int visibility;
 
 	public DynNetworkViewTaskGroup(
-			final DynCytoPanel<T,C> panel,
+			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
 			final BlockingQueue queue,
 			double low, 
@@ -44,7 +44,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 			final int visibility,
 			final CyGroup group) 
 	{
-		super(panel, view, queue, low, high);
+		super(panel, view, null, queue, low, high);
 		this.group = group;
 		this.visibility = visibility;
 	}

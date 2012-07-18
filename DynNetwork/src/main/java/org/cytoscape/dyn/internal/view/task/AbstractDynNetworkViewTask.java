@@ -3,8 +3,10 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
@@ -12,7 +14,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> AbstractDynNetworkViewTask </code> is the abstract calls all visual task
- * have to extend. It provides the functionality to communicate with {@link DynCytoPanel},
+ * have to extend. It provides the functionality to communicate with {@link AdvancedDynCytoPanel},
  * and update the visualization.
  * 
  * @author sabina
@@ -24,6 +26,7 @@ public class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynCytoPanel<T,C> panel;
 	protected final DynNetworkView<T> view;
 	protected final DynNetwork<T> dynNetwork;
+	protected final DynLayout<T> layout;
 	protected final BlockingQueue queue;
 	protected final double low;
 	protected final double high;
@@ -38,6 +41,7 @@ public class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	public AbstractDynNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
+			final DynLayout<T> layout,
 			final BlockingQueue queue, 
 			final double low, 
 			final double high) 
@@ -45,6 +49,7 @@ public class AbstractDynNetworkViewTask<T,C>  implements Runnable
 		this.panel = panel;
 		this.view = view;
 		this.dynNetwork = view.getNetwork();
+		this.layout = layout;
 		this.queue = queue;
 		this.low = low;
 		this.high = high;
@@ -78,33 +83,36 @@ public class AbstractDynNetworkViewTask<T,C>  implements Runnable
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
 	}
 	
-	protected void updatePosition(List<DynInterval<T>> intervalList, double alpha)
+	protected void updatePosition(List<DynInterval<T>> intervalList, double alpha, int n)
 	{
-		timeStart = System.currentTimeMillis();
-		
-		for (DynInterval<T> interval : intervalList)
+		for (int i=0;i<n;i++)
 		{
-			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
-			if (node!=null)
-				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
-					view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
-							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*(Double)interval.getValue()));
-				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
-					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
-							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*(Double)interval.getValue()));
-				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
-					view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
-							((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*(Double)interval.getValue()));
-		}
-		
-		view.updateView();
-		timeEnd = System.currentTimeMillis();
-		
-		if (timeEnd-timeStart<50)
-		try {
-			Thread.sleep(50-(int) (timeEnd-timeStart));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			timeStart = System.currentTimeMillis();
+
+			for (DynInterval<T> interval : intervalList)
+			{
+				CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
+				if (node!=null)
+					if (interval.getAttribute().getColumn().equals("node_X_Pos"))
+						view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
+								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*(Double)interval.getValue()));
+					else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
+						view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
+								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*(Double)interval.getValue()));
+					else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
+						view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
+								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*(Double)interval.getValue()));
+			}
+
+			view.updateView();
+			timeEnd = System.currentTimeMillis();
+
+			if (timeEnd-timeStart<50)
+				try {
+					Thread.sleep(50-(int) (timeEnd-timeStart));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 		}
 	}
 
@@ -149,6 +157,19 @@ public class AbstractDynNetworkViewTask<T,C>  implements Runnable
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
 			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 		}
+	}
+	
+	protected void updateTransparency(int visibility) 
+	{
+		// update nodes
+		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
+
+		// update edges
+		intervalList = dynNetwork.searchEdgesNot(timeInterval);
+		for (DynInterval<T> interval : intervalList)
+			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
 	}
 	
 }

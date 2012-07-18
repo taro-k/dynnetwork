@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.tree.DynAttribute;
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.tree.DynAttribute;
+import org.cytoscape.dyn.internal.tree.DynInterval;
 import org.cytoscape.dyn.internal.util.ObjectTypeMap;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
@@ -56,7 +56,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private final CyGroupFactory groupFactory;
 	private final CyNetworkFactory networkFactory;
 	private final CyRootNetworkManager rootNetworkManager;
-	private final DynNetworkManagerImpl<T> manager;
+	private final DynNetworkManager<T> manager;
 	private final CyNetworkNaming nameUtil;
 	
 	private final List<CyNode> metaNodes; 
@@ -66,7 +66,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			final CyRootNetworkManager rootNetworkManager,
 			final CyGroupManager groupManager,
 			final CyGroupFactory groupFactory,
-			final DynNetworkManagerImpl<T> manager,
+			final DynNetworkManager<T> manager,
 			final CyNetworkNaming nameUtil)
 	{
 		this.networkFactory = networkFactory;

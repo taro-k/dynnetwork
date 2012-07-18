@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.model.tree.DynAttribute;
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
+import org.cytoscape.dyn.internal.tree.DynAttribute;
+import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.tree.DynIntervalTreeImpl;
 import org.cytoscape.dyn.internal.util.KeyPairs;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.model.CyEdge;

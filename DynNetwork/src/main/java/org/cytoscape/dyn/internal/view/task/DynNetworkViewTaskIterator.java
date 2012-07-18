@@ -23,8 +23,9 @@ import java.util.List;
 
 import javax.swing.JSlider;
 
-import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
+import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
 public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkViewTask<T,C>
@@ -36,24 +37,25 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	private int visibility;
 	private int oldVisibility;
 	private final double alpha;
-	private final double n;
+	private final int n;
 	
 	public DynNetworkViewTaskIterator(
-			final DynCytoPanel<T,C> panel,
+			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
+			final DynLayout<T> layout,
 			final BlockingQueue queue,
 			final double low, 
 			final double high,
 			final JSlider slider,
 			final int timestep)
 	{
-		super(panel, view, queue, low, high);
+		super(panel, view, layout, queue, low, high);
 		this.slider = slider;
 		this.timeStep = timestep;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
 		this.alpha = 0.2;
-		this.n = 20;
+		this.n = 15;
 	}
 
 	@Override
@@ -68,7 +70,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			timeStart = System.currentTimeMillis();
 			
 			updateNetwork();
-			updateTransparency();
+			
+			oldVisibility = visibility;
+			visibility = panel.getVisibility();
+			if (oldVisibility!=visibility)
+				updateTransparency(visibility);
+			
 			view.updateView();
 			
 			timeEnd = System.currentTimeMillis();
@@ -87,11 +94,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		panel.setValueIsAdjusting(false);
 		
 		queue.unlock();	
-	}
-
-	public void cancel() 
-	{
-		this.cancelled = true;
 	}
 	
 	private void updateNetwork()
@@ -129,32 +131,15 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
 		
 		// update node positions
-		intervalList = view.searchChangedNodePositions(timeInterval);
-		if (!intervalList.isEmpty())
-			for (int i=0;i<n;i++)
-				updatePosition(intervalList, alpha);
+		if (layout!=null)
+		{
+			intervalList = layout.searchChangedNodePositions(timeInterval);
+			if (!intervalList.isEmpty())
+				updatePosition(intervalList, alpha, n);
+		}
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());
-	}
-	
-	private void updateTransparency() 
-	{
-		oldVisibility = visibility;
-		visibility = panel.getVisibility();
-		
-		if (oldVisibility!=visibility)
-		{
-			// update nodes
-			List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
-			for (DynInterval<T> interval : intervalList)
-				setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
-
-			// update edges
-			intervalList = dynNetwork.searchEdgesNot(timeInterval);
-			for (DynInterval<T> interval : intervalList)
-				setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
-		}
 	}
 	
 }

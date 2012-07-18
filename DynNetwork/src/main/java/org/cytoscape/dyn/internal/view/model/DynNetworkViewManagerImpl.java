@@ -45,10 +45,10 @@ public final class DynNetworkViewManagerImpl<T> implements DynNetworkViewManager
 	}
 	
 	@Override
-	public void addDynNetworkView(CyNetworkView view, DynNetworkView<T> dynNetworkView)
+	public void addDynNetworkView(DynNetworkView<T> dynNetworkView)
 	{
 		this.cyNetworkViewManager.addNetworkView(dynNetworkView.getNetworkView());
-		this.dynNetworkViewMap.put(view, dynNetworkView);
+		this.dynNetworkViewMap.put(dynNetworkView.getNetworkView(), dynNetworkView);
 	}
 
 	@Override
