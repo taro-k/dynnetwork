@@ -21,13 +21,10 @@ package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> DynNetworkViewTransparencyTask </code> is responsible for updating the {@link CyNetworkView}
@@ -38,26 +35,19 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  *
  * @param <T>
  */
-public final class DynNetworkViewTransparencyTask<T> implements Runnable 
+public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetworkViewTask<T,C>  
 {
-	private final DynNetworkView<T> view;
-	private final DynNetwork<T> dynNetwork;
-	private final BlockingQueue queue;
-	private final double low;
-	private final double high;
 	private final int visibility;
 
 	public DynNetworkViewTransparencyTask(
+			final DynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
-			final double low, final double high, final int visibility) 
+			final double low, 
+			final double high, 
+			final int visibility) 
 	{
-		this.view = view;
-		this.dynNetwork = dynNetwork;
-		this.queue = queue;
-		this.low = low;
-		this.high = high;
+		super(panel, view, queue, low, high);
 		this.visibility = visibility;
 	}
 
@@ -71,36 +61,16 @@ public final class DynNetworkViewTransparencyTask<T> implements Runnable
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()));
+			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
 		
 		// update edges
 		intervalList = dynNetwork.searchEdgesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()));
+			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
 
 		view.updateView();
 		
 		queue.unlock();
-
-	}
-
-	private void setTransparency(CyNode node)
-	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
-		}
-	}
-
-	private void setTransparency(CyEdge edge)
-	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
-		}
 	}
 
 }

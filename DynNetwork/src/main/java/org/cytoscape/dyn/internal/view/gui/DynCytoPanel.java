@@ -60,14 +60,9 @@ import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.view.model.View;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.view.vizmap.events.VisualStyleSetEvent;
 import org.cytoscape.view.vizmap.events.VisualStyleSetListener;
-import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
 /**
@@ -101,6 +96,7 @@ VisualStyleSetListener
 	private volatile boolean valueIsAdjusting = false;
 	
 	private int sliderMax;
+	private DynNetworkViewTask<T,C> singleTask;
 	private DynNetworkViewTaskIterator<T,C> recursiveTask;
 
 	private JPanel buttonPanel;
@@ -153,17 +149,9 @@ VisualStyleSetListener
 			
 			JButton source = (JButton)event.getSource();
 			if (source.equals(forwardButton))
-			{
-				recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						slider, +1, this, view, network, queue);
-				new Thread(recursiveTask).start();
-			}
+				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(this, view, queue, time, time, slider, +1)).start();
 			else if (source.equals(backwardButton))
-			{
-				recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						slider, -1, this, view, network, queue);
-				new Thread(recursiveTask).start();
-			}
+				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(this, view, queue, time, time, slider, -1)).start();
 		}
 		else if (event.getSource() instanceof JCheckBox)
 		{
@@ -407,32 +395,29 @@ VisualStyleSetListener
 	
 	private void updateView()
 	{
+		if (singleTask!=null)
+			singleTask.cancel();
+		
 		if (time==this.network.getMaxTime())
-			new Thread(new DynNetworkViewTask<T,C>(
-					this, view, network, queue, time-0.0000001, time+0.0000001, visibility)).start();
+			new Thread(singleTask = new DynNetworkViewTask<T,C>(this,view,queue,time-0.0000001,time+0.0000001,visibility)).start();
 		else
-			new Thread(new DynNetworkViewTask<T,C>(
-					this, view, network, queue, time, time, visibility)).start();
+			new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,queue,time,time,visibility)).start();
 	}
 	
 	private void updateGroup(CyGroup group)
 	{
 		if (time==maxTime)
-			new Thread(new DynNetworkViewTaskGroup<T>(
-					view, network, queue, time-0.0000001, time+0.0000001, visibility, group)).start();
+			new Thread(new DynNetworkViewTaskGroup<T,C>(this,view,queue,time-0.0000001,time+0.0000001,visibility, group)).start();
 		else
-			new Thread(new DynNetworkViewTaskGroup<T>(
-					view, network, queue, time, time, visibility, group)).start();
+			new Thread(new DynNetworkViewTaskGroup<T,C>(this,view,queue,time,time,visibility,group)).start();
 	}
 	
 	private void updateTransparency()
 	{
 		if (time==maxTime)
-			new Thread(new DynNetworkViewTransparencyTask<T>(
-					view, network, queue, time-0.0000001, time+0.0000001, visibility)).start();
+			new Thread(new DynNetworkViewTransparencyTask<T,C>(this,view,queue,time-0.0000001,time+0.0000001,visibility)).start();
 		else
-			new Thread(new DynNetworkViewTransparencyTask<T>(
-					view, network, queue, time, time, visibility)).start();
+			new Thread(new DynNetworkViewTransparencyTask<T,C>(this,view,queue,time,time,visibility)).start();
 	}
 	
 	private void updateGui(double absoluteTime, int value)

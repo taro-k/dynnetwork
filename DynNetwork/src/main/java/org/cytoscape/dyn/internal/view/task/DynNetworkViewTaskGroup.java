@@ -22,37 +22,29 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
-public class DynNetworkViewTaskGroup<T> implements Runnable 
+public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTask<T,C>  
 {
-	private final DynNetworkView<T> view;
-	private final DynNetwork<T> dynNetwork;
-	private final BlockingQueue queue;
-	private final double low;
-	private final double high;
 	private final CyGroup group;
 	private final int visibility;
 
 	public DynNetworkViewTaskGroup(
+			final DynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynNetwork<T> dynNetwork,
 			final BlockingQueue queue,
-			double low, double high,
+			double low, 
+			double high,
 			final int visibility,
 			final CyGroup group) 
 	{
-		this.view = view;
-		this.dynNetwork = dynNetwork;
-		this.queue = queue;
-		this.low = low;
-		this.high = high;
+		super(panel, view, queue, low, high);
 		this.group = group;
 		this.visibility = visibility;
 	}
@@ -63,6 +55,8 @@ public class DynNetworkViewTaskGroup<T> implements Runnable
 		queue.lock();
 		
 		view.updateView();
+		
+		timeInterval = new DynInterval<T>(low, high);
 
 		List<CyNode> nodeList = new ArrayList<CyNode>();
 		List<CyEdge> edgeList = new ArrayList<CyEdge>();
@@ -88,7 +82,7 @@ public class DynNetworkViewTaskGroup<T> implements Runnable
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
 		
 		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(new DynInterval<T>(low, high));
+		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
@@ -99,7 +93,7 @@ public class DynNetworkViewTaskGroup<T> implements Runnable
 		}
 		
 		// update edges
-		intervalList = dynNetwork.searchEdges(new DynInterval<T>(low, high));
+		intervalList = dynNetwork.searchEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyEdge edge = dynNetwork.getEdge(interval.getAttribute().getKey().getRow());
