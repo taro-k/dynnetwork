@@ -27,6 +27,14 @@ import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 
+/**
+ * <code> DynNetworkViewFactoryImpl </code> implements the interface
+ * {@link DynNetworkViewFactory} for creating {@link DynNetworkView}s.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory<T>
 {
 	private final DynNetworkViewManager<T> viewManager;

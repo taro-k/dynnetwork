@@ -23,11 +23,25 @@ import java.util.List;
 
 import javax.swing.JSlider;
 
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
+/**
+ * <code> DynNetworkViewTaskIterator </code> is the task that is responsible for updating
+ * the visualization of a dynamic network {@link DynNetwork} by recursively incrementing or 
+ * decrementing the time with a given timeStep. In order to increase speed performance, only 
+ * elements that changed from the last visualization are updated (by interval tree search over 
+ * all elements). The dynamics of the network is stored in {@link DynNetwork}, whereas the dynamics of the
+ * visualization is stored in {@link DynLayout}.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
+ */
 public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkViewTask<T,C>
 {	
 	private final JSlider slider;
@@ -47,15 +61,17 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			final double low, 
 			final double high,
 			final JSlider slider,
-			final int timestep)
+			final int timestep,
+			final double alpha,
+			final int n)
 	{
 		super(panel, view, layout, queue, low, high);
 		this.slider = slider;
 		this.timeStep = timestep;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
-		this.alpha = 0.2;
-		this.n = 15;
+		this.alpha = alpha;
+		this.n = n;
 	}
 
 	@Override

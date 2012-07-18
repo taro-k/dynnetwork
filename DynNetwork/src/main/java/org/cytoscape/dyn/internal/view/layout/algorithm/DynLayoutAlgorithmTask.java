@@ -30,6 +30,15 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
 
+/**
+ * <code> DynLayoutAlgorithmTask </code> is responsible for the generation of random network
+ * dynamics by associating to each nodes in the network ransom intervals of node positions,
+ * which are stored in {@link DynLayout}.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ */
 public final class DynLayoutAlgorithmTask<T> extends AbstractLayoutTask 
 {
     

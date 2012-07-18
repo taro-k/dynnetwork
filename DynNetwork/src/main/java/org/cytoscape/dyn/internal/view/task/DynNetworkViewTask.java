@@ -21,6 +21,7 @@ package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
@@ -28,10 +29,10 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
 /**
  * <code> DynNetworkViewTask </code> is the task that is responsible for updating
- * all elements when the current time interval is changed. In order to increase speed 
- * performance, only elements that changed from the last visualization are updated 
- * (by interval tree search over all elements), and only attributes of selected elements 
- * are updated (by linear search in single elements).
+ * the visualization of a static network {@link DynNetwork} by updating the time. In order 
+ * to increase speed performance, only elements that changed from the last visualization are 
+ * updated (by interval tree search over all elements). The dynamics of the network is stored in 
+ * {@link DynNetwork}, whereas the dynamics of the visualization is stored in {@link DynLayout}.
  * 
  * @author sabina
  *
@@ -52,12 +53,14 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 			final BlockingQueue queue,
 			final double low, 
 			final double high, 
-			final int visibility) 
+			final int visibility,
+			final double alpha,
+			final int n) 
 	{
 		super(panel, view, layout, queue, low, high);
 		this.visibility = visibility;
-		this.alpha = 0.2;
-		this.n = 15;
+		this.alpha = alpha;
+		this.n = n;
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import org.cytoscape.dyn.internal.event.Sink;
 
 
 /**
- * <code> DynNetworkFactory </code> is a the interface for the factory of
+ * <code> DynNetworkFactory </code> is the interface for the factory of
  * {@link DynNetwork}s and is an event sink.
  * 
  * @author sabina

@@ -37,7 +37,7 @@ import org.cytoscape.model.CyNode;
 /**
  * <code> DynNetworkImpl </code> implements the interface {@link DynNetwork}
  * and provides method and data structures to record and retrieve network dynamic 
- * information
+ * information.
  * 
  * @author sabina
  *

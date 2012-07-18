@@ -31,6 +31,15 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
+/**
+ * <code> DynLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
+ * {@link DynLayoutAlgorithmTask}.
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
+ */
 public class DynLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
