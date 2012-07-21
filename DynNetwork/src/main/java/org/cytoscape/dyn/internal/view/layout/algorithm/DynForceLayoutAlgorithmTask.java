@@ -74,8 +74,12 @@ public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	@SuppressWarnings("unchecked")
     protected void doLayout(TaskMonitor taskMonitor)
     {	
-		layout.setAlpha(0.2);
-		layout.setN(15);
+//		layout.setAlpha(0.2);
+//		layout.setN(15);
+		
+		layout.initNodePositions(currentTime);
+    	view.fitContent();
+    	view.updateView();
 		
     }
 

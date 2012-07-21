@@ -47,8 +47,6 @@ public class DynCyNetworkViewTaskIterator<T,C> extends AbstractCyNetworkViewTask
 	private final int timeStep;
 	
 	private double time;
-	private final double alpha;
-	private final int n;
 
 	public DynCyNetworkViewTaskIterator(
 			final AdvancedDynCytoPanel<T,C> panel,
@@ -63,8 +61,6 @@ public class DynCyNetworkViewTaskIterator<T,C> extends AbstractCyNetworkViewTask
 		super(panel, view, layout, queue, low, high);
 		this.slider = slider;
 		this.timeStep = timestep;
-		this.alpha = layout.getAlpha();
-		this.n = layout.getN();
 	}
 
 	@Override
@@ -111,7 +107,7 @@ public class DynCyNetworkViewTaskIterator<T,C> extends AbstractCyNetworkViewTask
 		// update node positions
 		List<DynInterval<T>> intervalList = layout.searchChangedNodePositions(timeInterval);
 		if (!intervalList.isEmpty())
-			updatePosition(intervalList, alpha, n);
+			updatePosition(intervalList, layout.getAlpha(), layout.getN());
 
 	}
 

@@ -41,9 +41,6 @@ import org.cytoscape.view.model.CyNetworkView;
  */
 public class DynCyNetworkViewTask<T,C> extends AbstractCyNetworkViewTask<T,C> 
 {
-	private final double alpha;
-	private final int n;
-	
 	private boolean updateNodes = true;
 
 	public DynCyNetworkViewTask(
@@ -56,8 +53,6 @@ public class DynCyNetworkViewTask<T,C> extends AbstractCyNetworkViewTask<T,C>
 			final int visibility) 
 	{
 		super(panel, view, layout, queue, low, high);
-		this.alpha = layout.getAlpha();
-		this.n = layout.getN();
 	}
 
 	@Override
@@ -75,7 +70,7 @@ public class DynCyNetworkViewTask<T,C> extends AbstractCyNetworkViewTask<T,C>
 		{
 			List<DynInterval<T>> intervalList = layout.searchChangedNodePositions(timeInterval);
 			if (!intervalList.isEmpty())
-				updatePosition(intervalList, alpha, n);
+				updatePosition(intervalList, layout.getAlpha(), layout.getN());
 		}
 		
 		view.updateView();

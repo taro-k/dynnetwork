@@ -79,7 +79,6 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
 		layout.setN(15);
 		
 		double dist = 2*50*Math.sqrt(nodesToLayOut.size());
-		System.out.println(nodesToLayOut.size() + " dist " + dist);
 		
     	for (View<CyNode> nv : nodesToLayOut)
 		{

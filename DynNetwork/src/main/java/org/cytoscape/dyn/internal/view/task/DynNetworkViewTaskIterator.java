@@ -50,8 +50,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	private double time;
 	private int visibility;
 	private int oldVisibility;
-	private final double alpha;
-	private final int n;
 	
 	public DynNetworkViewTaskIterator(
 			final AdvancedDynCytoPanel<T,C> panel,
@@ -68,8 +66,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		this.timeStep = timestep;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
-		this.alpha = layout.getAlpha();
-		this.n = layout.getN();
 	}
 
 	@Override
@@ -149,7 +145,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		{
 			intervalList = layout.searchChangedNodePositions(timeInterval);
 			if (!intervalList.isEmpty())
-				updatePosition(intervalList, alpha, n);
+				updatePosition(intervalList, layout.getAlpha(), layout.getN());
 		}
 		
 		panel.setNodes(dynNetwork.getVisibleNodes());
