@@ -8,7 +8,7 @@ import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import org.cytoscape.view.vizmap.mappings.ValueTranslator;
 
 public class DynPassthroughMappingImpl<K, V> extends AbstractVisualMappingFunction<K, V> implements
-		PassthroughMapping<K, V> {
+		PassthroughMapping<K,V> {
 
 	private final ValueTranslator<K, V> translator;
 

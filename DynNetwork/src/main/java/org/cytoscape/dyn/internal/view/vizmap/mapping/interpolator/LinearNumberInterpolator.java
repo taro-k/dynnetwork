@@ -1,5 +1,5 @@
 /*
-  File: LinearNumberToColorInterpolator.java
+  File: LinearNumberInterpolator.java
 
   Copyright (c) 2006, The Cytoscape Consortium (www.cytoscape.org)
 
@@ -33,48 +33,48 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-*/
-
-//LinearNumberToColorInterpolator.java
-package org.cytoscape.internal.view.vizmap.mapping.interpolator;
-
-import java.awt.Color;
-
-
-
-/**
- * The class provides a linear interpolation between color values. The
- * (red,green,blue,alpha) values of the returned color are linearly
- * interpolated from the associated values of the lower and upper colors,
- * according the the fractional distance frac from the lower value.
- *
- * If either object argument is not a Color, null is returned.
  */
-public class LinearNumberToColorInterpolator extends LinearNumberInterpolator<Color> {
 
-    /**
-     *  DOCUMENT ME!
-     *
-     * @param frac DOCUMENT ME!
-     * @param lowerRange DOCUMENT ME!
-     * @param upperRange DOCUMENT ME!
-     *
-     * @return  DOCUMENT ME!
-     */
+//LinearNumberInterpolator.java
+//----------------------------------------------------------------------------
+// $Revision: 10005 $
+// $Date: 2007-04-17 19:50:13 -0700 (Tue, 17 Apr 2007) $
+// $Author: kono $
+//----------------------------------------------------------------------------
+package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
+
+
+//----------------------------------------------------------------------------
+/**
+ * This subclass of NumberInterpolator further assumes a linear interpolation,
+ * and calculates the fractional distance of the target domain value from the
+ * lower boundary value for the convenience of subclasses.
+ */
+abstract public class LinearNumberInterpolator<R> extends NumberInterpolator<R> {
+
+	/**
+	 * DOCUMENT ME!
+	 * 
+	 * @param frac
+	 *            DOCUMENT ME!
+	 * @param lowerRange
+	 *            DOCUMENT ME!
+	 * @param upperRange
+	 *            DOCUMENT ME!
+	 * 
+	 * @return DOCUMENT ME!
+	 */
+	abstract public R getRangeValue(double frac, R lowerRange, R upperRange);
+
 	@Override
-	public Color getRangeValue(double frac, Color lowerRange,
-        Color upperRange) {
+	public R getRangeValue(double lowerDomain, R lowerRange,
+			double upperDomain, R upperRange, double domainValue) {
 
-        double red = lowerRange.getRed() +
-            (frac * (upperRange.getRed() - lowerRange.getRed()));
-        double green = lowerRange.getGreen() +
-            (frac * (upperRange.getGreen() - lowerRange.getGreen()));
-        double blue = lowerRange.getBlue() +
-            (frac * (upperRange.getBlue() - lowerRange.getBlue()));
-        double alpha = lowerRange.getAlpha() +
-            (frac * (upperRange.getAlpha() - lowerRange.getAlpha()));
+		if (lowerDomain == upperDomain)
+			return lowerRange;
 
-        return new Color((int) Math.round(red), (int) Math.round(green),
-            (int) Math.round(blue), (int) Math.round(alpha));
-    }
+		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
+
+		return getRangeValue(frac, lowerRange, upperRange);
+	}
 }

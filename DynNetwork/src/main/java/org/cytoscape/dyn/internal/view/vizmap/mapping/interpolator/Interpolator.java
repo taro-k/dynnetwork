@@ -1,5 +1,5 @@
 /*
-  File: LinearNumberInterpolator.java
+  File: Interpolator.java
 
   Copyright (c) 2006, The Cytoscape Consortium (www.cytoscape.org)
 
@@ -33,48 +33,43 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this library; if not, write to the Free Software Foundation,
   Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
- */
+*/
 
-//LinearNumberInterpolator.java
-//----------------------------------------------------------------------------
-// $Revision: 10005 $
-// $Date: 2007-04-17 19:50:13 -0700 (Tue, 17 Apr 2007) $
-// $Author: kono $
-//----------------------------------------------------------------------------
-package org.cytoscape.internal.view.vizmap.mapping.interpolator;
-
+//Interpolator.java
 
 //----------------------------------------------------------------------------
+// $Revision: 9736 $
+// $Date: 2007-03-19 17:25:45 -0700 (Mon, 19 Mar 2007) $
+// $Author: mes $
+//----------------------------------------------------------------------------
+package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
+
 /**
- * This subclass of NumberInterpolator further assumes a linear interpolation,
- * and calculates the fractional distance of the target domain value from the
- * lower boundary value for the convenience of subclasses.
+ * This interface defines an interpolation function that takes two pairs
+ * of (domain,range) values plus a target domain value, and calculates an
+ * associated range value via some kind of interpolation.
+ *
+ * The behavior of this function is undefined if the target domain value
+ * is not equal to one of the boundaries or between them.
+ * 
+ * @param V domain values.
+ * @param R range values.  These are Color, Number, etc.
+ * 
+ * @author mes
+ * @author kono
  */
-abstract public class LinearNumberInterpolator<R> extends NumberInterpolator<R> {
-
+public interface Interpolator<V, R> {
 	/**
-	 * DOCUMENT ME!
-	 * 
-	 * @param frac
-	 *            DOCUMENT ME!
-	 * @param lowerRange
-	 *            DOCUMENT ME!
-	 * @param upperRange
-	 *            DOCUMENT ME!
-	 * 
-	 * @return DOCUMENT ME!
+	 *  DOCUMENT ME!
+	 *
+	 * @param lowerDomain DOCUMENT ME!
+	 * @param lowerRange DOCUMENT ME!
+	 * @param upperDomain DOCUMENT ME!
+	 * @param upperRange DOCUMENT ME!
+	 * @param domainValue DOCUMENT ME!
+	 *
+	 * @return  DOCUMENT ME!
 	 */
-	abstract public R getRangeValue(double frac, R lowerRange, R upperRange);
-
-	@Override
-	public R getRangeValue(double lowerDomain, R lowerRange,
-			double upperDomain, R upperRange, double domainValue) {
-
-		if (lowerDomain == upperDomain)
-			return lowerRange;
-
-		double frac = (domainValue - lowerDomain) / (upperDomain - lowerDomain);
-
-		return getRangeValue(frac, lowerRange, upperRange);
-	}
+	 public <T extends V> R getRangeValue( T lowerDomain, R lowerRange, T upperDomain,
+	                            R  upperRange, T domainValue);
 }

@@ -1,5 +1,5 @@
 /*
-  File: Interpolator.java
+  File: LinearNumberToColorInterpolator.java
 
   Copyright (c) 2006, The Cytoscape Consortium (www.cytoscape.org)
 
@@ -35,41 +35,46 @@
   Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
-//Interpolator.java
+//LinearNumberToColorInterpolator.java
+package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
-//----------------------------------------------------------------------------
-// $Revision: 9736 $
-// $Date: 2007-03-19 17:25:45 -0700 (Mon, 19 Mar 2007) $
-// $Author: mes $
-//----------------------------------------------------------------------------
-package org.cytoscape.internal.view.vizmap.mapping.interpolator;
+import java.awt.Color;
+
+
 
 /**
- * This interface defines an interpolation function that takes two pairs
- * of (domain,range) values plus a target domain value, and calculates an
- * associated range value via some kind of interpolation.
+ * The class provides a linear interpolation between color values. The
+ * (red,green,blue,alpha) values of the returned color are linearly
+ * interpolated from the associated values of the lower and upper colors,
+ * according the the fractional distance frac from the lower value.
  *
- * The behavior of this function is undefined if the target domain value
- * is not equal to one of the boundaries or between them.
- * 
- * @param V domain values.
- * @param R range values.  These are Color, Number, etc.
- * 
- * @author mes
- * @author kono
+ * If either object argument is not a Color, null is returned.
  */
-public interface Interpolator<V, R> {
-	/**
-	 *  DOCUMENT ME!
-	 *
-	 * @param lowerDomain DOCUMENT ME!
-	 * @param lowerRange DOCUMENT ME!
-	 * @param upperDomain DOCUMENT ME!
-	 * @param upperRange DOCUMENT ME!
-	 * @param domainValue DOCUMENT ME!
-	 *
-	 * @return  DOCUMENT ME!
-	 */
-	 public <T extends V> R getRangeValue( T lowerDomain, R lowerRange, T upperDomain,
-	                            R  upperRange, T domainValue);
+public class LinearNumberToColorInterpolator extends LinearNumberInterpolator<Color> {
+
+    /**
+     *  DOCUMENT ME!
+     *
+     * @param frac DOCUMENT ME!
+     * @param lowerRange DOCUMENT ME!
+     * @param upperRange DOCUMENT ME!
+     *
+     * @return  DOCUMENT ME!
+     */
+	@Override
+	public Color getRangeValue(double frac, Color lowerRange,
+        Color upperRange) {
+
+        double red = lowerRange.getRed() +
+            (frac * (upperRange.getRed() - lowerRange.getRed()));
+        double green = lowerRange.getGreen() +
+            (frac * (upperRange.getGreen() - lowerRange.getGreen()));
+        double blue = lowerRange.getBlue() +
+            (frac * (upperRange.getBlue() - lowerRange.getBlue()));
+        double alpha = lowerRange.getAlpha() +
+            (frac * (upperRange.getAlpha() - lowerRange.getAlpha()));
+
+        return new Color((int) Math.round(red), (int) Math.round(green),
+            (int) Math.round(blue), (int) Math.round(alpha));
+    }
 }

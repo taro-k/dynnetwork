@@ -5,10 +5,10 @@ import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cytoscape.internal.view.vizmap.mapping.interpolator.FlatInterpolator;
-import org.cytoscape.internal.view.vizmap.mapping.interpolator.Interpolator;
-import org.cytoscape.internal.view.vizmap.mapping.interpolator.LinearNumberToColorInterpolator;
-import org.cytoscape.internal.view.vizmap.mapping.interpolator.LinearNumberToNumberInterpolator;
+import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.FlatInterpolator;
+import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.Interpolator;
+import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.LinearNumberToColorInterpolator;
+import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.LinearNumberToNumberInterpolator;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.vizmap.mappings.AbstractVisualMappingFunction;

@@ -61,8 +61,9 @@ import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
-import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleEvent;
-import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleListener;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskManager;
 
 /**
  * <code> DynCytoPanel </code> implements the a JPanel component in {@link CytoPanel} 
@@ -74,15 +75,18 @@ import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleListener;
  * @param <C>
  */
 public final class AdvancedDynCytoPanel<T,C> extends JPanel implements DynCytoPanel<T,C>,
-ChangeListener, ActionListener, SetCurrentNetworkViewListener, 
-GroupCollapsedListener, SetCurrentVisualStyleListener
+ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
 {
 	private static final long serialVersionUID = 1L;
 	
+	private final TaskManager<T,C> taskManager;
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
 	private final DynLayoutManager<T> layoutManager;
+	private final VisualMappingFunctionFactory continousFactory;
+	private final VisualMappingFunctionFactory discreteFactory;
+	private final VisualMappingFunctionFactory passthroughFactory;
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
@@ -91,6 +95,7 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 	private double minTime;
 	private double maxTime;
 	private int visibility = 0;
+	
 	private volatile boolean valueIsAdjusting = false;
 	
 	private int sliderMax;
@@ -106,19 +111,27 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 	private JLabel edgeNumber;
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
-	private JButton forwardButton, backwardButton,stopButton;
+	private JButton forwardButton, backwardButton,stopButton,vizmapButton;
 	private JCheckBox seeAllCheck;
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter,formatter2;
 
 	public AdvancedDynCytoPanel(
+			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
-			final DynLayoutManager<T> layoutManager)
+			final DynLayoutManager<T> layoutManager,
+			final VisualMappingFunctionFactory continousFactory,
+			final VisualMappingFunctionFactory discreteFactory,
+			final VisualMappingFunctionFactory passthroughFactory)
 	{
+		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.layoutManager = layoutManager;
+		this.continousFactory = continousFactory;
+		this.discreteFactory = discreteFactory;
+		this.passthroughFactory = passthroughFactory;
 		this.queue = new BlockingQueue();
 		initComponents();
 	}
@@ -139,7 +152,7 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 	@Override
 	public synchronized void actionPerformed(ActionEvent event)
 	{
-		if (event.getSource() instanceof JButton)
+		if (view!=null && event.getSource() instanceof JButton)
 		{
 			if (recursiveTask!=null)
 				recursiveTask.cancel();
@@ -151,16 +164,22 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 			else if (source.equals(backwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
 						this, view, layoutManager.getDynLayout(view.getNetworkView()), queue, time, time, slider, -1)).start();
+			else if (source.equals(vizmapButton))
+				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
+						view,view.getCurrentVisualStyle(),continousFactory,discreteFactory,passthroughFactory, queue)));
 		}
 		else if (event.getSource() instanceof JCheckBox)
 		{
 			JCheckBox source = (JCheckBox)event.getSource();
-			if (source.isSelected())
-				this.visibility = 30;
-			else
-				this.visibility = 0;
-			if (!valueIsAdjusting)
-				updateTransparency();
+			if (source==seeAllCheck)
+			{
+				if (source.isSelected())
+					this.visibility = 30;
+				else
+					this.visibility = 0;
+				if (!valueIsAdjusting)
+					updateTransparency();
+			}
 		}
 		else if (event.getSource() instanceof JComboBox)
 		{
@@ -202,13 +221,7 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 		if (view!=null)
 			updateGroup((CyGroup) e.getSource());
 	}
-
-	@Override
-	public void handleEvent(SetCurrentVisualStyleEvent e) 
-	{
-		new Thread(new DynVizmapTask<T>(view,e.getVisualStyle())).start();
-	}
-
+		
 	@Override
 	public void initView() 
 	{
@@ -350,13 +363,17 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 		resolutionComboBox.setSelectedIndex(1);
 		resolutionComboBox.addActionListener(this);
 		
+		vizmapButton = new JButton("Reset Vizmap");
+		vizmapButton.addActionListener(this);
+		
 		seeAllCheck = new JCheckBox("Display all",false);
 		seeAllCheck.addActionListener(this);
 		
 		featurePanel = new JPanel();
-		featurePanel.setLayout(new GridLayout(3,1));
+		featurePanel.setLayout(new GridLayout(4,1));
 		featurePanel.add(new JLabel("Time resolution"));
 		featurePanel.add(resolutionComboBox);
+		featurePanel.add(vizmapButton);
 		featurePanel.add(seeAllCheck);
 		
 		formatter2 = new DecimalFormat("#0");
@@ -420,8 +437,6 @@ GroupCollapsedListener, SetCurrentVisualStyleListener
 	{
 		if (singleTask!=null)
 			singleTask.cancel();
-		
-		System.out.println(time + " " + maxTime);
 		
 		if (time>=maxTime)
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(

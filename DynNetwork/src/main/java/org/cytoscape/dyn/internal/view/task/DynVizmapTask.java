@@ -1,80 +1,77 @@
 package org.cytoscape.dyn.internal.view.task;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.model.CyNode;
 import org.cytoscape.view.vizmap.VisualMappingFunction;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualStyle;
 import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
-import org.cytoscape.view.vizmap.mappings.ContinuousMappingPoint;
 import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskMonitor;
 
-public final class DynVizmapTask<T>  implements Runnable
+public final class DynVizmapTask<T> extends AbstractTask
 {
 	private DynNetworkView<T> view;
 	private VisualStyle visualStyle;
+	private final VisualMappingFunctionFactory continousFactory;
+	private final VisualMappingFunctionFactory discreteFactory;
+	private final VisualMappingFunctionFactory passthroughFactory;
+	private final BlockingQueue queue;
 	
 	public DynVizmapTask(
 			DynNetworkView<T> view, 
-			VisualStyle visualStyle) 
+			VisualStyle visualStyle,
+			final VisualMappingFunctionFactory continousFactory,
+			final VisualMappingFunctionFactory discreteFactory,
+			final VisualMappingFunctionFactory passthroughFactory,
+			final BlockingQueue queue) 
 	{
 		this.view = view;
 		this.visualStyle = visualStyle;
+		this.continousFactory = continousFactory;
+		this.discreteFactory = discreteFactory;
+		this.passthroughFactory = passthroughFactory;
+		this.queue = queue;
 	}
 
 	@Override
-	public void run() 
+	public void run(TaskMonitor taskMonitor) throws Exception 
 	{
+		queue.lock();
+		
 		visualStyle = view.getCurrentVisualStyle();
 		Collection<VisualMappingFunction<?, ?>> mappings = visualStyle.getAllVisualMappingFunctions();
-		for (VisualMappingFunction<?, ?> function : mappings)
+		Collection<VisualMappingFunction<?, ?>> newMappings = new ArrayList<VisualMappingFunction<?, ?>>();
+		for (VisualMappingFunction<?, ?> visualMapping : mappings)
 		{
-			if (function instanceof ContinuousMapping<?,?>)
-				fixContinuousMapping((VisualMappingFunction<?, ?>) function);
-			else if (function instanceof DiscreteMapping<?,?>)
-				fixDiscreteMapping((VisualMappingFunction<?, ?>) function);
-			else if (function instanceof PassthroughMapping<?,?>)
-				fixPassthroughMapping((VisualMappingFunction<?, ?>) function);
+			if (visualMapping instanceof ContinuousMapping<?,?>)
+				newMappings.add(
+						continousFactory.createVisualMappingFunction(
+						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
+			else if (visualMapping instanceof DiscreteMapping<?,?>)
+				newMappings.add(
+						discreteFactory.createVisualMappingFunction(
+						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
+			else if (visualMapping instanceof PassthroughMapping<?,?>)
+				newMappings.add(
+						passthroughFactory.createVisualMappingFunction(
+						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
 		}
+		
+		for (VisualMappingFunction<?, ?> visualMapping : mappings)
+			visualStyle.removeVisualMappingFunction(visualMapping.getVisualProperty());
+		
+		for (VisualMappingFunction<?, ?> visualMapping : newMappings)
+			visualStyle.addVisualMappingFunction(visualMapping);
+		
+		visualStyle.apply(view.getNetworkView());
+		
+		queue.unlock();
 	}
 	
-	private <K,V> void fixContinuousMapping(VisualMappingFunction<?,?> visualMapping)
-	{
-		ContinuousMapping<K,V> mapping = (ContinuousMapping<K,V>) visualMapping;
-		System.out.println(mapping.getMappingColumnName() + " " + mapping.getClass());
-		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
-			System.out.println(" point " + point.getValue() + " " + point.getRange().lesserValue + " " + point.getRange().equalValue + " " + point.getRange().greaterValue);
-//		visualStyle.removeVisualMappingFunction(mapping.getVisualProperty());
-	}
-
-	private <K,V> void fixDiscreteMapping(VisualMappingFunction<?,?> visualMapping)
-	{
-		DiscreteMapping<K,V> mapping = (DiscreteMapping<K,V>) visualMapping;
-		System.out.println(mapping.getMappingColumnName() + " " + mapping.getClass());
-		Iterator<K> iterator = mapping.getAll().keySet().iterator();
-		while (iterator.hasNext())
-		{
-			K key = iterator.next();
-		    System.out.println(" point " +  key + " " + mapping.getMapValue(key));
-		}
-//		visualStyle.removeVisualMappingFunction(mapping.getVisualProperty());
-	
-	}
-	
-	private <K,V> void fixPassthroughMapping(VisualMappingFunction<?,?> visualMapping)
-	{
-		PassthroughMapping<K,V> mapping = (PassthroughMapping<K,V>) visualMapping;
-		System.out.println(mapping.getMappingColumnName() + " " + mapping.getClass());
-		List<CyNode> nodeList = view.getNetwork().getNetwork().getNodeList();
-		for (CyNode node : nodeList)
-		{
-			 System.out.println(" point " +  node.getSUID() + " " + mapping.getMappedValue(view.getNetwork().getNetwork().getRow(node)));
-		}
-//		visualStyle.removeVisualMappingFunction(mapping.getVisualProperty());
-	}
 	
 }
