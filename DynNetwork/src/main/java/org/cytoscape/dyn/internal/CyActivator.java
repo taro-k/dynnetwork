@@ -54,7 +54,7 @@ import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.events.VisualStyleSetListener;
+import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleListener;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.undo.UndoSupport;
@@ -102,7 +102,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	
     	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
     	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
-    	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
+    	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Force Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	
@@ -119,10 +119,13 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,action,CyAction.class, new Properties());   	
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
-    	registerService(context,dynCytoPanel,VisualStyleSetListener.class, new Properties());
+    	registerService(context,dynCytoPanel,SetCurrentVisualStyleListener.class, new Properties());
     	registerService(context,dynRandomLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynForceLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
+    	
+    	
+    	
 
 	}
 	

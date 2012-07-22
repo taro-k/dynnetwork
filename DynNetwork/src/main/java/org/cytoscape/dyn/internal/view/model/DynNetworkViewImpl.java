@@ -29,6 +29,7 @@ import org.cytoscape.view.model.View;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.VisualStyle;
 
 /**
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
@@ -163,6 +164,12 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		this.currentTime = currentTime;
 	}	
+	
+	@Override
+	public VisualStyle getCurrentVisualStyle() 
+	{
+		return cyStyleManager.getCurrentVisualStyle();
+	}
 	
 	@Override
 	public void initTransparency(int visibility) 

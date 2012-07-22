@@ -57,13 +57,12 @@ import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskGroup;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
+import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
-import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.events.VisualStyleSetEvent;
-import org.cytoscape.view.vizmap.events.VisualStyleSetListener;
-import org.cytoscape.work.TaskManager;
+import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleEvent;
+import org.cytoscape.view.vizmap.events.SetCurrentVisualStyleListener;
 
 /**
  * <code> DynCytoPanel </code> implements the a JPanel component in {@link CytoPanel} 
@@ -76,11 +75,10 @@ import org.cytoscape.work.TaskManager;
  */
 public final class AdvancedDynCytoPanel<T,C> extends JPanel implements DynCytoPanel<T,C>,
 ChangeListener, ActionListener, SetCurrentNetworkViewListener, 
-GroupCollapsedListener, VisualStyleSetListener
+GroupCollapsedListener, SetCurrentVisualStyleListener
 {
 	private static final long serialVersionUID = 1L;
 	
-	private final TaskManager<T,C> taskManager;
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
@@ -88,7 +86,6 @@ GroupCollapsedListener, VisualStyleSetListener
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
-	private VisualStyle visualStyle;
 	
 	private double time;
 	private double minTime;
@@ -115,13 +112,10 @@ GroupCollapsedListener, VisualStyleSetListener
 	private DecimalFormat formatter,formatter2;
 
 	public AdvancedDynCytoPanel(
-			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
 			final DynLayoutManager<T> layoutManager)
 	{
-		super();
-		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.layoutManager = layoutManager;
@@ -208,20 +202,13 @@ GroupCollapsedListener, VisualStyleSetListener
 		if (view!=null)
 			updateGroup((CyGroup) e.getSource());
 	}
-	
 
 	@Override
-	public synchronized void handleEvent(VisualStyleSetEvent e)
+	public void handleEvent(SetCurrentVisualStyleEvent e) 
 	{
-//		visualStyle = e.getSource().getCurrentVisualStyle();
-//		Collection<VisualMappingFunction<?, ?>> mappings = visualStyle.getAllVisualMappingFunctions();
-//		for (VisualMappingFunction<?, ?> function : mappings)
-//		{
-//			System.out.println("column " + function.getMappingColumnName()
-//					+ " property " + function.getVisualProperty().getDisplayName());
-//		}
+		new Thread(new DynVizmapTask<T>(view,e.getVisualStyle())).start();
 	}
-	
+
 	@Override
 	public void initView() 
 	{
@@ -434,7 +421,9 @@ GroupCollapsedListener, VisualStyleSetListener
 		if (singleTask!=null)
 			singleTask.cancel();
 		
-		if (time==this.network.getMaxTime())
+		System.out.println(time + " " + maxTime);
+		
+		if (time>=maxTime)
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(
 					this,view,layoutManager.getDynLayout(view.getNetworkView()),queue,time-0.0000001,time+0.0000001,visibility)).start();
 		else
@@ -444,7 +433,7 @@ GroupCollapsedListener, VisualStyleSetListener
 	
 	private void updateGroup(CyGroup group)
 	{
-		if (time==maxTime)
+		if (time>=maxTime)
 			new Thread(new DynNetworkViewTaskGroup<T,C>(
 					this,view,queue,time-0.0000001,time+0.0000001,visibility, group)).start();
 		else
@@ -454,7 +443,7 @@ GroupCollapsedListener, VisualStyleSetListener
 	
 	private void updateTransparency()
 	{
-		if (time==maxTime)
+		if (time>=maxTime)
 			new Thread(new DynNetworkViewTransparencyTask<T,C>(
 					this,view,queue,time-0.0000001,time+0.0000001,visibility)).start();
 		else

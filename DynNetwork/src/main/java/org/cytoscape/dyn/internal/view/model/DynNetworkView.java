@@ -24,6 +24,7 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.vizmap.VisualStyle;
 
 /**
  * <code> DynNetworkView </code> is an object that represents a the view of a
@@ -165,4 +166,10 @@ public interface DynNetworkView<T>
 	 * @param currentTime
 	 */
 	public void setCurrentTime(double currentTime);
+	
+	/**
+	 * Get current visual style.
+	 * @return
+	 */
+	public VisualStyle getCurrentVisualStyle() ;
 }

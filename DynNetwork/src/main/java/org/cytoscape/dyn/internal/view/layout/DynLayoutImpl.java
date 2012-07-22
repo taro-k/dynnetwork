@@ -157,7 +157,6 @@ public final class DynLayoutImpl<T> implements DynLayout<T>
 	public void initNodePositions(double time) 
 	{
 		List<DynInterval<T>> intervalList = this.searchChangedNodePositions(new DynInterval<T>(time, time));
-		System.out.println(time + " " + intervalList.size());
 		for (DynInterval<T> interval : intervalList)
 		{
 			CyNode node = view.getModel().getNode(interval.getAttribute().getKey().getRow());
