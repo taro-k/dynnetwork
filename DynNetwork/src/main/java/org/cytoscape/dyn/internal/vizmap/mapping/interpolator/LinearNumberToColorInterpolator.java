@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
+package org.cytoscape.dyn.internal.vizmap.mapping.interpolator;
 /*
  * DynNetwork plugin for Cytoscape 3.0 (http://www.cytoscape.org/).
  * Copyright (C) 2012 Sabina Sara Pfister

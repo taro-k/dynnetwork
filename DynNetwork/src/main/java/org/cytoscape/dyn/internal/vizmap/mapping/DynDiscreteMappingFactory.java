@@ -17,40 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.vizmap.m;
+package org.cytoscape.dyn.internal.vizmap.mapping;
 
-import java.util.List;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.vizmap.VisualMappingFunction;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 
-import org.cytoscape.view.vizmap.mappings.ValueTranslator;
-
-public class StringTranslator implements ValueTranslator<Object, String>{
+public class DynDiscreteMappingFactory implements VisualMappingFunctionFactory
+{
 
 	@Override
-	public String translate(final Object inputValue) {
-		if (inputValue != null) {
-			if (inputValue instanceof List) {
-				// Special handler for List column.
-				final List<?> list = (List<?>)inputValue;
-				final StringBuffer sb = new StringBuffer();
+	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(final String attributeName,
+			Class<K> attrValueType, final VisualProperty<V> vp) {
 
-				if (list != null && !list.isEmpty()) {
-					for (Object item : list)
-						sb.append(item.toString() + "\n");
-
-					sb.deleteCharAt(sb.length() - 1);
-				}
-				
-				return sb.toString();
-			} else {
-				return inputValue.toString();
-			}
-		} else {
-			return null;
-		}
+		return new DynDiscreteMappingImpl<K, V>(attributeName, attrValueType, vp);
 	}
 
 	@Override
-	public Class<String> getTranslatedValueType() {
-		return String.class;
+	public String toString() {
+		return DiscreteMapping.DISCRETE;
 	}
+
+	@Override
+	public Class<?> getMappingFunctionType() {
+		return DiscreteMapping.class;
+	}
+
 }

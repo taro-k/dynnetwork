@@ -40,9 +40,9 @@ import org.cytoscape.dyn.internal.view.layout.algorithm.DynRandomLayoutAlgorithm
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
-import org.cytoscape.dyn.internal.view.vizmap.m.DynContinousMappingFactory;
-import org.cytoscape.dyn.internal.view.vizmap.m.DynDiscreteMappingFactory;
-import org.cytoscape.dyn.internal.view.vizmap.m.DynPassthroughMappingFactory;
+import org.cytoscape.dyn.internal.vizmap.mapping.DynContinousMappingFactory;
+import org.cytoscape.dyn.internal.vizmap.mapping.DynDiscreteMappingFactory;
+import org.cytoscape.dyn.internal.vizmap.mapping.DynPassthroughMappingFactory;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.group.events.GroupCollapsedListener;

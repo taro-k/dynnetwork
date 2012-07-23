@@ -17,17 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.vizmap.m;
+package org.cytoscape.dyn.internal.vizmap.mapping;
 
 import java.awt.Color;
 import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.FlatInterpolator;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.Interpolator;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.LinearNumberToColorInterpolator;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator.LinearNumberToNumberInterpolator;
+import org.cytoscape.dyn.internal.vizmap.mapping.interpolator.FlatInterpolator;
+import org.cytoscape.dyn.internal.vizmap.mapping.interpolator.Interpolator;
+import org.cytoscape.dyn.internal.vizmap.mapping.interpolator.LinearNumberToColorInterpolator;
+import org.cytoscape.dyn.internal.vizmap.mapping.interpolator.LinearNumberToNumberInterpolator;
 import org.cytoscape.model.CyRow;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.vizmap.mappings.AbstractVisualMappingFunction;
