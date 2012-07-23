@@ -202,6 +202,8 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 		
 		while (!edgeGraphicsList.isEmpty())
 			edgeGraphicsList.pop().add(this);
+		
+		networkViewManager.getNetworkViews(dynNetwork.getNetwork()).iterator().next().updateView();
 	}
 	
     private static Paint decodeHEXColor(String nm) throws NumberFormatException 

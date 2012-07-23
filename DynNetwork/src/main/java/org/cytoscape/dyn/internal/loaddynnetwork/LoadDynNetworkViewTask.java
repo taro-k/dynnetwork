@@ -57,7 +57,9 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 	public void run(TaskMonitor tm) throws Exception
 	{
 		tm.setProgress(0.0);
-		sink.createView(dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork()));
+		DynNetwork<T> dynNetwork = dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork());
+		sink.createView(dynNetwork);
+		sink.finalizeNetwork(dynNetwork);
 		tm.setProgress(1.0);
 	}
 
