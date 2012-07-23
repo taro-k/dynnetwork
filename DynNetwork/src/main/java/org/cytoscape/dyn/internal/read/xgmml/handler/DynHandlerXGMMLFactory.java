@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -54,9 +55,9 @@ public final class DynHandlerXGMMLFactory<T>
 	
 	private DynHandlerXGMML<T> handler;
 	
-	public DynHandlerXGMMLFactory(DynNetworkFactory<T> sink)
+	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
-		handler = new DynHandlerXGMML<T>(sink);
+		handler = new DynHandlerXGMML<T>(networkSink,viewSink);
 		startParseMap = new HashMap<ParseDynState, Map<String, ParseDynState>>();
 		buildMap(createStartParseTable(), startParseMap);
 	}

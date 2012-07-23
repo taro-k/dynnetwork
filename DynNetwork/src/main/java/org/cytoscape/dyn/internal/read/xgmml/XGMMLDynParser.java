@@ -23,6 +23,7 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.handler.DynHandlerXGMMLFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -42,9 +43,9 @@ public final class XGMMLDynParser<T> extends DefaultHandler
 	private ParseDynState parseState;
 	private Stack<ParseDynState> startStack;
 
-	public XGMMLDynParser(DynNetworkFactory<T> sink)
+	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
-		this.handler = new DynHandlerXGMMLFactory<T>(sink);
+		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink);
 	}
 
 	@Override

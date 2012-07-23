@@ -17,33 +17,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.util;
+package org.cytoscape.dyn.internal.view.vizmap.mapping;
 
-/**
- * <code> ObjectType </code> implements hash map to convert string types into the 
- * corresponding classes.
- * 
- * @author sabina
- *
- */
-public enum ObjectType
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.vizmap.VisualMappingFunction;
+import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
+import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
+
+public class DynDiscreteMappingFactory implements VisualMappingFunctionFactory
 {
-    NONE("none"), STRING("string"), BOOLEAN("boolean"), REAL("real"), INTEGER("integer"), LIST("list");
 
-    private String name;
+	@Override
+	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(final String attributeName,
+			Class<K> attrValueType, final VisualProperty<V> vp) {
 
-    private ObjectType(String s)
-    {
-        name = s;
-    }
+		return new DynDiscreteMappingImpl<K, V>(attributeName, attrValueType, vp);
+	}
 
-    public String getName()
-    {
-        return name;
-    }
+	@Override
+	public String toString() {
+		return DiscreteMapping.DISCRETE;
+	}
 
-    public String toString()
-    {
-        return name;
-    }
+	@Override
+	public Class<?> getMappingFunctionType() {
+		return DiscreteMapping.class;
+	}
+
 }

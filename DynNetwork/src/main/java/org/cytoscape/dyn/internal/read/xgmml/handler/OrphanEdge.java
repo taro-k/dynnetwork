@@ -43,9 +43,16 @@ public final class OrphanEdge<T>
 	private final String end;
 	
 	private final ArrayList<OrphanAttribute<T>> attributes;
+	private final ArrayList<OrphanGraphicsAttribute<T>> graphics_attributes;
 	
-	public OrphanEdge(DynNetwork<T> currentNetwork, String id, String label,
-			String source, String target, String start, String end)
+	public OrphanEdge(
+			DynNetwork<T> currentNetwork, 
+			String id, 
+			String label,
+			String source, 
+			String target, 
+			String start, 
+			String end)
 	{
 		this.currentNetwork = currentNetwork;
 		this.id = id;
@@ -54,13 +61,17 @@ public final class OrphanEdge<T>
 		this.target = target;
 		this.start = start;
 		this.end = end;
+		
 		attributes = new ArrayList<OrphanAttribute<T>>();
+		graphics_attributes = new ArrayList<OrphanGraphicsAttribute<T>>();
 	}
 	
 	public void add(DynHandlerXGMML<T> handler)
 	{
 		CyEdge currentEdge = handler.addEdge(currentNetwork, id, label, source, target, start,  end);
 		for (OrphanAttribute<T> attr : attributes)
+			attr.add(handler, currentEdge);
+		for (OrphanGraphicsAttribute<T> attr : graphics_attributes)
 			attr.add(handler, currentEdge);
 		
 		if (currentEdge==null)
@@ -71,6 +82,11 @@ public final class OrphanEdge<T>
 	public void addAttribute(DynNetwork<T> currentNetwork, String name, String value, String type, String start, String end)
 	{
 		attributes.add(new OrphanAttribute<T>(currentNetwork, name, value, type, start, end));
+	}
+	
+	public void addGraphics(DynNetwork<T> currentNetwork, String width, String fill)
+	{
+		graphics_attributes.add(new OrphanGraphicsAttribute<T>(currentNetwork, width, fill));
 	}
 
 }

@@ -17,40 +17,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.vizmap.mapping;
+package org.cytoscape.dyn.internal.view.model;
 
-import java.util.List;
+import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.model.CyEdge;
 
-import org.cytoscape.view.vizmap.mappings.ValueTranslator;
-
-public class StringTranslator implements ValueTranslator<Object, String>{
-
-	@Override
-	public String translate(final Object inputValue) {
-		if (inputValue != null) {
-			if (inputValue instanceof List) {
-				// Special handler for List column.
-				final List<?> list = (List<?>)inputValue;
-				final StringBuffer sb = new StringBuffer();
-
-				if (list != null && !list.isEmpty()) {
-					for (Object item : list)
-						sb.append(item.toString() + "\n");
-
-					sb.deleteCharAt(sb.length() - 1);
-				}
-				
-				return sb.toString();
-			} else {
-				return inputValue.toString();
-			}
-		} else {
-			return null;
-		}
+/**
+ * <code> EdgeGraphicsAttribute </code> is used to store edge graphics attributes
+ * to be added later to the visualization.
+ * 
+ * @author sabina
+ * 
+ */
+public final class EdgeGraphicsAttribute<T>
+{
+	private final DynNetwork<T> currentNetwork;
+	private final CyEdge currentEdge;
+	
+	private final String width;
+	private final String fill;
+	
+	public EdgeGraphicsAttribute(
+			DynNetwork<T> currentNetwork,
+			CyEdge currentEdge,
+			String width, 
+			String fill)
+	{
+		this.currentNetwork = currentNetwork;
+		this.currentEdge = currentEdge;
+		this.width = width;
+		this.fill = fill;
 	}
-
-	@Override
-	public Class<String> getTranslatedValueType() {
-		return String.class;
+	
+	public void add(DynNetworkViewFactory<T> viewFactory)
+	{
+		viewFactory.setEdgeGraphics(currentNetwork, currentEdge, width, fill);
 	}
+	
 }

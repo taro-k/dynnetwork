@@ -41,62 +41,75 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	// Note: i don't implement generation of events, since xgmml reading is almost sequential 
 	// and direct calling of sink methods is much faster.
 
-	protected Sink<T> sink;
+	protected Sink<T> networkSink;
+	protected Sink<T> viewSink;
 
 	protected DynNetwork<T> addGraph(
 			String id, String label, String start, String end, String directed)
 	{
-		return sink.addedGraph(id, label, start, end, directed);
+		return networkSink.addedGraph(id, label, start, end, directed);
 	}
 	
 	protected CyNode addNode(DynNetwork<T> currentNetwork, CyGroup group, 
 			String id, String label, String start, String end)
 	{
-		return sink.addedNode(currentNetwork, group, id, label, start, end);
+		return networkSink.addedNode(currentNetwork, group, id, label, start, end);
 	}
 	
 	protected CyEdge addEdge(DynNetwork<T> currentNetwork, 
 			String id, String label, String source, String target, String start, String end)
 	{
-		return sink.addedEdge(currentNetwork, id, label, source, target, start, end);
+		return networkSink.addedEdge(currentNetwork, id, label, source, target, start, end);
 	}
 	
 	protected CyGroup addGroup(DynNetwork<T> currentNetwork, CyNode currentNode)
 	{
-		return sink.addedGroup(currentNetwork, currentNode);
+		return networkSink.addedGroup(currentNetwork, currentNode);
 	}
 	
 	protected void addGraphAttribute(DynNetwork<T> currentNetwork, 
 			String name, String value, String type, String start, String end)
 	{
-		sink.addedGraphAttribute(currentNetwork, name, value, type, start, end);
+		networkSink.addedGraphAttribute(currentNetwork, name, value, type, start, end);
 	}
 	
 	protected void addNodeAttribute(DynNetwork<T> network, CyNode currentNode, 
 			String name, String value, String type, String start, String end)
 	{
-		sink.addedNodeAttribute(network, currentNode, name, value, type, start, end);
+		networkSink.addedNodeAttribute(network, currentNode, name, value, type, start, end);
+	}
+	
+	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
+			String type, String height, String width, String x, String y, String fill, String linew, String outline)
+	{
+		viewSink.addedNodeGraphics(network, currentNode, type, height, width, x, y, fill, linew, outline);
 	}
 	
 	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge, 
 			String name, String value, String type, String start, String end)
 	{
-		sink.addedEdgeAttribute(network, currentEdge, name, value, type, start, end);
+		networkSink.addedEdgeAttribute(network, currentEdge, name, value, type, start, end);
+	}
+	
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
+			String width, String fill)
+	{
+		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
 	}
 	
 	protected void deleteGraph(DynNetwork<T> netwrok)
 	{
-		sink.deletedGraph(netwrok);
+		networkSink.deletedGraph(netwrok);
 	}
 
 	protected void deleteNode(DynNetwork<T> currentNetwork, CyNode node)
 	{
-		sink.deletedNode(currentNetwork, node);
+		networkSink.deletedNode(currentNetwork, node);
 	}
 	
 	protected void deleteEdge(DynNetwork<T> currentNetwork, CyEdge edge)
 	{
-		sink.deletedEdge(currentNetwork, edge);
+		networkSink.deletedEdge(currentNetwork, edge);
 	}
 	
 	protected void deleteGraphAttribute(DynNetwork<T> currentNetwork, CyNetwork netwrok, String label)
@@ -116,7 +129,7 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	
 	protected void finalize(DynNetwork<T> currentNetwork)
 	{
-		sink.finalizeNetwork(currentNetwork);
+		networkSink.finalizeNetwork(currentNetwork);
 	}
 	
 	abstract protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
@@ -124,14 +137,19 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	@Override
 	public void addSink(Sink<T> sink) 
 	{
-		this.sink = sink;
+		if (this.networkSink==null)
+			this.networkSink = sink;
+		else
+			this.viewSink = sink;
 	}
 	
 	@Override
 	public void removeSink(Sink<T> sink) 
 	{
-		if (this.sink == sink)
-			this.sink = null;
+		if (this.networkSink == sink)
+			this.networkSink = null;
+		else if (this.viewSink == sink)
+			this.viewSink = null;
 	}
 	
 }

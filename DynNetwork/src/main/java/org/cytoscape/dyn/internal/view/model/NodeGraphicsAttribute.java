@@ -17,47 +17,59 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.read.xgmml.handler;
+package org.cytoscape.dyn.internal.view.model;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNode;
 
 /**
- * <code> OrphanAttribute </code> is used to store attributes of 
- * {@link OrphanEdge}.
+ * <code> NodeGraphicsAttribute </code> is used to store node graphics attributes
+ * to be added later to the visualization.
  * 
  * @author sabina
  * 
  */
-public final class OrphanAttribute<T>
+public final class NodeGraphicsAttribute<T>
 {
 	private final DynNetwork<T> currentNetwork;
-	private final String name;
-	private final String value;
-	private final String type;
-	private final String start;
-	private final String end;
+	private final CyNode currentNode;
 	
-	public OrphanAttribute(
-			DynNetwork<T> currentNetwork, 
-			String name, 
-			String value,
-			String type, 
-			String start, 
-			String end)
+	private final String type;
+	private final String height;
+	private final String width;
+	private final String x;
+	private final String y;
+	private final String fill;
+	private final String linew;
+	private final String outline;
+	
+	public NodeGraphicsAttribute(
+			DynNetwork<T> currentNetwork,
+			CyNode currentNode,
+			final String type, 
+			final String height, 
+			final String width, 
+			final String x, 
+			final String y, 
+			final String fill,  
+			final String linew,
+			final String outline)
 	{
 		this.currentNetwork = currentNetwork;
-		this.name = name;
-		this.value = value;
+		this.currentNode = currentNode;
 		this.type = type;
-		this.start = start;
-		this.end = end;
+		this.height = height;
+		this.width = width;
+		this.x = x;
+		this.y = y;
+		this.fill = fill;
+		this.linew = linew;
+		this.outline = outline;
 	}
-	
-	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
+
+	public void add(DynNetworkViewFactory<T> viewFactory)
 	{
-		if (currentEdge!= null && name!=null && value!=null && type!=null)
-			handler.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
+		viewFactory.setNodeGraphics(currentNetwork, currentNode, type, height, width, x, y, fill, linew, outline);
 	}
 	
 }

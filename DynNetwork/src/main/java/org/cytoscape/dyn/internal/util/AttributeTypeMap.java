@@ -24,36 +24,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <code> ObjectTypeMap </code> used to convert string types into the 
+ * <code> AttributeTypeMap </code> used to convert string attribute types into the 
  * corresponding classes.
  * 
  * @author sabina
  *
  */
-public final class ObjectTypeMap
+public final class AttributeTypeMap
 {
+    private Map<String, AttributeType> typeMap;
 
-    private Map<String, ObjectType> typeMap;
-
-    public ObjectTypeMap()
+    public AttributeTypeMap()
     {
-        typeMap = new HashMap<String, ObjectType>();
+        typeMap = new HashMap<String, AttributeType>();
 
-        for (ObjectType type : ObjectType.values())
+        for (AttributeType type : AttributeType.values())
             typeMap.put(type.getName(), type);
     }
 
-    public ObjectType getType(String name)
+    public AttributeType getType(String name)
     {
-        final ObjectType type = typeMap.get(name);
+        final AttributeType type = typeMap.get(name);
         
         if (type != null)
             return type;
         else
-            return ObjectType.NONE;
+            return AttributeType.NONE;
     }
 
-    public Object getTypedValue(ObjectType type, String value)
+    public Object getTypedValue(AttributeType type, String value)
     {
 
         switch (type) {

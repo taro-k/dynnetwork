@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.tree.DynAttribute;
 import org.cytoscape.dyn.internal.tree.DynInterval;
-import org.cytoscape.dyn.internal.util.ObjectTypeMap;
+import org.cytoscape.dyn.internal.util.AttributeTypeMap;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;
@@ -50,7 +50,7 @@ import org.cytoscape.session.CyNetworkNaming;
  */
 public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 {
-	private final ObjectTypeMap typeMap;
+	private final AttributeTypeMap typeMap;
 	
 	private final CyGroupManager groupManager;
 	private final CyGroupFactory groupFactory;
@@ -76,7 +76,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		this.manager = manager;
 		this.nameUtil = nameUtil;
 		
-		this.typeMap = new ObjectTypeMap();
+		this.typeMap = new AttributeTypeMap();
 		this.metaNodes = new ArrayList<CyNode>();
 	}
 
@@ -135,6 +135,18 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String attName, String attValue, String attType, String start, String end)
 	{
 		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end);
+	}
+	
+	@Override
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline) 
+	{
+
+	}
+	
+	@Override
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill) 
+	{
+
 	}
 
 	@Override
@@ -293,16 +305,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	{
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
 		DynNetworkImpl<T> dynNetwork = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
-//		createDummyGraph(rootNetwork, dynNetwork);
 		return dynNetwork;
 	}
-	
-//	private void createDummyGraph(CyRootNetwork rootNetwork, DynNetwork<T> dynNetwork)
-//	{
-//		CyNode node = rootNetwork.addNode();
-//		addRow(rootNetwork, rootNetwork.getDefaultNodeTable(), node, "name", "test");
-//		addRow(rootNetwork, rootNetwork.getDefaultNodeTable(), node, "size", 100);
-//	}
 
 	private CyNode createNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end)
 	{

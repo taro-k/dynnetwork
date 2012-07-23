@@ -26,6 +26,7 @@ import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.read.xgmml.ParseDynState;
 import org.cytoscape.dyn.internal.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
@@ -61,14 +62,23 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	private String start;
 	private String end;
 	
+	private String h;
+	private String w;
+	private String x;
+	private String y;
+	private String fill;
+	private String width;
+	private String outline;
+	
+	
 	private int ID = 0;
 	
-	public DynHandlerXGMML(DynNetworkFactory<T> sink)
+	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
-		super();
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
-		this.sink = sink;
+		this.networkSink = networkSink;
+		this.viewSink = viewSink;
 	}
 
 	@Override
@@ -140,7 +150,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			if (currentNode!= null && name!=null && value!=null && type!=null)
+			if (currentNode!=null && name!=null && value!=null && type!=null)
 				this.addNodeAttribute(currentNetwork, currentNode, name, value, type, start, end);
 			break;
 			
@@ -150,11 +160,34 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			type = atts.getValue("type");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
-			if (currentEdge!= null && name!=null && value!=null && type!=null)
+			if (currentEdge!=null && name!=null && value!=null && type!=null)
 				this.addEdgeAttribute(currentNetwork, currentEdge, name, value, type, start, end);
 			else
 				orphanEdgeList.peek().addAttribute(currentNetwork, name, value, type, start, end);
 			break;
+			
+		case NODE_GRAPHICS:
+			type = atts.getValue("type");
+			h = atts.getValue("h");
+			w = atts.getValue("w");
+			x = atts.getValue("x");
+			y = atts.getValue("y");
+			fill = atts.getValue("fill");
+			width = atts.getValue("width");
+			outline = atts.getValue("outline");
+			if (currentNode!=null)
+				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, x, y, fill, width, outline);
+			break;
+			
+		case EDGE_GRAPHICS:
+			width = atts.getValue("width");
+			fill = atts.getValue("fill");
+			if (currentEdge!=null)
+				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill);
+			else
+				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill);
+			break;
+			
 		}
 	}
 
@@ -180,14 +213,21 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	protected CyEdge addEdge(DynNetwork<T> currentNetwork, String id, String label,
 			String source, String target, String start, String end)
 	{
-		return sink.addedEdge(currentNetwork, id, label, source, target, start, end);
+		return networkSink.addedEdge(currentNetwork, id, label, source, target, start, end);
 	}
 
 	@Override
 	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge,
 			String name, String value, String Type, String start, String end)
 	{
-		sink.addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
+		networkSink.addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
+	}
+	
+	@Override
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
+			String width, String fill)
+	{
+		networkSink.addedEdgeGraphics(network, currentEdge, width, fill);
 	}
 	
 	@Override
@@ -197,5 +237,4 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		return null;
 	}
 	
-
 }

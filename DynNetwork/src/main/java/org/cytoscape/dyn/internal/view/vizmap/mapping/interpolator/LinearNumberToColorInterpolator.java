@@ -1,4 +1,3 @@
-package org.cytoscape.dyn.internal.vizmap.mapping.interpolator;
 /*
  * DynNetwork plugin for Cytoscape 3.0 (http://www.cytoscape.org/).
  * Copyright (C) 2012 Sabina Sara Pfister
@@ -18,7 +17,7 @@ package org.cytoscape.dyn.internal.vizmap.mapping.interpolator;
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-ackage org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
+package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
 import java.awt.Color;
 

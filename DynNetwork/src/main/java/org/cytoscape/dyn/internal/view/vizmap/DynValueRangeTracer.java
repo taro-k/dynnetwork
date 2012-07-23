@@ -1,4 +1,4 @@
-package org.cytoscape.dyn.internal.vizmap;
+package org.cytoscape.dyn.internal.view.vizmap;
 
 import java.util.HashMap;
 import java.util.Map;

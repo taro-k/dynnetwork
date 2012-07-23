@@ -17,45 +17,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.model;
+package org.cytoscape.dyn.internal.read.xgmml.handler;
 
-import org.cytoscape.dyn.internal.event.Sink;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNode;
 
 /**
- * <code> DynNetworkViewFactory </code> is a the interface for the factory of
- * {@link DynNetworkView}s and is an event sink.
+ * <code> OrphanGraphicsAttribute </code> is used to store graphics attributes of 
+ * {@link OrphanEdge}.
  * 
  * @author sabina
- *
- * @param <T>
+ * 
  */
-public interface DynNetworkViewFactory<T> extends Sink<T>
+public class OrphanGraphicsAttribute<T>
 {
-	/**
-	 * Set node graphics attributes.
-	 * @param dynNetwork
-	 * @param currentNode
-	 * @param type
-	 * @param height
-	 * @param width
-	 * @param x
-	 * @param y
-	 * @param line width
-	 * @param fill
-	 * @param outline
-	 */
-	public void setNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
+	private final DynNetwork<T> currentNetwork;
+	private final String width;
+	private final String fill;
 	
-	/**
-	 * Set edge graphics attributes.
-	 * @param dynNetwork
-	 * @param currentEdge
-	 * @param width
-	 * @param fill
-	 */
-	public void setEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
+	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill)
+	{
+		this.currentNetwork = currentNetwork;
+		this.width = width;
+		this.fill = fill;
+	}
+	
+	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
+	{
+		if (currentEdge!=null)
+			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill);
+	}
 	
 }

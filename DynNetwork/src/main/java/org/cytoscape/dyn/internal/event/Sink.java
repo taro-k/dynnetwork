@@ -105,6 +105,21 @@ public interface Sink<T>
 	public void addedNodeAttribute(DynNetwork<T> dynNetwork, CyNode currentNode, String name, String value, String Type, String start, String end);
 	
 	/**
+	 * Process added node graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentNode
+	 * @param type
+	 * @param height
+	 * @param width
+	 * @param x
+	 * @param y
+	 * @param fill
+	 * @param line width
+	 * @param outline
+	 */
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
+	
+	/**
 	 * Process added edge attribute event.
 	 * @param dynNetwork
 	 * @param currentEdge
@@ -115,6 +130,15 @@ public interface Sink<T>
 	 * @param end
 	 */
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String name, String value, String Type, String start, String end);
+	
+	/**
+	 * Process added edge graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentEdge
+	 * @param width
+	 * @param fill
+	 */
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
 	
 	/**
 	 * Process deleted graph event.
