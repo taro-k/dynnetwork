@@ -55,8 +55,8 @@ public final class DynVizmapTask<T> extends AbstractTask
 				VisualMappingFunction<?, ?> newVisualMapping = continousFactory.createVisualMappingFunction(
 						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty());
 				makeContinousMapping(newVisualMapping);
-				printContinousMapping(visualMapping);
-				printContinousMapping(newVisualMapping);
+//				printContinousMapping(visualMapping);
+//				printContinousMapping(newVisualMapping);
 				visualStyle.removeVisualMappingFunction(visualMapping.getVisualProperty());
 				visualStyle.addVisualMappingFunction(newVisualMapping);
 				

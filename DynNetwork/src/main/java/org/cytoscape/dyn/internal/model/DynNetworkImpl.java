@@ -501,6 +501,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		return this.visibleEdges;
 	}
 	
+	//TODO: check waht os going on here!
+	
 	@Override
 	public T getMinValue(String attName, Class<? extends CyIdentifiable> type)
 	{
@@ -508,13 +510,13 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		if (type==CyNode.class)
 		{
 			for (long row : cyNodes.values())
-				if (this.network.containsNode(this.getNode(row)))
+				if (this.nodeTable.get(new KeyPairs(attName, row))!=null)
 					minValue = compareMin(minValue,this.nodeTable.get(new KeyPairs(attName, row)).getMinValue());
 		}
 		else if (type==CyEdge.class)
 		{
 			for (long row : cyEdges.values())
-				if (this.network.containsEdge(this.getEdge(row)))
+				if (this.edgeTable.get(new KeyPairs(attName, row))!=null)
 					minValue = compareMin(minValue,this.edgeTable.get(new KeyPairs(attName, row)).getMinValue());
 		}
 		return minValue;
@@ -527,13 +529,13 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		if (type==CyNode.class)
 		{
 			for (long row : cyNodes.values())
-				if (this.network.containsNode(this.getNode(row)))
+				if (this.nodeTable.get(new KeyPairs(attName, row))!=null)
 					maxValue = compareMax(maxValue,this.nodeTable.get(new KeyPairs(attName, row)).getMinValue());
 		}
 		else if (type==CyEdge.class)
 		{
 			for (long row : cyEdges.values())
-				if (this.network.containsEdge(this.getEdge(row)))
+				if (this.edgeTable.get(new KeyPairs(attName, row))!=null)
 					maxValue = compareMax(maxValue,this.edgeTable.get(new KeyPairs(attName, row)).getMinValue());
 		}
 		return maxValue;
