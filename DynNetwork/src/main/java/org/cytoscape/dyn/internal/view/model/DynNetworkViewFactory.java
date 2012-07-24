@@ -19,7 +19,7 @@
 
 package org.cytoscape.dyn.internal.view.model;
 
-import org.cytoscape.dyn.internal.event.Sink;
+import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;

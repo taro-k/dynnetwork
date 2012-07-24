@@ -21,10 +21,11 @@ package org.cytoscape.dyn.internal.model;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.tree.DynAttribute;
-import org.cytoscape.dyn.internal.tree.DynInterval;
-import org.cytoscape.dyn.internal.tree.DynIntervalTree;
+import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
 import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
@@ -386,6 +387,22 @@ public interface DynNetwork<T>
 	 * @return maximum time
 	 */
 	public double getMaxTime();
+	
+	/**
+	 * Get minimum value over the entire dynamic network for this attribute.
+	 * @param AttName
+	 * @param type
+	 * @return
+	 */
+	public T getMinValue(String AttName, Class<? extends CyIdentifiable> type);
+	
+	/**
+	 * Get maximum value over the entire dynamic network for this attribute.
+	 * @param AttName
+	 * @param type
+	 * @return
+	 */
+	public T getMaxValue(String AttName, Class<? extends CyIdentifiable> type);
 	
 	/**
 	 * Get if the network is directed

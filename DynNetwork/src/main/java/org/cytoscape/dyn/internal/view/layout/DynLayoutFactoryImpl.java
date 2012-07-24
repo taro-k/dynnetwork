@@ -29,19 +29,19 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public class DynLayoutFactoryImpl <T> implements DynLayoutFactory<T> 
+public class DynLayoutFactoryImpl implements DynLayoutFactory 
 {
-	private final DynLayoutManager<T> layoutManager;
+	private final DynLayoutManager layoutManager;
 	
-	public DynLayoutFactoryImpl(DynLayoutManager<T> layoutManager)
+	public DynLayoutFactoryImpl(DynLayoutManager layoutManager)
 	{
 		this.layoutManager = layoutManager;
 	}
 	
 	@Override
-	public DynLayoutImpl<T> createLayout(CyNetworkView view)
+	public DynLayoutImpl createLayout(CyNetworkView view)
 	{
-		DynLayoutImpl<T> layout = new DynLayoutImpl<T>(view);
+		DynLayoutImpl layout = new DynLayoutImpl(view);
 		layoutManager.addDynLayout(layout);
 		return layout;
 	}

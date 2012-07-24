@@ -22,7 +22,7 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
@@ -47,7 +47,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	public DynNetworkViewTask(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout<T> layout,
+			final DynLayout layout,
 			final BlockingQueue queue,
 			final double low, 
 			final double high, 
@@ -57,6 +57,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		this.visibility = visibility;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run() 
 	{
@@ -96,9 +97,9 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		// update node positions
 		if (layout!=null && this.updateNodes)
 		{
-			intervalList = layout.searchChangedNodePositions(timeInterval);
-			if (!intervalList.isEmpty())
-				updatePosition(intervalList, layout.getAlpha(), layout.getN());
+			List<DynInterval<Double>> nodeIntervalList = layout.searchChangedNodePositions((DynInterval<Double>) timeInterval);
+			if (!nodeIntervalList.isEmpty())
+				updatePosition(nodeIntervalList, layout.getAlpha(), layout.getN());
 		}
 
 		panel.setNodes(dynNetwork.getVisibleNodes());

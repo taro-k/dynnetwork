@@ -107,8 +107,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	VisualMappingFunctionFactory discreteMappingFunctionFactoryRef = new DynDiscreteMappingFactory();
     	VisualMappingFunctionFactory passthroughMappingFunctionFactoryRef = new DynPassthroughMappingFactory();
     	
-    	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
-    	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
+    	DynLayoutManagerImpl dynLayoutManager = new DynLayoutManagerImpl();
+    	DynLayoutFactoryImpl dynLayoutFactory = new DynLayoutFactoryImpl(dynLayoutManager);
     	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,continousMappingFunctionFactoryRef,discreteMappingFunctionFactoryRef,passthroughMappingFunctionFactoryRef);
     	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Force Dynamic",undo,dynCytoPanel,dynLayoutFactory);

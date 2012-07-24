@@ -22,7 +22,7 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;

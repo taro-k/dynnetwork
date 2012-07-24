@@ -21,7 +21,7 @@ package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.model.CyNetwork;
@@ -43,7 +43,7 @@ public class AbstractCyNetworkViewTask<T,C>  implements Runnable
 	protected final DynCytoPanel<T,C> panel;
 	protected final CyNetworkView view;
 	protected final CyNetwork network;
-	protected final DynLayout<T> layout;
+	protected final DynLayout layout;
 	protected final BlockingQueue queue;
 	protected final double low;
 	protected final double high;
@@ -58,7 +58,7 @@ public class AbstractCyNetworkViewTask<T,C>  implements Runnable
 	public AbstractCyNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final CyNetworkView view,
-			final DynLayout<T> layout,
+			final DynLayout layout,
 			final BlockingQueue queue, 
 			final double low, 
 			final double high) 
@@ -83,13 +83,13 @@ public class AbstractCyNetworkViewTask<T,C>  implements Runnable
 		
 	}
 	
-	protected void updatePosition(List<DynInterval<T>> intervalList, double alpha, int n)
+	protected void updatePosition(List<DynInterval<Double>> intervalList, double alpha, int n)
 	{
 		for (int i=0;i<n;i++)
 		{
 			timeStart = System.currentTimeMillis();
 
-			for (DynInterval<T> interval : intervalList)
+			for (DynInterval<Double> interval : intervalList)
 			{
 				CyNode node = network.getNode(interval.getAttribute().getKey().getRow());
 				if (node!=null)

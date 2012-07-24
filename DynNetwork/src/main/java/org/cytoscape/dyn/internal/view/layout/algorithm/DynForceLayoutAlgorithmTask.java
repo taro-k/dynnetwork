@@ -38,10 +38,10 @@ import org.cytoscape.work.undo.UndoSupport;
  *
  * @param <T>
  */
-public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask 
+public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask 
 {
     
-	private final DynLayout<T> layout;
+	private final DynLayout layout;
 	private final CyNetworkView view;
 	
 	private final double currentTime;
@@ -51,7 +51,7 @@ public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	
     public DynForceLayoutAlgorithmTask(
                     final String name,
-                    final DynLayout<T> layout,
+                    final DynLayout layout,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,

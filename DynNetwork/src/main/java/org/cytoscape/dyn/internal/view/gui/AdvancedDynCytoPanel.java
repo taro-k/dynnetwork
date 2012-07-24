@@ -83,7 +83,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
-	private final DynLayoutManager<T> layoutManager;
+	private final DynLayoutManager layoutManager;
 	private final VisualMappingFunctionFactory continousFactory;
 	private final VisualMappingFunctionFactory discreteFactory;
 	private final VisualMappingFunctionFactory passthroughFactory;
@@ -120,7 +120,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
-			final DynLayoutManager<T> layoutManager,
+			final DynLayoutManager layoutManager,
 			final VisualMappingFunctionFactory continousFactory,
 			final VisualMappingFunctionFactory discreteFactory,
 			final VisualMappingFunctionFactory passthroughFactory)

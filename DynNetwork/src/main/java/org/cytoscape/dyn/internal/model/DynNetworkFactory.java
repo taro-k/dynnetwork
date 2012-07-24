@@ -19,7 +19,7 @@
 
 package org.cytoscape.dyn.internal.model;
 
-import org.cytoscape.dyn.internal.event.Sink;
+import org.cytoscape.dyn.internal.io.event.Sink;
 
 
 /**

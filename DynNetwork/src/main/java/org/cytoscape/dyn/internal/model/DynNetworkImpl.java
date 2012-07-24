@@ -19,18 +19,22 @@
 
 package org.cytoscape.dyn.internal.model;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.tree.DynAttribute;
-import org.cytoscape.dyn.internal.tree.DynInterval;
-import org.cytoscape.dyn.internal.tree.DynIntervalTreeImpl;
-import org.cytoscape.dyn.internal.util.KeyPairs;
+import org.cytoscape.dyn.internal.io.util.KeyPairs;
+import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynBooleanAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynDoubleAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynIntegerAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynStringAttribute;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
@@ -496,14 +500,64 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		return this.visibleEdges;
 	}
+	
+	@Override
+	public T getMinValue(String attName, Class<? extends CyIdentifiable> type)
+	{
+		T minValue = null;
+		if (type==CyNode.class)
+		{
+			for (long row : cyNodes.values())
+				if (this.network.containsNode(this.getNode(row)))
+					minValue = compareMin(minValue,this.nodeTable.get(new KeyPairs(attName, row)).getMinValue());
+		}
+		else if (type==CyEdge.class)
+		{
+			for (long row : cyEdges.values())
+				if (this.network.containsEdge(this.getEdge(row)))
+					minValue = compareMin(minValue,this.edgeTable.get(new KeyPairs(attName, row)).getMinValue());
+		}
+		return minValue;
+	}
 
+	@Override
+	public T getMaxValue(String attName, Class<? extends CyIdentifiable> type)
+	{
+		T maxValue = null;
+		if (type==CyNode.class)
+		{
+			for (long row : cyNodes.values())
+				if (this.network.containsNode(this.getNode(row)))
+					maxValue = compareMax(maxValue,this.nodeTable.get(new KeyPairs(attName, row)).getMinValue());
+		}
+		else if (type==CyEdge.class)
+		{
+			for (long row : cyEdges.values())
+				if (this.network.containsEdge(this.getEdge(row)))
+					maxValue = compareMax(maxValue,this.edgeTable.get(new KeyPairs(attName, row)).getMinValue());
+		}
+		return maxValue;
+	}
+
+	@SuppressWarnings("unchecked")
 	private synchronized void setDynAttribute(String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
 		if (this.graphTable.containsKey(key))
 			this.graphTable.get(key).addInterval(interval);
 		else
-			this.graphTable.put(key, new DynAttribute<T>(interval, key));
+		{
+			DynAttribute<T> attribute = null;
+			if (interval.getType()==Integer.class)
+				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
+			else if (interval.getType()==Double.class)
+				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
+			else if (interval.getType()==Boolean.class)
+				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
+			else if (interval.getType()==String.class)
+				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			this.graphTable.put(key, attribute);
+		}
 		overwriteGraphIntervals(this.graphTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
@@ -511,13 +565,25 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.graphTable.get(key));
 	}
 
+	@SuppressWarnings("unchecked")
 	private synchronized void setDynAttribute(CyNode node, String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, node.getSUID());
 		if (this.nodeTable.containsKey(key))
 			this.nodeTable.get(key).addInterval(interval);
 		else
-			this.nodeTable.put(key, new DynAttribute<T>(interval, key));
+		{
+			DynAttribute<T> attribute = null;
+			if (interval.getType()==Integer.class)
+				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
+			else if (interval.getType()==Double.class)
+				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
+			else if (interval.getType()==Boolean.class)
+				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
+			else if (interval.getType()==String.class)
+				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			this.nodeTable.put(key, attribute);
+		}
 		overwriteNodeIntervals(this.nodeTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
@@ -525,13 +591,25 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.nodeTable.get(key));
 	}
 
+	@SuppressWarnings("unchecked")
 	private synchronized void setDynAttribute(CyEdge edge, String column, DynInterval<T> interval)
 	{
 		KeyPairs key = new KeyPairs(column, edge.getSUID());
 		if (this.edgeTable.containsKey(key))
 			this.edgeTable.get(key).addInterval(interval);
 		else
-			this.edgeTable.put(key, new DynAttribute<T>(interval, key));
+		{
+			DynAttribute<T> attribute = null;
+			if (interval.getType()==Integer.class)
+				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
+			else if (interval.getType()==Double.class)
+				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
+			else if (interval.getType()==Boolean.class)
+				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
+			else if (interval.getType()==String.class)
+				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			this.edgeTable.put(key, attribute);
+		}
 		overwriteEdgeIntervals(this.edgeTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
@@ -667,37 +745,96 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
-	private void print()
+//	@SuppressWarnings("unchecked")
+//	private void print()
+//	{
+//		DecimalFormat formatter = new DecimalFormat("#0.000");
+//		
+//		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
+//		
+//		for (DynAttribute<T> attr : graphTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//			{
+//				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+//				graphTreeAttr.insert(interval, attr.getRow());
+//			}
+//		
+//		for (DynAttribute<T> attr : nodeTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//			{
+//				if (this.getNode(interval.getAttribute().getRow())!=null)
+//				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+//				nodeTreeAttr.insert(interval, attr.getRow());
+//			}
+//
+//		for (DynAttribute<T> attr : edgeTable.values())
+//			for (DynInterval<T> interval : attr.getIntervalList())
+//			{
+//				if (this.getEdge(interval.getAttribute().getRow())!=null)
+//				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+//				edgeTreeAttr.insert(interval, attr.getRow());
+//			}
+//	}
+	
+	@SuppressWarnings("unchecked")
+	private T compareMin(T t1, T t2)
 	{
-		DecimalFormat formatter = new DecimalFormat("#0.000");
-		
-		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
-		
-		for (DynAttribute<T> attr : graphTable.values())
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				graphTreeAttr.insert(interval, attr.getRow());
-			}
-		
-		for (DynAttribute<T> attr : nodeTable.values())
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				if (this.getNode(interval.getAttribute().getRow())!=null)
-				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				nodeTreeAttr.insert(interval, attr.getRow());
-			}
-
-		for (DynAttribute<T> attr : edgeTable.values())
-			for (DynInterval<T> interval : attr.getIntervalList())
-			{
-				if (this.getEdge(interval.getAttribute().getRow())!=null)
-				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				edgeTreeAttr.insert(interval, attr.getRow());
-			}
+		if (t1==null)
+			return t2;
+		else if (t2==null)
+			return t1;
+		else if (t1 instanceof Integer)
+		{
+			if ((Integer) t1 < (Integer) t2)
+				return t1;
+			else
+				return t2;
+		}
+		else if (t1 instanceof Double)
+		{
+			if ((Double) t1 < (Double) t2)
+				return t1;
+			else
+				return t2;
+		}
+		else if (t1 instanceof Boolean)
+		{
+			return (T) new Boolean(false);
+		}
+		else
+			return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private T compareMax(T t1, T t2)
+	{
+		if (t1==null)
+			return t2;
+		else if (t2==null)
+			return t1;
+		else if (t1 instanceof Integer)
+		{
+			if ((Integer) t1 < (Integer) t2)
+				return t2;
+			else
+				return t1;
+		}
+		else if (t1 instanceof Double)
+		{
+			if ((Double) t1 < (Double) t2)
+				return t2;
+			else
+				return t1;
+		}
+		else if (t1 instanceof Boolean)
+		{
+			return (T) new Boolean(true);
+		}
+		else
+			return null;
 	}
 	
 }

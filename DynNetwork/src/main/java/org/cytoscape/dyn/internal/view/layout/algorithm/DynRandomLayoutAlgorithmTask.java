@@ -21,7 +21,7 @@ package org.cytoscape.dyn.internal.view.layout.algorithm;
 
 import java.util.Set;
 
-import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
@@ -39,10 +39,10 @@ import org.cytoscape.work.undo.UndoSupport;
  *
  * @param <T>
  */
-public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask 
+public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask 
 {
     
-	private final DynLayout<T> layout;
+	private final DynLayout layout;
 	private final CyNetworkView view;
 	
 	private final double currentTime;
@@ -52,7 +52,7 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	
     public DynRandomLayoutAlgorithmTask(
                     final String name,
-                    final DynLayout<T> layout,
+                    final DynLayout layout,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
@@ -82,17 +82,17 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
 		
     	for (View<CyNode> nv : nodesToLayOut)
 		{
-    		layout.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),timeMin,timeMin+timeStep));
-    		layout.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),timeMin,timeMin+timeStep));
+    		layout.insertNodePositionX(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),timeMin,timeMin+timeStep));
+    		layout.insertNodePositionY(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),timeMin,timeMin+timeStep));
 		}
     	
     	for (double time=timeMin; time<timeMax; time=time+timeStep)
     		for (View<CyNode> nv : nodesToLayOut)
     		{
     			if (Math.random()>0.3)
-    				layout.insertNodePositionX(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
+    				layout.insertNodePositionX(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
     			if (Math.random()>0.3)
-    				layout.insertNodePositionY(nv.getModel(), new DynInterval<T>((Class<T>) Double.class,(T) new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
+    				layout.insertNodePositionY(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
     		}
     	
     	layout.initNodePositions(currentTime);

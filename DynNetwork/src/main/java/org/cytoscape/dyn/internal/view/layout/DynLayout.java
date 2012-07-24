@@ -21,7 +21,7 @@ package org.cytoscape.dyn.internal.view.layout;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 
@@ -33,28 +33,28 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public interface DynLayout<T>
+public interface DynLayout
 {
 	/**
 	 * Insert node position X.
 	 * @param node
 	 * @param interval
 	 */
-	public void insertNodePositionX(CyNode node, DynInterval<T> interval);
+	public void insertNodePositionX(CyNode node, DynInterval<Double> interval);
 	
 	/**
 	 * Insert node position Y.
 	 * @param node
 	 * @param interval
 	 */
-	public void insertNodePositionY(CyNode node, DynInterval<T> interval);
+	public void insertNodePositionY(CyNode node, DynInterval<Double> interval);
 	
 	/**
 	 * Insert node position Z.
 	 * @param node
 	 * @param interval
 	 */
-	public void insertNodePositionZ(CyNode node, DynInterval<T> interval);
+	public void insertNodePositionZ(CyNode node, DynInterval<Double> interval);
 
 	/**
 	 * Remove intervals and attributes belonging to node.
@@ -72,28 +72,28 @@ public interface DynLayout<T>
 	 * @param node
 	 * @return
 	 */
-	public List<DynInterval<T>> getIntervals(CyNode node);
+	public List<DynInterval<Double>> getIntervals(CyNode node);
 
 	/**
 	 * Search all positions of visible nodes
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<T>> searchNodePositions(DynInterval<T> interval);
+	public List<DynInterval<Double>> searchNodePositions(DynInterval<Double> interval);
 	
 	/**
 	 * Search all positions of visible nodes that changed from the last time interval.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<T>> searchChangedNodePositions(DynInterval<T> interval);
+	public List<DynInterval<Double>> searchChangedNodePositions(DynInterval<Double> interval);
 
 	/**
 	 * Search positions of not visible nodes.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<T>> searchNodePositionsNot(DynInterval<T> interval);
+	public List<DynInterval<Double>> searchNodePositionsNot(DynInterval<Double> interval);
 	
 	/**
 	 * Initialize node positions.

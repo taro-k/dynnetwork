@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.tree.DynAttribute;
-import org.cytoscape.dyn.internal.tree.DynInterval;
-import org.cytoscape.dyn.internal.util.AttributeTypeMap;
+import org.cytoscape.dyn.internal.io.util.AttributeTypeMap;
+import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;

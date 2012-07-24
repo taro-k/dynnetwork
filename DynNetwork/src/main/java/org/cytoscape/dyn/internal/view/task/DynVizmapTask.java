@@ -1,15 +1,18 @@
 package org.cytoscape.dyn.internal.view.task;
 
+import java.awt.Color;
+import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.mappings.BoundaryRangeValues;
 import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
-import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
-import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
+import org.cytoscape.view.vizmap.mappings.ContinuousMappingPoint;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskMonitor;
 
@@ -44,34 +47,86 @@ public final class DynVizmapTask<T> extends AbstractTask
 		queue.lock();
 		
 		visualStyle = view.getCurrentVisualStyle();
-		Collection<VisualMappingFunction<?, ?>> mappings = visualStyle.getAllVisualMappingFunctions();
-		Collection<VisualMappingFunction<?, ?>> newMappings = new ArrayList<VisualMappingFunction<?, ?>>();
+		ArrayList<VisualMappingFunction<?, ?>> mappings = copy(visualStyle.getAllVisualMappingFunctions());
 		for (VisualMappingFunction<?, ?> visualMapping : mappings)
 		{
 			if (visualMapping instanceof ContinuousMapping<?,?>)
-				newMappings.add(
-						continousFactory.createVisualMappingFunction(
-						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
-			else if (visualMapping instanceof DiscreteMapping<?,?>)
-				newMappings.add(
-						discreteFactory.createVisualMappingFunction(
-						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
-			else if (visualMapping instanceof PassthroughMapping<?,?>)
-				newMappings.add(
-						passthroughFactory.createVisualMappingFunction(
-						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty()));
+			{
+				VisualMappingFunction<?, ?> newVisualMapping = continousFactory.createVisualMappingFunction(
+						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty());
+				makeContinousMapping(newVisualMapping);
+				printContinousMapping(visualMapping);
+				printContinousMapping(newVisualMapping);
+				visualStyle.removeVisualMappingFunction(visualMapping.getVisualProperty());
+				visualStyle.addVisualMappingFunction(newVisualMapping);
+				
+			}
+//			else if (visualMapping instanceof DiscreteMapping<?,?>)
+//			{
+//
+//			}
+//			else if (visualMapping instanceof PassthroughMapping<?,?>)
+//			{
+//
+//			}
 		}
-		
-		for (VisualMappingFunction<?, ?> visualMapping : mappings)
-			visualStyle.removeVisualMappingFunction(visualMapping.getVisualProperty());
-		
-		for (VisualMappingFunction<?, ?> visualMapping : newMappings)
-			visualStyle.addVisualMappingFunction(visualMapping);
-		
+
 		visualStyle.apply(view.getNetworkView());
 		
 		queue.unlock();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private <K, V> void makeContinousMapping(VisualMappingFunction<?, ?> visualMapping)
+	{
+		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
+		String name = mapping.getMappingColumnName();
+		VisualProperty vp = mapping.getVisualProperty();
+		
+		K min = (K) view.getNetwork().getMinValue(name, vp.getTargetDataType());
+		K max = (K) view.getNetwork().getMaxValue(name, vp.getTargetDataType());
+
+		if (vp.getRange().getType() == Color.class || vp.getRange().getType() == Paint.class)
+		{
+			mapping.addPoint(min, new BoundaryRangeValues<V>((V) Color.BLACK, (V) Color.BLACK, (V) Color.BLACK));
+			mapping.addPoint(max, new BoundaryRangeValues<V>((V) Color.WHITE, (V) Color.WHITE, (V) Color.WHITE));
+		}
+		else if (Number.class.isAssignableFrom(vp.getRange().getType()))
+		{
+			mapping.addPoint(min, new BoundaryRangeValues<V>((V) min, (V) min, (V) min));
+			mapping.addPoint(max, new BoundaryRangeValues<V>((V) max, (V) max, (V) max));
+		}
+		else
+		{
+			mapping.addPoint(min, new BoundaryRangeValues<V>((V) new Boolean(false), (V) new Boolean(false), (V) new Boolean(false)));
+			mapping.addPoint(max, new BoundaryRangeValues<V>((V) new Boolean(true), (V) new Boolean(true), (V) new Boolean(true)));
+		}
+
+		
+	}
 	
+	@SuppressWarnings("unchecked")
+	private <K, V> void printContinousMapping(VisualMappingFunction<?, ?> visualMapping)
+	{
+		System.out.println("\nMAPPING attribute : " + visualMapping.getMappingColumnName());
+		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
+		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
+		{
+			System.out.println(
+					" K=" + point.getValue() + 
+					" lesser=" + point.getRange().lesserValue +
+					" equal=" + point.getRange().equalValue +
+					" greater=" + point.getRange().greaterValue);
+		}
+	}
+	
+	private ArrayList<VisualMappingFunction<?, ?>> copy(Collection<VisualMappingFunction<?, ?>> mappings)
+	{
+		ArrayList<VisualMappingFunction<?, ?>> newList = new ArrayList<VisualMappingFunction<?, ?>>(mappings.size());
+		for (VisualMappingFunction<?, ?> visualMapping : mappings)
+			newList.add(visualMapping);
+		return newList;
+	}
+	
+
 }

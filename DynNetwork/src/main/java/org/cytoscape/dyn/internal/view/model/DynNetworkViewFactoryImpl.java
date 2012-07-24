@@ -23,8 +23,8 @@ import java.awt.Color;
 import java.awt.Paint;
 import java.util.Stack;
 
+import org.cytoscape.dyn.internal.io.util.GraphicsTypeMap;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.util.GraphicsTypeMap;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
