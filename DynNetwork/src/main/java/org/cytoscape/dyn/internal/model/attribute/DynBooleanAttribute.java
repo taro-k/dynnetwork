@@ -31,11 +31,20 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  */
 public class DynBooleanAttribute extends AbstractDynAttribute<Boolean>
 {
+	/**
+	 * <code> DynBooleanAttribute </code> constructor.
+	 * @param type
+	 */
 	public DynBooleanAttribute(Class<Boolean> type)
 	{
 		super(type);
 	}
 	
+	/**
+	 * <code> DynBooleanAttribute </code> constructor.
+	 * @param interval
+	 * @param key
+	 */
 	public DynBooleanAttribute(DynInterval<Boolean> interval, KeyPairs key)
 	{
 		super(interval,key);

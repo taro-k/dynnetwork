@@ -24,20 +24,29 @@ import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 
+/**
+ * <code> DynContinousMappingFactory </code> is a dynamic implementation of a 
+ * {@link VisualMappingFunctionFactory}.
+ * 
+ * @author cytoscape
+ *
+ */
 public class DynContinousMappingFactory implements VisualMappingFunctionFactory
 {
 	@Override
-	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(final String attributeName, 
-			Class<K> attrValueType, VisualProperty<V> vp) {
-		
-		// Validate attribute type: Continuous Mapping is compatible with Numbers only.
+	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(
+			final String attributeName, 
+			Class<K> attrValueType, VisualProperty<V> vp) 
+			{
+
 		if(Number.class.isAssignableFrom(attrValueType) == false)
 			throw new IllegalArgumentException("ContinuousMapping can be used for numerical attributes only.");
-		
+
 		return new DynContinousMappingImpl<K, V>(attributeName, attrValueType, vp);
-	}
-	
-	@Override public String toString() {
+			}
+
+	@Override public String toString()
+	{
 		return ContinuousMapping.CONTINUOUS;
 	}
 

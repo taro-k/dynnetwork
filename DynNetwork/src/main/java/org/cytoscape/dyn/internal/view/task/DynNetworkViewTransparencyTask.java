@@ -39,6 +39,15 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 {
 	private final int visibility;
 
+	/**
+	 * <code> DynNetworkViewTransparencyTask </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param visibility
+	 */
 	public DynNetworkViewTransparencyTask(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,

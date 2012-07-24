@@ -48,6 +48,17 @@ public class DynCyNetworkViewTaskIterator<T,C> extends AbstractCyNetworkViewTask
 	
 	private double time;
 
+	/**
+	 * <code> DynCyNetworkViewTaskIterator </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param layout
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param slider
+	 * @param timestep
+	 */
 	public DynCyNetworkViewTaskIterator(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final CyNetworkView view,

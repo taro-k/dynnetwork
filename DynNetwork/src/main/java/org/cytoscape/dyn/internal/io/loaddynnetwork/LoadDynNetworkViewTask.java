@@ -44,6 +44,12 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 	
 	private Sink<T> sink;
 	
+	/**
+	 * <code> LoadDynNetworkViewTask </code> constructor.
+	 * @param appManager
+	 * @param dynNetworkManager
+	 * @param dynNetworkViewFactory
+	 */
 	public LoadDynNetworkViewTask(
 			final CyApplicationManager appManager,
 			final DynNetworkManager<T> dynNetworkManager,
@@ -54,6 +60,9 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 		this.addSink(dynNetworkViewFactory);
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run(TaskMonitor tm) throws Exception
 	{
 		tm.setProgress(0.0);

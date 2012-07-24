@@ -34,16 +34,25 @@ public class BlockingQueue
 
 	private final Lock lock;
 
+	/**
+	 * <code> BlockingQueue </code> constructor.
+	 */
     public BlockingQueue()
     {
     	lock = new ReentrantLock();
     }
 
+    /**
+     * Lock blocking queue.
+     */
     public void lock()
     {
     	lock.lock();
     }
 
+    /**
+     * Unlock blocking queue.
+     */
     public void unlock()
     {
     	lock.unlock();

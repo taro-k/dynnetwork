@@ -34,6 +34,9 @@ public final class AttributeTypeMap
 {
     private Map<String, AttributeType> typeMap;
 
+    /**
+     * <code> AttributeTypeMap </code> constructor.
+     */
     public AttributeTypeMap()
     {
         typeMap = new HashMap<String, AttributeType>();
@@ -42,6 +45,11 @@ public final class AttributeTypeMap
             typeMap.put(type.getName(), type);
     }
 
+    /**
+     * Get type.
+     * @param name
+     * @return type.
+     */
     public AttributeType getType(String name)
     {
         final AttributeType type = typeMap.get(name);
@@ -52,6 +60,12 @@ public final class AttributeTypeMap
             return AttributeType.NONE;
     }
 
+    /**
+     * Get object associated with value.
+     * @param type
+     * @param value
+     * @return object
+     */
     public Object getTypedValue(AttributeType type, String value)
     {
 
@@ -80,6 +94,11 @@ public final class AttributeTypeMap
         return null;
     }
     
+    /**
+     * Parse Boolean string.
+     * @param s
+     * @return boolean
+     */
     public static boolean fromXGMMLBoolean(String s)
     {
     	// should be only "1", but let's be nice and also accept "true"
@@ -87,6 +106,11 @@ public final class AttributeTypeMap
     	return s != null && s.matches("(?i)1|true");
     }
 
+    /**
+     * Return string.
+     * @param value
+     * @return string
+     */
     public static String toXGMMLBoolean(boolean value)
     {
     	return value ? "1" : "0";

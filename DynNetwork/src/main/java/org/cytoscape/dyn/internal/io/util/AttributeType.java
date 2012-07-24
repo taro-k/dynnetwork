@@ -42,11 +42,18 @@ public enum AttributeType
         name = s;
     }
 
+    /**
+     * Get name.
+     * @return
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * To string.
+     */
     public String toString()
     {
         return name;

@@ -44,6 +44,11 @@ public abstract class AbstractLoadDynNetworkTask extends AbstractTask
 	protected boolean interrupted = false;
 	protected StreamUtil streamUtil;
 
+	/**
+	 * <code> AbstractLoadDynNetworkTask </code> constructor.
+	 * @param factory
+	 * @param streamUtil
+	 */
 	public AbstractLoadDynNetworkTask(
 			final InputStreamTaskFactory factory,
 			StreamUtil streamUtil)

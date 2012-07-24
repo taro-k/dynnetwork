@@ -38,20 +38,29 @@ import org.cytoscape.work.TunableSetter;
  */
 public final class LoadDynNetworkFileTaskFactoryImpl extends AbstractTaskFactory implements LoadDynNetworkFileTaskFactory {
 
-	private InputStreamTaskFactory factory;
+	private final InputStreamTaskFactory factory;
 	private final TunableSetter tunableSetter;
 	private final StreamUtil streamUtil;
 
+	/**
+	 * <code> LoadDynNetworkFileTaskFactoryImpl </code> constructor.
+	 * @param factory
+	 * @param tunableSetter
+	 * @param streamUtil
+	 */
 	public LoadDynNetworkFileTaskFactoryImpl(
-			InputStreamTaskFactory factory, 
-			TunableSetter tunableSetter,
-			StreamUtil streamUtil)
+			final InputStreamTaskFactory factory, 
+			final TunableSetter tunableSetter,
+			final StreamUtil streamUtil)
 	{	
 		this.factory = factory;
 		this.tunableSetter = tunableSetter;
 		this.streamUtil = streamUtil;
 	}
 	
+	/**
+	 * Create task iterator.
+	 */
 	public TaskIterator createTaskIterator()
 	{
 		return new TaskIterator(1, new LoadDynNetworkFileTask(factory, streamUtil));

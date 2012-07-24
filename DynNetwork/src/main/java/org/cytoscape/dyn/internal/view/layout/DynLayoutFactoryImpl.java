@@ -33,6 +33,10 @@ public class DynLayoutFactoryImpl implements DynLayoutFactory
 {
 	private final DynLayoutManager layoutManager;
 	
+	/**
+	 * <code> DynLayoutFactoryImpl </code> constructor.
+	 * @param layoutManager
+	 */
 	public DynLayoutFactoryImpl(DynLayoutManager layoutManager)
 	{
 		this.layoutManager = layoutManager;

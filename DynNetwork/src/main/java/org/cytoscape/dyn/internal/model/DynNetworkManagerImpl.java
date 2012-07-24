@@ -38,6 +38,10 @@ public final class DynNetworkManagerImpl<T> implements DynNetworkManager<T>
 	private final CyNetworkManager cyNetworkManager;
 	private final Map<CyNetwork, DynNetwork<T>> dynNetworkMap;
 	
+	/**
+	 * <code> DynNetworkManagerImpl </code> constructor.
+	 * @param cyNetworkManager
+	 */
 	public DynNetworkManagerImpl(CyNetworkManager cyNetworkManager)
 	{
 		this.cyNetworkManager = cyNetworkManager;

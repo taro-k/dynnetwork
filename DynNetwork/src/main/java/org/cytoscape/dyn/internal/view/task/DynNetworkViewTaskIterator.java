@@ -51,6 +51,17 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	private int visibility;
 	private int oldVisibility;
 	
+	/**
+	 * <code> DynNetworkViewTaskIterator </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param layout
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param slider
+	 * @param timestep
+	 */
 	public DynNetworkViewTaskIterator(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,

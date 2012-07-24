@@ -55,6 +55,11 @@ public final class DynHandlerXGMMLFactory<T>
 	
 	private DynHandlerXGMML<T> handler;
 	
+	/**
+	 * <code> DynHandlerXGMMLFactory </code> constructor.
+	 * @param networkSink
+	 * @param viewSink
+	 */
 	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
 		handler = new DynHandlerXGMML<T>(networkSink,viewSink);
@@ -62,6 +67,14 @@ public final class DynHandlerXGMMLFactory<T>
 		buildMap(createStartParseTable(), startParseMap);
 	}
 	
+	/**
+	 * Handle start state.
+	 * @param current
+	 * @param tag
+	 * @param atts
+	 * @return
+	 * @throws SAXException
+	 */
 	public ParseDynState handleStartState(ParseDynState current, String tag, Attributes atts) throws SAXException
 	{
 		current = startParseMap.get(current).get(tag);
@@ -69,6 +82,14 @@ public final class DynHandlerXGMMLFactory<T>
 		return current;
 	}
 	
+	/**
+	 * Handle end state.
+	 * @param current
+	 * @param tag
+	 * @param atts
+	 * @return
+	 * @throws SAXException
+	 */
 	public ParseDynState handleEndState(ParseDynState current, String tag, Attributes atts) throws SAXException
 	{
 		handler.handleEnd(atts, current);

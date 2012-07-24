@@ -21,27 +21,19 @@ package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
 import java.awt.Color;
 
-
-
 /**
- * The class provides a linear interpolation between color values. The
+ * <code> LinearNumberToColorInterpolator </code> provides a linear interpolation between color values. The
  * (red,green,blue,alpha) values of the returned color are linearly
  * interpolated from the associated values of the lower and upper colors,
  * according the the fractional distance frac from the lower value.
  *
  * If either object argument is not a Color, null is returned.
+ * 
+ * @author cytoscape
  */
-public class LinearNumberToColorInterpolator extends LinearNumberInterpolator<Color> {
+public class LinearNumberToColorInterpolator extends LinearNumberInterpolator<Color> 
+{
 
-    /**
-     *  DOCUMENT ME!
-     *
-     * @param frac DOCUMENT ME!
-     * @param lowerRange DOCUMENT ME!
-     * @param upperRange DOCUMENT ME!
-     *
-     * @return  DOCUMENT ME!
-     */
 	@Override
 	public Color getRangeValue(double frac, Color lowerRange,
         Color upperRange) {

@@ -37,6 +37,13 @@ public final class EdgeGraphicsAttribute<T>
 	private final String width;
 	private final String fill;
 	
+	/**
+	 * <code> EdgeGraphicsAttribute </code> constructor.
+	 * @param currentNetwork
+	 * @param currentEdge
+	 * @param width
+	 * @param fill
+	 */
 	public EdgeGraphicsAttribute(
 			DynNetwork<T> currentNetwork,
 			CyEdge currentEdge,
@@ -49,6 +56,10 @@ public final class EdgeGraphicsAttribute<T>
 		this.fill = fill;
 	}
 	
+	/**
+	 * Add edge graphics attribute.
+	 * @param viewFactory
+	 */
 	public void add(DynNetworkViewFactory<T> viewFactory)
 	{
 		viewFactory.setEdgeGraphics(currentNetwork, currentEdge, width, fill);

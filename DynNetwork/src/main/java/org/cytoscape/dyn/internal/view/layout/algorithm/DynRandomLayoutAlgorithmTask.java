@@ -50,6 +50,18 @@ public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask
 	private final double timeMax;
 	private final double timeStep;
 	
+	/**
+	 * <code> DynRandomLayoutAlgorithmTask </code> constructor.
+	 * @param name
+	 * @param layout
+	 * @param nodesToLayOut
+	 * @param layoutAttribute
+	 * @param undo
+	 * @param currentTime
+	 * @param timeMin
+	 * @param timeMax
+	 * @param timeStep
+	 */
     public DynRandomLayoutAlgorithmTask(
                     final String name,
                     final DynLayout layout,

@@ -82,6 +82,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private double minEndTime = Double.POSITIVE_INFINITY;
 	private double maxEndTime = Double.NEGATIVE_INFINITY;
 
+	/**
+	 * <code> DynNetworkImpl </code> constructor.
+	 * @param network
+	 * @param groupManager
+	 * @param isDirected
+	 */
 	public DynNetworkImpl(
 			final CyNetwork network,
 			final CyGroupManager groupManager,

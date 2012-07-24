@@ -43,6 +43,19 @@ public final class NodeGraphicsAttribute<T>
 	private final String linew;
 	private final String outline;
 	
+	/**
+	 * <code> NodeGraphicsAttribute </code> constructor.
+	 * @param currentNetwork
+	 * @param currentNode
+	 * @param type
+	 * @param height
+	 * @param width
+	 * @param x
+	 * @param y
+	 * @param fill
+	 * @param linew
+	 * @param outline
+	 */
 	public NodeGraphicsAttribute(
 			DynNetwork<T> currentNetwork,
 			CyNode currentNode,
@@ -67,6 +80,10 @@ public final class NodeGraphicsAttribute<T>
 		this.outline = outline;
 	}
 
+	/**
+	 * Add node graphics attribute.
+	 * @param viewFactory
+	 */
 	public void add(DynNetworkViewFactory<T> viewFactory)
 	{
 		viewFactory.setNodeGraphics(currentNetwork, currentNode, type, height, width, x, y, fill, linew, outline);

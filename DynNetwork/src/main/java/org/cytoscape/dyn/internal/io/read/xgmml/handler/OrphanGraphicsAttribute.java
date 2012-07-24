@@ -35,6 +35,12 @@ public class OrphanGraphicsAttribute<T>
 	private final String width;
 	private final String fill;
 	
+	/**
+	 * <code> OrphanGraphicsAttribute </code> constructor.
+	 * @param currentNetwork
+	 * @param width
+	 * @param fill
+	 */
 	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill)
 	{
 		this.currentNetwork = currentNetwork;
@@ -42,6 +48,11 @@ public class OrphanGraphicsAttribute<T>
 		this.fill = fill;
 	}
 	
+	/**
+	 * Add orphan edge graphics attribute to edge.
+	 * @param handler
+	 * @param currentEdge
+	 */
 	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!=null)

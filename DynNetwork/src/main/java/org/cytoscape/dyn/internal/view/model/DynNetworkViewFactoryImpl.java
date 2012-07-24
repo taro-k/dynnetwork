@@ -55,6 +55,13 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	private final Stack<NodeGraphicsAttribute<T>> nodeGraphicsList;
 	private final Stack<EdgeGraphicsAttribute<T>> edgeGraphicsList;
 	
+	/**
+	 * <code> DynNetworkViewFactoryImpl </code> constructor.
+	 * @param viewManager
+	 * @param cyNetworkViewFactory
+	 * @param networkViewManager
+	 * @param vmm
+	 */
 	public DynNetworkViewFactoryImpl(
 			DynNetworkViewManager<T> viewManager,
 			CyNetworkViewFactory cyNetworkViewFactory,

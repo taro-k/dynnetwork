@@ -37,6 +37,9 @@ public final class DynLayoutManagerImpl implements DynLayoutManager
 {
 	private final Map<CyNetworkView, DynLayout> dynLayoutMap;
 	
+	/**
+	 * <code> DynLayoutManagerImpl </code> constructor.
+	 */
 	public DynLayoutManagerImpl()
 	{
 		this.dynLayoutMap = new WeakHashMap<CyNetworkView, DynLayout>();

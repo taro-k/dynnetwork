@@ -116,6 +116,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter,formatter2;
 
+	/**
+	 * <code> AdvancedDynCytoPanel </code> constructor.
+	 * @param taskManager
+	 * @param appManager
+	 * @param viewManager
+	 * @param layoutManager
+	 * @param continousFactory
+	 * @param discreteFactory
+	 * @param passthroughFactory
+	 */
 	public AdvancedDynCytoPanel(
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
@@ -269,6 +279,9 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		updateView();
 	}
 
+	/**
+	 * Get network view hidden nodes visibility.
+	 */
 	public int getVisibility() 
 	{
 		return visibility;
@@ -304,11 +317,17 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		return null;
 	}
 	
+	/**
+	 * Set current number of displayed nodes.
+	 */
 	public void setNodes(int nodes) 
 	{
 		nodeNumber.setText("Current nodes = " + formatter2.format(nodes) + "/" + formatter2.format(network.getNetwork().getNodeCount()));
 	}
 
+	/**
+	 * Set current number of displayed edges.
+	 */
 	public void setEdges(int edges) 
 	{
 		edgeNumber.setText("Current edges = " + formatter2.format(edges) + "/" + formatter2.format(network.getNetwork().getEdgeCount()));

@@ -41,6 +41,17 @@ public class CreateEdgeDynEvent<T> implements DynEvent
 	
 	private final Sink<T> sink;
 
+	/**
+	 * <code> CreateEdgeDynEvent </code> constructor.
+	 * @param network
+	 * @param id
+	 * @param label
+	 * @param source
+	 * @param target
+	 * @param start
+	 * @param end
+	 * @param sink
+	 */
 	public CreateEdgeDynEvent(
 			final DynNetwork<T> network,
 			final String id,

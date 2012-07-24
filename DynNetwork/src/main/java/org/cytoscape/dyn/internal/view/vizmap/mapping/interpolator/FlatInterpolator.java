@@ -19,67 +19,45 @@
 
 package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
-
-
-//----------------------------------------------------------------------------
 /**
- * This simple Interpolator returns the value at either the lower or upper
+ * <code> FlatInterpolator </code> returns the value at either the lower or upper
  * boundary of the domain. Note that no check is made whether the supplied
  * domainValue is actually within the boundaries.
+ * 
+ * @author cytoscape
  */
-public class FlatInterpolator<V, R> implements Interpolator<V, R> {
-	/**
-	 *
-	 */
+public class FlatInterpolator<V, R> implements Interpolator<V, R> 
+{
+
 	public static final Integer LOWER = Integer.valueOf(0);
 
-	/**
-	 *
-	 */
 	public static final Integer UPPER = Integer.valueOf(1);
 	private boolean useLower;
 
 	/**
-	 * The default FlatInterpolator returns the range value at the lower
-	 * boundary.
+	 * <code> FlatInterpolator </code> constructor.
 	 */
-	public FlatInterpolator() {
+	public FlatInterpolator() 
+	{
 		useLower = true;
 	}
 
 	/**
-	 * Constructs a FlatInterpolator which returns the range value at the lower
-	 * boundary unless the argument 'mode' is equal to FlatInterpolator.UPPER.
+	 * <code> FlatInterpolator </code> constructor.
+	 * @param mode
 	 */
-	public FlatInterpolator(Integer mode) {
+	public FlatInterpolator(Integer mode)
+	{
 		if (mode.equals(UPPER))
 			useLower = false;
 		else
 			useLower = true;
 	}
-//
-//	/**
-//	 * DOCUMENT ME!
-//	 *
-//	 * @param lowerDomain
-//	 *            DOCUMENT ME!
-//	 * @param lowerRange
-//	 *            DOCUMENT ME!
-//	 * @param upperDomain
-//	 *            DOCUMENT ME!
-//	 * @param upperRange
-//	 *            DOCUMENT ME!
-//	 * @param domainValue
-//	 *            DOCUMENT ME!
-//	 *
-//	 * @return DOCUMENT ME!
-//	 */
-//	public R getRangeValue(V lowerDomain, R lowerRange, V upperDomain, R upperRange, V domainValue) {
-//		return ((useLower) ? lowerRange : upperRange);
-//	}
 
+	@Override
 	public <T extends V> R getRangeValue(T lowerDomain, R lowerRange,
-			T upperDomain, R upperRange, T domainValue) {
+			T upperDomain, R upperRange, T domainValue) 
+	{
 		return ((useLower) ? lowerRange : upperRange);
 	}
 }

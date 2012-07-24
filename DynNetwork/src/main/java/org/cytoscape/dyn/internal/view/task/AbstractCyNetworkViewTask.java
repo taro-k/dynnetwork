@@ -55,6 +55,15 @@ public class AbstractCyNetworkViewTask<T,C>  implements Runnable
 	
 	protected boolean cancelled = false;
 	
+	/**
+	 * <code> AbstractCyNetworkViewTask </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param layout
+	 * @param queue
+	 * @param low
+	 * @param high
+	 */
 	public AbstractCyNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final CyNetworkView view,
@@ -72,6 +81,9 @@ public class AbstractCyNetworkViewTask<T,C>  implements Runnable
 		this.high = high;
 	}
 
+	/**
+	 * Cancel task.
+	 */
 	public void cancel() 
 	{
 		this.cancelled = true;

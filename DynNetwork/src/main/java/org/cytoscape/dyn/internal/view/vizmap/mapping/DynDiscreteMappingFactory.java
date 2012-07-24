@@ -24,23 +24,35 @@ import org.cytoscape.view.vizmap.VisualMappingFunction;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.mappings.DiscreteMapping;
 
+/**
+ * <code> DynDiscreteMappingFactory </code> is a dynamic implementation of a 
+ * {@link VisualMappingFunctionFactory}.
+ * 
+ * @author cytoscape
+ *
+ */
 public class DynDiscreteMappingFactory implements VisualMappingFunctionFactory
 {
 
 	@Override
-	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(final String attributeName,
-			Class<K> attrValueType, final VisualProperty<V> vp) {
+	public <K, V> VisualMappingFunction<K, V> createVisualMappingFunction(
+			final String attributeName,
+			Class<K> attrValueType, 
+			final VisualProperty<V> vp) 
+			{
 
 		return new DynDiscreteMappingImpl<K, V>(attributeName, attrValueType, vp);
 	}
 
 	@Override
-	public String toString() {
+	public String toString() 
+	{
 		return DiscreteMapping.DISCRETE;
 	}
 
 	@Override
-	public Class<?> getMappingFunctionType() {
+	public Class<?> getMappingFunctionType() 
+	{
 		return DiscreteMapping.class;
 	}
 

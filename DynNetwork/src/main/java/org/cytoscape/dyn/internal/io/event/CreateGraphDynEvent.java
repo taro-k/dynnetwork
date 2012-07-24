@@ -37,6 +37,17 @@ public final class CreateGraphDynEvent<T> implements DynEvent
 	
 	private final Sink<T> sink;
 
+	/**
+	 * <code> CreateGraphDynEvent </code> constructor.
+	 * @param sourceId
+	 * @param timeStamp
+	 * @param id
+	 * @param label
+	 * @param start
+	 * @param end
+	 * @param directed
+	 * @param sink
+	 */
 	public CreateGraphDynEvent(
 			final String sourceId, 
 			final double timeStamp, 

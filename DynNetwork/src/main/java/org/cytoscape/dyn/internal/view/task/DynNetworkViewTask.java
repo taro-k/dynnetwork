@@ -44,6 +44,16 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	
 	private boolean updateNodes = true;
 
+	/**
+	 * <code> DynNetworkViewTask </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param layout
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param visibility
+	 */
 	public DynNetworkViewTask(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,

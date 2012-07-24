@@ -38,6 +38,15 @@ public final class OrphanAttribute<T>
 	private final String start;
 	private final String end;
 	
+	/**
+	 * <code> OrphanAttribute </code> constructor.
+	 * @param currentNetwork
+	 * @param name
+	 * @param value
+	 * @param type
+	 * @param start
+	 * @param end
+	 */
 	public OrphanAttribute(
 			DynNetwork<T> currentNetwork, 
 			String name, 
@@ -54,6 +63,11 @@ public final class OrphanAttribute<T>
 		this.end = end;
 	}
 	
+	/**
+	 * Add orphan edge attribute to edge.
+	 * @param handler
+	 * @param currentEdge
+	 */
 	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!= null && name!=null && value!=null && type!=null)

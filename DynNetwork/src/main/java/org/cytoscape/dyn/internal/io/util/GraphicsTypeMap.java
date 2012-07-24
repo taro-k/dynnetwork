@@ -35,6 +35,9 @@ public class GraphicsTypeMap
 {
 	   private Map<String, GraphicsType> typeMap;
 
+	   /**
+	    * <code> GraphicsTypeMap </code> constructor.
+	    */
 	    public GraphicsTypeMap()
 	    {
 	        typeMap = new HashMap<String, GraphicsType>();
@@ -43,6 +46,11 @@ public class GraphicsTypeMap
 	            typeMap.put(type.getName(), type);
 	    }
 
+	    /**
+	     * Get type.
+	     * @param name
+	     * @return type
+	     */
 	    public GraphicsType getType(String name)
 	    {
 	        final GraphicsType type = typeMap.get(name.toUpperCase());
@@ -53,6 +61,11 @@ public class GraphicsTypeMap
 	            return GraphicsType.NONE;
 	    }
 
+	    /**
+	     * Get object associated with value.
+	     * @param type
+	     * @return object
+	     */
 	    public Object getTypedValue(GraphicsType type)
 	    {
 	        switch (type) {

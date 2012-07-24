@@ -40,6 +40,9 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	protected final Map<Long,List<DynInterval<T>>> intervalMap;
 	protected List<DynInterval<T>> currentIntervals;
 	
+	/**
+	 * <code> AbstractDynIntervalTree </code> constructor.
+	 */
 	public AbstractDynIntervalTree()
 	{
 		this.nil = new DynNode<T>();
@@ -49,12 +52,21 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 		this.currentIntervals = new ArrayList<DynInterval<T>>();
 	}
 	
+	/**
+	 * <code> AbstractDynIntervalTree </code> constructor.
+	 * @param root
+	 */
 	public AbstractDynIntervalTree(DynNode<T> root)
 	{
 		this();
 		this.root.setLeft(root);
 	}
 	
+	/**
+	 * <code> AbstractDynIntervalTree </code> constructor.
+	 * @param interval
+	 * @param id
+	 */
 	public AbstractDynIntervalTree(DynInterval<T> interval, long id)
 	{
 		this(new DynNode<T>(interval, new DynNode<T>()));

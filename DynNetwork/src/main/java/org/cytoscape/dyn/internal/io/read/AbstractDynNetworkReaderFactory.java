@@ -31,6 +31,10 @@ import org.cytoscape.io.read.AbstractInputStreamTaskFactory;
  */
 public abstract class AbstractDynNetworkReaderFactory extends AbstractInputStreamTaskFactory
 {
+	/**
+	 * <code> AbstractDynNetworkReaderFactory </code> constructor.
+	 * @param filter
+	 */
 	public AbstractDynNetworkReaderFactory(CyFileFilter filter)
 	{
 		super(filter);

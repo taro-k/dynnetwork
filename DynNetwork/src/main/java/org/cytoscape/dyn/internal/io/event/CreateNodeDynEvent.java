@@ -41,6 +41,16 @@ public class CreateNodeDynEvent<T> implements DynEvent
 	
 	private final Sink<T> sink;
 
+	/**
+	 * <code> CreateNodeDynEvent </code> constructor.
+	 * @param network
+	 * @param group
+	 * @param id
+	 * @param label
+	 * @param start
+	 * @param end
+	 * @param sink
+	 */
 	public CreateNodeDynEvent(
 			final DynNetwork<T> network,
 			final CyGroup group,

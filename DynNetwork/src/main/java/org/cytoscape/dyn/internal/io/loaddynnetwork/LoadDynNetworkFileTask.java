@@ -45,19 +45,30 @@ public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask
 	@Tunable(description = "Network file to load", params = "fileCategory=network;input=true")
 	public File file;
 	
+	/**
+	 * Get title.
+	 */
 	@ProvidesTitle
 	public String getTitle() 
 	{
 		return "Load Network from File";
 	}
 	
+	/**
+	 * <code> LoadDynNetworkFileTask </code> constructor.
+	 * @param factory
+	 * @param streamUtil
+	 */
 	public LoadDynNetworkFileTask(
 			final InputStreamTaskFactory factory, 
-			StreamUtil streamUtil)
+			final StreamUtil streamUtil)
 	{
 		super(factory, streamUtil);
 	}
 	
+	/**
+	 * Run.
+	 */
 	public void run(TaskMonitor taskMonitor) throws Exception
 	{
 		this.taskMonitor = taskMonitor;

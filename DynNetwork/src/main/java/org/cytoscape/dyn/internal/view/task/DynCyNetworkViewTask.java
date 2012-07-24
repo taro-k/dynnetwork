@@ -43,6 +43,16 @@ public class DynCyNetworkViewTask<T,C> extends AbstractCyNetworkViewTask<T,C>
 {
 	private boolean updateNodes = true;
 
+	/**
+	 * <code> DynCyNetworkViewTask </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param layout
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param visibility
+	 */
 	public DynCyNetworkViewTask(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final CyNetworkView view,

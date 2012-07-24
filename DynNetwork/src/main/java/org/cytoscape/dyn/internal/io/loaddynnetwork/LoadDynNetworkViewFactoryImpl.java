@@ -37,6 +37,12 @@ public class LoadDynNetworkViewFactoryImpl<T> implements LoadDynNetworkViewFacto
 	private final DynNetworkManager<T> dynNetworkManager;
 	private final DynNetworkViewFactory<T> dynNetworkViewFactory;
 
+	/**
+	 * <code> LoadDynNetworkViewFactoryImpl </code> constructor.
+	 * @param appManager
+	 * @param dynNetworkManager
+	 * @param dynNetworkViewFactory
+	 */
 	public LoadDynNetworkViewFactoryImpl(
 			CyApplicationManager appManager,
 			DynNetworkManager<T> dynNetworkManager,

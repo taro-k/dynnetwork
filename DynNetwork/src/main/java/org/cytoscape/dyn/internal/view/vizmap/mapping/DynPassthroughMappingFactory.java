@@ -28,6 +28,13 @@ import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.mappings.PassthroughMapping;
 import org.cytoscape.view.vizmap.mappings.ValueTranslator;
 
+/**
+ * <code> DynPassthroughMappingFactory </code> is a dynamic implementation of a 
+ * {@link VisualMappingFunctionFactory}.
+ * 
+ * @author cytoscape
+ *
+ */
 public class DynPassthroughMappingFactory implements VisualMappingFunctionFactory
 {
 

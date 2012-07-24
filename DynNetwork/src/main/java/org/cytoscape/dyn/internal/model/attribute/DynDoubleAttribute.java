@@ -31,11 +31,20 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  */
 public class DynDoubleAttribute extends AbstractDynAttribute<Double>
 {
+	/**
+	 * <code> DynDoubleAttribute </code> constructor.
+	 * @param type
+	 */
 	public DynDoubleAttribute(Class<Double> type)
 	{
 		super(type);
 	}
 	
+	/**
+	 * <code> DynDoubleAttribute </code> constructor.
+	 * @param interval
+	 * @param key
+	 */
 	public DynDoubleAttribute(DynInterval<Double> interval, KeyPairs key)
 	{
 		super(interval,key);

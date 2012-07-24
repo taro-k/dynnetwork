@@ -61,6 +61,15 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	
 	private final List<CyNode> metaNodes; 
 	
+	/**
+	 * <code> DynNetworkFactoryImpl </code> constructor.
+	 * @param networkFactory
+	 * @param rootNetworkManager
+	 * @param groupManager
+	 * @param groupFactory
+	 * @param manager
+	 * @param nameUtil
+	 */
 	public DynNetworkFactoryImpl(
 			final CyNetworkFactory networkFactory,
 			final CyRootNetworkManager rootNetworkManager,

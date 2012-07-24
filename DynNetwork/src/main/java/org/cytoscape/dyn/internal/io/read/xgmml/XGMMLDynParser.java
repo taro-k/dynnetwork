@@ -43,6 +43,11 @@ public final class XGMMLDynParser<T> extends DefaultHandler
 	private ParseDynState parseState;
 	private Stack<ParseDynState> startStack;
 
+	/**
+	 * <code> XGMMLDynParser </code> constructor.
+	 * @param networkSink
+	 * @param viewSink
+	 */
 	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
 		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink);

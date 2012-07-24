@@ -19,32 +19,29 @@
 
 package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
-
-//----------------------------------------------------------------------------
 /**
- * This subclass of NumberInterpolator further assumes a linear interpolation,
+ * <code> LinearNumberInterpolator </code> further assumes a linear interpolation,
  * and calculates the fractional distance of the target domain value from the
  * lower boundary value for the convenience of subclasses.
+ * 
+ * @author cytoscape
  */
-abstract public class LinearNumberInterpolator<R> extends NumberInterpolator<R> {
+abstract public class LinearNumberInterpolator<R> extends NumberInterpolator<R> 
+{
 
 	/**
-	 * DOCUMENT ME!
-	 * 
+	 * Get range value.
 	 * @param frac
-	 *            DOCUMENT ME!
 	 * @param lowerRange
-	 *            DOCUMENT ME!
 	 * @param upperRange
-	 *            DOCUMENT ME!
-	 * 
-	 * @return DOCUMENT ME!
+	 * @return value
 	 */
 	abstract public R getRangeValue(double frac, R lowerRange, R upperRange);
 
 	@Override
 	public R getRangeValue(double lowerDomain, R lowerRange,
-			double upperDomain, R upperRange, double domainValue) {
+			double upperDomain, R upperRange, double domainValue) 
+	{
 
 		if (lowerDomain == upperDomain)
 			return lowerRange;

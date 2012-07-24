@@ -49,6 +49,18 @@ public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask
 	private final double timeMax;
 	private final double timeStep;
 	
+	/**
+	 * <code> DynForceLayoutAlgorithmTask </code> constructor.
+	 * @param name
+	 * @param layout
+	 * @param nodesToLayOut
+	 * @param layoutAttribute
+	 * @param undo
+	 * @param currentTime
+	 * @param timeMin
+	 * @param timeMax
+	 * @param timeStep
+	 */
     public DynForceLayoutAlgorithmTask(
                     final String name,
                     final DynLayout layout,

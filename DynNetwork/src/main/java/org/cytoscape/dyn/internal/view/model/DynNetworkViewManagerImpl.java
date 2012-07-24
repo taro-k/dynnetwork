@@ -38,6 +38,10 @@ public final class DynNetworkViewManagerImpl<T> implements DynNetworkViewManager
 	private final CyNetworkViewManager cyNetworkViewManager;
 	private final Map<CyNetworkView, DynNetworkView<T>> dynNetworkViewMap;
 
+	/**
+	 * <code> DynNetworkViewManagerImpl </code> constructor.
+	 * @param cyNetworkViewManager
+	 */
 	public DynNetworkViewManagerImpl(final CyNetworkViewManager cyNetworkViewManager) 
 	{
 		this.cyNetworkViewManager = cyNetworkViewManager;

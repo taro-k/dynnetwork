@@ -73,11 +73,17 @@ import org.osgi.framework.BundleContext;
  */
 public class CyActivator<T,C> extends AbstractCyActivator
 {
+	/**
+	 * <code> CyActivator </code> Constructor
+	 */
 	public CyActivator()
 	{
 		super();
 	}
 
+	/**
+	 * Start bundle.
+	 */
 	@SuppressWarnings("unchecked")
 	public void start(BundleContext context)
 	{

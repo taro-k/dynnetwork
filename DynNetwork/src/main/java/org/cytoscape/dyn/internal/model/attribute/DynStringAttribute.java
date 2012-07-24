@@ -31,11 +31,20 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  */
 public class DynStringAttribute extends AbstractDynAttribute<String>
 {
+	/**
+	 * <code> DynStringAttribute </code> constructor.
+	 * @param type
+	 */
 	public DynStringAttribute(Class<String> type)
 	{
 		super(type);
 	}
 	
+	/**
+	 * <code> DynStringAttribute </code> constructor.
+	 * @param interval
+	 * @param key
+	 */
 	public DynStringAttribute(DynInterval<String> interval, KeyPairs key)
 	{
 		super(interval,key);

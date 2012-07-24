@@ -49,6 +49,11 @@ public final class XGMMLDynNetworkReader extends AbstractDynNetworkReader
 {
 	protected final DefaultHandler parser;
 
+	/**
+	 * <code> XGMMLDynNetworkReader </code> constructor.
+	 * @param inputStream
+	 * @param parser
+	 */
 	public XGMMLDynNetworkReader(
 			final InputStream inputStream,
 			final DefaultHandler parser)

@@ -37,12 +37,27 @@ public final class XGMMLDynFileFilter extends BasicCyFileFilter {
 	
 	public static final Pattern XGMML_VIEW_ATTRIBUTE_PATTERN = Pattern.compile("cy:view=[\\'\"](1|true)[\\'\"]");
 
-
+	/**
+	 * <code> XGMMLDynFileFilter </code> constructor.
+	 * @param extensions
+	 * @param contentTypes
+	 * @param description
+	 * @param category
+	 * @param streamUtil
+	 */
 	public XGMMLDynFileFilter(Set<String> extensions, Set<String> contentTypes,
 			String description, DataCategory category, StreamUtil streamUtil) {
 		super(extensions, contentTypes, description, category, streamUtil);
 	}
 
+	/**
+	 * <code> XGMMLDynFileFilter </code> constructor.
+	 * @param extensions
+	 * @param contentTypes
+	 * @param description
+	 * @param category
+	 * @param streamUtil
+	 */
 	public XGMMLDynFileFilter(String[] extensions, String[] contentTypes,
 			String description, DataCategory category, StreamUtil streamUtil) {
 		super(extensions, contentTypes, description, category, streamUtil);

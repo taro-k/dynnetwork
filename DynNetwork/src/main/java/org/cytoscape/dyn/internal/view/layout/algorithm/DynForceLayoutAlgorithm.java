@@ -45,6 +45,14 @@ public class DynForceLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory dynLaoutFactory;
     
+    /**
+     * <code> DynForceLayoutAlgorithm </code> constructor.
+     * @param computerName
+     * @param humanName
+     * @param undoSupport
+     * @param panel
+     * @param dynLaoutFactory
+     */
     public DynForceLayoutAlgorithm(
                     final String computerName, 
                     final String humanName,

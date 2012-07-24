@@ -36,17 +36,30 @@ public class KeyPairs
 	private String column;
 	private Long row;
 	
+	/**
+	 * <code> KeyPairs </code> constructor.
+	 * @param column
+	 * @param row
+	 */
 	public KeyPairs(String column, Long row) 
 	{
 		this.column = column;
 		this.row = row;
 	}
 	
+	/**
+	 * Get column.
+	 * @return
+	 */
 	public String getColumn() 
 	{
 		return column;
 	}
 
+	/**
+	 * Get row.
+	 * @return
+	 */
 	public Long getRow() 
 	{
 		return row;

@@ -34,6 +34,10 @@ public abstract class AbstractDynNetworkReader extends AbstractTask implements D
 {
 	protected InputStream inputStream;
 
+	/**
+	 * <code> AbstractDynNetworkReader </code> constructor.
+	 * @param inputStream
+	 */
 	public AbstractDynNetworkReader(InputStream inputStream) 
 	{
 		this.inputStream = inputStream;

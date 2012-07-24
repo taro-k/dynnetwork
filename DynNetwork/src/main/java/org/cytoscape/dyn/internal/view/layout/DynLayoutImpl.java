@@ -60,6 +60,10 @@ public final class DynLayoutImpl implements DynLayout
 	private final Map<KeyPairs,DynDoubleAttribute> node_Y_Pos;
 	private final Map<KeyPairs,DynDoubleAttribute> node_Z_Pos;
 
+	/**
+	 * <code> DynLayoutImpl </code> constructor.
+	 * @param view
+	 */
 	public DynLayoutImpl(CyNetworkView view)
 	{
 		this.view = view;

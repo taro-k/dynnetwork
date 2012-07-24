@@ -42,6 +42,13 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	
 	private DynAttribute<T> attribute;
 	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param type
+	 * @param value
+	 * @param start
+	 * @param end
+	 */
 	public DynInterval(Class<T> type, T value, double start, double end)
 	{
 		this.value = value;
@@ -50,6 +57,11 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		this.end = end;
 	}
 
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param start
+	 * @param end
+	 */
 	public DynInterval(double start, double end)
 	{
 		this(null, null, start, end);

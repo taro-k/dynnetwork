@@ -40,6 +40,16 @@ public class CreateGraphAttrDynEvent<T> implements DynEvent
 	
 	private final Sink<T> sink;
 
+	/**
+	 * <code> CreateGraphAttrDynEvent </code> constructor.
+	 * @param network
+	 * @param name
+	 * @param value
+	 * @param type
+	 * @param start
+	 * @param end
+	 * @param sink
+	 */
 	public CreateGraphAttrDynEvent(
 			final DynNetwork<T> network,
 			final String name,

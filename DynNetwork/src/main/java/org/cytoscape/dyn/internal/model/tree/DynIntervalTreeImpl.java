@@ -35,16 +35,28 @@ package org.cytoscape.dyn.internal.model.tree;
 public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
 {
 
+	/**
+	 * <code> DynIntervalTreeImpl </code> constructor.
+	 */
 	public DynIntervalTreeImpl()
 	{
 		super();
 	}
 	
+	/**
+	 * <code> DynIntervalTreeImpl </code> constructor.
+	 * @param root
+	 */
 	public DynIntervalTreeImpl(DynNode<T> root)
 	{
 		super(root);
 	}
 	
+	/**
+	 * <code> DynIntervalTreeImpl </code> constructor.
+	 * @param interval
+	 * @param id
+	 */
 	public DynIntervalTreeImpl(DynInterval<T> interval, long id)
 	{
 		super(interval, id);

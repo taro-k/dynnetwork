@@ -20,31 +20,22 @@
 package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
 
-//----------------------------------------------------------------------------
 /**
  * The class assumes that the supplied range objects are Numbers, and returns a
  * linearly interplated value according to the value of frac.
  * 
  * If either object argument is not a Number, null is returned.
+ * 
+ * @author cytoscape
  */
 public class LinearNumberToNumberInterpolator extends
-		LinearNumberInterpolator<Number> {
+		LinearNumberInterpolator<Number> 
+{
 
-	/**
-	 * DOCUMENT ME!
-	 * 
-	 * @param frac
-	 *            DOCUMENT ME!
-	 * @param lowerRange
-	 *            DOCUMENT ME!
-	 * @param upperRange
-	 *            DOCUMENT ME!
-	 * 
-	 * @return Value for the given fraction point.
-	 */
 	@Override
 	public Number getRangeValue(double frac, Number lowerRange,
-			Number upperRange) {
+			Number upperRange) 
+	{
 
 		double lowerVal = lowerRange.doubleValue();
 		double upperVal = upperRange.doubleValue();

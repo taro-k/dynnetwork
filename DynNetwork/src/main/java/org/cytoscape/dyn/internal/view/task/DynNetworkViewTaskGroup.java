@@ -35,6 +35,16 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 	private final CyGroup group;
 	private final int visibility;
 
+	/**
+	 * <code> DynNetworkViewTaskGroup </code> constructor.
+	 * @param panel
+	 * @param view
+	 * @param queue
+	 * @param low
+	 * @param high
+	 * @param visibility
+	 * @param group
+	 */
 	public DynNetworkViewTaskGroup(
 			final AdvancedDynCytoPanel<T,C> panel,
 			final DynNetworkView<T> view,

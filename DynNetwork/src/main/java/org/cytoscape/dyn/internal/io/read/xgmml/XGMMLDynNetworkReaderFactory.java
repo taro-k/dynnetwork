@@ -37,6 +37,11 @@ public final class XGMMLDynNetworkReaderFactory extends AbstractDynNetworkReader
 {
 	private final DefaultHandler parser;
 
+	/**
+	 * <code> XGMMLDynNetworkReaderFactory </code> constructor.
+	 * @param filter
+	 * @param parser
+	 */
 	public XGMMLDynNetworkReaderFactory(
 			final CyFileFilter filter,
 			final DefaultHandler parser)

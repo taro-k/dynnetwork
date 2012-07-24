@@ -42,6 +42,9 @@ public final class DynNode<T>
 	private List<DynInterval<T>> intervalList = new ArrayList<DynInterval<T>>();
 	private double max = Double.NEGATIVE_INFINITY;
 
+	/**
+	 * <code> DynNode </code> constructor.
+	 */
 	public DynNode()
 	{
 		this.parent = this;
@@ -49,6 +52,11 @@ public final class DynNode<T>
 		this.children[1] = this;
 	}
 	
+	/**
+	 * <code> DynNode </code> constructor.
+	 * @param interval
+	 * @param nil
+	 */
 	public DynNode(DynInterval<T> interval, DynNode<T> nil)
 	{
 		this.parent = nil;

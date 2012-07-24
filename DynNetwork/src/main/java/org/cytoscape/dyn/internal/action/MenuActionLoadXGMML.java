@@ -49,8 +49,10 @@ import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 
 /**
- * <code> MenuActionLoadXGMML </code> launches an ActionEvent from the 
- * menu "File/Dynamic XGMML Loader".
+ * <code> MenuActionLoadXGMML </code> launches an ActionEvent from the menu 
+ * "File/Dynamic XGMML Loader" to import dynamic networks into Cytoscape, and is
+ * also responsible to create the panel {@link CytoPanel} to control the visalization
+ * of dynamic graphical information.
  * 
  * @author sabina
  *
@@ -74,6 +76,19 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	private final StreamUtil streamUtil;
 	private final TunableSetter tunableSetterServiceRef;
 
+	/**
+	 * <code> MenuActionLoadXGMML </code> constructor.
+	 * @param desktopApp
+	 * @param appManager
+	 * @param myDynPanel
+	 * @param taskManager
+	 * @param dynNetworkManager
+	 * @param dynNetworkFactory
+	 * @param dynNetworkViewFactory
+	 * @param fileUtil
+	 * @param streamUtil
+	 * @param tunableSetterServiceRef
+	 */
     public MenuActionLoadXGMML(
     		final CySwingApplication desktopApp,
     		final CyApplicationManager appManager,
@@ -101,6 +116,9 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
         this.tunableSetterServiceRef = tunableSetterServiceRef;
     }
 
+    /**
+     * Fire action.
+     */
     public void actionPerformed(ActionEvent e)
     {
     	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(dynNetworkFactory,dynNetworkViewFactory);

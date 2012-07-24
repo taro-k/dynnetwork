@@ -73,6 +73,11 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	
 	private int ID = 0;
 	
+	/**
+	 * <code> DynHandlerXGMML </code> constructor.
+	 * @param networkSink
+	 * @param viewSink
+	 */
 	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
 	{
 		groupStack = new Stack<CyGroup>();

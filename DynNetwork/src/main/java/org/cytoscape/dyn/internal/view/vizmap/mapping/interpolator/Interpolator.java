@@ -20,7 +20,7 @@
 package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
 /**
- * This interface defines an interpolation function that takes two pairs
+ * <code> Interpolator </code> defines an interpolation function that takes two pairs
  * of (domain,range) values plus a target domain value, and calculates an
  * associated range value via some kind of interpolation.
  *
@@ -34,16 +34,16 @@ package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
  * @author kono
  */
 public interface Interpolator<V, R> {
+
 	/**
-	 *  DOCUMENT ME!
-	 *
-	 * @param lowerDomain DOCUMENT ME!
-	 * @param lowerRange DOCUMENT ME!
-	 * @param upperDomain DOCUMENT ME!
-	 * @param upperRange DOCUMENT ME!
-	 * @param domainValue DOCUMENT ME!
-	 *
-	 * @return  DOCUMENT ME!
+	 * Get range value.
+	 * @param <T>
+	 * @param lowerDomain
+	 * @param lowerRange
+	 * @param upperDomain
+	 * @param upperRange
+	 * @param domainValue
+	 * @return value
 	 */
 	 public <T extends V> R getRangeValue( T lowerDomain, R lowerRange, T upperDomain,
 	                            R  upperRange, T domainValue);

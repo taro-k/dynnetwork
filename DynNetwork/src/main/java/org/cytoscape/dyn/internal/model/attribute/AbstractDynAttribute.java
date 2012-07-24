@@ -43,6 +43,10 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	
 	protected List<DynAttribute<T>> children;
 	
+	/**
+	 * <code> AbstractDynAttribute </code> constructor.
+	 * @param type
+	 */
 	public AbstractDynAttribute(Class<T> type)
 	{
 		this.type = type;
@@ -50,6 +54,11 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 		children = new ArrayList<DynAttribute<T>>();
 	}
 	
+	/**
+	 * <code> AbstractDynAttribute </code> constructor.
+	 * @param interval
+	 * @param key
+	 */
 	public AbstractDynAttribute(DynInterval<T> interval, KeyPairs key)
 	{
 		this(interval.getType());
@@ -58,22 +67,26 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 		interval.setAttribute(this);
 	}
 		
+	@Override
 	public void addInterval(DynInterval<T> interval)
 	{
 		intervalList.add(interval);
 		interval.setAttribute(this);
 	}
 	
+	@Override
 	public void removeInterval(DynInterval<T> interval)
 	{
 		intervalList.remove(interval);
 	}
 	
+	@Override
     public List<DynInterval<T>> getIntervalList()
     {
 		return intervalList;
 	}
     
+	@Override
     public List<DynInterval<T>> getRecursiveIntervalList(ArrayList<DynInterval<T>> list)
     {
     	for (DynInterval<T> interval : intervalList)
@@ -83,37 +96,44 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
     	return list;
     }
 
+	@Override
     public void setKey(long row, String column)
     {
     	this.key = new KeyPairs(column, row);
     }
 
+	@Override
     public KeyPairs getKey() 
     {
     	return key;
     }
 	
+	@Override
 	public String getColumn() 
 	{
 		return key.getColumn();
 	}
 	
+	@Override
 	public long getRow() 
 	{
 		return key.getRow();
 	}
 	
+	@Override
 	public void addChildren(DynAttribute<T> attr)
 	{
 		this.children.add(attr);
 	}
 	
+	@Override
 	public void removeChildren(DynAttribute<T> attr)
 	{
 		if (this.children.contains(attr))
 			this.children.remove(attr);
 	}
 	
+	@Override
 	public void clear()
 	{
 		this.intervalList.clear();
@@ -121,15 +141,19 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 		this.key = null;
 	}
 
+	@Override
 	public Class<T> getType()
 	{
 		return type;
 	}
 	
+	@Override
 	public abstract T getMinValue();
 	
+	@Override
 	public abstract T getMaxValue();
 
+	@Override
     public double getMinTime()
     {
             double minTime = Double.POSITIVE_INFINITY;
@@ -138,6 +162,7 @@ abstract class AbstractDynAttribute<T> implements DynAttribute<T>
             return minTime;
     }
 
+	@Override
 	public double getMaxTime()
     {
             double maxTime = Double.NEGATIVE_INFINITY;

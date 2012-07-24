@@ -37,6 +37,11 @@ public class DynCytoPanelTask<T,C> extends AbstractTask
 	private final DynCytoPanel<T,C> panel;
 	private final CytoPanel cytoPanelWest;
 	
+	/**
+	 * <code> DynCytoPanelTask </code> constructor.
+	 * @param panel
+	 * @param cytoPanelWest
+	 */
 	public DynCytoPanelTask(
 			final DynCytoPanel<T,C> panel,
 			final CytoPanel cytoPanelWest)

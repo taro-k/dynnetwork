@@ -19,19 +19,22 @@
 
 package org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator;
 
-
-//----------------------------------------------------------------------------
 /**
- * This partial implementation of Interpolator assumes that the domain values
+ * <code> NumberInterpolator </code> assumes that the domain values
  * are some kind of number, and extracts the values into ordinary doubles for
  * the convenience of subclasses. If any argument is null, or if any of the
  * domain values is not an instance of Number, null is returned.
+
+ * 
+ * @author cytoscape
  */
-abstract public class NumberInterpolator<R> implements Interpolator<Number, R> {
+abstract public class NumberInterpolator<R> implements Interpolator<Number, R> 
+{
 
 	@Override
 	public <T extends Number> R getRangeValue(T lowerDomain, R lowerRange,
-			T upperDomain, R upperRange, T domainValue) {
+			T upperDomain, R upperRange, T domainValue) 
+	{
 
 		if (lowerDomain == null || lowerRange == null || upperDomain == null
 				|| upperRange == null || domainValue == null)
@@ -41,52 +44,15 @@ abstract public class NumberInterpolator<R> implements Interpolator<Number, R> {
 				.doubleValue(), upperRange, domainValue.doubleValue());
 	}
 
-	// /**
-	// * DOCUMENT ME!
-	// *
-	// * @param lowerDomain DOCUMENT ME!
-	// * @param lowerRange DOCUMENT ME!
-	// * @param upperDomain DOCUMENT ME!
-	// * @param upperRange DOCUMENT ME!
-	// * @param domainValue DOCUMENT ME!
-	// *
-	// * @return DOCUMENT ME!
-	// */
-	// public R getRangeValue(Number lowerDomain, Object lowerRange, Object
-	// upperDomain,
-	// Object upperRange, Object domainValue) {
-	// if ((lowerRange == null) || (upperRange == null)) {
-	// return null;
-	// }
-	//
-	// if ((lowerDomain == null) || !(lowerDomain instanceof Number)) {
-	// return null;
-	// }
-	//
-	// if ((upperDomain == null) || !(upperDomain instanceof Number)) {
-	// return null;
-	// }
-	//
-	// if ((domainValue == null) || !(domainValue instanceof Number)) {
-	// return null;
-	// }
-	//
-	// return getRangeValue(((Number) lowerDomain).doubleValue(), lowerRange,
-	// ((Number) upperDomain).doubleValue(), upperRange,
-	// ((Number) domainValue).doubleValue());
-	// }
-	//
-	// /**
-	// * DOCUMENT ME!
-	// *
-	// * @param lowerDomain DOCUMENT ME!
-	// * @param lowerRange DOCUMENT ME!
-	// * @param upperDomain DOCUMENT ME!
-	// * @param upperRange DOCUMENT ME!
-	// * @param domainValue DOCUMENT ME!
-	// *
-	// * @return DOCUMENT ME!
-	// */
+	/**
+	 * Get range value.
+	 * @param lowerDomain
+	 * @param lowerRange
+	 * @param upperDomain
+	 * @param upperRange
+	 * @param domainValue
+	 * @return value
+	 */
 	abstract public R getRangeValue(double lowerDomain, R lowerRange,
 			double upperDomain, R upperRange, double domainValue);
 }

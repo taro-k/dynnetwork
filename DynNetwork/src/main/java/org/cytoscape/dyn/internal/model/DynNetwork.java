@@ -372,7 +372,8 @@ public interface DynNetwork<T>
 	public T readEdgeTable(CyEdge edge, String name, T value);
 	
 	/**
-	 * Finalize network.
+	 * Finalize network. We perform here all operations that require the network construction
+	 * to be finished.
 	 */
 	public void finalizeNetwork();
 	
