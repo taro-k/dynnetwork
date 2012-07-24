@@ -302,6 +302,14 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		// do nothing
 		return null;
 	}
+	
+//	private void setNetworkName(CyNetwork currentNetwork, String label)
+//	{
+//		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
+//		rootNetwork.getDefaultNetworkTable().createColumn(CyNetwork.NAME, String.class, false);
+//		rootNetwork.getDefaultNetworkTable().getRow(CyNetwork.NAME).set(CyNetwork.NAME,nameUtil.getSuggestedNetworkTitle(label));
+//		currentNetwork.getRow(currentNetwork).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
+//	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
 	{

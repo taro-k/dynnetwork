@@ -109,13 +109,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
     	
-    	VisualMappingFunctionFactory continousMappingFunctionFactoryRef = new DynContinousMappingFactory();
-    	VisualMappingFunctionFactory discreteMappingFunctionFactoryRef = new DynDiscreteMappingFactory();
-    	VisualMappingFunctionFactory passthroughMappingFunctionFactoryRef = new DynPassthroughMappingFactory();
-    	
     	DynLayoutManagerImpl dynLayoutManager = new DynLayoutManagerImpl();
     	DynLayoutFactoryImpl dynLayoutFactory = new DynLayoutFactoryImpl(dynLayoutManager);
-    	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,continousMappingFunctionFactoryRef,discreteMappingFunctionFactoryRef,passthroughMappingFunctionFactoryRef);
+    	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Force Dynamic",undo,dynCytoPanel,dynLayoutFactory);
     	

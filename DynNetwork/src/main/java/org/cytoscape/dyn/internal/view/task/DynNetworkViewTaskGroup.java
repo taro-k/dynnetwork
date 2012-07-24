@@ -30,6 +30,18 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
+/**
+ * <code> DynNetworkViewTaskGroup </code> is the task that is responsible for updating
+ * the visualization after metanodes are expanded or collapsed. this is necessary since the
+ * visualization computes only changed elements from the last visualizations, and thus we need to
+ * manually initialize new nodes or edges.
+ * 
+ * 
+ * @author sabina
+ *
+ * @param <T>
+ * @param <C>
+ */
 public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTask<T,C>  
 {
 	private final CyGroup group;

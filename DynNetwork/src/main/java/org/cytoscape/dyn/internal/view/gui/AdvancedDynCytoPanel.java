@@ -84,9 +84,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
 	private final DynLayoutManager layoutManager;
-	private final VisualMappingFunctionFactory continousFactory;
-	private final VisualMappingFunctionFactory discreteFactory;
-	private final VisualMappingFunctionFactory passthroughFactory;
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
@@ -130,18 +127,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
-			final DynLayoutManager layoutManager,
-			final VisualMappingFunctionFactory continousFactory,
-			final VisualMappingFunctionFactory discreteFactory,
-			final VisualMappingFunctionFactory passthroughFactory)
+			final DynLayoutManager layoutManager)
 	{
 		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.layoutManager = layoutManager;
-		this.continousFactory = continousFactory;
-		this.discreteFactory = discreteFactory;
-		this.passthroughFactory = passthroughFactory;
 		this.queue = new BlockingQueue();
 		initComponents();
 	}
@@ -176,7 +167,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 						this, view, layoutManager.getDynLayout(view.getNetworkView()), queue, time, time, slider, -1)).start();
 			else if (source.equals(vizmapButton))
 				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
-						view,view.getCurrentVisualStyle(),continousFactory,discreteFactory,passthroughFactory, queue)));
+						view,view.getCurrentVisualStyle(), queue)));
 		}
 		else if (event.getSource() instanceof JCheckBox)
 		{

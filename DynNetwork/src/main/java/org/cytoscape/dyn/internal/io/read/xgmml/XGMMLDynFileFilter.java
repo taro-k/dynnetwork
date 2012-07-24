@@ -30,7 +30,14 @@ import org.cytoscape.io.BasicCyFileFilter;
 import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.util.StreamUtil;
 
-public final class XGMMLDynFileFilter extends BasicCyFileFilter {
+/**
+ * <code> ParseDynState </code> is used to filter XGMML file extensions.
+ * 
+ * @author cytoscape
+ *
+ */
+public final class XGMMLDynFileFilter extends BasicCyFileFilter 
+{
 	
 	public static final Pattern XGMML_HEADER_PATTERN = Pattern
 			.compile("<graph[^<>]+[\\'\"]http://www.cs.rpi.edu/XGMML[\\'\"][^<>]*>");
@@ -59,23 +66,23 @@ public final class XGMMLDynFileFilter extends BasicCyFileFilter {
 	 * @param streamUtil
 	 */
 	public XGMMLDynFileFilter(String[] extensions, String[] contentTypes,
-			String description, DataCategory category, StreamUtil streamUtil) {
+			String description, DataCategory category, StreamUtil streamUtil) 
+	{
 		super(extensions, contentTypes, description, category, streamUtil);
 	}
 
 	@Override
-	public boolean accepts(InputStream stream, DataCategory category) {
-		// Check data category
+	public boolean accepts(InputStream stream, DataCategory category) 
+	{
 		if (category != this.category)
 			return false;
 		
 		final String header = this.getHeader(stream, 20);
 		Matcher matcher = XGMML_HEADER_PATTERN.matcher(header);
 		
-		if (matcher.find()) {
-			// It looks like an XGMML graph tag
+		if (matcher.find()) 
+		{
 			final String graph = matcher.group(0);
-			// But we still have to check if it is NOT the session-view type:
 			matcher = XGMML_VIEW_ATTRIBUTE_PATTERN.matcher(graph);
 			
 			if (!matcher.find())
@@ -86,11 +93,11 @@ public final class XGMMLDynFileFilter extends BasicCyFileFilter {
 	}
 
 	@Override
-	public boolean accepts(URI uri, DataCategory category) {
+	public boolean accepts(URI uri, DataCategory category) 
+	{
 		try {
 			return accepts(uri.toURL().openStream(), category);
 		} catch (IOException e) {
-//			logger.error("Error while opening stream: " + uri, e);
 			return false;
 		}
 	}

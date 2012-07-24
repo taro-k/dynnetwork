@@ -19,17 +19,13 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
-import java.awt.Color;
-import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.vizmap.VisualMappingFunction;
-import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.mappings.BoundaryRangeValues;
 import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.view.vizmap.mappings.ContinuousMappingPoint;
 import org.cytoscape.work.AbstractTask;
@@ -38,7 +34,8 @@ import org.cytoscape.work.TaskMonitor;
 /**
  * <code> DynVizmapTask </code> is responsible for updating the {@link VisualStyle} by computing
  * the mapped values range in oder to take into account the whole dynamic range and not only the 
- * current time snapshot.
+ * current time snapshot. All points are linearly re-mapped to the resized range. At the moment only
+ * support for continuous VisualMappings is implemented.
  * 
  * @author sabina
  *
@@ -48,9 +45,6 @@ public final class DynVizmapTask<T> extends AbstractTask
 {
 	private DynNetworkView<T> view;
 	private VisualStyle visualStyle;
-	private final VisualMappingFunctionFactory continousFactory;
-	private final VisualMappingFunctionFactory discreteFactory;
-	private final VisualMappingFunctionFactory passthroughFactory;
 	private final BlockingQueue queue;
 	
 	/**
@@ -65,16 +59,10 @@ public final class DynVizmapTask<T> extends AbstractTask
 	public DynVizmapTask(
 			DynNetworkView<T> view, 
 			VisualStyle visualStyle,
-			final VisualMappingFunctionFactory continousFactory,
-			final VisualMappingFunctionFactory discreteFactory,
-			final VisualMappingFunctionFactory passthroughFactory,
 			final BlockingQueue queue) 
 	{
 		this.view = view;
 		this.visualStyle = visualStyle;
-		this.continousFactory = continousFactory;
-		this.discreteFactory = discreteFactory;
-		this.passthroughFactory = passthroughFactory;
 		this.queue = queue;
 	}
 
@@ -84,20 +72,11 @@ public final class DynVizmapTask<T> extends AbstractTask
 		queue.lock();
 		
 		visualStyle = view.getCurrentVisualStyle();
-		ArrayList<VisualMappingFunction<?, ?>> mappings = copy(visualStyle.getAllVisualMappingFunctions());
+		Collection<VisualMappingFunction<?, ?>> mappings = visualStyle.getAllVisualMappingFunctions();
 		for (VisualMappingFunction<?, ?> visualMapping : mappings)
-		{
 			if (visualMapping instanceof ContinuousMapping<?,?>)
-			{
-				VisualMappingFunction<?, ?> newVisualMapping = continousFactory.createVisualMappingFunction(
-						visualMapping.getMappingColumnName(), visualMapping.getMappingColumnType(), visualMapping.getVisualProperty());
-				makeContinousMapping(newVisualMapping);
-//				printContinousMapping(visualMapping);
-//				printContinousMapping(newVisualMapping);
-				visualStyle.removeVisualMappingFunction(visualMapping.getVisualProperty());
-				visualStyle.addVisualMappingFunction(newVisualMapping);
-				
-			}
+				remap(visualMapping);
+		
 //			else if (visualMapping instanceof DiscreteMapping<?,?>)
 //			{
 //
@@ -106,64 +85,68 @@ public final class DynVizmapTask<T> extends AbstractTask
 //			{
 //
 //			}
-		}
 
 		visualStyle.apply(view.getNetworkView());
+		view.updateView();
 		
 		queue.unlock();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <K, V> void makeContinousMapping(VisualMappingFunction<?, ?> visualMapping)
+	private <K, V> void remap(VisualMappingFunction<?, ?> originalMapping)
 	{
-		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
-		String name = mapping.getMappingColumnName();
-		VisualProperty vp = mapping.getVisualProperty();
-		
-		K min = (K) view.getNetwork().getMinValue(name, vp.getTargetDataType());
-		K max = (K) view.getNetwork().getMaxValue(name, vp.getTargetDataType());
+		ContinuousMapping<K, V> original = (ContinuousMapping<K, V>) originalMapping;
+		ArrayList<ContinuousMappingPoint<K, V>>  points = new ArrayList<ContinuousMappingPoint<K, V>>(original.getAllPoints());
 
-		if (vp.getRange().getType() == Color.class || vp.getRange().getType() == Paint.class)
+		String name = original.getMappingColumnName();
+		VisualProperty vp = original.getVisualProperty();
+		K newMin = (K) view.getNetwork().getMinValue(name, vp.getTargetDataType());
+		K newMax = (K) view.getNetwork().getMaxValue(name, vp.getTargetDataType());
+		
+		K min = points.get(0).getValue();
+		K max = points.get(points.size()-1).getValue();
+		
+		for (int i=1;i<points.size()-1;i++)
+			points.get(i).setValue(
+					resize(points.get(i).getValue(),min,max, newMin, newMax));
+
+
+		points.get(0).setValue(newMin);
+		points.get(points.size()-1).setValue(newMax);
+	}
+	
+//	@SuppressWarnings("unchecked")
+//	private <K, V> void printContinousMapping(VisualMappingFunction<?, ?> visualMapping)
+//	{
+//		System.out.println("\nMAPPING attribute : " + visualMapping.getMappingColumnName());
+//		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
+//		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
+//		{
+//			System.out.println(
+//					" K=" + point.getValue() + 
+//					" lesser=" + point.getRange().lesserValue +
+//					" equal=" + point.getRange().equalValue +
+//					" greater=" + point.getRange().greaterValue);
+//		}
+//	}
+
+	@SuppressWarnings("unchecked")
+	private <K> K resize(K value, K min, K max, K newMin, K newMax)
+	{
+		if (value instanceof Integer)
 		{
-			mapping.addPoint(min, new BoundaryRangeValues<V>((V) Color.BLACK, (V) Color.BLACK, (V) Color.BLACK));
-			mapping.addPoint(max, new BoundaryRangeValues<V>((V) Color.WHITE, (V) Color.WHITE, (V) Color.WHITE));
+			return (K) new Integer(((Integer)(newMax)-(Integer)(newMin))*(((Integer)value - (Integer) min)/(Integer) max) + (Integer) newMin);
 		}
-		else if (Number.class.isAssignableFrom(vp.getRange().getType()))
+		else if (value instanceof Double)
 		{
-			mapping.addPoint(min, new BoundaryRangeValues<V>((V) min, (V) min, (V) min));
-			mapping.addPoint(max, new BoundaryRangeValues<V>((V) max, (V) max, (V) max));
+			return (K) new Double(((Double)(newMax)-(Double)(newMin))*(((Double)value - (Double) min)/(Double) max) + (Double) newMin);
+		}
+		else if (value instanceof Boolean)
+		{
+			return (K) new Boolean(false);
 		}
 		else
-		{
-			mapping.addPoint(min, new BoundaryRangeValues<V>((V) new Boolean(false), (V) new Boolean(false), (V) new Boolean(false)));
-			mapping.addPoint(max, new BoundaryRangeValues<V>((V) new Boolean(true), (V) new Boolean(true), (V) new Boolean(true)));
-		}
-
-		
+			return null;
 	}
-	
-	@SuppressWarnings("unchecked")
-	private <K, V> void printContinousMapping(VisualMappingFunction<?, ?> visualMapping)
-	{
-		System.out.println("\nMAPPING attribute : " + visualMapping.getMappingColumnName());
-		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
-		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
-		{
-			System.out.println(
-					" K=" + point.getValue() + 
-					" lesser=" + point.getRange().lesserValue +
-					" equal=" + point.getRange().equalValue +
-					" greater=" + point.getRange().greaterValue);
-		}
-	}
-	
-	private ArrayList<VisualMappingFunction<?, ?>> copy(Collection<VisualMappingFunction<?, ?>> mappings)
-	{
-		ArrayList<VisualMappingFunction<?, ?>> newList = new ArrayList<VisualMappingFunction<?, ?>>(mappings.size());
-		for (VisualMappingFunction<?, ?> visualMapping : mappings)
-			newList.add(visualMapping);
-		return newList;
-	}
-	
 
 }
