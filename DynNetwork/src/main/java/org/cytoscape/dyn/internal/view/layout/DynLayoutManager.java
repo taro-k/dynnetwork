@@ -47,6 +47,11 @@ public interface DynLayoutManager
 	public DynLayout getDynLayout(CyNetworkView view);
 	
 	/**
+	 * Remove DynLayout associated with view if exists.
+	 * @param view
+	 */
+	public void removeDynLayout(CyNetworkView view);
+	/**
 	 * Get all dynLayouts.
 	 * @return networks
 	 */

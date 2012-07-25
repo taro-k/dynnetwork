@@ -31,18 +31,16 @@ import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.model.DynNetworkManagerImpl;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactoryImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManagerImpl;
+import org.cytoscape.dyn.internal.view.layout.algorithm.DynCleanLayoutAlgorithm;
 import org.cytoscape.dyn.internal.view.layout.algorithm.DynForceLayoutAlgorithm;
 import org.cytoscape.dyn.internal.view.layout.algorithm.DynRandomLayoutAlgorithm;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.DynContinousMappingFactory;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.DynDiscreteMappingFactory;
-import org.cytoscape.dyn.internal.view.vizmap.mapping.DynPassthroughMappingFactory;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.group.events.GroupCollapsedListener;
@@ -56,7 +54,6 @@ import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
@@ -111,9 +108,10 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	
     	DynLayoutManagerImpl dynLayoutManager = new DynLayoutManagerImpl();
     	DynLayoutFactoryImpl dynLayoutFactory = new DynLayoutFactoryImpl(dynLayoutManager);
-    	AdvancedDynCytoPanel<T,C> dynCytoPanel = new AdvancedDynCytoPanel<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random Dynamic",undo,dynCytoPanel,dynLayoutFactory);
-    	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Force Dynamic",undo,dynCytoPanel,dynLayoutFactory);
+    	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
+    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random",undo,dynCytoPanel,dynLayoutFactory);
+    	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Kamada-Kawai",undo,dynCytoPanel,dynLayoutFactory);
+    	CyLayoutAlgorithm dynClearLayout = new DynCleanLayoutAlgorithm<T,C>("Dynamic Layouts", "Remove",undo,dynCytoPanel,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 
@@ -130,6 +128,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
     	registerService(context,dynRandomLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynForceLayout,CyLayoutAlgorithm.class, myLayoutProps);
+    	registerService(context,dynClearLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
 
 	}

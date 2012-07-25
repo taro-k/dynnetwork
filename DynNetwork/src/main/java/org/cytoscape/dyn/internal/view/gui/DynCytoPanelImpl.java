@@ -61,7 +61,6 @@ import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
-import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -74,7 +73,7 @@ import org.cytoscape.work.TaskManager;
  * @param <T>
  * @param <C>
  */
-public final class AdvancedDynCytoPanel<T,C> extends JPanel implements DynCytoPanel<T,C>,
+public final class DynCytoPanelImpl<T,C> extends JPanel implements DynCytoPanel<T,C>,
 ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
 {
 	private static final long serialVersionUID = 1L;
@@ -123,7 +122,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	 * @param discreteFactory
 	 * @param passthroughFactory
 	 */
-	public AdvancedDynCytoPanel(
+	public DynCytoPanelImpl(
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,

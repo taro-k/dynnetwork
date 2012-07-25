@@ -50,4 +50,10 @@ public class DynLayoutFactoryImpl implements DynLayoutFactory
 		return layout;
 	}
 
+	@Override
+	public void removeLayout(CyNetworkView view) 
+	{
+		layoutManager.removeDynLayout(view);
+	}
+
 }

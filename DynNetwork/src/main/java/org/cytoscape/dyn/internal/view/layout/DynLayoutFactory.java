@@ -37,4 +37,12 @@ public interface DynLayoutFactory
 	 * @return
 	 */
 	public DynLayoutImpl createLayout(CyNetworkView view);
+	
+	/**
+	 * Remove layout from view.
+	 * @param view
+	 * @return
+	 */
+	public void removeLayout(CyNetworkView view);
+	
 }

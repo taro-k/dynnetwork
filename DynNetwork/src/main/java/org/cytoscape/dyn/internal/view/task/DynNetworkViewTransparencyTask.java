@@ -22,7 +22,7 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.view.model.CyNetworkView;
 
@@ -49,7 +49,7 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	 * @param visibility
 	 */
 	public DynNetworkViewTransparencyTask(
-			final AdvancedDynCytoPanel<T,C> panel,
+			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final BlockingQueue queue,
 			final double low, 

@@ -85,7 +85,7 @@ public final class DynVizmapTask<T> extends AbstractTask
 //			{
 //
 //			}
-
+		
 		visualStyle.apply(view.getNetworkView());
 		view.updateView();
 		

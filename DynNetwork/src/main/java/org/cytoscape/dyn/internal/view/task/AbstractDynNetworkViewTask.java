@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
@@ -33,7 +33,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> AbstractDynNetworkViewTask </code> is the abstract calls all visual task
- * have to extend. It provides the functionality to communicate with {@link AdvancedDynCytoPanel},
+ * have to extend. It provides the functionality to communicate with {@link DynCytoPanelImpl},
  * and update the visualization.
  * 
  * @author sabina

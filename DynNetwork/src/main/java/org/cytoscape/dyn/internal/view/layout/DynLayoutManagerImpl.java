@@ -58,6 +58,13 @@ public final class DynLayoutManagerImpl implements DynLayoutManager
 	}
 	
 	@Override
+	public void removeDynLayout(CyNetworkView view)
+	{
+		if (dynLayoutMap.containsKey(view))
+			dynLayoutMap.remove(view);
+	}
+	
+	@Override
 	public Collection<DynLayout> getDynNetworks() 
 	{
 		return dynLayoutMap.values();

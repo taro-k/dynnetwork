@@ -25,7 +25,7 @@ import javax.swing.JSlider;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
@@ -63,7 +63,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	 * @param timestep
 	 */
 	public DynNetworkViewTaskIterator(
-			final AdvancedDynCytoPanel<T,C> panel,
+			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout layout,
 			final BlockingQueue queue,
@@ -82,7 +82,14 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	@Override
 	public void run() 
 	{
+		
 		queue.lock();
+		
+		if (this.cancelled==true)
+		{
+			queue.unlock();	
+			return;
+		}
 		
 		panel.setValueIsAdjusting(true);
 		

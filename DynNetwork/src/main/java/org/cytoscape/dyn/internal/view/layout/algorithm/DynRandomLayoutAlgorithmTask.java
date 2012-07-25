@@ -87,8 +87,8 @@ public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask
 	@SuppressWarnings("unchecked")
     protected void doLayout(TaskMonitor taskMonitor)
     {	
-		layout.setAlpha(0.2);
-		layout.setN(15);
+		layout.setAlpha(0.15);
+		layout.setN(20);
 		
 		double dist = 2*50*Math.sqrt(nodesToLayOut.size());
 		

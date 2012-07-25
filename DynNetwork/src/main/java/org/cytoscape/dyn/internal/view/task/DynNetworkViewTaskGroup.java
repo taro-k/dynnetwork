@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -58,7 +58,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 	 * @param group
 	 */
 	public DynNetworkViewTaskGroup(
-			final AdvancedDynCytoPanel<T,C> panel,
+			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final BlockingQueue queue,
 			double low, 

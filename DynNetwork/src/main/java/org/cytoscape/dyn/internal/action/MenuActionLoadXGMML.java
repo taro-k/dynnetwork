@@ -36,7 +36,7 @@ import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
-import org.cytoscape.dyn.internal.view.gui.AdvancedDynCytoPanel;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelTask;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.io.DataCategory;
@@ -67,7 +67,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	private final CyApplicationManager appManager;
 	
 	private final CytoPanel cytoPanelWest;
-	private final AdvancedDynCytoPanel<T,C> myDynPanel;
+	private final DynCytoPanelImpl<T,C> myDynPanel;
 	private final TaskManager<T,C> taskManager;
 	private final DynNetworkManager<T> dynNetworkManager;
 	private final DynNetworkFactory<T> dynNetworkFactory;
@@ -92,7 +92,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     public MenuActionLoadXGMML(
     		final CySwingApplication desktopApp,
     		final CyApplicationManager appManager,
-    		final AdvancedDynCytoPanel<T,C> myDynPanel,
+    		final DynCytoPanelImpl<T,C> myDynPanel,
     		final TaskManager<T,C> taskManager,
     		final DynNetworkManager<T> dynNetworkManager,
     		final DynNetworkFactory<T> dynNetworkFactory,
