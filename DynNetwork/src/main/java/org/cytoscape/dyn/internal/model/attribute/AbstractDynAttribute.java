@@ -33,7 +33,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  *
  * @param <T>
  */
-abstract class AbstractDynAttribute<T> implements DynAttribute<T>
+public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 {
 	protected Class<T> type;
 	

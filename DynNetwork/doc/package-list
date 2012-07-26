@@ -14,5 +14,4 @@ org.cytoscape.dyn.internal.view.layout
 org.cytoscape.dyn.internal.view.layout.algorithm
 org.cytoscape.dyn.internal.view.model
 org.cytoscape.dyn.internal.view.task
-org.cytoscape.dyn.internal.view.vizmap.mapping
-org.cytoscape.dyn.internal.view.vizmap.mapping.interpolator
+org.cytoscape.dyn.internal.view.task.interpolator

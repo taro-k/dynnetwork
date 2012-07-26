@@ -38,7 +38,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  *
  * @param <T>
  */
-public class AbstractCyNetworkViewTask<T,C>  implements Runnable
+public abstract class AbstractCyNetworkViewTask<T,C>  implements Runnable
 {
 	protected final DynCytoPanel<T,C> panel;
 	protected final CyNetworkView view;
