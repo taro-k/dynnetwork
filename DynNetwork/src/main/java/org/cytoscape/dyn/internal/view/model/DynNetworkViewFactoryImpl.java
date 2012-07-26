@@ -39,7 +39,7 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
  * <code> DynNetworkViewFactoryImpl </code> implements the interface
  * {@link DynNetworkViewFactory} for creating {@link DynNetworkView}s.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

@@ -26,7 +26,7 @@ import org.cytoscape.dyn.internal.io.event.Sink;
  * <code> DynNetworkFactory </code> is the interface for the factory of
  * {@link DynNetwork}s and is an event sink.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

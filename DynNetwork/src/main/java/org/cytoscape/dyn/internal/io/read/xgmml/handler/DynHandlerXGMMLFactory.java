@@ -44,7 +44,8 @@ import org.xml.sax.SAXException;
  * <code> DynHandlerXGMMLFactory </code> is the factory for the event Handler. 
  * Implements the finite state machine states and transition rules
  * for start elements and end elements from the SAX Parser.
- * @author sabina
+ * 
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

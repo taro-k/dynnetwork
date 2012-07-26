@@ -29,7 +29,7 @@ import org.cytoscape.model.CyEdge;
  * have not been yet defined. We will try to insert them once the parser reaches
  * the last command.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public final class OrphanEdge<T>

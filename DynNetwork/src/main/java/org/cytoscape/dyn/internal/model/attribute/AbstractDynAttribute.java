@@ -29,7 +29,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  * <code> AbstractDynAttribute </code> is the abstract class which rpovides generic methods 
  * to set and get dynamic attributes intervals.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */
@@ -47,7 +47,7 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	 * <code> AbstractDynAttribute </code> constructor.
 	 * @param type
 	 */
-	public AbstractDynAttribute(Class<T> type)
+	protected AbstractDynAttribute(Class<T> type)
 	{
 		this.type = type;
 		intervalList = new ArrayList<DynInterval<T>>();
@@ -59,7 +59,7 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	 * @param interval
 	 * @param key
 	 */
-	public AbstractDynAttribute(DynInterval<T> interval, KeyPairs key)
+	protected AbstractDynAttribute(DynInterval<T> interval, KeyPairs key)
 	{
 		this(interval.getType());
 		this.key = key;

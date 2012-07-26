@@ -37,7 +37,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  * manually initialize new nodes or edges.
  * 
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

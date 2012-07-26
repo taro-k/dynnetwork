@@ -28,7 +28,7 @@ import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
  * period of time. A half-open interval is an ordered pair of real numbers [startTime, 
  * endTime[ with startTime =< endTime, where startTime is included and endTime is excluded.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

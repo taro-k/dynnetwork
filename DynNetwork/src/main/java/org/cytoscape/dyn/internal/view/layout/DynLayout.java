@@ -29,7 +29,7 @@ import org.cytoscape.view.model.CyNetworkView;
  * <code> DynLayout </code> is the interface to represent the dynamics in time
  * of a {@link CyNetworkView} and is implemented by {@link DynLayoutImpl}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

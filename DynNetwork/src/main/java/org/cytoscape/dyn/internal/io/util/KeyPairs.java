@@ -27,7 +27,7 @@ import org.cytoscape.model.CyNode;
  * about {@link CyNode}s, connecting {@link CyEdge}s, and the respective attributes.
  * Each pair is identified by an id long value and by a String column.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public class KeyPairs 

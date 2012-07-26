@@ -44,7 +44,7 @@ import org.cytoscape.session.CyNetworkNaming;
  * <code> DynNetworkFactoryImpl </code> implements the interface
  * {@link DynNetworkFactory} for creating {@link DynNetwork}s.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

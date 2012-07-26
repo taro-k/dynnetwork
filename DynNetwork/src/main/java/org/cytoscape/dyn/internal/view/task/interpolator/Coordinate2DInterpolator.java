@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  * 
- * The code below is from the org.j3d.util.interpolator library.
+ * The code below is modified from the org.j3d.util.interpolator library.
  * 
  ********************************************************************************
  *                        J3D.org Copyright (c) 2000
@@ -31,78 +31,48 @@
 package org.cytoscape.dyn.internal.view.task.interpolator;
 
 /**
- * An interpolator that works with 2D positional coordinates.
- * <P>
+ * <code> Coordinate2DInterpolator </code> is the abstract class for a 2D coordinate
+ * interpolator. The interpolation routine is either a stepwise, simple linear, or 
+ * smoothed interpolation between each of the points. The interpolator may take
+ * arbitrarily spaced keyframes and compute correct values.
  *
- * The interpolation routine is just a simple linear interpolation between
- * each of the points. The interpolator may take arbitrarily spaced keyframes
- * and compute correct values.
+ * @author Justin Couch, Sabina Sara Pfister
  *
- * @author Justin Couch
- * @version $Revision: 1.1 $
  */
 public class Coordinate2DInterpolator extends AbstractInterpolator
 {
 
-    /** Reference to the shared float array return value for key values */
     private float[] sharedVector;
-
-    /** The key values indexed as [index][x, y] */
     private float[][] keyValues;
-
-    /** The smallest number of items in the value array */
     private int valueLength;
 
     /**
-     * Create a new linear interpolator instance with the default size for the
-     * number of key values.
+     * <code> Coordinate2DInterpolator </code> constructor.
      */
     public Coordinate2DInterpolator()
     {
-        this(DEFAULT_SIZE, LINEAR);
+        super(DEFAULT_SIZE);
     }
 
     /**
-     * Create an linear interpolator with the given basic size.
-     *
-     * @param size The starting number of items in interpolator
+     * <code> Coordinate2DInterpolator </code> constructor.
+     * @param size
      */
     public Coordinate2DInterpolator(int size)
     {
-        this(size, LINEAR);
-    }
-
-    /**
-     * Create a interpolator with the given basic size using the interpolation
-     * type.
-     *
-     * @param size The starting number of items in interpolator
-     * @param type The type of interpolation scheme to use
-     */
-    public Coordinate2DInterpolator(int size, int type)
-    {
-        super(size, type);
-
-        keys = new float[size];
+        super(size);
         keyValues = new float[size][];
         valueLength = -1;
     }
 
-    /**
-     * Add a key frame set of values at the given key point. This will insert
-     * the values at the correct position within the array for the given key.
-     * If two keys have the same value, the new key is inserted before the old
-     * one.
-     *
-     * @param key The value of the key to use
-     * @param coords The coordinates at this key
-     */
+   /**
+    * Add a key frame set of values at the given key point.
+    * @param key
+    * @param coords
+    */
     public void addKeyFrame(float key, float coords[])
     {
         int loc = findKeyIndex(key);
-
-        // loc is now the largest key less than the new key.
-        // adjust loc up to the first key greater than the new key.
         if(loc < 0)
             loc = 0;
         while (loc<currentSize && keys[loc]<=key)
@@ -143,81 +113,121 @@ public class Coordinate2DInterpolator extends AbstractInterpolator
     }
 
     /**
-     * Get the interpolated value of the point at the given key value. If the
-     * key lies outside the range of the values defined, it will be clamped to
-     * the end point value. For speed reasons, this will return a reusable
-     * float array. Do not modify the values or keep a reference to this as
-     * it will change values between calls.
-     *
-     * @param key The key value to get the position for
-     * @return An array of the values at that position [x, y, z]
+     * Get the step interpolated value of the point at the given key value.
+     * @param key
+     * @return value
      */
-    public float[] floatValue(float key)
+    public float[] floatValueStep(float key)
     {
-        if(sharedVector == null || sharedVector.length != valueLength)
-            sharedVector = new float[valueLength];
+    	if(sharedVector == null || sharedVector.length != valueLength)
+    		sharedVector = new float[valueLength];
 
-        int loc = findKeyIndex(key);
+    	int loc = findKeyIndex(key);
 
-        if(loc < 0)
-            System.arraycopy(keyValues[0], 0, sharedVector, 0, valueLength);
-        else if(loc >= currentSize - 1)
-            System.arraycopy(keyValues[currentSize - 1], 0, sharedVector, 0, valueLength);
-        else
-        {
-            switch(interpolationType)
-            {
-                case LINEAR:
-                    float p1[] = keyValues[loc + 1];
-                    float p0[] = keyValues[loc];
-                    float fraction = 0;
-                    float prev_key = keys[loc];
-                    float next_key = keys[loc + 1];
-                    float diff;
+    	if(loc < 0)
+    		System.arraycopy(keyValues[0], 0, sharedVector, 0, valueLength);
+    	else if(loc >= currentSize - 1)
+    		System.arraycopy(keyValues[currentSize - 1], 0, sharedVector, 0, valueLength);
+    	else
+    	{
+    		System.arraycopy(keyValues[loc], 0, sharedVector, 0, valueLength);
+    	}
 
-                    if(next_key != prev_key)
-                        fraction = (key - prev_key) / (next_key - prev_key);
+    	return sharedVector;
+    }
+    
+    /**
+     * Get the linear interpolated value of the point at the given key value.
+     * @param key
+     * @return value
+     */
+    public float[] floatValueLinear(float key)
+    {
+    	if(sharedVector == null || sharedVector.length != valueLength)
+    		sharedVector = new float[valueLength];
 
-                    for(int j = valueLength; --j > 1; )
-                    {
-                        diff = p1[j] - p0[j];
-                        sharedVector[j] = p0[j] + fraction * diff;
-                        j--;
-                        diff = p1[j] - p0[j];
-                        sharedVector[j] = p0[j] + fraction * diff;
-                   }
+    	int loc = findKeyIndex(key);
 
-                    break;
+    	if(loc < 0)
+    		System.arraycopy(keyValues[0], 0, sharedVector, 0, valueLength);
+    	else if(loc >= currentSize - 1)
+    		System.arraycopy(keyValues[currentSize - 1], 0, sharedVector, 0, valueLength);
+    	else
+    	{
+    		float p1[] = keyValues[loc + 1];
+    		float p0[] = keyValues[loc];
+    		float fraction = 0;
+    		float prev_key = keys[loc];
+    		float next_key = keys[loc + 1];
+    		float diff;
 
-                case STEP:
-                    System.arraycopy(keyValues[loc], 0, sharedVector, 0, valueLength);
-                    break;
-            }
-        }
+    		if(next_key != prev_key)
+    			fraction = (key - prev_key) / (next_key - prev_key);
 
-        return sharedVector;
+    		for(int j = valueLength; --j > 1; )
+    		{
+    			diff = p1[j] - p0[j];
+    			sharedVector[j] = p0[j] + fraction * diff;
+    			j--;
+    			diff = p1[j] - p0[j];
+    			sharedVector[j] = p0[j] + fraction * diff;
+    		}
+    	}
+
+    	return sharedVector;
     }
 
     /**
-     * Resize the allocated space for the keyValues array if needed. Marked
-     * as final in order to encourage the compiler to inline the code for
-     * faster execution.
+     * Get the smooth interpolated value of the point at the given key value.
+     * @param key
+     * @return value
      */
+    public float[] floatValueSmooth(float key)
+    {
+    	if(sharedVector == null || sharedVector.length != valueLength)
+    		sharedVector = new float[valueLength];
+
+    	int loc = findKeyIndex(key);
+
+    	if(loc < 0)
+    		System.arraycopy(keyValues[0], 0, sharedVector, 0, valueLength);
+    	else if(loc >= currentSize - 1)
+    		System.arraycopy(keyValues[currentSize - 1], 0, sharedVector, 0, valueLength);
+    	else
+    	{
+    		float p1[] = keyValues[loc + 1];
+    		float p0[] = keyValues[loc];
+    		float fraction = 0;
+    		float prev_key = keys[loc];
+    		float next_key = keys[loc + 1];
+    		float diff;
+
+    		if(next_key != prev_key)
+    			fraction = (key - prev_key) / (next_key - prev_key);
+
+    		for(int j = valueLength; --j > 1; )
+    		{
+    			diff = p1[j] - p0[j];
+    			sharedVector[j] = p0[j] + fraction * diff;
+    			j--;
+    			diff = p1[j] - p0[j];
+    			sharedVector[j] = p0[j] + fraction * diff;
+    		}
+    	}
+
+    	return sharedVector;
+    }
+
+
     private final void realloc()
     {
         if(currentSize == allocatedSize)
         {
             int new_size = allocatedSize + ARRAY_INCREMENT;
-
-            // Don't acutally allocate the space for the float[3] values as the
-            // arraycopy will set these. Just make sure we allocate after that
-            // the remaining new, empty, places.
             float[][] new_values = new float[new_size][];
-
             System.arraycopy(keyValues, 0, new_values, 0, allocatedSize);
 
             float[] new_keys = new float[new_size];
-
             System.arraycopy(keys, 0, new_keys, 0, allocatedSize);
 
             keys = new_keys;
@@ -226,6 +236,7 @@ public class Coordinate2DInterpolator extends AbstractInterpolator
         }
     }
 
+    @Override
     public String toString()
     {
         StringBuffer stringbuffer = new StringBuffer("<Coordinate interpolator>\n");

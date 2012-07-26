@@ -27,7 +27,7 @@ import org.cytoscape.work.AbstractTask;
  * <code> AbstractDynNetworkReader </code> abstract class for the implementation of a 
  * the reader.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public abstract class AbstractDynNetworkReader extends AbstractTask implements DynNetworkReader
@@ -38,7 +38,7 @@ public abstract class AbstractDynNetworkReader extends AbstractTask implements D
 	 * <code> AbstractDynNetworkReader </code> constructor.
 	 * @param inputStream
 	 */
-	public AbstractDynNetworkReader(InputStream inputStream) 
+	protected AbstractDynNetworkReader(InputStream inputStream) 
 	{
 		this.inputStream = inputStream;
 	}

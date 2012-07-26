@@ -27,7 +27,7 @@ import org.cytoscape.work.TaskMonitor;
 /**
  * <code> DynCytoPanelTask </code> updates the visualization by resetting the view.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

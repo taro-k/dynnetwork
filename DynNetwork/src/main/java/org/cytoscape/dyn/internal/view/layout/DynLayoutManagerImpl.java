@@ -29,7 +29,7 @@ import org.cytoscape.view.model.CyNetworkView;
  * <code> DynLayoutManagerImpl </code> implements the interface
  * {@link DynLayoutManager} for managing multiple {@link DynLayout}s.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

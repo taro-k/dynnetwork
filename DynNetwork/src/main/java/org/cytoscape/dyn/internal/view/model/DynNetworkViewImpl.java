@@ -35,7 +35,7 @@ import org.cytoscape.view.vizmap.VisualStyle;
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
  * dynamic networks {@link DynNetworkView}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

@@ -27,7 +27,7 @@ import org.cytoscape.view.model.CyNetworkView;
  * <code> DynLayoutManager </code> is the interface of the
  * {@link DynLayout}s manager.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

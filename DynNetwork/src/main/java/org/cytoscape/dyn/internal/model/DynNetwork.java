@@ -37,7 +37,7 @@ import org.cytoscape.model.CyNode;
  * information about dynamic attributes {@link DynAttribute} in form of a
  * {@link DynIntervalTree}. 
  *
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public interface DynNetwork<T>

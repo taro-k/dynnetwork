@@ -26,7 +26,7 @@ import org.cytoscape.model.CyEdge;
  * <code> EdgeGraphicsAttribute </code> is used to store edge graphics attributes
  * to be added later to the visualization.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public final class EdgeGraphicsAttribute<T>

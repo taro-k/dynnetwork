@@ -26,7 +26,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  * <code> DynIntegerAttribute </code> implements Integer attributes and contains
  * a list of their interval times.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public class DynIntegerAttribute extends AbstractDynAttribute<Integer>

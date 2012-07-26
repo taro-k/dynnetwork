@@ -34,7 +34,7 @@ import org.cytoscape.work.TaskMonitor;
  * <code> LoadNetworkViewTask </code> implements {@link Task} and is responsible
  * for creating the network view {@link DynNetworkView} from a network {@link DynNetwork}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Source<T> 

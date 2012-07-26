@@ -26,7 +26,7 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  * <code> DynBooleanAttribute </code> implements Boolean attributes and contains
  * a list of their interval times.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public class DynBooleanAttribute extends AbstractDynAttribute<Boolean>

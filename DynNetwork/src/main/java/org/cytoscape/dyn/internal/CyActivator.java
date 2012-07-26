@@ -63,7 +63,7 @@ import org.osgi.framework.BundleContext;
 /**
  * <code> CyActivator </code> for DynNetwork plugin.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

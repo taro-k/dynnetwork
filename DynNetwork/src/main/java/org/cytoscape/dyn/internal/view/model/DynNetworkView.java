@@ -30,7 +30,7 @@ import org.cytoscape.view.vizmap.VisualStyle;
  * <code> DynNetworkView </code> is an object that represents a the view of a
  * dynamic network. It provides the link to the current static {@link DynNetwork}. 
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

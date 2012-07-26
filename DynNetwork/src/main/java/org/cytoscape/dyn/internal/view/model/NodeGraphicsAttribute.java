@@ -26,7 +26,7 @@ import org.cytoscape.model.CyNode;
  * <code> NodeGraphicsAttribute </code> is used to store node graphics attributes
  * to be added later to the visualization.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public final class NodeGraphicsAttribute<T>

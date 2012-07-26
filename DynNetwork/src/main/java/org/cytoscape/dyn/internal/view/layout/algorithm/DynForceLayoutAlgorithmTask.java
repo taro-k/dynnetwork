@@ -34,7 +34,7 @@ import org.cytoscape.work.undo.UndoSupport;
  * dynamics by associating to each nodes in the network appropriate intervals of node positions,
  * which are stored in {@link DynLayout}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

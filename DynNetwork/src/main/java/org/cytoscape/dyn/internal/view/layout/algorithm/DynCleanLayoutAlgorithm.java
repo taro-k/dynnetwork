@@ -34,7 +34,7 @@ import org.cytoscape.work.undo.UndoSupport;
  * <code> DynCleanLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
  * {@link DynCleanLayoutAlgorithmTask}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

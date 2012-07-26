@@ -23,7 +23,7 @@ package org.cytoscape.dyn.internal.io.event;
  * <code> CreateGraphDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of graph events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * <code> XGMMLDynParser </code> is used to parse XGMML files.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

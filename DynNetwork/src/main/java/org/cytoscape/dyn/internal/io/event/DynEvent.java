@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
  * that is used to generate graph events between a {@link Source}
  * and a {@link Sink}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public interface DynEvent extends Callable<Object>

@@ -28,7 +28,7 @@ import org.cytoscape.work.TaskIterator;
  * <code> LoadDynNetworkViewFactoryImpl </code> implements the interface 
  * {@link LoadDynNetworkFileTaskFactory}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public class LoadDynNetworkViewFactoryImpl<T> implements LoadDynNetworkViewFactory<T>

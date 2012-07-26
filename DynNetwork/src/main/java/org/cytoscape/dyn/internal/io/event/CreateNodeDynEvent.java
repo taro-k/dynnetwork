@@ -26,7 +26,7 @@ import org.cytoscape.group.CyGroup;
  * <code> CreateNodeDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of node events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

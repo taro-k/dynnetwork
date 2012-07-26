@@ -25,7 +25,7 @@ import org.cytoscape.view.model.CyNetworkView;
  * <code> DynLayoutFactoryImpl </code> implements the interface
  * {@link DynLayoutFactory} for creating {@link DynLayout}s.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

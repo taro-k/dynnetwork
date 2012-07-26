@@ -23,7 +23,7 @@ package org.cytoscape.dyn.internal.io.read.xgmml;
  * <code> ParseDynState </code> is an enumeration class used in the finite state machine
  * to parse trough the XGMML file and execute the appropriate actions.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public enum ParseDynState 

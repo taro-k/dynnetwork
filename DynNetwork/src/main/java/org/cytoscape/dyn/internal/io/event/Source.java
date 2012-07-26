@@ -24,7 +24,7 @@ package org.cytoscape.dyn.internal.io.event;
  * <code> Source </code> produces graph events (elements and attributes), but does not
  * contain a graph instance.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  * @param <T>
  * 

@@ -37,7 +37,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
  * all elements). The dynamics of the network is stored in {@link DynNetwork}, whereas the dynamics of the
  * visualization is stored in {@link DynLayout}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

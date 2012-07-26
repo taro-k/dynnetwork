@@ -28,7 +28,7 @@ package org.cytoscape.dyn.internal.model.tree;
  * 
  * <code> DynIntervalTreeImpl </code> guarantees O(log n) insertion and deletion of elements.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

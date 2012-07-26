@@ -26,7 +26,7 @@ import org.cytoscape.model.CyEdge;
  * <code> OrphanAttribute </code> is used to store attributes of 
  * {@link OrphanEdge}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public final class OrphanAttribute<T>

@@ -42,7 +42,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  * to update the visualization are minimal and asynchronous.
  * 
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

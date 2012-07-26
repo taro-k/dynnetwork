@@ -31,7 +31,7 @@ import org.cytoscape.work.TaskMonitor;
  * <code> AbstractLoadDynNetworkTask </code> abstract class for the implementation of a 
  * the load network task.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public abstract class AbstractLoadDynNetworkTask extends AbstractTask
@@ -49,7 +49,7 @@ public abstract class AbstractLoadDynNetworkTask extends AbstractTask
 	 * @param factory
 	 * @param streamUtil
 	 */
-	public AbstractLoadDynNetworkTask(
+	protected AbstractLoadDynNetworkTask(
 			final InputStreamTaskFactory factory,
 			StreamUtil streamUtil)
 	{

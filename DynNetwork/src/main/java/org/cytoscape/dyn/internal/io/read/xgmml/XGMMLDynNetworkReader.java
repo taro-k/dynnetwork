@@ -42,7 +42,7 @@ import org.xml.sax.helpers.ParserAdapter;
  * (dynamic) and {@link CyNetwork} (static) data structures by generating graph
  * events.
  *
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public final class XGMMLDynNetworkReader extends AbstractDynNetworkReader

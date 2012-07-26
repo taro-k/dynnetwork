@@ -32,7 +32,7 @@ import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
  * The intervals list is not used to search for the current intervals, instead intervals
  * are also stored into {@link DynIntervalTree}s, which provide much faster search time.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

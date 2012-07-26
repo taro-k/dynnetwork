@@ -25,7 +25,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
  * <code> DynCytoPanel </code> is the interface for the a dynamic panel to
  * visualize dynamic networks.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

@@ -28,7 +28,7 @@ import org.cytoscape.model.CyNode;
  * <code> DynNetworkViewFactory </code> is a the interface for the factory of
  * {@link DynNetworkView}s and is an event sink.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

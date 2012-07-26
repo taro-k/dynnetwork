@@ -30,7 +30,7 @@ import org.cytoscape.model.CyNetworkManager;
  * <code> DynNetworkManagerImpl </code> implements the interface
  * {@link DynNetworkManager} for managing multiple {@link DynNetwork}s.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  */
 public final class DynNetworkManagerImpl<T> implements DynNetworkManager<T>

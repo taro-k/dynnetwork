@@ -37,7 +37,7 @@ import org.cytoscape.work.Tunable;
  * <code> LoadDynNetworkFileTask </code> implements {@link Task} and is responsible
  * for loading the network from a given file.
  * 
- * @author rozagh, sabina
+ * @author rozagh, Sabina Sara Pfister
  *
  */
 public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask 

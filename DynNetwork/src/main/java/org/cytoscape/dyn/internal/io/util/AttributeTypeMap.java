@@ -27,7 +27,7 @@ import java.util.Map;
  * <code> AttributeTypeMap </code> used to convert string attribute types into the 
  * corresponding classes.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public final class AttributeTypeMap

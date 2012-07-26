@@ -25,7 +25,7 @@ import org.cytoscape.work.TaskIterator;
  * <code> LoadDynNetworkViewFactory </code> is interface that provides 
  * a task iterator for creating networks view from networks.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public interface LoadDynNetworkViewFactory<T>

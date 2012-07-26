@@ -30,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * <code> XGMMLDynNetworkReaderFactory </code> extends {@link AbstractDynNetworkReaderFactory}. 
  * Is used to create instance of the file reader {@link XGMMLDynNetworkReader}.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public final class XGMMLDynNetworkReaderFactory extends AbstractDynNetworkReaderFactory

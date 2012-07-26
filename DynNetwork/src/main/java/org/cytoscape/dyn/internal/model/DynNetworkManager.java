@@ -27,7 +27,7 @@ import org.cytoscape.model.CyNetwork;
  * <code> DynNetworkManager </code> is the interface of the {@link DynNetwork}s
  * manager.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

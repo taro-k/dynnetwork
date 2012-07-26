@@ -37,7 +37,7 @@ import org.cytoscape.work.TaskMonitor;
  * current time snapshot. All points are linearly re-mapped to the resized range. At the moment only
  * support for continuous VisualMappings is implemented.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

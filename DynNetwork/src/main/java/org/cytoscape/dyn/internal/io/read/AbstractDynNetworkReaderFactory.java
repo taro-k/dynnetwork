@@ -26,7 +26,7 @@ import org.cytoscape.io.read.AbstractInputStreamTaskFactory;
  * <code> AbstractDynNetworkReaderFactory </code> abstract class for the implementation of a 
  * the reader factory.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public abstract class AbstractDynNetworkReaderFactory extends AbstractInputStreamTaskFactory
@@ -35,7 +35,7 @@ public abstract class AbstractDynNetworkReaderFactory extends AbstractInputStrea
 	 * <code> AbstractDynNetworkReaderFactory </code> constructor.
 	 * @param filter
 	 */
-	public AbstractDynNetworkReaderFactory(CyFileFilter filter)
+	protected AbstractDynNetworkReaderFactory(CyFileFilter filter)
 	{
 		super(filter);
 	}

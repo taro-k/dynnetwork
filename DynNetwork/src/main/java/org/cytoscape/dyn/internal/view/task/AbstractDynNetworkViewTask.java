@@ -36,7 +36,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  * have to extend. It provides the functionality to communicate with {@link DynCytoPanelImpl},
  * and update the visualization.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */
@@ -66,7 +66,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	 * @param low
 	 * @param high
 	 */
-	public AbstractDynNetworkViewTask(
+	protected AbstractDynNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout layout,

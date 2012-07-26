@@ -32,7 +32,7 @@ import org.cytoscape.model.CyNode;
  * <code> AbstractXGMMLSource </code> is an abstract class to generates 
  * graph events from file parsing.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

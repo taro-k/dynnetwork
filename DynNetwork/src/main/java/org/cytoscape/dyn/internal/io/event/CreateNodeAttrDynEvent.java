@@ -26,7 +26,7 @@ import org.cytoscape.model.CyNode;
  * <code> CreateNodeAttrDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of node attribute events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

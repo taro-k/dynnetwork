@@ -43,7 +43,7 @@ import org.cytoscape.model.CyNode;
  * and provides method and data structures to record and retrieve network dynamic 
  * information.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

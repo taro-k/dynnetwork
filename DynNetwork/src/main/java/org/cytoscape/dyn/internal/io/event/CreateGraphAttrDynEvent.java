@@ -25,7 +25,7 @@ import org.cytoscape.dyn.internal.model.DynNetwork;
  * <code> CreateGraphAttrDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of graph attribute events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

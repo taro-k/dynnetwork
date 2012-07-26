@@ -54,7 +54,7 @@ import org.cytoscape.work.TunableSetter;
  * also responsible to create the panel {@link CytoPanel} to control the visalization
  * of dynamic graphical information.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

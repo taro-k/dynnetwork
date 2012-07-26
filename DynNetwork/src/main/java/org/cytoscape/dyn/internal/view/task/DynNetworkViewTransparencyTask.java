@@ -31,7 +31,7 @@ import org.cytoscape.view.model.CyNetworkView;
  * everytime the background transparency level is set to show/hide elements of the network that are
  * not in the current time interval.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

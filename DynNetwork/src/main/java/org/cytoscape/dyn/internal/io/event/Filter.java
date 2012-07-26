@@ -24,7 +24,7 @@ package org.cytoscape.dyn.internal.io.event;
  * <code> Filter </code> filters event that pass between a 
  * a {@link Source} and a {@link Sink}.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  * @param <T>
  * 

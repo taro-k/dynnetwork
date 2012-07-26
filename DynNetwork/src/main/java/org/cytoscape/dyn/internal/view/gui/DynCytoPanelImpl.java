@@ -68,7 +68,7 @@ import org.cytoscape.work.TaskManager;
  * <code> DynCytoPanel </code> implements the a JPanel component in {@link CytoPanel} 
  * west to provide a time slider for controlling the dynamic visualization.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>

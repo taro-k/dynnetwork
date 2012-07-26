@@ -27,7 +27,7 @@ import org.cytoscape.model.CyEdge;
  * <code> CreateEdgeAttrDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of edge attribute events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

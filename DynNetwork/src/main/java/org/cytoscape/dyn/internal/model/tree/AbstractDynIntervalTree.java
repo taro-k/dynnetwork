@@ -28,7 +28,7 @@ import java.util.Map;
  * <code> AbstractDynIntervalTree </code> abstract class for the implementation of a 
  * the interval tree.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */
@@ -43,7 +43,7 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	/**
 	 * <code> AbstractDynIntervalTree </code> constructor.
 	 */
-	public AbstractDynIntervalTree()
+	protected AbstractDynIntervalTree()
 	{
 		this.nil = new DynNode<T>();
 		this.root = new DynNode<T>();
@@ -56,7 +56,7 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	 * <code> AbstractDynIntervalTree </code> constructor.
 	 * @param root
 	 */
-	public AbstractDynIntervalTree(DynNode<T> root)
+	protected AbstractDynIntervalTree(DynNode<T> root)
 	{
 		this();
 		this.root.setLeft(root);
@@ -67,7 +67,7 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	 * @param interval
 	 * @param id
 	 */
-	public AbstractDynIntervalTree(DynInterval<T> interval, long id)
+	protected AbstractDynIntervalTree(DynInterval<T> interval, long id)
 	{
 		this(new DynNode<T>(interval, new DynNode<T>()));
 		addInterval(id, interval);

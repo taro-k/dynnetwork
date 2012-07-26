@@ -25,7 +25,7 @@ import org.cytoscape.work.TaskMonitor;
 /**
  *  <code> DynNetworkReader </code> interface of network reader task.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public interface DynNetworkReader extends Task 

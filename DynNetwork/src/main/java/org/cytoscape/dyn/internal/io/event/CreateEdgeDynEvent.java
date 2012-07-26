@@ -25,7 +25,7 @@ import org.cytoscape.dyn.internal.model.DynNetwork;
  * <code> CreateEdgeDynEvent </code> implements the interface {@link DynEvent}
  * for the generation of edge events.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  * @param <T>
  */

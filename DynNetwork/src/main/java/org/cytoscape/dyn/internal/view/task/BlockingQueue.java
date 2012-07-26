@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <code> BlockingQueue </code> implements a simple blocking queue used to 
  * process visualization updates sequentially.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public class BlockingQueue

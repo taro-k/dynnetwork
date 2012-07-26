@@ -28,7 +28,7 @@ import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
  * <code> GraphicsTypeMap </code> used to convert string graphics types into the 
  * corresponding classes.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public class GraphicsTypeMap 

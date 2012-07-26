@@ -23,7 +23,7 @@ package org.cytoscape.dyn.internal.io.util;
  * <code> AttributeType </code> implements hash map to convert string attribute types into the 
  * corresponding classes.
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public enum AttributeType

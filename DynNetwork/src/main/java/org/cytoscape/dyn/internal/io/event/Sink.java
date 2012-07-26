@@ -31,7 +31,7 @@ import org.cytoscape.model.CyNode;
  * contain a graph instance. Graph listeners are called each time a graph element (node
  * or edge) or attributed is added, changed or removed.
  *  
- * @author sabina
+ * @author Sabina Sara Pfister
  * 
  * @param <T>
  */
