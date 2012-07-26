@@ -19,6 +19,7 @@
 
 package org.cytoscape.dyn.internal.model;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -453,16 +454,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public void finalizeNetwork() 
 	{
 		createIntervalTrees();
-//		print();
-//		System.out.println("Interval Edge Tree Order");
-//		this.edgeTree.print();
-//		for (CyGroup group : this.groupManager.getGroupSet(this.network))
-//		{
-//			group.removeNodes(new ArrayList<CyNode>());
-//			Iterable<CyEdge> metaEdgeList = this.network.getAdjacentEdgeIterable(group.getGroupNode(), CyEdge.Type.ANY);
-//			while (metaEdgeList.iterator().hasNext())
-//				System.out.println("yes!");
-//		}
 	}
 
 	@Override
@@ -506,8 +497,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		return this.visibleEdges;
 	}
-	
-	//TODO: check waht os going on here!
 	
 	@Override
 	public T getMinValue(String attName, Class<? extends CyIdentifiable> type)
@@ -625,15 +614,24 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.edgeTable.get(key));
 	}
 	
+	// Compare list of current intervals with new search. For the moment I'm registering which interval is turned
+	// off or on by storing a boolean value directly in the interval. This is a hack, but for the moment this is
+	// way much faster than accessing visual properties in Cytoscape!
 	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
 	{
 		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
 		for (DynInterval<T> i : list1)
 			if (!list2.contains(i))
+			{
 				diff.add(i);
+				i.setOn(false);
+			}
 		for (DynInterval<T> i : list2)
 			if (!list1.contains(i))
+			{
 				diff.add(i);
+				i.setOn(true);
+			}
 		return diff;
 	}
 
@@ -753,39 +751,39 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	private void print()
-//	{
-//		DecimalFormat formatter = new DecimalFormat("#0.000");
-//		
-//		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
-//		
-//		for (DynAttribute<T> attr : graphTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//			{
-//				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-//				graphTreeAttr.insert(interval, attr.getRow());
-//			}
-//		
-//		for (DynAttribute<T> attr : nodeTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//			{
-//				if (this.getNode(interval.getAttribute().getRow())!=null)
-//				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-//				nodeTreeAttr.insert(interval, attr.getRow());
-//			}
-//
-//		for (DynAttribute<T> attr : edgeTable.values())
-//			for (DynInterval<T> interval : attr.getIntervalList())
-//			{
-//				if (this.getEdge(interval.getAttribute().getRow())!=null)
-//				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-//						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-//				edgeTreeAttr.insert(interval, attr.getRow());
-//			}
-//	}
+	@SuppressWarnings("unchecked")
+	private void print()
+	{
+		DecimalFormat formatter = new DecimalFormat("#0.000");
+		
+		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
+		
+		for (DynAttribute<T> attr : graphTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				graphTreeAttr.insert(interval, attr.getRow());
+			}
+		
+		for (DynAttribute<T> attr : nodeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (this.getNode(interval.getAttribute().getRow())!=null)
+				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				nodeTreeAttr.insert(interval, attr.getRow());
+			}
+
+		for (DynAttribute<T> attr : edgeTable.values())
+			for (DynInterval<T> interval : attr.getIntervalList())
+			{
+				if (this.getEdge(interval.getAttribute().getRow())!=null)
+				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				edgeTreeAttr.insert(interval, attr.getRow());
+			}
+	}
 	
 	@SuppressWarnings("unchecked")
 	private T compareMin(T t1, T t2)

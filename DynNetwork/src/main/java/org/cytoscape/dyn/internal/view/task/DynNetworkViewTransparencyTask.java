@@ -24,7 +24,10 @@ import java.util.List;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.model.CyEdge;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> DynNetworkViewTransparencyTask </code> is responsible for updating the {@link CyNetworkView}
@@ -56,7 +59,7 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 			final double high, 
 			final int visibility) 
 	{
-		super(panel, view, null, queue, low, high);
+		super(panel, view, null, null, queue, low, high);
 		this.visibility = visibility;
 	}
 
@@ -71,7 +74,7 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
-		
+
 		// update edges
 		intervalList = dynNetwork.searchEdgesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
@@ -80,6 +83,25 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 		view.updateView();
 		
 		queue.unlock();
+	}
+	
+	private void setTransparency(CyNode node, int visibility)
+	{
+		if (node!=null)
+		{
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+		}
+	}
+
+	private void setTransparency(CyEdge edge, int visibility)
+	{
+		if (edge!=null)
+		{
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+		}
 	}
 
 }

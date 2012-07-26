@@ -53,12 +53,14 @@ public final class DynLayoutImpl implements DynLayout
 	private double alpha = 1;
 	private int n = 1;
 	
-	private List<DynInterval<Double>> currentNodes;
-	private final DynIntervalTreeImpl<Double> nodePositionsTree;
+	private List<DynInterval<Double>> currentNodesX;
+	private List<DynInterval<Double>> currentNodesY;
+	
+	private final DynIntervalTreeImpl<Double> nodeXPositionsTree;
+	private final DynIntervalTreeImpl<Double> nodeYPositionsTree;
 	
 	private final Map<KeyPairs,DynDoubleAttribute> node_X_Pos;
 	private final Map<KeyPairs,DynDoubleAttribute> node_Y_Pos;
-	private final Map<KeyPairs,DynDoubleAttribute> node_Z_Pos;
 
 	/**
 	 * <code> DynLayoutImpl </code> constructor.
@@ -68,12 +70,13 @@ public final class DynLayoutImpl implements DynLayout
 	{
 		this.view = view;
 
-		this.currentNodes = new ArrayList<DynInterval<Double>>();
-		this.nodePositionsTree = new DynIntervalTreeImpl<Double>();
+		this.currentNodesX = new ArrayList<DynInterval<Double>>();
+		this.currentNodesY = new ArrayList<DynInterval<Double>>();
+		this.nodeXPositionsTree = new DynIntervalTreeImpl<Double>();
+		this.nodeYPositionsTree = new DynIntervalTreeImpl<Double>();
 
 		this.node_X_Pos = new HashMap<KeyPairs,DynDoubleAttribute>();
 		this.node_Y_Pos = new HashMap<KeyPairs,DynDoubleAttribute>();
-		this.node_Z_Pos = new HashMap<KeyPairs,DynDoubleAttribute>();
 	}
 	
 	@Override
@@ -81,7 +84,7 @@ public final class DynLayoutImpl implements DynLayout
 	{
 		setDynAttributeX(node,interval);
 		node_X_Pos.put(interval.getAttribute().getKey(), (DynDoubleAttribute) interval.getAttribute());
-		nodePositionsTree.insert(interval, node.getSUID());
+		nodeXPositionsTree.insert(interval, node.getSUID());
 	}
 
 	@Override
@@ -89,15 +92,7 @@ public final class DynLayoutImpl implements DynLayout
 	{
 		setDynAttributeY(node, (DynInterval<Double>) interval);
 		node_Y_Pos.put(interval.getAttribute().getKey(), (DynDoubleAttribute)interval.getAttribute());
-		nodePositionsTree.insert(interval, node.getSUID());
-	}
-	
-	@Override
-	public synchronized void insertNodePositionZ(CyNode node, DynInterval<Double> interval)
-	{
-		setDynAttributeZ(node,(DynInterval<Double>) interval);
-		node_Z_Pos.put(interval.getAttribute().getKey(), (DynDoubleAttribute)interval.getAttribute());
-		nodePositionsTree.insert(interval, node.getSUID());
+		nodeYPositionsTree.insert(interval, node.getSUID());
 	}
 	
 	@Override
@@ -105,73 +100,97 @@ public final class DynLayoutImpl implements DynLayout
 	{
 		KeyPairs key = new KeyPairs("node_X_Pos", node.getSUID());
 		for (DynInterval<Double> interval : node_X_Pos.get(key).getIntervalList())
-			nodePositionsTree.remove(interval, node.getSUID());
+			nodeXPositionsTree.remove(interval, node.getSUID());
 		node_X_Pos.remove(key);
 		
 		key = new KeyPairs("node_Y_Pos", node.getSUID());
 		for (DynInterval<Double> interval : node_Y_Pos.get(key).getIntervalList())
-			nodePositionsTree.remove(interval, node.getSUID());
+			nodeYPositionsTree.remove(interval, node.getSUID());
 		node_Y_Pos.remove(key);
-		
-		key = new KeyPairs("node_Z_Pos", node.getSUID());
-		for (DynInterval<Double> interval : node_Z_Pos.get(key).getIntervalList())
-			nodePositionsTree.remove(interval, node.getSUID());
-		node_Z_Pos.remove(key);
 
 	}
 	
 	@Override
 	public synchronized void removeAllIntervals()
 	{
-		nodePositionsTree.clear();
+		nodeXPositionsTree.clear();
+		nodeYPositionsTree.clear();
 		this.node_X_Pos.clear();
 		this.node_Y_Pos.clear();
-		this.node_Z_Pos.clear();
-		currentNodes.clear();
+		currentNodesX.clear();
+		currentNodesY.clear();
 	}
 	
 	@Override
-	public List<DynInterval<Double>> getIntervals(CyNode node)
+	public List<DynInterval<Double>> getIntervalsX(CyNode node)
 	{
-		return nodePositionsTree.getIntervals(node.getSUID());
+		return nodeXPositionsTree.getIntervals(node.getSUID());
 	}
 	
 	@Override
-	public List<DynInterval<Double>> searchNodePositions(DynInterval<Double> interval)
+	public List<DynInterval<Double>> getIntervalsY(CyNode node)
 	{
-		return nodePositionsTree.search(interval);
+		return nodeYPositionsTree.getIntervals(node.getSUID());
 	}
 	
 	@Override
-	public List<DynInterval<Double>> searchChangedNodePositions(DynInterval<Double> interval)
+	public List<DynInterval<Double>> searchNodePositionsX(DynInterval<Double> interval)
 	{
-		List<DynInterval<Double>> tempList = nodePositionsTree.search(interval);
-		List<DynInterval<Double>> changedList = nonOverlap(currentNodes, tempList);
-		currentNodes = tempList;
+		return nodeXPositionsTree.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<Double>> searchNodePositionsY(DynInterval<Double> interval)
+	{
+		return nodeXPositionsTree.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<Double>> searchChangedNodePositionsX(DynInterval<Double> interval)
+	{
+		List<DynInterval<Double>> tempList = nodeXPositionsTree.search(interval);
+		List<DynInterval<Double>> changedList = nonOverlap(currentNodesX, tempList);
+		currentNodesX = tempList;
 		return changedList;
 	}
 	
 	@Override
-	public List<DynInterval<Double>> searchNodePositionsNot(DynInterval<Double> interval)
+	public List<DynInterval<Double>> searchChangedNodePositionsY(DynInterval<Double> interval)
 	{
-		return nodePositionsTree.searchNot(interval);
+		List<DynInterval<Double>> tempList = nodeYPositionsTree.search(interval);
+		List<DynInterval<Double>> changedList = nonOverlap(currentNodesY, tempList);
+		currentNodesY = tempList;
+		return changedList;
+	}
+	
+	@Override
+	public List<DynInterval<Double>> searchNodePositionsNotX(DynInterval<Double> interval)
+	{
+		return nodeXPositionsTree.searchNot(interval);
+	}
+	
+	@Override
+	public List<DynInterval<Double>> searchNodePositionsNotY(DynInterval<Double> interval)
+	{
+		return nodeYPositionsTree.searchNot(interval);
 	}
 	
 	@Override
 	public void initNodePositions(double time) 
 	{
-		List<DynInterval<Double>> intervalList = this.searchChangedNodePositions(new DynInterval<Double>(time, time));
-		for (DynInterval<Double> interval : intervalList)
+		for (DynInterval<Double> interval : this.searchChangedNodePositionsX(new DynInterval<Double>(time, time)))
 		{
 			CyNode node = view.getModel().getNode(interval.getAttribute().getKey().getRow());
 			if (node!=null)
-				if (interval.getAttribute().getColumn().equals("node_X_Pos"))
-					view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (Double) interval.getValue());
-				else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
-					view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (Double) interval.getValue());
-				else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
-					view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Z_LOCATION, (Double) interval.getValue());
+				view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (Double) interval.getValue());;
 		}
+		
+		for (DynInterval<Double> interval : this.searchChangedNodePositionsY(new DynInterval<Double>(time, time)))
+				{
+					CyNode node = view.getModel().getNode(interval.getAttribute().getKey().getRow());
+					if (node!=null)
+						view.getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (Double) interval.getValue());;
+				}
 	}
 	
 	@Override
@@ -205,15 +224,6 @@ public final class DynLayoutImpl implements DynLayout
 			this.node_Y_Pos.get(key).addInterval(interval);
 		else
 			this.node_Y_Pos.put(key, new DynDoubleAttribute(interval, key));
-	}
-	
-	private synchronized void setDynAttributeZ(CyNode node, DynInterval<Double> interval)
-	{
-		KeyPairs key = new KeyPairs("node_Z_Pos", node.getSUID());
-		if (this.node_Z_Pos.containsKey(key))
-			this.node_Z_Pos.get(key).addInterval(interval);
-		else
-			this.node_Z_Pos.put(key, new DynDoubleAttribute(interval, key));
 	}
 
 	@Override

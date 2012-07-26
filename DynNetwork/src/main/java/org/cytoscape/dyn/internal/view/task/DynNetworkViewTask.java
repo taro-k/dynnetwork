@@ -19,8 +19,6 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
-import java.util.List;
-
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
@@ -56,16 +54,16 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout layout,
+			final Transformator transformator,
 			final BlockingQueue queue,
 			final double low, 
 			final double high, 
 			final int visibility) 
 	{
-		super(panel, view, layout, queue, low, high);
+		super(panel, view, layout, transformator, queue, low, high);
 		this.visibility = visibility;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void run() 
 	{
@@ -80,38 +78,23 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		
 		timeInterval = new DynInterval<T>(low, high);
 		
-		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchChangedNodes(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			switchTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
-		
-		// update edges
-		intervalList = dynNetwork.searchChangedEdges(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			switchTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
+		// update node and edges visual properties
+		if (layout!=null)
+			transformator.run(dynNetwork,view,timeInterval,layout,visibility);
+		else
+			transformator.run(dynNetwork,view,timeInterval,visibility);
 
 		// update graph attributes
-		intervalList = dynNetwork.searchChangedGraphsAttr(timeInterval);
-		for (DynInterval<T> interval : intervalList)
+		for (DynInterval<T> interval : dynNetwork.searchChangedGraphsAttr(timeInterval))
 			updateAttr(interval);
 		
 		// update node attributes
-		intervalList = dynNetwork.searchChangedNodesAttr(timeInterval);
-		for (DynInterval<T> interval : intervalList)
+		for (DynInterval<T> interval : dynNetwork.searchChangedNodesAttr(timeInterval))
 			updateAttr(dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval);
 
 		// update edge attributes
-		intervalList = dynNetwork.searchChangedEdgesAttr(timeInterval);
-		for (DynInterval<T> interval : intervalList)
+		for (DynInterval<T> interval : dynNetwork.searchChangedEdgesAttr(timeInterval))
 			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
-
-		// update node positions
-		if (layout!=null)
-		{
-			List<DynInterval<Double>> nodeIntervalList = layout.searchChangedNodePositions((DynInterval<Double>) timeInterval);
-			if (!nodeIntervalList.isEmpty())
-				updatePosition(nodeIntervalList, layout.getAlpha(), layout.getN());
-		}
 
 		panel.setNodes(dynNetwork.getVisibleNodes());
 		panel.setEdges(dynNetwork.getVisibleEdges());

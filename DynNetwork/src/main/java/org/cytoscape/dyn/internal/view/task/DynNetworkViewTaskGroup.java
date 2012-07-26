@@ -66,7 +66,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 			final int visibility,
 			final CyGroup group) 
 	{
-		super(panel, view, null, queue, low, high);
+		super(panel, view, null, null, queue, low, high);
 		this.group = group;
 		this.visibility = visibility;
 	}

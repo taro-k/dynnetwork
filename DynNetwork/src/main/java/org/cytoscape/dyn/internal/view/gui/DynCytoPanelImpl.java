@@ -58,6 +58,7 @@ import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskGroup;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
+import org.cytoscape.dyn.internal.view.task.Transformator;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
@@ -83,6 +84,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
 	private final DynLayoutManager layoutManager;
+	private final Transformator transformator;
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
@@ -132,6 +134,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.layoutManager = layoutManager;
+		this.transformator = new Transformator();
 		this.queue = new BlockingQueue();
 		initComponents();
 	}
@@ -160,10 +163,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			JButton source = (JButton)event.getSource();
 			if (source.equals(forwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), queue, time, time, slider, +1)).start();
+						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, time, time, slider, +1)).start();
 			else if (source.equals(backwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), queue, time, time, slider, -1)).start();
+						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, time, time, slider, -1)).start();
 			else if (source.equals(vizmapButton))
 				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
 						view,view.getCurrentVisualStyle(), queue)));
@@ -449,10 +452,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		
 		if (time>=maxTime)
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this,view,layoutManager.getDynLayout(view.getNetworkView()),queue,time-0.0000001,time+0.0000001,visibility)).start();
+					this,view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time-0.0000001,time+0.0000001,visibility)).start();
 		else
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this, view,layoutManager.getDynLayout(view.getNetworkView()),queue,time,time,visibility)).start();
+					this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time,time,visibility)).start();
 	}
 	
 	private void updateGroup(CyGroup group)

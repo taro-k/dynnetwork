@@ -39,6 +39,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	private T value;
 	private double start;
 	private double end;
+	private boolean isOn;
 	
 	private DynAttribute<T> attribute;
 	
@@ -55,6 +56,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		this.type = type;
 		this.start = start;
 		this.end = end;
+		this.isOn = false;
 	}
 
 	/**
@@ -156,6 +158,28 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		this.attribute = attribute;
 	}
 	
+	/**
+	 * Get is on. Is used to keep track of which intervals are currently visualized.
+	 * It's a hack, but for the moment this is much faster than accessing the 
+	 * visual properties in Cytoscape!
+	 * @return
+	 */
+	public boolean isOn() 
+	{
+		return isOn;
+	}
+
+	/**
+	 * Set is on. Is used to keep track of which intervals are currently visualized.
+	 * It's a hack, but for the moment this is much faster than accessing the 
+	 * visual properties in Cytoscape!
+	 * @param isOn
+	 */
+	public void setOn(boolean isOn) 
+	{
+		this.isOn = isOn;
+	}
+
 	/**
 	 * Return class type
 	 * @return class

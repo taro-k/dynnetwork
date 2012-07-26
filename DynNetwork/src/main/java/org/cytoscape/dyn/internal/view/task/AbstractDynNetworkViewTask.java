@@ -46,6 +46,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynNetworkView<T> view;
 	protected final DynNetwork<T> dynNetwork;
 	protected final DynLayout layout;
+	protected final Transformator transformator;
 	protected final BlockingQueue queue;
 	protected final double low;
 	protected final double high;
@@ -70,6 +71,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout layout,
+			final Transformator transformator,
 			final BlockingQueue queue, 
 			final double low, 
 			final double high) 
@@ -78,6 +80,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 		this.view = view;
 		this.dynNetwork = view.getNetwork();
 		this.layout = layout;
+		this.transformator = transformator;
 		this.queue = queue;
 		this.low = low;
 		this.high = high;
@@ -112,95 +115,6 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	{
 		if (edge!=null)
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
-	}
-	
-	protected void updatePosition(List<DynInterval<Double>> intervalList, double alpha, int n)
-	{
-		for (int i=0;i<n;i++)
-		{
-			timeStart = System.currentTimeMillis();
-
-			for (DynInterval<Double> interval : intervalList)
-			{
-				CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
-				if (node!=null)
-					if (interval.getAttribute().getColumn().equals("node_X_Pos"))
-						view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
-								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*(Double)interval.getValue()));
-					else if (interval.getAttribute().getColumn().equals("node_Y_Pos"))
-						view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
-								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*(Double)interval.getValue()));
-					else if (interval.getAttribute().getColumn().equals("node_Z_Pos"))
-						view.writeVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION, 
-								((1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Z_LOCATION)+alpha*(Double)interval.getValue()));
-			}
-
-			view.updateView();
-			timeEnd = System.currentTimeMillis();
-
-			if (timeEnd-timeStart<50)
-				try {
-					Thread.sleep(50-(int) (timeEnd-timeStart));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-		}
-	}
-
-	protected void switchTransparency(CyNode node, int visibility)
-	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,
-					view.readVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY)<255?255:visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,
-					view.readVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY)<255?255:visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,
-					view.readVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY)<255?255:visibility);
-		}
-	}
-
-	protected void switchTransparency(CyEdge edge, int visibility)
-	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,
-					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY)<255?255:visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,
-					view.readVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY)<255?255:visibility);
-		}
-	}
-	
-	protected void setTransparency(CyNode node, int visibility)
-	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
-		}
-	}
-
-	protected void setTransparency(CyEdge edge, int visibility)
-	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
-		}
-	}
-	
-	protected void updateTransparency(int visibility) 
-	{
-		// update nodes
-		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
-
-		// update edges
-		intervalList = dynNetwork.searchEdgesNot(timeInterval);
-		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
 	}
 	
 }
