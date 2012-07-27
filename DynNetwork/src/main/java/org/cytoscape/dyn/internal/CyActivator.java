@@ -109,9 +109,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	DynLayoutManagerImpl dynLayoutManager = new DynLayoutManagerImpl();
     	DynLayoutFactoryImpl dynLayoutFactory = new DynLayoutFactoryImpl(dynLayoutManager);
     	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random",undo,dynCytoPanel,dynLayoutFactory);
-    	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Kamada-Kawai",undo,dynCytoPanel,dynLayoutFactory);
-    	CyLayoutAlgorithm dynClearLayout = new DynCleanLayoutAlgorithm<T,C>("Dynamic Layouts", "Remove",undo,dynCytoPanel,dynLayoutFactory);
+    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Kamada-Kawai",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynClearLayout = new DynCleanLayoutAlgorithm<T,C>("Dynamic Layouts", "Remove",undo,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 

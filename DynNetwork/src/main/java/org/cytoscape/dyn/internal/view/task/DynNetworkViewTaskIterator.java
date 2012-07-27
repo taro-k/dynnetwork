@@ -53,6 +53,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	private double time;
 	private int visibility;
 	private int oldVisibility;
+	private int smoothness;
 	
 	/**
 	 * <code> DynNetworkViewTaskIterator </code> constructor.
@@ -81,12 +82,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		this.timeStep = timestep;
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
+		this.smoothness = this.panel.getSmoothness();
 	}
 
 	@Override
 	public void run() 
 	{
-		
 		queue.lock();
 		
 		if (this.cancelled==true)
@@ -101,8 +102,9 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		{			
 			timeStart = System.currentTimeMillis();
 			
+			smoothness = panel.getSmoothness();
 			updateNetwork();
-			
+
 			oldVisibility = visibility;
 			visibility = panel.getVisibility();
 			if (oldVisibility!=visibility)
@@ -130,31 +132,31 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	{ 
 		slider.setValue(slider.getValue()+timeStep);
 		time = slider.getValue()*((panel.getMaxTime()-panel.getMinTime())/panel.getSliderMax())+(panel.getMinTime());
-		if (time==panel.getMaxTime())
+		if (time>=panel.getMaxTime())
 			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
-		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility);
-		
 		// update graph attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedGraphsAttr(timeInterval))
+		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
 			updateAttr(interval);
 		
 		// update node attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedNodesAttr(timeInterval))
-			updateAttr(dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval);
+		for (DynInterval<T> interval : view.searchChangedNodesAttr(timeInterval))
+			updateAttr(dynNetwork.getNode(interval),interval);
 
 		// update edge attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedEdgesAttr(timeInterval))
-			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
+		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
+			updateAttr(dynNetwork.getEdge(interval),interval);
 		
-		panel.setNodes(dynNetwork.getVisibleNodes());
-		panel.setEdges(dynNetwork.getVisibleEdges());
+		// update node and edges visual properties
+		if (layout!=null)
+			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness);
+		else
+			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness);
+		
+		panel.setNodes(view.getVisibleNodes());
+		panel.setEdges(view.getVisibleEdges());
 	}
 	
 	public void updateTransparency(int visibility) 
@@ -162,12 +164,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getNode(interval.getAttribute().getKey().getRow()), visibility);
+			setTransparency(dynNetwork.getNode(interval), visibility);
 
 		// update edges
 		intervalList = dynNetwork.searchEdgesNot(timeInterval);
 		for (DynInterval<T> interval : intervalList)
-			setTransparency(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()), visibility);
+			setTransparency(dynNetwork.getEdge(interval), visibility);
 
 		view.updateView();
 		

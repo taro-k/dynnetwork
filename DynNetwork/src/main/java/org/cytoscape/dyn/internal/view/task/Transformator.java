@@ -53,10 +53,7 @@ public class Transformator
 	 */
 	public Transformator() 
 	{
-		this.alpha = 0.3;
-		this.iterations = 10;
-		this.delay = (int) (500/iterations);
-			
+
 	}
 	
 	/**
@@ -70,13 +67,16 @@ public class Transformator
 			final DynNetwork<T> dynNetwork,
 			final DynNetworkView<T> view,
 			final DynInterval<T> timeInterval,
-			final int visibility)
+			final int visibility,
+			final int smoothness)
 	{
+		setSmoothness(smoothness);
+		
 		this.onCounter = 255;
 		this.offCounter = visibility;
 		
-		List<DynInterval<T>> nodes = dynNetwork.searchChangedNodes(timeInterval);
-		List<DynInterval<T>> edges = dynNetwork.searchChangedEdges(timeInterval);
+		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
+		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
 		
 		if (nodes.isEmpty() && edges.isEmpty())
 			return;
@@ -90,15 +90,15 @@ public class Transformator
 
 			for (DynInterval<T> interval : nodes)
 				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),offCounter);
+					updateTransparency(view, dynNetwork.getNode(interval),offCounter);
 				else
-					updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),onCounter);
+					updateTransparency(view, dynNetwork.getNode(interval),onCounter);
 
 			for (DynInterval<T> interval : edges)
 				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),offCounter);
+					updateTransparency(view, dynNetwork.getEdge(interval),offCounter);
 				else
-					updateTransparency(view, dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),onCounter);
+					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
 
 			timeEnd = System.currentTimeMillis();
 			if (timeEnd-timeStart<delay)
@@ -113,9 +113,9 @@ public class Transformator
 		
 		for (DynInterval<T> interval : nodes)
 			if (interval.isOn())
-				updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),255);
+				updateTransparency(view, dynNetwork.getNode(interval),255);
 			else
-				updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),visibility);
+				updateTransparency(view, dynNetwork.getNode(interval),visibility);
 		
 		view.updateView();
 	}
@@ -133,15 +133,18 @@ public class Transformator
 			final DynNetworkView<T> view,
 			final DynInterval<T> timeInterval,
 			final DynLayout layout,
-			final int visibility)
+			final int visibility,
+			final int smoothness)
 	{
+		setSmoothness(smoothness);
+		
 		this.onCounter = 255;
 		this.offCounter = visibility;
 		
-		List<DynInterval<T>> nodes = dynNetwork.searchChangedNodes(timeInterval);
-		List<DynInterval<T>> edges = dynNetwork.searchChangedEdges(timeInterval);
-		List<DynInterval<Double>> nodesPosX = layout.searchChangedNodePositionsX((DynInterval<Double>) timeInterval);
-		List<DynInterval<Double>> nodesPosY = layout.searchChangedNodePositionsY((DynInterval<Double>) timeInterval);
+		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
+		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
+		List<DynInterval<T>> nodesPosX = layout.searchChangedNodePositionsX(timeInterval);
+		List<DynInterval<T>> nodesPosY = layout.searchChangedNodePositionsY(timeInterval);
 
 		if (nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
 			return;
@@ -155,22 +158,28 @@ public class Transformator
 
 			for (DynInterval<T> interval : nodes)
 				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),offCounter);
+					updateTransparency(view, dynNetwork.getNode(interval),offCounter);
 				else
-					updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),onCounter);
+					updateTransparency(view, dynNetwork.getNode(interval),onCounter);
 
 			for (DynInterval<T> interval : edges)
 				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),offCounter);
+					updateTransparency(view, dynNetwork.getEdge(interval),offCounter);
 				else
-					updateTransparency(view, dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),onCounter);
+					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
 
-			for (DynInterval<Double> interval : nodesPosX)
-					updatePositionX(view,dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval.getAttribute().getKey().getColumn(),(Double)interval.getValue());
+			for (DynInterval<T> interval : nodesPosX)
+				if (!interval.isOn() && interval.getOffValue()!=null)
+					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
+				else if (interval.isOn())
+					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
 			
-			for (DynInterval<Double> interval : nodesPosY)
-				updatePositionY(view,dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval.getAttribute().getKey().getColumn(),(Double)interval.getValue());
-
+			for (DynInterval<T> interval : nodesPosY)
+				if (!interval.isOn() && interval.getOffValue()!=null)
+					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
+				else if (interval.isOn())
+					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
+			
 			timeEnd = System.currentTimeMillis();
 			if (timeEnd-timeStart<delay)
 				try {
@@ -184,9 +193,9 @@ public class Transformator
 		
 		for (DynInterval<T> interval : nodes)
 			if (interval.isOn())
-				updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),255);
+				updateTransparency(view, dynNetwork.getNode(interval),255);
 			else
-				updateTransparency(view, dynNetwork.getNode(interval.getAttribute().getKey().getRow()),visibility);
+				updateTransparency(view, dynNetwork.getNode(interval),visibility);
 		
 		view.updateView();
 	}
@@ -222,6 +231,43 @@ public class Transformator
 		if (node!=null)
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
 					(1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*value);
+	}
+	
+	private void setSmoothness(int smoothness)
+	{
+		if (smoothness==0)
+		{
+			this.iterations = 1;
+			this.delay = 0;
+			this.alpha = 1;
+		}
+		else
+		{
+			this.iterations = (int) (smoothness*25/1000);
+			this.delay = (int) (smoothness/iterations);
+			
+			switch(smoothness)
+			{
+			case 250:
+				this.alpha = 0.5;
+				break;
+			case 500:
+				this.alpha = 0.4;
+				break;
+			case 750:
+				this.alpha = 0.3;
+				break;
+			case 1000:
+				this.alpha = 0.2;
+				break;
+			case 2000:
+				this.alpha = 0.1;
+				break;
+			}
+
+		}
+
+
 	}
 
 }

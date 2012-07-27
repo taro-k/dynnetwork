@@ -24,6 +24,7 @@ import java.util.Set;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkView;
@@ -44,6 +45,7 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory dynLaoutFactory;
+    private final DynNetworkViewManager<T> viewManager;
     
     /**
      * <code> DynRandomLayoutAlgorithm </code> constructor.
@@ -58,11 +60,13 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     final String humanName,
                     final UndoSupport undoSupport,
                     final DynCytoPanel<T, C> panel,
-                    final DynLayoutFactory dynLaoutFactory)
+                    final DynLayoutFactory dynLaoutFactory,
+                    final DynNetworkViewManager<T> viewManager)
     {
             super(computerName, humanName, undoSupport);
             this.panel = panel;
             this.dynLaoutFactory = dynLaoutFactory;
+            this.viewManager = viewManager;
     }
 
     @Override
@@ -72,15 +76,10 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
-    	if (networkView!=null)
-    	{
     		DynLayout layout = dynLaoutFactory.createLayout(networkView);
-            return new TaskIterator(new DynRandomLayoutAlgorithmTask(
-            		getName(), layout, nodesToLayOut, layoutAttribute, undoSupport,
+            return new TaskIterator(new DynRandomLayoutAlgorithmTask<T>(
+            		getName(), layout, viewManager.getDynNetworkView(networkView), nodesToLayOut, layoutAttribute, undoSupport,
             		panel.getTime(),panel.getMinTime(),panel.getMaxTime(),(panel.getMaxTime()-panel.getMinTime())/10));
-    	}
-    	else
-    		return  new TaskIterator();
     }
 
 }

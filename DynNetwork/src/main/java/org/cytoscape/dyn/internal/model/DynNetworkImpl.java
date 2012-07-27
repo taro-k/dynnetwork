@@ -53,19 +53,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private final CyNetwork network;
 	private final CyGroupManager groupManager;
 	
-	private int visibleNodes;
-	private int visibleEdges;
-	
 	private final boolean isDirected;
 
 	private final Map<String, Long> cyNodes;
 	private final Map<String, Long> cyEdges;
-
-	private List<DynInterval<T>> currentNodes;
-	private List<DynInterval<T>> currentEdges;
-	private List<DynInterval<T>> currentGraphsAttr;
-	private List<DynInterval<T>> currentNodesAttr;
-	private List<DynInterval<T>> currentEdgesAttr;
 
 	private final DynIntervalTreeImpl<T> graphTree;
 	private final DynIntervalTreeImpl<T> nodeTree;
@@ -97,19 +88,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.network = network;
 		this.groupManager = groupManager;
 		
-		this.visibleNodes = 0;
-		this.visibleEdges = 0;
-		
 		this.isDirected = isDirected;
 
 		cyNodes = new HashMap<String, Long>();
 		cyEdges = new HashMap<String, Long>();
-
-		this.currentNodes = new ArrayList<DynInterval<T>>();
-		this.currentEdges = new ArrayList<DynInterval<T>>();
-		this.currentGraphsAttr = new ArrayList<DynInterval<T>>();
-		this.currentNodesAttr = new ArrayList<DynInterval<T>>();
-		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
 
 		this.graphTree = new DynIntervalTreeImpl<T>();
 		this.nodeTree = new DynIntervalTreeImpl<T>();
@@ -180,8 +162,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTable.clear();
 		this.nodeTable.clear();
 		this.edgeTable.clear();
-		currentNodes.clear();
-		currentEdges.clear();
 	}
 
 	@Override
@@ -227,9 +207,45 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
-	public List<DynInterval<T>> getIntervals()
+	public List<DynInterval<T>> getGraphIntervals()
 	{
-		List<DynInterval<T>> list = this.graphTree.getIntervals(this.network.getSUID());
+		return this.graphTree.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getNodesIntervals()
+	{
+		return this.nodeTree.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getEdgesIntervals()
+	{
+		return this.edgeTree.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getGraphAttrIntervals()
+	{
+		return this.graphTreeAttr.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getNodesAttrIntervals()
+	{
+		return this.nodeTreeAttr.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getEdgesAttrIntervals()
+	{
+		return this.edgeTreeAttr.getIntervals();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getIntervals(CyNetwork net)
+	{
+		List<DynInterval<T>> list = this.graphTree.getIntervals(net.getSUID());
 		list.addAll(this.graphTreeAttr.getIntervals(this.network.getSUID()));
 		return list;
 	}
@@ -275,26 +291,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
-	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = nodeTree.search(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
-		this.visibleNodes = tempList.size();
-		currentNodes = tempList;
-		return changedList;
-	}
-
-	@Override
-	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = edgeTree.search(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
-		this.visibleEdges = tempList.size();
-		currentEdges = tempList;
-		return changedList;
-	}
-	
-	@Override
 	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval)
 	{
 		return graphTreeAttr.search(interval);
@@ -310,33 +306,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval)
 	{
 		return edgeTreeAttr.search(interval);
-	}
-	
-	@Override
-	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = graphTreeAttr.search(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentGraphsAttr, tempList);
-		currentGraphsAttr = tempList;
-		return changedList;
-	}
-
-	@Override
-	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = nodeTreeAttr.search(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentNodesAttr, tempList);
-		currentNodesAttr = tempList;
-		return changedList;
-	}
-
-	@Override
-	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = edgeTreeAttr.search(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentEdgesAttr, tempList);
-		currentEdgesAttr = tempList;
-		return changedList;
 	}
 
 	@Override
@@ -364,15 +333,15 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
-	public CyNode getNode(long key) 
+	public CyNode getNode(DynInterval<T> interval) 
 	{
-		return network.getNode(key);
+		return network.getNode(interval.getAttribute().getRow());
 	}
 
 	@Override
-	public CyEdge getEdge(long key) 
+	public CyEdge getEdge(DynInterval<T> interval) 
 	{
-		return network.getEdge(key);
+		return network.getEdge(interval.getAttribute().getRow());
 	}
 
 	@Override
@@ -484,18 +453,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public boolean isDirected() 
 	{
 		return this.isDirected;
-	}
-	
-	@Override
-	public int getVisibleNodes()
-	{
-		return this.visibleNodes;
-	}
-
-	@Override
-	public int getVisibleEdges()
-	{
-		return this.visibleEdges;
 	}
 	
 	@Override
@@ -613,27 +570,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
 	}
-	
-	// Compare list of current intervals with new search. For the moment I'm registering which interval is turned
-	// off or on by storing a boolean value directly in the interval. This is a hack, but for the moment this is
-	// way much faster than accessing visual properties in Cytoscape!
-	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
-	{
-		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
-		for (DynInterval<T> i : list1)
-			if (!list2.contains(i))
-			{
-				diff.add(i);
-				i.setOn(false);
-			}
-		for (DynInterval<T> i : list2)
-			if (!list1.contains(i))
-			{
-				diff.add(i);
-				i.setOn(true);
-			}
-		return diff;
-	}
 
 	private synchronized void setMinMaxTime(DynInterval<T> interval)
 	{
@@ -697,8 +633,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				{
 					String label = this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
 					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for graph label=" + label + 
-							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 				}
 			}
 	}
@@ -719,10 +655,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					interval.setEnd(i.getStart());
 				else
 				{
-					String label = this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string").toString();
+					String label = this.readNodeTable(this.getNode(interval),CyNetwork.NAME, (T) "string").toString();
 					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for node label=" + label + 
-							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 				}
 			}
 	}
@@ -743,10 +679,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					interval.setEnd(i.getStart());
 				else
 				{   
-					String label = this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string").toString();
+					String label = this.readEdgeTable(this.getEdge(interval),CyNetwork.NAME, (T) "string").toString();
 					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
-							"\n  > attr=" + attr.getColumn() + " value=" + i.getValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-							"\n  > attr=" + attr.getColumn() + " value=" + interval.getValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 				}
 			}
 	}
@@ -762,25 +698,25 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
 				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				graphTreeAttr.insert(interval, attr.getRow());
 			}
 		
 		for (DynAttribute<T> attr : nodeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
-				if (this.getNode(interval.getAttribute().getRow())!=null)
-				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				if (this.getNode(interval)!=null)
+				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				nodeTreeAttr.insert(interval, attr.getRow());
 			}
 
 		for (DynAttribute<T> attr : edgeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
-				if (this.getEdge(interval.getAttribute().getRow())!=null)
-				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval.getAttribute().getRow()),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+				if (this.getEdge(interval)!=null)
+				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				edgeTreeAttr.insert(interval, attr.getRow());
 			}
 	}

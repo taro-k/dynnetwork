@@ -91,20 +91,26 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	@Override
 	public void remove(DynInterval<T> interval, long id)
 	{
-		for (DynNode<T> n : searchNodes(interval))
-			if (n.getIntervalList().size()>1)
-				n.getIntervalList().remove(interval);
+		DynNode<T> z = searchThisNode(interval);
+		if (z!=null)
+			if (z.getIntervalList().size()>1)
+				z.removeInterval(interval);
 			else
-				remove(n);
+				remove(z);	
 		removeInterval(id, interval);
+	}
+	
+	protected DynNode<T> searchThisNode(DynInterval<T> interval)
+	{
+		return root.getLeft().searchThisNode(interval);
 	}
 	
 	abstract protected void remove(DynNode<T> z);
 	
 	@Override
-	public List<DynInterval<T>> searchAll()
+	public List<DynInterval<T>> getIntervals()
 	{
-		return root.getLeft().searchAll(new ArrayList<DynInterval<T>>());
+		return root.getLeft().getIntervals(new ArrayList<DynInterval<T>>());
 	}
 	
 	@Override

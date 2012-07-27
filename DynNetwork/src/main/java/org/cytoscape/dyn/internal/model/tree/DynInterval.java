@@ -27,6 +27,10 @@ import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
  * Intervals are convenient for representing events that each occupy a continuous 
  * period of time. A half-open interval is an ordered pair of real numbers [startTime, 
  * endTime[ with startTime =< endTime, where startTime is included and endTime is excluded.
+ * <P>
+ * 
+ * <code> DynInterval </code> offers the possibility to store two different values for on 
+ * and off events.
  *  
  * @author Sabina Sara Pfister
  *
@@ -36,7 +40,8 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 {
 	private Class<T> type;
 	
-	private T value;
+	private T onValue;
+	private T offValue;
 	private double start;
 	private double end;
 	private boolean isOn;
@@ -45,18 +50,136 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	
 	/**
 	 * <code> DynInterval </code> constructor.
-	 * @param type
-	 * @param value
+	 * @param type of generic
+	 * @param generic value
 	 * @param start
 	 * @param end
 	 */
-	public DynInterval(Class<T> type, T value, double start, double end)
+	public DynInterval(Class<T> type, T onValue, double start, double end)
 	{
-		this.value = value;
+		this.onValue = onValue;
 		this.type = type;
 		this.start = start;
 		this.end = end;
 		this.isOn = false;
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param int value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(int onValue, double start, double end)
+	{
+		this((Class<T>) Integer.class, (T) new Integer(onValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param double value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(double onValue, double start, double end)
+	{
+		this((Class<T>) Double.class, (T) new Double(onValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param boolean value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(boolean onValue, double start, double end)
+	{
+		this((Class<T>) Boolean.class, (T) new Boolean(onValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param string value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(String onValue, double start, double end)
+	{
+		this((Class<T>) String.class, (T) new String(onValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param type
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	public DynInterval(Class<T> type, T onValue,  T offValue, double start, double end)
+	{
+		this.onValue = onValue;
+		this.offValue = offValue;
+		this.type = type;
+		this.start = start;
+		this.end = end;
+		this.isOn = false;
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(int onValue, int offValue, double start, double end)
+	{
+		this((Class<T>) Integer.class, (T) new Integer(onValue), (T) new Integer(offValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(double onValue, double offValue, double start, double end)
+	{
+		this((Class<T>) Double.class, (T) new Double(onValue), (T) new Double(offValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(boolean onValue, boolean offValue, double start, double end)
+	{
+		this((Class<T>) Boolean.class, (T) new Boolean(onValue), (T) new Boolean(offValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(String onValue, String offValue, double start, double end)
+	{
+		this((Class<T>) String.class, (T) new String(onValue), (T) new String(offValue), start, end);
 	}
 
 	/**
@@ -66,7 +189,8 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	 */
 	public DynInterval(double start, double end)
 	{
-		this(null, null, start, end);
+		this.start = start;
+		this.end = end;
 	}
 
 	@Override
@@ -83,12 +207,21 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	}
 
 	/**
-	 * Get interval value.
+	 * Get interval value when this interval is on. It is used to deal with on events.
 	 * @return value
 	 */
-	public T getValue()
+	public T getOnValue()
 	{
-		return value;
+		return onValue;
+	}
+	
+	/**
+	 * Get interval value when this interval is off. It is used to deal with off events.
+	 * @return value
+	 */
+	public T getOffValue()
+	{
+		return offValue;
 	}
 	
 	/**
@@ -99,7 +232,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public T getValue(DynInterval<T> interval)
 	{
 		if (this.compareTo(interval)>0)
-			return value;
+			return onValue;
 		else
 			return null;
 	}
@@ -141,6 +274,32 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	}
 	
 	/**
+	 * Get time of the closest next interval. Return Double.POSITIVE_INFINITY
+	 * if none is found.
+	 * @return end
+	 */
+	public double getNext()
+	{
+		double next = Double.POSITIVE_INFINITY;
+		for (DynInterval<T> interval : this.getAttribute().getIntervalList())
+			next = Math.min(next,interval.getStart());
+		return next;
+	}
+	
+	/**
+	 * Get time of the closest previous interval. Return Double.NEGATIVE_INFINITY
+	 * if none is found.
+	 * @return end
+	 */
+	public double getPrevious()
+	{
+		double previous = Double.NEGATIVE_INFINITY;
+		for (DynInterval<T> interval : this.getAttribute().getIntervalList())
+			previous = Math.max(previous,interval.getStart());
+		return previous;
+	}
+	
+	/**
 	 * Get the attribute corresponding to this time interval.
 	 * @return
 	 */
@@ -159,9 +318,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	}
 	
 	/**
-	 * Get is on. Is used to keep track of which intervals are currently visualized.
-	 * It's a hack, but for the moment this is much faster than accessing the 
-	 * visual properties in Cytoscape!
+	 * Get is on. Is used to know if this interval was turned on or off.
 	 * @return
 	 */
 	public boolean isOn() 
@@ -170,9 +327,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	}
 
 	/**
-	 * Set is on. Is used to keep track of which intervals are currently visualized.
-	 * It's a hack, but for the moment this is much faster than accessing the 
-	 * visual properties in Cytoscape!
+	 * Set is on. Is used to know if this interval was turned on or off..
 	 * @param isOn
 	 */
 	public void setOn(boolean isOn) 
@@ -188,5 +343,5 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	{
 		return type;
 	}
-    
+	
 }

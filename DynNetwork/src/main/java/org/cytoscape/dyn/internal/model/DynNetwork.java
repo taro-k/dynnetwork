@@ -123,22 +123,62 @@ public interface DynNetwork<T>
 	public void removeEdgeAttr(CyEdge edge);
 	
 	/**
-	 * Get all intervals belonging to this network.
-	 * @return
+	 * Get all graph intervals (without attribute intervals).
+	 * @return interval list
 	 */
-	public List<DynInterval<T>> getIntervals();
+	public List<DynInterval<T>> getGraphIntervals();
+	
+	/**
+	 * Get all node intervals (without attribute intervals).
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getNodesIntervals();
+	
+	/**
+	 * Get all edge intervals (without attribute intervals).
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getEdgesIntervals();
+	
+	/**
+	 * Get all graph attributes intervals (without graph intervals).
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getGraphAttrIntervals();
+	
+	/**
+	 * Get all node attributes intervals (without node intervals).
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getNodesAttrIntervals();
+	
+	/**
+	 * Get all edge attributes intervals (without edge intervals).
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getEdgesAttrIntervals();
+	
+	/**
+	 * Get all intervals belonging to the network (with attribute intervals). 
+	 * If the network is not contained in this DynNetwork, a empty list id returned. 
+	 * @param net
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getIntervals(CyNetwork net);
 
 	/**
-	 * Get all intervals belonging to this node.
+	 * Get all intervals belonging to this node (with attribute intervals). 
+	 * If the node is not contained in this DynNetwork, a empty list id returned.
 	 * @param node
-	 * @return
+	 * @return interval list
 	 */
 	public List<DynInterval<T>> getIntervals(CyNode node);
 
 	/**
-	 * Get all intervals belonging to this edge.
+	 * Get all intervals belonging to this edge (with attribute intervals). 
+	 * If the edge is not contained in this DynNetwork, a empty list id returned.
 	 * @param edge
-	 * @return
+	 * @return interval list
 	 */
 	public List<DynInterval<T>> getIntervals(CyEdge edge);
 	
@@ -180,45 +220,6 @@ public interface DynNetwork<T>
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for graphs given an interval that changed
-	 * @param interval
-	 * @return list of changed overlapping intervals
-	 */
-	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for nodes given an interval that changed
-	 * from the last search.
-	 * @param interval
-	 * @return list of changed overlapping intervals
-	 */
-	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for edges given an interval that changed
-	 * from the last search.
-	 * @param interval
-	 * @return list of changed overlapping intervals
-	 */
-	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for node attributes given an interval that changed
-	 * from the last search.
-	 * @param interval
-	 * @return list of changed overlapping intervals
-	 */
-	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for edge attributes given an interval that changed
-	 * from the last search.
-	 * @param interval
-	 * @return list of changed overlapping intervals
-	 */
-	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval);
 	
 	/**
 	 * Search not overlapping intervals for nodes given an interval
@@ -275,10 +276,10 @@ public interface DynNetwork<T>
 	
 	/**
 	 * Get node.
-	 * @param key
+	 * @param interval
 	 * @return node
 	 */
-	public CyNode getNode(long key);
+	public CyNode getNode(DynInterval<T> interval);
 	
 	/**
 	 * Get edge.
@@ -288,11 +289,11 @@ public interface DynNetwork<T>
 	public long getCyEdge(String id);
 	
 	/**
-	 * Get edge
-	 * @param key
+	 * Get edge.
+	 * @param interval
 	 * @return edge
 	 */
-	public CyEdge getEdge(long key);
+	public CyEdge getEdge(DynInterval<T> interval);
 	
 	/**
 	 * Contains node.
@@ -410,17 +411,5 @@ public interface DynNetwork<T>
 	 * @return boolean
 	 */
 	public boolean isDirected();
-	
-	/**
-	 * Get number of currently visible nodes
-	 * @return
-	 */
-	public int getVisibleNodes();
-
-	/**
-	 * Get number of current visible edges.
-	 * @return
-	 */
-	public int getVisibleEdges();
 
 }

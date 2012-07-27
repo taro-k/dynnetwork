@@ -66,7 +66,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
 /**
- * <code> DynCytoPanel </code> implements the a JPanel component in {@link CytoPanel} 
+ * <code> DynCytoPanelImpl </code> implements the a JPanel component in {@link CytoPanel} 
  * west to provide a time slider for controlling the dynamic visualization.
  * 
  * @author Sabina Sara Pfister
@@ -92,7 +92,9 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private double time;
 	private double minTime;
 	private double maxTime;
+	
 	private int visibility = 0;
+	private int smoothness = 500;
 	
 	private volatile boolean valueIsAdjusting = false;
 	
@@ -109,13 +111,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private JLabel edgeNumber;
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
+	private JComboBox smoothnessComboBox;
 	private JButton forwardButton, backwardButton,stopButton,vizmapButton;
 	private JCheckBox seeAllCheck;
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter,formatter2;
 
 	/**
-	 * <code> AdvancedDynCytoPanel </code> constructor.
+	 * <code> DynCytoPanelImpl </code> constructor.
 	 * @param taskManager
 	 * @param appManager
 	 * @param viewManager
@@ -187,9 +190,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		else if (event.getSource() instanceof JComboBox)
 		{
 			JComboBox source = (JComboBox)event.getSource();
-			updateGui((double) slider.getValue()/sliderMax, ((NameIDObj)source.getSelectedItem()).id);
-			if (!valueIsAdjusting)
-				updateView();
+			if (source==resolutionComboBox)
+			{
+				updateGui((double) slider.getValue()/sliderMax, ((NameIDObj)source.getSelectedItem()).id);
+				if (!valueIsAdjusting)
+					updateView();
+			}
+			else if (source==smoothnessComboBox)
+			{
+				this.smoothness = ((NameIDObj)source.getSelectedItem()).id;
+			}
 		}
 	}
 	
@@ -272,12 +282,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		updateView();
 	}
 
-	/**
-	 * Get network view hidden nodes visibility.
-	 */
+	@Override
 	public int getVisibility() 
 	{
 		return visibility;
+	}
+	
+	@Override
+	public int getSmoothness() 
+	{
+		return smoothness;
 	}
 
 	@Override
@@ -310,17 +324,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		return null;
 	}
 	
-	/**
-	 * Set current number of displayed nodes.
-	 */
+	@Override
 	public void setNodes(int nodes) 
 	{
 		nodeNumber.setText("Current nodes = " + formatter2.format(nodes) + "/" + formatter2.format(network.getNetwork().getNodeCount()));
 	}
 
-	/**
-	 * Set current number of displayed edges.
-	 */
+	@Override
 	public void setEdges(int edges) 
 	{
 		edgeNumber.setText("Current edges = " + formatter2.format(edges) + "/" + formatter2.format(network.getNetwork().getEdgeCount()));
@@ -363,29 +373,47 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		dynVizPanel = new JPanel();
 		dynVizPanel.setLayout(new GridLayout(3,1));
 		dynVizPanel.add(currentTime);
-		dynVizPanel.add(slider);
+		dynVizPanel.add(slider);;
 		dynVizPanel.add(buttonPanel);
-		
-		NameIDObj[] items = { 
-				new NameIDObj(10,"1/10"), 
-				new NameIDObj(100,"1/100"), 
-				new NameIDObj(1000,"1/1000"), 
+
+		NameIDObj[] itemsTimeResolution = { 
+				new NameIDObj(10,   "1/10   "), 
+				new NameIDObj(25,   "1/25   "),
+				new NameIDObj(50,   "1/50   "),
+				new NameIDObj(75,   "1/75   "),
+				new NameIDObj(100,  "1/100  "), 
+				new NameIDObj(1000, "1/1000 "), 
 				new NameIDObj(10000,"1/10000") };
-		resolutionComboBox  = new JComboBox(items);
+		resolutionComboBox  = new JComboBox(itemsTimeResolution);
 		resolutionComboBox.setSelectedIndex(1);
 		resolutionComboBox.addActionListener(this);
 		
-		vizmapButton = new JButton("Reset Vizmap");
+		NameIDObj[] itemsSmoothness = { 
+				new NameIDObj(0,   "0 ms   "), 
+				new NameIDObj(250, "250 ms "),
+				new NameIDObj(500, "500 ms "),
+				new NameIDObj(750, "750 ms "),
+				new NameIDObj(1000,"1000 ms"),
+				new NameIDObj(2000,"2000 ms")};
+		smoothnessComboBox  = new JComboBox(itemsSmoothness);
+		smoothnessComboBox.setSelectedIndex(2);
+		smoothnessComboBox.addActionListener(this);
+
+		vizmapButton = new JButton("Reset");
 		vizmapButton.addActionListener(this);
 		
 		seeAllCheck = new JCheckBox("Display all",false);
 		seeAllCheck.addActionListener(this);
 		
 		featurePanel = new JPanel();
-		featurePanel.setLayout(new GridLayout(4,1));
-		featurePanel.add(new JLabel("Time resolution"));
+		featurePanel.setLayout(new GridLayout(4,2));
+		featurePanel.add(new JLabel("Time resolution      "));
 		featurePanel.add(resolutionComboBox);
+		featurePanel.add(new JLabel("Time smoothness      "));
+		featurePanel.add(smoothnessComboBox);
+		featurePanel.add(new JLabel("VizMap Range "));
 		featurePanel.add(vizmapButton);
+		featurePanel.add(new JLabel("Node/edge visibility "));
 		featurePanel.add(seeAllCheck);
 		
 		formatter2 = new DecimalFormat("#0");
@@ -434,12 +462,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				);
 				layout.setVerticalGroup(
 				   layout.createSequentialGroup()
-				      .addComponent(dynVizPanel, 150,
+				      .addComponent(dynVizPanel, 170,
 				    		  GroupLayout.DEFAULT_SIZE, 270)
 				      .addComponent(featurePanel,  GroupLayout.DEFAULT_SIZE,
-				    		  150 , Short.MAX_VALUE)
+				    		  200 , Short.MAX_VALUE)
 				      .addComponent(measurePanel, GroupLayout.DEFAULT_SIZE,
-				    		   400, Short.MAX_VALUE)
+				    		   500, Short.MAX_VALUE)
 				);
 
 		this.setVisible(true);
@@ -452,10 +480,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		
 		if (time>=maxTime)
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this,view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time-0.0000001,time+0.0000001,visibility)).start();
+					this,view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time-0.0000001,time+0.0000001,visibility,smoothness)).start();
 		else
 			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time,time,visibility)).start();
+					this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time,time,visibility,smoothness)).start();
 	}
 	
 	private void updateGroup(CyGroup group)

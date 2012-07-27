@@ -33,21 +33,22 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public interface DynLayout
+public interface DynLayout<T>
 {
-	/**
-	 * Insert node position X.
-	 * @param node
-	 * @param interval
-	 */
-	public void insertNodePositionX(CyNode node, DynInterval<Double> interval);
 	
 	/**
-	 * Insert node position Y.
+	 * Insert node position X for when the given interval goes on.
 	 * @param node
 	 * @param interval
 	 */
-	public void insertNodePositionY(CyNode node, DynInterval<Double> interval);
+	public void insertNodePositionX(CyNode node, DynInterval<T> interval);
+	
+	/**
+	 * Insert node position Y for when the given interval goes on.
+	 * @param node
+	 * @param interval
+	 */
+	public void insertNodePositionY(CyNode node, DynInterval<T> interval);
 
 	/**
 	 * Remove intervals and attributes belonging to node.
@@ -65,56 +66,56 @@ public interface DynLayout
 	 * @param node
 	 * @return
 	 */
-	public List<DynInterval<Double>> getIntervalsX(CyNode node);
+	public List<DynInterval<T>> getIntervalsX(CyNode node);
 	
 	/**
 	 * Get all Y intervals for node.
 	 * @param node
 	 * @return
 	 */
-	public List<DynInterval<Double>> getIntervalsY(CyNode node);
+	public List<DynInterval<T>> getIntervalsY(CyNode node);
 
 	/**
 	 * Search X positions of visible nodes
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchNodePositionsX(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchNodePositionsX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of visible nodes
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchNodePositionsY(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchNodePositionsY(DynInterval<T> interval);
 	
 	/**
 	 * Search X positions of visible nodes that changed from the last time interval.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchChangedNodePositionsX(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchChangedNodePositionsX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of visible nodes that changed from the last time interval.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchChangedNodePositionsY(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchChangedNodePositionsY(DynInterval<T> interval);
 
 	/**
 	 * Search X positions of not visible nodes.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchNodePositionsNotX(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchNodePositionsNotX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of not visible nodes.
 	 * @param interval
 	 * @return
 	 */
-	public List<DynInterval<Double>> searchNodePositionsNotY(DynInterval<Double> interval);
+	public List<DynInterval<T>> searchNodePositionsNotY(DynInterval<T> interval);
 	
 	/**
 	 * Initialize node positions.
@@ -128,29 +129,4 @@ public interface DynLayout
 	 */
 	public CyNetworkView getNetworkView();
 
-	/**
-	 * Get constant alpha (position updating speed).
-	 * @return
-	 */
-	double getAlpha();
-
-	/**
-	 * Set constant alpha (position updating speed).
-	 * @param alpha
-	 */
-	void setAlpha(double alpha);
-
-	/**
-	 * Get constant n (position updating iterations).
-	 * @return
-	 */
-	int getN();
-
-	/**
-	 * Set constant n (position updating iterations).
-	 * @param n
-	 */
-	void setN(int n);
-
-	
 }

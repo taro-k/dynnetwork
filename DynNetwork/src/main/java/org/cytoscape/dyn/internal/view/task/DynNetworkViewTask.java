@@ -39,6 +39,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,C> 
 {
 	private final int visibility;
+	private final int smoothness;
 
 	/**
 	 * <code> DynNetworkViewTask </code> constructor.
@@ -58,10 +59,12 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 			final BlockingQueue queue,
 			final double low, 
 			final double high, 
-			final int visibility) 
+			final int visibility,
+			final int smoothness) 
 	{
 		super(panel, view, layout, transformator, queue, low, high);
 		this.visibility = visibility;
+		this.smoothness = smoothness;
 	}
 
 	@Override
@@ -77,27 +80,27 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		}
 		
 		timeInterval = new DynInterval<T>(low, high);
-		
-		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility);
 
 		// update graph attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedGraphsAttr(timeInterval))
+		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
 			updateAttr(interval);
 		
 		// update node attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedNodesAttr(timeInterval))
-			updateAttr(dynNetwork.getNode(interval.getAttribute().getKey().getRow()),interval);
+		for (DynInterval<T> interval : view.searchChangedNodesAttr(timeInterval))
+			updateAttr(dynNetwork.getNode(interval),interval);
 
 		// update edge attributes
-		for (DynInterval<T> interval : dynNetwork.searchChangedEdgesAttr(timeInterval))
-			updateAttr(dynNetwork.getEdge(interval.getAttribute().getKey().getRow()),interval);
+		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
+			updateAttr(dynNetwork.getEdge(interval),interval);
 
-		panel.setNodes(dynNetwork.getVisibleNodes());
-		panel.setEdges(dynNetwork.getVisibleEdges());
+		// update node and edges visual properties
+		if (layout!=null)
+			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness);
+		else
+			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness);
+		
+		panel.setNodes(view.getVisibleNodes());
+		panel.setEdges(view.getVisibleEdges());
 		
 		view.updateView();
 		

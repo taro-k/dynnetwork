@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.view.layout.algorithm;
 import java.util.Set;
 
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
 import org.cytoscape.view.model.CyNetworkView;
@@ -38,11 +39,12 @@ import org.cytoscape.work.undo.UndoSupport;
  *
  * @param <T>
  */
-public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask 
+public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask 
 {
     
 	private final DynLayout layout;
 	private final CyNetworkView view;
+	private final DynNetworkView<T> dynView;
 	
 	private final double currentTime;
 	private final double timeMin;
@@ -64,6 +66,7 @@ public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask
     public DynForceLayoutAlgorithmTask(
                     final String name,
                     final DynLayout layout,
+                    final DynNetworkView<T> dynView,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
@@ -75,6 +78,7 @@ public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask
             super(name, layout.getNetworkView(), nodesToLayOut, layoutAttribute, undo);
             this.layout = layout;
             this.view = layout.getNetworkView();
+            this.dynView = dynView;
             
             this.currentTime = currentTime;
             this.timeMin = timeMin;
@@ -83,16 +87,14 @@ public class DynForceLayoutAlgorithmTask extends AbstractLayoutTask
     }
 
 	@Override
-	@SuppressWarnings("unchecked")
-    protected void doLayout(TaskMonitor taskMonitor)
-    {	
-//		layout.setAlpha(0.2);
-//		layout.setN(15);
-		
-		layout.initNodePositions(currentTime);
-    	view.fitContent();
-    	view.updateView();
-		
-    }
+	protected void doLayout(TaskMonitor taskMonitor)
+	{	
+		if (networkView!=null && dynView!=null)
+		{
+			layout.initNodePositions(currentTime);
+			view.fitContent();
+			view.updateView();
+		}
+	}
 
 }

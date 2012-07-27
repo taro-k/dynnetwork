@@ -23,27 +23,31 @@ import java.util.Set;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
  * <code> DynLayoutAlgorithmTask </code> is responsible for the generation of random network
  * dynamics by associating to each nodes in the network ransom intervals of node positions,
- * which are stored in {@link DynLayout}.
+ * which are stored in {@link DynLayout}. Use this class as an example of how to write custom
+ * dynamic layout algorithms.
  * 
  * @author Sabina Sara Pfister
  *
  * @param <T>
  */
-public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask 
+public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask 
 {
     
-	private final DynLayout layout;
+	private final DynLayout<T> layout;
 	private final CyNetworkView view;
+	private final DynNetworkView<T> dynView;
 	
 	private final double currentTime;
 	private final double timeMin;
@@ -64,7 +68,8 @@ public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask
 	 */
     public DynRandomLayoutAlgorithmTask(
                     final String name,
-                    final DynLayout layout,
+                    final DynLayout<T> layout,
+                    final DynNetworkView<T> dynView,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
@@ -76,6 +81,7 @@ public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask
             super(name, layout.getNetworkView(), nodesToLayOut, layoutAttribute, undo);
             this.layout = layout;
             this.view = layout.getNetworkView();
+            this.dynView = dynView;
             
             this.currentTime = currentTime;
             this.timeMin = timeMin;
@@ -83,33 +89,38 @@ public final class DynRandomLayoutAlgorithmTask extends AbstractLayoutTask
             this.timeStep = timeStep;
     }
 
-	@Override
-	@SuppressWarnings("unchecked")
+    @Override
     protected void doLayout(TaskMonitor taskMonitor)
     {	
-		layout.setAlpha(0.15);
-		layout.setN(20);
-		
-		double dist = 2*50*Math.sqrt(nodesToLayOut.size());
-		
-    	for (View<CyNode> nv : nodesToLayOut)
-		{
-    		layout.insertNodePositionX(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),timeMin,timeMin+timeStep));
-    		layout.insertNodePositionY(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),timeMin,timeMin+timeStep));
-		}
-    	
-    	for (double time=timeMin; time<timeMax; time=time+timeStep)
+    	if (networkView!=null)
+    	{
+    		// Compute distance between nodes depending on the number of present nodes
+    		double dist = 2*50*Math.sqrt(nodesToLayOut.size());
+    		
+    		// First we set the initial node positions to some random location.
     		for (View<CyNode> nv : nodesToLayOut)
     		{
-    			if (Math.random()>0.3)
-    				layout.insertNodePositionX(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
-    			if (Math.random()>0.3)
-    				layout.insertNodePositionY(nv.getModel(), new DynInterval<Double>(Double.class,new Double(Math.random()*dist),time+Math.random()*timeStep,time+timeStep));
+    			nv.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, Math.random()*dist);
+    			nv.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, Math.random()*dist);
     		}
-    	
-    	layout.initNodePositions(currentTime);
-    	view.fitContent();
-    	view.updateView();
-    }
 
+    		// Get a sorted list of all node events: we will make every node move randomly
+    		// every time a node appears and disappears.
+    		for (DynInterval<T> interval : dynView.getNetwork().getNodesIntervals())
+    		{
+    			CyNode node = dynView.getNetwork().getNode(interval);
+    			if (node!=null)
+    			{
+    				layout.insertNodePositionX(node, new DynInterval<T>(Math.random()*dist,Math.random()*dist,interval.getStart(),interval.getEnd()));
+    				layout.insertNodePositionY(node, new DynInterval<T>(Math.random()*dist,Math.random()*dist,interval.getStart(),interval.getEnd()));
+    			}
+    		}
+
+    		// We update the visualization
+    		layout.initNodePositions(currentTime);
+    		view.fitContent();
+    		view.updateView();
+
+    	}
+    }
 }

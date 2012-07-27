@@ -91,6 +91,14 @@ public final class DynNode<T>
 	{
 		this.intervalList.add(interval);
 	}
+	
+	/**
+	 * Add time interval to interval tree.
+	 */
+	public void removeInterval(DynInterval<T> interval)
+	{
+		intervalList.remove(interval);
+	}
 
 	/**
 	 * Get parent node.
@@ -220,14 +228,14 @@ public final class DynNode<T>
 	 * @param intervalList
 	 * @return interval list
 	 */
-	public List<DynInterval<T>> searchAll(List<DynInterval<T>> intervalList)
+	public List<DynInterval<T>> getIntervals(List<DynInterval<T>> intervalList)
 	{
 		if (!this.isLeaf())
 		{
-			this.children[0].searchAll(intervalList);
+			this.children[0].getIntervals(intervalList);
 			for (DynInterval<T> interval : this.intervalList)
 				intervalList.add(interval);
-			this.children[1].searchAll(intervalList);
+			this.children[1].getIntervals(intervalList);
 		}
 		return intervalList;
 	}
@@ -290,6 +298,27 @@ public final class DynNode<T>
 				this.children[1].searchNodes(interval, nodeList);
 		}
 		return nodeList;
+	}
+	
+	/**
+	 * Return the node that contains this interval.
+	 * @param interval
+	 * @param nodeList
+	 * @return node list
+	 */
+	public DynNode<T> searchThisNode(DynInterval<T> interval)
+	{
+		if (!this.isLeaf() && interval.getStart()<=this.getMax())
+		{
+			this.children[0].searchThisNode(interval);
+			if (this.intervalList.get(0).getStart()==interval.getStart() && this.intervalList.get(0).getEnd()==interval.getEnd())
+				for (DynInterval<T> i : this.intervalList)	
+					if (i==interval)
+						return this;
+			if (interval.getEnd()>=this.intervalList.get(0).getStart())
+				this.children[1].searchThisNode(interval);
+		}
+		return null;
 	}
 
 	/**

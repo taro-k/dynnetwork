@@ -19,7 +19,10 @@
 
 package org.cytoscape.dyn.internal.view.model;
 
+import java.util.List;
+
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -133,6 +136,46 @@ public interface DynNetworkView<T>
 	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value);
 	
 	/**
+	 * Search overlapping intervals for graphs given an interval that changed
+	 * from the last search.
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for nodes given an interval that changed
+	 * from the last search.
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for edges given an interval that changed
+	 * from the last search.
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for node attributes given an interval that changed
+	 * from the last search.
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for edge attributes given an interval that changed
+	 * from the last search.
+	 * @param interval
+	 * @return list of changed overlapping intervals
+	 */
+	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval);
+	
+	/**
 	 * Initialize transparency values.
 	 * @param visibility
 	 */
@@ -171,5 +214,17 @@ public interface DynNetworkView<T>
 	 * Get current visual style.
 	 * @return
 	 */
-	public VisualStyle getCurrentVisualStyle() ;
+	public VisualStyle getCurrentVisualStyle();
+	
+	/**
+	 * Get number of currently visible nodes
+	 * @return
+	 */
+	public int getVisibleNodes();
+
+	/**
+	 * Get number of current visible edges.
+	 * @return
+	 */
+	public int getVisibleEdges();
 }

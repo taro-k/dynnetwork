@@ -19,7 +19,11 @@
 
 package org.cytoscape.dyn.internal.view.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -45,6 +49,15 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final CyNetworkView view;
 	private final VisualMappingManager cyStyleManager;
 	
+	private int visibleNodes;
+	private int visibleEdges;
+	
+	private List<DynInterval<T>> currentNodes;
+	private List<DynInterval<T>> currentEdges;
+	private List<DynInterval<T>> currentGraphsAttr;
+	private List<DynInterval<T>> currentNodesAttr;
+	private List<DynInterval<T>> currentEdgesAttr;
+	
 	private double currentTime;
 
 	public DynNetworkViewImpl(
@@ -56,6 +69,15 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentTime = 0;
 		this.dynNetwork = dynNetwork;
 		this.cyStyleManager = cyStyleManager;
+		
+		this.visibleNodes = 0;
+		this.visibleEdges = 0;
+		
+		this.currentNodes = new ArrayList<DynInterval<T>>();
+		this.currentEdges = new ArrayList<DynInterval<T>>();
+		this.currentGraphsAttr = new ArrayList<DynInterval<T>>();
+		this.currentNodesAttr = new ArrayList<DynInterval<T>>();
+		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
 		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
@@ -134,6 +156,65 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		view.getEdgeView(edge).setLockedValue(vp,value);
 	}
+	
+	@Override
+	public List<DynInterval<T>> searchChangedNodes(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = dynNetwork.searchNodes(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
+		this.visibleNodes = tempList.size();
+		currentNodes = tempList;
+		return changedList;
+	}
+
+	@Override
+	public List<DynInterval<T>> searchChangedEdges(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = dynNetwork.searchEdges(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
+		this.visibleEdges = tempList.size();
+		currentEdges = tempList;
+		return changedList;
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchChangedGraphsAttr(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = dynNetwork.searchGraphsAttr(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentGraphsAttr, tempList);
+		currentGraphsAttr = tempList;
+		return changedList;
+	}
+
+	@Override
+	public List<DynInterval<T>> searchChangedNodesAttr(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = dynNetwork.searchNodesAttr(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentNodesAttr, tempList);
+		currentNodesAttr = tempList;
+		return changedList;
+	}
+
+	@Override
+	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = dynNetwork.searchEdgesAttr(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdgesAttr, tempList);
+		currentEdgesAttr = tempList;
+		return changedList;
+	}
+	
+	@Override
+	public int getVisibleNodes()
+	{
+		return this.visibleNodes;
+	}
+
+	@Override
+	public int getVisibleEdges()
+	{
+		return this.visibleEdges;
+	}
 
 	@Override
 	public void updateView() 
@@ -169,6 +250,24 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	public VisualStyle getCurrentVisualStyle() 
 	{
 		return cyStyleManager.getCurrentVisualStyle();
+	}
+	
+	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
+	{
+		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : list1)
+			if (!list2.contains(i))
+			{
+				diff.add(i);
+				i.setOn(false);
+			}
+		for (DynInterval<T> i : list2)
+			if (!list1.contains(i))
+			{
+				diff.add(i);
+				i.setOn(true);
+			}
+		return diff;
 	}
 	
 	@Override

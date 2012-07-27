@@ -55,7 +55,7 @@ public class DynDoubleAttribute extends AbstractDynAttribute<Double>
     {
 		double min = Double.POSITIVE_INFINITY;
 		for (DynInterval<Double> i : intervalList)
-			min = Math.min(min, i.getValue());
+			min = Math.min(min, i.getOnValue());
     	return min;
     }
     
@@ -64,7 +64,7 @@ public class DynDoubleAttribute extends AbstractDynAttribute<Double>
 	{
 		double max = Double.NEGATIVE_INFINITY;
 		for (DynInterval<Double> i : intervalList)
-			max = Math.max(max, i.getValue());
+			max = Math.max(max, i.getOnValue());
     	return max;
 	}
 	

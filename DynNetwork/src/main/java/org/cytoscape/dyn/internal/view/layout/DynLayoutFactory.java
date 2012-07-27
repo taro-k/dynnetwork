@@ -29,14 +29,14 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public interface DynLayoutFactory
+public interface DynLayoutFactory<T>
 {
 	/**
 	 * Create layout for view.
 	 * @param view
 	 * @return
 	 */
-	public DynLayoutImpl createLayout(CyNetworkView view);
+	public DynLayout<T> createLayout(CyNetworkView view);
 	
 	/**
 	 * Remove layout from view.

@@ -107,7 +107,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodes(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
-			CyNode node = dynNetwork.getNode(interval.getAttribute().getKey().getRow());
+			CyNode node = dynNetwork.getNode(interval);
 			if (node!=null && nodeList.contains(node))
 			{
 				view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
@@ -118,7 +118,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 		intervalList = dynNetwork.searchEdges(timeInterval);
 		for (DynInterval<T> interval : intervalList)
 		{
-			CyEdge edge = dynNetwork.getEdge(interval.getAttribute().getKey().getRow());
+			CyEdge edge = dynNetwork.getEdge(interval);
 			if (edge!=null && edgeList.contains(edge))
 				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 		}

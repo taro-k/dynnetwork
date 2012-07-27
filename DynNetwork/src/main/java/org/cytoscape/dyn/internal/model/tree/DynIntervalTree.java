@@ -55,7 +55,7 @@ public interface DynIntervalTree<T>
 	 * Get all intervals contained in this interval tree.
 	 * @return list of intervals in this interval tree.
 	 */
-	public List<DynInterval<T>> searchAll();
+	public List<DynInterval<T>> getIntervals();
 	
 	/**
 	 * Get all intervals corresponding to this object id

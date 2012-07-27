@@ -96,4 +96,10 @@ public interface DynCytoPanel<T,C> extends CytoPanelComponent
 	 * @return
 	 */
 	public int getVisibility();
+	
+	/**
+	 * Get smoothness;
+	 * @return
+	 */
+	public int getSmoothness();
 }

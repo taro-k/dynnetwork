@@ -24,9 +24,9 @@ package org.cytoscape.dyn.internal.model.tree;
  * in a given time range. An interval tree is a red-black tree that maintains a dynamic set of 
  * elements, with each node {@link DynNode} containing an interval {@link DynInterval}.  The leaf 
  * nodes do not contain data, and reference to a dummy sentinel node (nil). The root is also a nil 
- * sentinel node, whose left reference points to the network root.
- * 
- * <code> DynIntervalTreeImpl </code> guarantees O(log n) insertion and deletion of elements.
+ * sentinel node, whose left reference points to the network root. <code> DynIntervalTreeImpl </code> 
+ * guarantees O(log n) insertion and deletion of elements. The code was extended to be able to deal
+ * with identical intervals.
  *  
  * @author Sabina Sara Pfister
  *
@@ -67,7 +67,6 @@ public final class DynIntervalTreeImpl<T> extends AbstractDynIntervalTree<T>
 		int dir = 0;
 		while (!root.isLeaf())
 		{	
-			
 			// If duplicate
 			if (z.getStart()==root.getStart() && z.getEnd()==root.getEnd())
 			{

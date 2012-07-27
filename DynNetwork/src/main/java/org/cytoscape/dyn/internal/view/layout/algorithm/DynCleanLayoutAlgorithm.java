@@ -21,7 +21,6 @@ package org.cytoscape.dyn.internal.view.layout.algorithm;
 
 import java.util.Set;
 
-import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutAlgorithm;
@@ -41,7 +40,6 @@ import org.cytoscape.work.undo.UndoSupport;
  */
 public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
-	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory dynLaoutFactory;
     
     /**
@@ -56,11 +54,9 @@ public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
-                    final DynCytoPanel<T, C> panel,
                     final DynLayoutFactory dynLaoutFactory)
     {
             super(computerName, humanName, undoSupport);
-            this.panel = panel;
             this.dynLaoutFactory = dynLaoutFactory;
     }
 
@@ -71,10 +67,9 @@ public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
-    	if (networkView!=null)
-    		dynLaoutFactory.removeLayout(networkView);
-
-    	return  new TaskIterator();
+    	dynLaoutFactory.removeLayout(networkView);
+    	return new TaskIterator(new DynCleanLayoutAlgorithmTask(
+        		getName(), networkView,nodesToLayOut, layoutAttribute, undoSupport));
     }
 
 }
