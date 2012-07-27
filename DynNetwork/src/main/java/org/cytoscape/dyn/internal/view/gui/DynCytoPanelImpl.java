@@ -83,7 +83,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
-	private final DynLayoutManager layoutManager;
+	private final DynLayoutManager<T> layoutManager;
 	private final Transformator transformator;
 	
 	private DynNetwork<T> network;
@@ -131,7 +131,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
-			final DynLayoutManager layoutManager)
+			final DynLayoutManager<T> layoutManager)
 	{
 		this.taskManager = taskManager;
 		this.appManager = appManager;

@@ -54,7 +54,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	public DynNetworkViewTask(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout layout,
+			final DynLayout<T> layout,
 			final Transformator transformator,
 			final BlockingQueue queue,
 			final double low, 

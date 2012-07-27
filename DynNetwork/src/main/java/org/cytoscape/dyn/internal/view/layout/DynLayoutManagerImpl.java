@@ -33,26 +33,26 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public final class DynLayoutManagerImpl implements DynLayoutManager
+public final class DynLayoutManagerImpl<T> implements DynLayoutManager<T>
 {
-	private final Map<CyNetworkView, DynLayout> dynLayoutMap;
+	private final Map<CyNetworkView, DynLayout<T>> dynLayoutMap;
 	
 	/**
 	 * <code> DynLayoutManagerImpl </code> constructor.
 	 */
 	public DynLayoutManagerImpl()
 	{
-		this.dynLayoutMap = new WeakHashMap<CyNetworkView, DynLayout>();
+		this.dynLayoutMap = new WeakHashMap<CyNetworkView, DynLayout<T>>();
 	}
 
 	@Override
-	public void addDynLayout(DynLayout dynLayout)
+	public void addDynLayout(DynLayout<T> dynLayout)
 	{
 		this.dynLayoutMap.put(dynLayout.getNetworkView(), dynLayout);
 	}
 
 	@Override
-	public DynLayout getDynLayout(CyNetworkView view)
+	public DynLayout<T> getDynLayout(CyNetworkView view)
 	{
 		return dynLayoutMap.get(view);
 	}
@@ -65,7 +65,7 @@ public final class DynLayoutManagerImpl implements DynLayoutManager
 	}
 	
 	@Override
-	public Collection<DynLayout> getDynNetworks() 
+	public Collection<DynLayout<T>> getDynNetworks() 
 	{
 		return dynLayoutMap.values();
 	}

@@ -31,13 +31,13 @@ import org.cytoscape.view.model.CyNetworkView;
  */
 public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T> 
 {
-	private final DynLayoutManager layoutManager;
+	private final DynLayoutManager<T> layoutManager;
 	
 	/**
 	 * <code> DynLayoutFactoryImpl </code> constructor.
 	 * @param layoutManager
 	 */
-	public DynLayoutFactoryImpl(DynLayoutManager layoutManager)
+	public DynLayoutFactoryImpl(DynLayoutManager<T> layoutManager)
 	{
 		this.layoutManager = layoutManager;
 	}

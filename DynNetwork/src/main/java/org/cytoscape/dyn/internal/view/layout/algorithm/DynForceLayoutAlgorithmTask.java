@@ -42,14 +42,11 @@ import org.cytoscape.work.undo.UndoSupport;
 public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask 
 {
     
-	private final DynLayout layout;
+	private final DynLayout<T> layout;
 	private final CyNetworkView view;
 	private final DynNetworkView<T> dynView;
 	
 	private final double currentTime;
-	private final double timeMin;
-	private final double timeMax;
-	private final double timeStep;
 	
 	/**
 	 * <code> DynForceLayoutAlgorithmTask </code> constructor.
@@ -65,25 +62,18 @@ public class DynForceLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	 */
     public DynForceLayoutAlgorithmTask(
                     final String name,
-                    final DynLayout layout,
+                    final DynLayout<T> layout,
                     final DynNetworkView<T> dynView,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
-                    final double currentTime,
-                    final double timeMin,
-                    final double timeMax,
-                    final double timeStep)
+                    final double currentTime)
     {
             super(name, layout.getNetworkView(), nodesToLayOut, layoutAttribute, undo);
             this.layout = layout;
             this.view = layout.getNetworkView();
             this.dynView = dynView;
-            
             this.currentTime = currentTime;
-            this.timeMin = timeMin;
-            this.timeMax = timeMax;
-            this.timeStep = timeStep;
     }
 
 	@Override

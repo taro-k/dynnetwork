@@ -42,7 +42,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynCytoPanel<T,C> panel;
 	protected final DynNetworkView<T> view;
 	protected final DynNetwork<T> dynNetwork;
-	protected final DynLayout layout;
+	protected final DynLayout<T> layout;
 	protected final Transformator transformator;
 	protected final BlockingQueue queue;
 	protected final double low;
@@ -67,7 +67,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected AbstractDynNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout layout,
+			final DynLayout<T> layout,
 			final Transformator transformator,
 			final BlockingQueue queue, 
 			final double low, 

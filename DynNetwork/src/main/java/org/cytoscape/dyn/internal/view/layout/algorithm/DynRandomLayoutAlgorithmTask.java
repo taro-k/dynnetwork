@@ -50,9 +50,7 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	private final DynNetworkView<T> dynView;
 	
 	private final double currentTime;
-	private final double timeMin;
-	private final double timeMax;
-	private final double timeStep;
+
 	
 	/**
 	 * <code> DynRandomLayoutAlgorithmTask </code> constructor.
@@ -62,9 +60,6 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
 	 * @param layoutAttribute
 	 * @param undo
 	 * @param currentTime
-	 * @param timeMin
-	 * @param timeMax
-	 * @param timeStep
 	 */
     public DynRandomLayoutAlgorithmTask(
                     final String name,
@@ -73,26 +68,19 @@ public final class DynRandomLayoutAlgorithmTask<T> extends AbstractLayoutTask
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
-                    final double currentTime,
-                    final double timeMin,
-                    final double timeMax,
-                    final double timeStep)
+                    final double currentTime)
     {
             super(name, layout.getNetworkView(), nodesToLayOut, layoutAttribute, undo);
             this.layout = layout;
             this.view = layout.getNetworkView();
             this.dynView = dynView;
-            
             this.currentTime = currentTime;
-            this.timeMin = timeMin;
-            this.timeMax = timeMax;
-            this.timeStep = timeStep;
     }
 
     @Override
     protected void doLayout(TaskMonitor taskMonitor)
     {	
-    	if (networkView!=null)
+    	if (networkView!=null && dynView!=null)
     	{
     		// Compute distance between nodes depending on the number of present nodes
     		double dist = 2*50*Math.sqrt(nodesToLayOut.size());

@@ -44,7 +44,7 @@ import org.cytoscape.work.undo.UndoSupport;
 public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
-    private final DynLayoutFactory dynLaoutFactory;
+    private final DynLayoutFactory<T> dynLaoutFactory;
     private final DynNetworkViewManager<T> viewManager;
     
     /**
@@ -60,7 +60,7 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     final String humanName,
                     final UndoSupport undoSupport,
                     final DynCytoPanel<T, C> panel,
-                    final DynLayoutFactory dynLaoutFactory,
+                    final DynLayoutFactory<T> dynLaoutFactory,
                     final DynNetworkViewManager<T> viewManager)
     {
             super(computerName, humanName, undoSupport);
@@ -76,10 +76,15 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
-    		DynLayout layout = dynLaoutFactory.createLayout(networkView);
+    		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
             return new TaskIterator(new DynRandomLayoutAlgorithmTask<T>(
-            		getName(), layout, viewManager.getDynNetworkView(networkView), nodesToLayOut, layoutAttribute, undoSupport,
-            		panel.getTime(),panel.getMinTime(),panel.getMaxTime(),(panel.getMaxTime()-panel.getMinTime())/10));
+            		getName(), 
+            		layout, 
+            		viewManager.getDynNetworkView(networkView), 
+            		nodesToLayOut, 
+            		layoutAttribute, 
+            		undoSupport,
+            		panel.getTime()));
     }
 
 }

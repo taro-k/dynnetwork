@@ -114,20 +114,20 @@ public final class DynVizmapTask<T> extends AbstractTask
 		points.get(points.size()-1).setValue(newMax);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private <K, V> void printContinousMapping(VisualMappingFunction<?, ?> visualMapping)
-	{
-		System.out.println("\nMAPPING attribute : " + visualMapping.getMappingColumnName());
-		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
-		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
-		{
-			System.out.println(
-					" K=" + point.getValue() + 
-					" lesser=" + point.getRange().lesserValue +
-					" equal=" + point.getRange().equalValue +
-					" greater=" + point.getRange().greaterValue);
-		}
-	}
+//	@SuppressWarnings("unchecked")
+//	private <K, V> void printContinousMapping(VisualMappingFunction<?, ?> visualMapping)
+//	{
+//		System.out.println("\nMAPPING attribute : " + visualMapping.getMappingColumnName());
+//		ContinuousMapping<K, V> mapping = (ContinuousMapping<K, V>) visualMapping;
+//		for (ContinuousMappingPoint<K, V> point : mapping.getAllPoints())
+//		{
+//			System.out.println(
+//					" K=" + point.getValue() + 
+//					" lesser=" + point.getRange().lesserValue +
+//					" equal=" + point.getRange().equalValue +
+//					" greater=" + point.getRange().greaterValue);
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	private <K> K resize(K value, K min, K max, K newMin, K newMax)

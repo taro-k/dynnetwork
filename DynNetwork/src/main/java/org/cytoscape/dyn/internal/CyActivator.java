@@ -106,8 +106,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
     	
-    	DynLayoutManagerImpl dynLayoutManager = new DynLayoutManagerImpl();
-    	DynLayoutFactoryImpl dynLayoutFactory = new DynLayoutFactoryImpl(dynLayoutManager);
+    	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
+    	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
     	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
     	CyLayoutAlgorithm dynForceLayout = new DynForceLayoutAlgorithm<T,C>("Dynamic Layouts", "Kamada-Kawai",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);

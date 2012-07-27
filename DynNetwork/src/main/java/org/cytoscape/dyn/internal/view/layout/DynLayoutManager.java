@@ -31,20 +31,20 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public interface DynLayoutManager
+public interface DynLayoutManager<T>
 {
 	/**
 	 * Add layout.
 	 * @param dynLayout
 	 */
-	public void addDynLayout(DynLayout dynLayout);
+	public void addDynLayout(DynLayout<T> dynLayout);
 
 	/**
 	 * Get network view.
 	 * @param network
 	 * @return network
 	 */
-	public DynLayout getDynLayout(CyNetworkView view);
+	public DynLayout<T> getDynLayout(CyNetworkView view);
 	
 	/**
 	 * Remove DynLayout associated with view if exists.
@@ -55,6 +55,6 @@ public interface DynLayoutManager
 	 * Get all dynLayouts.
 	 * @return networks
 	 */
-	public Collection<DynLayout> getDynNetworks();
+	public Collection<DynLayout<T>> getDynNetworks();
 	
 }

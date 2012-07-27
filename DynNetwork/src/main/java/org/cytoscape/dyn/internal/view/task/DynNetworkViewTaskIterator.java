@@ -69,7 +69,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	public DynNetworkViewTaskIterator(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout layout,
+			final DynLayout<T> layout,
 			final Transformator transformator,
 			final BlockingQueue queue,
 			final double low, 

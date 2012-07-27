@@ -40,7 +40,7 @@ import org.cytoscape.work.undo.UndoSupport;
  */
 public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
-    private final DynLayoutFactory dynLaoutFactory;
+    private final DynLayoutFactory<T> dynLaoutFactory;
     
     /**
      * <code> DynCleanLayoutAlgorithm </code> constructor.
@@ -54,7 +54,7 @@ public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
-                    final DynLayoutFactory dynLaoutFactory)
+                    final DynLayoutFactory<T> dynLaoutFactory)
     {
             super(computerName, humanName, undoSupport);
             this.dynLaoutFactory = dynLaoutFactory;
