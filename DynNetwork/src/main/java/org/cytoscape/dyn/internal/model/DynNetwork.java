@@ -268,11 +268,24 @@ public interface DynNetwork<T>
 	public CyNetwork getNetwork();
 	
 	/**
+	 * Get network label.
+	 * @return network label
+	 */
+	public String getNetworkLabel();
+	
+	/**
 	 * Get node.
 	 * @param id
 	 * @return node
 	 */
-	public long getCyNode(String id);
+	public long getNode(String id);
+	
+	/**
+	 * Get node label.
+	 * @param node
+	 * @return node label
+	 */
+	public String getNodeLabel(CyNode node);
 	
 	/**
 	 * Get node.
@@ -286,7 +299,14 @@ public interface DynNetwork<T>
 	 * @param id
 	 * @return edge
 	 */
-	public long getCyEdge(String id);
+	public long getEdge(String id);
+	
+	/**
+	 * Get edge label.
+	 * @param edge
+	 * @return edge label
+	 */
+	public String getEdgeLabel(CyEdge edge);
 	
 	/**
 	 * Get edge.

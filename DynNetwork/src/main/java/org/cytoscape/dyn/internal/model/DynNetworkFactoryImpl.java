@@ -250,7 +250,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			String label = dynNetwork.readGraphTable(CyNetwork.NAME, (T) "string").toString();
+			String label = dynNetwork.getNetworkLabel();
 			System.out.println("\nXGMML Parser Warning: skipped invalid interval for graph label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
 		}
 	}
@@ -267,7 +267,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			String label = dynNetwork.readNodeTable(node, CyNetwork.NAME, (T) "string").toString();
+			String label = dynNetwork.getNodeLabel(node);
 			System.out.println("\nXGMML Parser Warning: skipped invalid interval for node label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
 		}
 	}
@@ -284,7 +284,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			String label = dynNetwork.readEdgeTable(edge, CyNetwork.NAME, (T) "string").toString();
+			String label = dynNetwork.getEdgeLabel(edge);
 			System.out.println("\nXGMML Parser Warning: skipped invalid interval for edge label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
 		}
 	}
@@ -302,14 +302,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		// do nothing
 		return null;
 	}
-	
-//	private void setNetworkName(CyNetwork currentNetwork, String label)
-//	{
-//		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
-//		rootNetwork.getDefaultNetworkTable().createColumn(CyNetwork.NAME, String.class, false);
-//		rootNetwork.getDefaultNetworkTable().getRow(CyNetwork.NAME).set(CyNetwork.NAME,nameUtil.getSuggestedNetworkTitle(label));
-//		currentNetwork.getRow(currentNetwork).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
-//	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
 	{
@@ -336,7 +328,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		else
 		{
 			System.out.println("\nXGMML Parser Warning: updated node label=" + label + " (duplicate)");
-			node = dynNetwork.getNetwork().getNode(dynNetwork.getCyNode(id));
+			node = dynNetwork.getNetwork().getNode(dynNetwork.getNode(id));
 		}
 		
 		if (group!=null)
@@ -351,8 +343,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	
 	private CyEdge createEdge(DynNetwork<T> dynNetwork, String id, String label, String source, String target, String start, String end)
 	{
-			CyNode nodeSource = dynNetwork.getNetwork().getNode(dynNetwork.getCyNode(source));
-			CyNode nodeTarget = dynNetwork.getNetwork().getNode(dynNetwork.getCyNode(target));
+			CyNode nodeSource = dynNetwork.getNetwork().getNode(dynNetwork.getNode(source));
+			CyNode nodeTarget = dynNetwork.getNetwork().getNode(dynNetwork.getNode(target));
 
 			CyEdge edge;
 			if (!dynNetwork.containsCyEdge(id))
@@ -364,7 +356,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			{
 				System.out.println("\nXGMML Parser Warning: updated edge label=" + label 
 						+ " source=" + source + " target=" + target + " (duplicate)");
-				edge = dynNetwork.getNetwork().getEdge(dynNetwork.getCyEdge(id));
+				edge = dynNetwork.getNetwork().getEdge(dynNetwork.getEdge(id));
 			}
 
 			for (CyGroup group : groupManager.getGroupsForNode(nodeSource))

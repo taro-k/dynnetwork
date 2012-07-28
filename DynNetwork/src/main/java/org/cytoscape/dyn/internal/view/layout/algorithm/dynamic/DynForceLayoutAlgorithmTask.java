@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.layout.algorithm;
+package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
 import java.util.Set;
 

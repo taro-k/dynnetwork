@@ -17,11 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.layout.algorithm;
+package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
 import java.util.Set;
 
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
+import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkView;
@@ -30,34 +33,40 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> DynCleanLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
- * {@link DynCleanLayoutAlgorithmTask}.
+ * <code> DynLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
+ * {@link DynRandomLayoutAlgorithmTask}.
  * 
  * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>
  */
-public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
+public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
+	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory<T> dynLaoutFactory;
+    private final DynNetworkViewManager<T> viewManager;
     
     /**
-     * <code> DynCleanLayoutAlgorithm </code> constructor.
+     * <code> DynRandomLayoutAlgorithm </code> constructor.
      * @param computerName
      * @param humanName
      * @param undoSupport
      * @param panel
      * @param dynLaoutFactory
      */
-    public DynCleanLayoutAlgorithm(
+    public DynRandomLayoutAlgorithm(
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
-                    final DynLayoutFactory<T> dynLaoutFactory)
+                    final DynCytoPanel<T, C> panel,
+                    final DynLayoutFactory<T> dynLaoutFactory,
+                    final DynNetworkViewManager<T> viewManager)
     {
             super(computerName, humanName, undoSupport);
+            this.panel = panel;
             this.dynLaoutFactory = dynLaoutFactory;
+            this.viewManager = viewManager;
     }
 
     @Override
@@ -67,9 +76,15 @@ public class DynCleanLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
-    	dynLaoutFactory.removeLayout(networkView);
-    	return new TaskIterator(new DynCleanLayoutAlgorithmTask(
-        		getName(), networkView,nodesToLayOut, layoutAttribute, undoSupport));
+    		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
+            return new TaskIterator(new DynRandomLayoutAlgorithmTask<T>(
+            		getName(), 
+            		layout, 
+            		viewManager.getDynNetworkView(networkView), 
+            		nodesToLayOut, 
+            		layoutAttribute, 
+            		undoSupport,
+            		panel.getTime()));
     }
 
 }

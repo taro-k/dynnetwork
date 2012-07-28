@@ -333,6 +333,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
+	public String getNetworkLabel()
+	{
+		return this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
+	}
+	
+	@Override
 	public CyNode getNode(DynInterval<T> interval) 
 	{
 		return network.getNode(interval.getAttribute().getRow());
@@ -345,15 +351,29 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
-	public long getCyNode(String id)
+	public long getNode(String id)
 	{
 		return cyNodes.get(id);
 	}
 
 	@Override
-	public long getCyEdge(String id) 
+	public long getEdge(String id) 
 	{
 		return cyEdges.get(id);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public String getNodeLabel(CyNode node) 
+	{
+		return this.readNodeTable(node,CyNetwork.NAME, (T) "string").toString();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public String getEdgeLabel(CyEdge edge) 
+	{
+		return this.readEdgeTable(edge,CyNetwork.NAME, (T) "string").toString();
 	}
 
 	@Override
@@ -697,7 +717,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		for (DynAttribute<T> attr : graphTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
-				System.out.println("graph" + "\t" + this.readGraphTable(CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+				System.out.println("graph" + "\t" + this.getNetworkLabel() + "\t" + attr.getKey().getColumn() + 
 						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				graphTreeAttr.insert(interval, attr.getRow());
 			}
@@ -706,7 +726,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
 				if (this.getNode(interval)!=null)
-				System.out.println("node" + "\t" + this.readNodeTable(this.getNode(interval),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+				System.out.println("node" + "\t" + this.getNodeLabel(this.getNode(interval)) + "\t" + attr.getKey().getColumn() + 
 						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				nodeTreeAttr.insert(interval, attr.getRow());
 			}
@@ -715,7 +735,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
 				if (this.getEdge(interval)!=null)
-				System.out.println("edge" + "\t" + this.readEdgeTable(this.getEdge(interval),CyNetwork.NAME, (T) "string") + "\t" + attr.getKey().getColumn() + 
+				System.out.println("edge" + "\t" + this.getEdgeLabel(this.getEdge(interval)) + "\t" + attr.getKey().getColumn() + 
 						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				edgeTreeAttr.insert(interval, attr.getRow());
 			}
