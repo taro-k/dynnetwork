@@ -45,8 +45,6 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynLayout<T> layout;
 	protected final Transformator transformator;
 	protected final BlockingQueue queue;
-	protected final double low;
-	protected final double high;
 	
 	protected double timeStart;
 	protected double timeEnd;
@@ -69,9 +67,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 			final DynNetworkView<T> view,
 			final DynLayout<T> layout,
 			final Transformator transformator,
-			final BlockingQueue queue, 
-			final double low, 
-			final double high) 
+			final BlockingQueue queue) 
 	{
 		this.panel = panel;
 		this.view = view;
@@ -79,8 +75,6 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 		this.layout = layout;
 		this.transformator = transformator;
 		this.queue = queue;
-		this.low = low;
-		this.high = high;
 	}
 
 	/**
@@ -99,19 +93,19 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	
 	protected void updateAttr(DynInterval<T> interval)
 	{
-		dynNetwork.writeGraphTable(interval.getAttribute().getColumn(), interval.getValue(timeInterval));
+		dynNetwork.writeGraphTable(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 	}
 	
 	protected void updateAttr(CyNode node, DynInterval<T> interval)
 	{
 		if (node!=null)
-			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
+			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 	}
 	
 	protected void updateAttr(CyEdge edge, DynInterval<T> interval)
 	{
 		if (edge!=null)
-			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getValue(timeInterval));
+			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 	}
 	
 }

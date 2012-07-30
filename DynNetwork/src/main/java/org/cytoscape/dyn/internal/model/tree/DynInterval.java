@@ -229,7 +229,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	 * @param interval
 	 * @return value
 	 */
-	public T getValue(DynInterval<T> interval)
+	public T getOverlappingValue(DynInterval<T> interval)
 	{
 		if (this.compareTo(interval)>0)
 			return onValue;

@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.model;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 
@@ -225,6 +226,30 @@ public interface DynNetworkSnapshot<T>
 	 * @return edge count
 	 */
 	public int getEdgeCount();
+	
+	/**
+	 * Get dynamic network view.
+	 * @return dynamic network view class
+	 */
+	public DynNetworkView<T> getNetworkView();
+
+	/**
+	 * Get time interval for this snapshot.
+	 * @return
+	 */
+	public DynInterval<T> getInterval();
+	
+	/**
+	 * Get time interval for node.
+	 * @return
+	 */
+	public DynInterval<T> getInterval(CyNode node);
+	
+	/**
+	 * Get time interval for edge.
+	 * @return
+	 */
+	public DynInterval<T> getInterval(CyEdge edge);	
 	
 	/**
 	 * Print list of nodes and edges.

@@ -76,6 +76,7 @@ public class DynRandomLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     Set<View<CyNode>> nodesToLayOut,
                     String layoutAttribute)
     {
+    		dynLaoutFactory.removeLayout(networkView);
     		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
             return new TaskIterator(new DynRandomLayoutAlgorithmTask<T>(
             		getName(), 

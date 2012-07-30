@@ -40,7 +40,8 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  */
 public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetworkViewTask<T,C>  
 {
-	private final int visibility;
+	private double time;
+	private int visibility;
 
 	/**
 	 * <code> DynNetworkViewTransparencyTask </code> constructor.
@@ -48,27 +49,21 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	 * @param view
 	 * @param queue
 	 * @param low
-	 * @param high
-	 * @param visibility
 	 */
 	public DynNetworkViewTransparencyTask(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
-			final BlockingQueue queue,
-			final double low, 
-			final double high, 
-			final int visibility) 
+			final BlockingQueue queue) 
 	{
-		super(panel, view, null, null, queue, low, high);
-		this.visibility = visibility;
+		super(panel, view, null, null, queue);
 	}
 
 	@Override
 	public void run() 
 	{
 		queue.lock(); 
-		
-		DynInterval<T> timeInterval = new DynInterval<T>(low, high);
+
+		setParameters();
 		
 		// update nodes
 		List<DynInterval<T>> intervalList = dynNetwork.searchNodesNot(timeInterval);
@@ -89,9 +84,9 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	{
 		if (node!=null)
 		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
 		}
 	}
 
@@ -99,9 +94,19 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	{
 		if (edge!=null)
 		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 		}
+	}
+	
+	private void setParameters()
+	{
+		this.time = this.panel.getTime();
+		if (time>=panel.getMaxTime())
+			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			timeInterval = new DynInterval<T>(time, time);
+		this.visibility = this.panel.getVisibility();
 	}
 
 }

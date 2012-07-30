@@ -11,6 +11,7 @@ org.cytoscape.dyn.internal.model.attribute
 org.cytoscape.dyn.internal.model.tree
 org.cytoscape.dyn.internal.view.gui
 org.cytoscape.dyn.internal.view.layout
-org.cytoscape.dyn.internal.view.layout.algorithm
+org.cytoscape.dyn.internal.view.layout.algorithm.dynamic
+org.cytoscape.dyn.internal.view.layout.algorithms.standard
 org.cytoscape.dyn.internal.view.model
 org.cytoscape.dyn.internal.view.task

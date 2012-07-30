@@ -45,30 +45,25 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTask<T,C>  
 {
 	private final CyGroup group;
-	private final int visibility;
+	
+	private double time;
+	private int visibility;
 
 	/**
 	 * <code> DynNetworkViewTaskGroup </code> constructor.
 	 * @param panel
 	 * @param view
 	 * @param queue
-	 * @param low
-	 * @param high
-	 * @param visibility
 	 * @param group
 	 */
 	public DynNetworkViewTaskGroup(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final BlockingQueue queue,
-			double low, 
-			double high,
-			final int visibility,
 			final CyGroup group) 
 	{
-		super(panel, view, null, null, queue, low, high);
+		super(panel, view, null, null, queue);
 		this.group = group;
-		this.visibility = visibility;
 	}
 
 	@Override
@@ -78,7 +73,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 		
 		view.updateView();
 		
-		timeInterval = new DynInterval<T>(low, high);
+		setParameters();
 
 		List<CyNode> nodeList = new ArrayList<CyNode>();
 		List<CyEdge> edgeList = new ArrayList<CyEdge>();
@@ -127,6 +122,16 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 		
 		queue.unlock(); 
 
+	}
+	
+	private void setParameters()
+	{
+		this.time = this.panel.getTime();
+		if (time>=panel.getMaxTime())
+			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			timeInterval = new DynInterval<T>(time, time);
+		this.visibility = this.panel.getVisibility();
 	}
 
 }

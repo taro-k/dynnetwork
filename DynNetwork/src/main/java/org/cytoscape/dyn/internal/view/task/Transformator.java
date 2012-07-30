@@ -204,9 +204,9 @@ public class Transformator
 	{
 		if (node!=null)
 		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
 		}
 	}
 	
@@ -214,8 +214,8 @@ public class Transformator
 	{
 		if (edge!=null)
 		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,value);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,value);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,value);
 		}
 	}
 
@@ -263,11 +263,15 @@ public class Transformator
 			case 2000:
 				this.alpha = 0.1;
 				break;
+			case 3000:
+				this.alpha = 0.04;
+				break;
+			case 4000:
+				this.alpha = 0.03;
+				break;
 			}
 
 		}
-
-
 	}
 
 }

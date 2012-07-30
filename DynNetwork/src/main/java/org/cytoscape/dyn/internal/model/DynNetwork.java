@@ -238,6 +238,12 @@ public interface DynNetwork<T>
 	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval);
 	
 	/**
+	 * Get a list of times at which events occur.
+	 * @return
+	 */
+	public List<Double> getEventTimeList();
+	
+	/**
 	 * Get dynamic attribute for given network and name.
 	 * @param network
 	 * @param column
@@ -431,5 +437,11 @@ public interface DynNetwork<T>
 	 * @return boolean
 	 */
 	public boolean isDirected();
+	
+	/**
+	 * Print out network structure.
+	 * @return
+	 */
+	public void print();
 
 }

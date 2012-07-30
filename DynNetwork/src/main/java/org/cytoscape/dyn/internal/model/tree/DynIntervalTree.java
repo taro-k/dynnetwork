@@ -64,6 +64,12 @@ public interface DynIntervalTree<T>
 	 */
 	public List<DynInterval<T>> getIntervals(long id);
 	
+	/**
+	 * Get a list of times at which events occur.
+	 * @return
+	 */
+	public List<Double> getEventTimeList();
+	
     /**
      * Search overlapping intervals in the tree.
 	 * @param interval

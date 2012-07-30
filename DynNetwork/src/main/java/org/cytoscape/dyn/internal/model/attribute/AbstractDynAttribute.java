@@ -171,4 +171,24 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
             return maxTime;
     }
 
+	@Override	
+	public DynInterval<T> getSuccesor(DynInterval<T> interval)
+	{
+		for (DynInterval<T> i : intervalList)
+			if (interval.getEnd()==i.getStart() &&
+					interval.getOnValue().equals(i.getOnValue()))
+				return i;
+		return null;
+	}
+
+	@Override
+	public DynInterval<T> getPredecessor(DynInterval<T> interval)
+	{
+		for (DynInterval<T> i : intervalList)
+			if (interval.getStart()==i.getEnd() &&
+					interval.getOnValue().equals(i.getOnValue()))
+				return i;
+		return null;
+	}
+
 }

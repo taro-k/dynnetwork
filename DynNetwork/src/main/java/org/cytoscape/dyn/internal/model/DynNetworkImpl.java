@@ -51,7 +51,7 @@ import org.cytoscape.model.CyNode;
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
 	private final CyNetwork network;
-	private final CyGroupManager groupManager;
+//	private final CyGroupManager groupManager;
 	
 	private final boolean isDirected;
 
@@ -86,7 +86,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			final boolean isDirected)
 	{
 		this.network = network;
-		this.groupManager = groupManager;
+//		this.groupManager = groupManager;
 		
 		this.isDirected = isDirected;
 
@@ -110,7 +110,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
-		graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -118,7 +117,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
-		nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -126,7 +124,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
-		edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -134,7 +131,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(column, interval);
-		graphTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -142,7 +138,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(node, column, interval);
-		nodeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -150,7 +145,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		setMinMaxTime(interval);
 		setDynAttribute(edge, column, interval);
-		edgeTable.put(interval.getAttribute().getKey(), interval.getAttribute());
 	}
 
 	@Override
@@ -307,6 +301,12 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		return edgeTreeAttr.search(interval);
 	}
+	
+	@Override
+	public List<Double> getEventTimeList()
+	{
+		return this.nodeTree.getEventTimeList();
+	}
 
 	@Override
 	public DynAttribute<T> getDynAttribute(CyNetwork network, String column)
@@ -333,6 +333,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public String getNetworkLabel()
 	{
 		return this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
@@ -454,7 +455,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			else
 				return minEndTime;
 		else
-			return minStartTime;
+			return Math.min(minStartTime,minEndTime);
 	}
 
 	@Override
@@ -466,7 +467,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			else
 				return maxStartTime;
 		else
-			return maxEndTime;
+			return Math.max(maxEndTime,maxStartTime);
 	}
 	
 	@Override
@@ -537,6 +538,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		if (!column.equals(CyNetwork.NAME))
 			this.graphTable.get(new KeyPairs(CyNetwork.NAME, this.network.getSUID()))
 			.addChildren(this.graphTable.get(key));
+		
+		extendInterval(graphTable.get(key).getPredecessor(interval), interval, graphTable.get(key).getSuccesor(interval));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -563,6 +566,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		if (!column.equals(CyNetwork.NAME))
 			this.nodeTable.get(new KeyPairs(CyNetwork.NAME, node.getSUID()))
 			.addChildren(this.nodeTable.get(key));
+		
+		extendInterval(nodeTable.get(key).getPredecessor(interval), interval, nodeTable.get(key).getSuccesor(interval));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -589,6 +594,22 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		if (!column.equals(CyNetwork.NAME))
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
+		
+		extendInterval(edgeTable.get(key).getPredecessor(interval), interval, edgeTable.get(key).getSuccesor(interval));
+	}
+	
+	private void extendInterval(DynInterval<T> previous, DynInterval<T> interval, DynInterval<T> next)
+	{
+		if (previous!=null)
+		{
+			interval.setStart(previous.getStart());
+			interval.getAttribute().removeInterval(previous);
+		}
+		if (next!=null)
+		{
+			interval.setEnd(previous.getEnd());
+			interval.getAttribute().removeInterval(previous);
+		}
 	}
 
 	private synchronized void setMinMaxTime(DynInterval<T> interval)
@@ -602,8 +623,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		}
 		if (!Double.isInfinite(end))
 		{
-			maxEndTime = Math.max(maxEndTime, end);
 			minEndTime = Math.min(minEndTime, end);
+			maxEndTime = Math.max(maxEndTime, end);
 		}
 	}
 	
@@ -707,13 +728,13 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void print()
+	@Override
+	public void print()
 	{
 		DecimalFormat formatter = new DecimalFormat("#0.000");
 		
 		System.out.println("\nELEMENT\tLABEL\tCOLUMN\tVALUE\tSTART\tEND");
-		
+
 		for (DynAttribute<T> attr : graphTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
@@ -721,13 +742,13 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				graphTreeAttr.insert(interval, attr.getRow());
 			}
-		
+
 		for (DynAttribute<T> attr : nodeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
 				if (this.getNode(interval)!=null)
-				System.out.println("node" + "\t" + this.getNodeLabel(this.getNode(interval)) + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+					System.out.println("node" + "\t" + this.getNodeLabel(this.getNode(interval)) + "\t" + attr.getKey().getColumn() + 
+							"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				nodeTreeAttr.insert(interval, attr.getRow());
 			}
 
@@ -735,8 +756,8 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			for (DynInterval<T> interval : attr.getIntervalList())
 			{
 				if (this.getEdge(interval)!=null)
-				System.out.println("edge" + "\t" + this.getEdgeLabel(this.getEdge(interval)) + "\t" + attr.getKey().getColumn() + 
-						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
+					System.out.println("edge" + "\t" + this.getEdgeLabel(this.getEdge(interval)) + "\t" + attr.getKey().getColumn() + 
+							"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
 				edgeTreeAttr.insert(interval, attr.getRow());
 			}
 	}

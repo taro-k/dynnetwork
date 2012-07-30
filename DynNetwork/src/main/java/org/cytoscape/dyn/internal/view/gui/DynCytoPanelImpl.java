@@ -94,7 +94,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private double maxTime;
 	
 	private int visibility = 0;
-	private int smoothness = 500;
+	private int smoothness;
 	
 	private volatile boolean valueIsAdjusting = false;
 	
@@ -166,10 +166,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			JButton source = (JButton)event.getSource();
 			if (source.equals(forwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, time, time, slider, +1)).start();
+						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, slider, +1)).start();
 			else if (source.equals(backwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, time, time, slider, -1)).start();
+						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, slider, -1)).start();
 			else if (source.equals(vizmapButton))
 				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
 						view,view.getCurrentVisualStyle(), queue)));
@@ -180,7 +180,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			if (source==seeAllCheck)
 			{
 				if (source.isSelected())
-					this.visibility = 30;
+					this.visibility = 20;
 				else
 					this.visibility = 0;
 				if (!valueIsAdjusting)
@@ -394,10 +394,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				new NameIDObj(500, "500 ms "),
 				new NameIDObj(750, "750 ms "),
 				new NameIDObj(1000,"1000 ms"),
-				new NameIDObj(2000,"2000 ms")};
+				new NameIDObj(2000,"2000 ms"),
+				new NameIDObj(2000,"3000 ms"),
+				new NameIDObj(2000,"4000 ms")};
 		smoothnessComboBox  = new JComboBox(itemsSmoothness);
 		smoothnessComboBox.setSelectedIndex(2);
 		smoothnessComboBox.addActionListener(this);
+		this.smoothness = ((NameIDObj)smoothnessComboBox.getSelectedItem()).id;
 
 		vizmapButton = new JButton("Reset");
 		vizmapButton.addActionListener(this);
@@ -478,32 +481,17 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		if (singleTask!=null)
 			singleTask.cancel();
 		
-		if (time>=maxTime)
-			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this,view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time-0.0000001,time+0.0000001,visibility,smoothness)).start();
-		else
-			new Thread(singleTask = new DynNetworkViewTask<T,C>(
-					this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue,time,time,visibility,smoothness)).start();
+		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue)).start();
 	}
 	
 	private void updateGroup(CyGroup group)
 	{
-		if (time>=maxTime)
-			new Thread(new DynNetworkViewTaskGroup<T,C>(
-					this,view,queue,time-0.0000001,time+0.0000001,visibility, group)).start();
-		else
-			new Thread(new DynNetworkViewTaskGroup<T,C>(
-					this,view,queue,time,time,visibility,group)).start();
+		new Thread(new DynNetworkViewTaskGroup<T,C>(this,view,queue,group)).start();
 	}
 	
 	private void updateTransparency()
 	{
-		if (time>=maxTime)
-			new Thread(new DynNetworkViewTransparencyTask<T,C>(
-					this,view,queue,time-0.0000001,time+0.0000001,visibility)).start();
-		else
-			new Thread(new DynNetworkViewTransparencyTask<T,C>(
-					this,view,queue,time,time,visibility)).start();
+		new Thread(new DynNetworkViewTransparencyTask<T,C>(this,view,queue)).start();
 	}
 	
 	private void updateGui(double absoluteTime, int value)

@@ -275,15 +275,15 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	{
 		for (final View<CyNode> nodeView : this.getNetworkView().getNodeViews())
 		{
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			nodeView.setVisualProperty(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
 		}
 		
 		for (final View<CyEdge> edgeView : this.getNetworkView().getEdgeViews())
 		{
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+			edgeView.setVisualProperty(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
 		}
 	}
 

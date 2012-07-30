@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 
@@ -40,6 +41,7 @@ import org.cytoscape.model.CyNode;
 public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 {
 	private final DynNetwork<T> network;
+	private final DynNetworkView<T> view;
 	
 	private final List<CyNode> nodeList;
 	private final List<CyEdge> edgeList;
@@ -47,14 +49,16 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	private final Map<CyNode,List<CyEdge>> inEdges;
 	private final Map<CyNode,List<CyEdge>> outEdges;
 	
+	private DynInterval<T> interval;
 	private List<DynInterval<T>> currentNodes;
 	private List<DynInterval<T>> currentEdges;
-	
-	private DynInterval<T> interval;
+	private final Map<CyNode,DynInterval<T>> nodeIntervals;
+	private final Map<CyEdge,DynInterval<T>> edgeIntervals;
 
-	public DynNetworkSnapshotImpl(final DynNetwork<T> network) 
+	public DynNetworkSnapshotImpl(final DynNetworkView<T> view) 
 	{
-		this.network = network;
+		this.view = view;
+		this.network = view.getNetwork();
 		
 		this.nodeList = new ArrayList<CyNode>();
 		this.edgeList = new ArrayList<CyEdge>();
@@ -64,22 +68,41 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		
 		this.currentNodes = new ArrayList<DynInterval<T>>();
 		this.currentEdges = new ArrayList<DynInterval<T>>();
+		this.nodeIntervals = new HashMap<CyNode,DynInterval<T>>();
+		this.edgeIntervals = new HashMap<CyEdge,DynInterval<T>>();
 	}
 	
 	@Override
 	public void setInterval(DynInterval<T> interval) 
 	{
-		this.interval = interval;
+		this.interval = interval; 
+		
 		for (DynInterval<T> i : getChangedNodeIntervals(interval))
 			if (i.isOn())
-				addNode(network.getNode(i));
+			{
+				CyNode node = network.getNode(i);
+				addNode(node);
+				nodeIntervals.put(node, interval);
+			}
 			else
-				removeNode(network.getNode(i));
+			{
+				CyNode node = network.getNode(i);
+				removeNode(node);
+				nodeIntervals.remove(node);
+			}
 		for (DynInterval<T> i : getChangedEdgeIntervals(interval))
 			if (i.isOn())
-				addEdge(network.getEdge(i));
+			{
+				CyEdge edge = network.getEdge(i);
+				addEdge(edge);
+				edgeIntervals.put(edge, interval);
+			}
 			else
+			{
+				CyEdge edge = network.getEdge(i);
 				removeEdge(network.getEdge(i));
+				edgeIntervals.remove(edge);
+			}
 	}
 	
 	@Override
@@ -302,7 +325,13 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 		return edgeList.size();
 	}
-	
+
+	@Override
+	public DynNetworkView<T> getNetworkView() 
+	{
+		return view;
+	}
+
 	private void addNode(CyNode node)
 	{
 		if (node!=null)
@@ -418,9 +447,27 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 
 	@Override
+	public DynInterval<T> getInterval()
+	{
+		return this.interval;
+	}
+	
+	@Override
+	public DynInterval<T> getInterval(CyNode node)
+	{
+		return this.nodeIntervals.get(node);
+	}
+	
+	@Override
+	public DynInterval<T> getInterval(CyEdge edge)
+	{
+		return this.edgeIntervals.get(edge);
+	}
+
+	@Override
 	public void print() 
 	{
-		System.out.println("\n********************\nTIME " + interval.getStart());
+		System.out.println("\n********************");
 		for (CyNode node : this.nodeList)
 		{
 			System.out.println("\nLABEL:" + network.getNodeLabel(node) +

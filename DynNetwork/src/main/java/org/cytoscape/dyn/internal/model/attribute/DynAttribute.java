@@ -134,5 +134,19 @@ public interface DynAttribute<T>
      * @return
      */
 	public double getMaxTime();
+	
+	/**
+	 * Get next successor interval with same value. If none is found, returns null
+	 * @param interval
+	 * @return interval
+	 */
+	public DynInterval<T> getSuccesor(DynInterval<T> interval);
+	
+	/**
+	 * Get next predecessor interval with same value. If none is found, returns null.
+	 * @param interval
+	 * @return interval
+	 */
+	public DynInterval<T> getPredecessor(DynInterval<T> interval);
 
 }

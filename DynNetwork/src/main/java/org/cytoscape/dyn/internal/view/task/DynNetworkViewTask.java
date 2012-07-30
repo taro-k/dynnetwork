@@ -38,8 +38,9 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
  */
 public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,C> 
 {
-	private final int visibility;
-	private final int smoothness;
+	private double time;
+	private int visibility;
+	private int smoothness;
 
 	/**
 	 * <code> DynNetworkViewTask </code> constructor.
@@ -47,24 +48,15 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	 * @param view
 	 * @param layout
 	 * @param queue
-	 * @param low
-	 * @param high
-	 * @param visibility
 	 */
 	public DynNetworkViewTask(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout<T> layout,
 			final Transformator transformator,
-			final BlockingQueue queue,
-			final double low, 
-			final double high, 
-			final int visibility,
-			final int smoothness) 
+			final BlockingQueue queue) 
 	{
-		super(panel, view, layout, transformator, queue, low, high);
-		this.visibility = visibility;
-		this.smoothness = smoothness;
+		super(panel, view, layout, transformator, queue);
 	}
 
 	@Override
@@ -79,7 +71,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 			return;
 		}
 		
-		timeInterval = new DynInterval<T>(low, high);
+		setParameters();
 
 		// update graph attributes
 		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
@@ -105,6 +97,18 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		view.updateView();
 		
 		queue.unlock(); 
+	}
+	
+	private void setParameters()
+	{
+		this.time = this.panel.getTime();
+		if (time>=panel.getMaxTime())
+			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			timeInterval = new DynInterval<T>(time, time);
+		
+		this.visibility = this.panel.getVisibility();
+		this.smoothness = panel.getSmoothness();
 	}
 
 }

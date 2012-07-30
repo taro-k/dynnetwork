@@ -34,14 +34,14 @@ import org.cytoscape.work.undo.UndoSupport;
 
 /**
  * <code> DynForceLayoutAlgorithm </code> instantiate the dynamic layout algorithm task 
- * {@link DynForceLayoutAlgorithmTask}.
+ * {@link DynKKLayoutAlgorithmTask}.
  * 
  * @author Sabina Sara Pfister
  *
  * @param <T>
  * @param <C>
  */
-public class DynForceLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
+public class DynKKLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
     private final DynLayoutFactory<T> dynLaoutFactory;
@@ -55,7 +55,7 @@ public class DynForceLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
      * @param panel
      * @param dynLaoutFactory
      */
-    public DynForceLayoutAlgorithm(
+    public DynKKLayoutAlgorithm(
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
@@ -77,14 +77,17 @@ public class DynForceLayoutAlgorithm<T,C> extends AbstractLayoutAlgorithm
                     String layoutAttribute)
     {
     	
+    		dynLaoutFactory.removeLayout(networkView);
     		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
-            return new TaskIterator(new DynForceLayoutAlgorithmTask<T>(
+            return new TaskIterator(new DynKKLayoutAlgorithmTask<T>(
             		getName(), 
             		layout, 
             		viewManager.getDynNetworkView(networkView), 
             		nodesToLayOut, layoutAttribute, 
             		undoSupport,
-            		panel.getTime()));
+            		panel.getTime(),
+            		panel.getMinTime(),
+            		panel.getMaxTime()));
     }
 
 }

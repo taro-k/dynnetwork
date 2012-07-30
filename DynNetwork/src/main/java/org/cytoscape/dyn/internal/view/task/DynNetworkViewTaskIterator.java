@@ -61,8 +61,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	 * @param view
 	 * @param layout
 	 * @param queue
-	 * @param low
-	 * @param high
 	 * @param slider
 	 * @param timestep
 	 */
@@ -72,17 +70,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			final DynLayout<T> layout,
 			final Transformator transformator,
 			final BlockingQueue queue,
-			final double low, 
-			final double high,
 			final JSlider slider,
 			final int timestep)
 	{
-		super(panel, view, layout, transformator, queue, low, high);
+		super(panel, view, layout, transformator, queue);
 		this.slider = slider;
 		this.timeStep = timestep;
-		this.visibility = this.panel.getVisibility();
-		this.oldVisibility = visibility;
-		this.smoothness = this.panel.getSmoothness();
 	}
 
 	@Override
@@ -95,6 +88,8 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			queue.unlock();	
 			return;
 		}
+		
+		setParameters();
 		
 		panel.setValueIsAdjusting(true);
 		
@@ -179,9 +174,9 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	{
 		if (node!=null)
 		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
+			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
 		}
 	}
 
@@ -189,9 +184,22 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	{
 		if (edge!=null)
 		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 		}
+	}
+	
+	private void setParameters()
+	{
+		this.time = this.panel.getTime();
+		if (time>=panel.getMaxTime())
+			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			timeInterval = new DynInterval<T>(time, time);
+		
+		this.visibility = this.panel.getVisibility();
+		this.oldVisibility = visibility;
+		this.smoothness = panel.getSmoothness();
 	}
 	
 }

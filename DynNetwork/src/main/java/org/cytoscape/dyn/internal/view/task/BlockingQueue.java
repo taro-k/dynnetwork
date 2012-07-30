@@ -39,7 +39,7 @@ public class BlockingQueue
 	 */
     public BlockingQueue()
     {
-    	lock = new ReentrantLock();
+    	lock = new ReentrantLock(false);
     }
 
     /**
@@ -57,5 +57,37 @@ public class BlockingQueue
     {
     	lock.unlock();
     }
+    
+    /**
+     * Try to lock to blocking queue.
+     */
+    public boolean trylock()
+    {
+    	return lock.tryLock();
+    }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

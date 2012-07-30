@@ -293,6 +293,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
 		dynNetwork.finalizeNetwork();
+		for (CyNode node : metaNodes)
+			dynNetwork.getNetwork().removeEdges(dynNetwork.getNetwork().getAdjacentEdgeList(node, CyEdge.Type.ANY));
 		dynNetwork.getNetwork().removeNodes(metaNodes);
 	}
 	
