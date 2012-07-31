@@ -144,6 +144,13 @@ public interface DynNetworkSnapshot<T>
 	public List<CyEdge> getEdges();
 	
 	/**
+	 * Get degree.
+	 * @param node
+	 * @return degree
+	 */
+	public int getDegree(CyNode node);
+	
+	/**
 	 * Get in degree.
 	 * @param node
 	 * @return in degree

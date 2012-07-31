@@ -235,6 +235,12 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 	
 	@Override
+	public int getDegree(CyNode node)
+	{
+		return this.inDegree(node)+this.outDegree(node);
+	}
+	
+	@Override
 	public int inDegree(CyNode node)
 	{
 		if (this.inEdges.containsKey(node))

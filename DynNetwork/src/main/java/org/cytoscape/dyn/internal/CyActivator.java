@@ -35,9 +35,11 @@ import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactoryImpl;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManagerImpl;
-import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.DynCleanLayoutAlgorithm;
-import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.DynKKLayoutAlgorithm;
-import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.DynRandomLayoutAlgorithm;
+import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.CleanDynLayout;
+import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.KKDynLayout;
+import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.RandomDynLayout;
+import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.SmoothKKDynLayout;
+import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.SpringDynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
@@ -109,9 +111,11 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
     	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
     	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynRandomLayout = new DynRandomLayoutAlgorithm<T,C>("Dynamic Layouts", "Random",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
-    	CyLayoutAlgorithm dynForceLayout = new DynKKLayoutAlgorithm<T,C>("Dynamic Layouts", "Kamada-Kawai",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
-    	CyLayoutAlgorithm dynClearLayout = new DynCleanLayoutAlgorithm<T,C>("Dynamic Layouts", "Remove",undo,dynLayoutFactory);
+    	CyLayoutAlgorithm dynRandomLayout = new RandomDynLayout<T,C>("Dynamic Layouts", "Random DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynsmoothKKLayout = new SmoothKKDynLayout<T,C>("Dynamic Layouts", "Smooth Kamada-Kawai DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynSpringLayout = new SpringDynLayout<T,C>("Dynamic Layouts", "Spring DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
+    	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
 
@@ -127,7 +131,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
     	registerService(context,dynRandomLayout,CyLayoutAlgorithm.class, myLayoutProps);
-    	registerService(context,dynForceLayout,CyLayoutAlgorithm.class, myLayoutProps);
+    	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
+    	registerService(context,dynsmoothKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
+//    	registerService(context,dynSpringLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynClearLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
 
