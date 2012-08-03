@@ -84,9 +84,9 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	{
 		if (node!=null)
 		{
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
 		}
 	}
 
@@ -94,8 +94,8 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	{
 		if (edge!=null)
 		{
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 		}
 	}
 	

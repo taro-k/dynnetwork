@@ -109,10 +109,12 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	public List<CyNode> getNeighbors(CyNode node)
 	{
 		ArrayList<CyNode> list = new ArrayList<CyNode>();
-		for (CyEdge edge : this.inEdges.get(node))
-			list.add(edge.getTarget());
-		for (CyEdge edge : this.outEdges.get(node))
-			list.add(edge.getSource());
+		if (this.inEdges.containsKey(node))
+			for (CyEdge edge : this.inEdges.get(node))
+				list.add(edge.getTarget());
+		if (this.outEdges.containsKey(node))
+			for (CyEdge edge : this.outEdges.get(node))
+				list.add(edge.getSource());
 		return list;
 	}
 	

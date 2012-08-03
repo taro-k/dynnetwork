@@ -135,7 +135,7 @@ public class Transformator
 			final DynLayout layout,
 			final int visibility,
 			final int smoothness)
-	{
+	{	
 		setSmoothness(smoothness);
 		
 		this.onCounter = 255;
@@ -204,9 +204,9 @@ public class Transformator
 	{
 		if (node!=null)
 		{
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
 		}
 	}
 	
@@ -214,8 +214,8 @@ public class Transformator
 	{
 		if (edge!=null)
 		{
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,value);
-			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,value);
 		}
 	}
 

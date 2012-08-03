@@ -91,9 +91,9 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 
 		for (CyNode node : nodeList)
 		{
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
 		}
 		for (CyEdge edge : edgeList)
 			view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
@@ -105,7 +105,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 			CyNode node = dynNetwork.getNode(interval);
 			if (node!=null && nodeList.contains(node))
 			{
-				view.writeVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
+				view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
 			}
 		}
 		
@@ -115,7 +115,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 		{
 			CyEdge edge = dynNetwork.getEdge(interval);
 			if (edge!=null && edgeList.contains(edge))
-				view.writeVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
+				view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY, 255);
 		}
 
 		view.updateView();

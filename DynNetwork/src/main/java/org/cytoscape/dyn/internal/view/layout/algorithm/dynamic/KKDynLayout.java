@@ -21,6 +21,8 @@ package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
 import java.util.Set;
 
+import javax.swing.JFrame;
+
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
@@ -33,7 +35,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> KKDynLayout </code> instantiate the dynamic layout algorithm task 
+ * <code> SmoothKKDynLayout </code> instantiate the dynamic layout algorithm task 
  * {@link KKDynLayoutTask}.
  * 
  * @author Sabina Sara Pfister
@@ -48,7 +50,7 @@ public class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
     private final DynNetworkViewManager<T> viewManager;
     
     /**
-     * <code> KKDynLayout </code> constructor.
+     * <code> SmoothKKDynLayout </code> constructor.
      * @param computerName
      * @param humanName
      * @param undoSupport
@@ -79,6 +81,9 @@ public class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
     	
     		dynLaoutFactory.removeLayout(networkView);
     		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
+    		
+    		KKDynLayoutDialog<T> dlg = new KKDynLayoutDialog<T>(new JFrame(), viewManager.getDynNetworkView(networkView));
+
             return new TaskIterator(new KKDynLayoutTask<T>(
             		getName(), 
             		layout, 
@@ -86,8 +91,10 @@ public class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
             		nodesToLayOut, layoutAttribute, 
             		undoSupport,
             		panel.getTime(),
-            		panel.getMinTime(),
-            		panel.getMaxTime()));
+            		dlg.getPastEvents(),
+            		dlg.getFutureEvents(),
+            		dlg.getIterationRate(),
+            		false));
     }
 
 }

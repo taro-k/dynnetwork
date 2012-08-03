@@ -147,6 +147,12 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	}
 	
 	@Override
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill) 
+	{
+		
+	}
+	
+	@Override
 	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline) 
 	{
 
@@ -296,6 +302,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		for (CyNode node : metaNodes)
 			dynNetwork.getNetwork().removeEdges(dynNetwork.getNetwork().getAdjacentEdgeList(node, CyEdge.Type.ANY));
 		dynNetwork.getNetwork().removeNodes(metaNodes);
+//		dynNetwork.print();
 	}
 	
 	@Override

@@ -305,7 +305,21 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	@Override
 	public List<Double> getEventTimeList()
 	{
+		List<Double> list = this.nodeTree.getEventTimeList();
+		list.addAll(this.edgeTree.getEventTimeList());
+		return list;
+	}
+	
+	@Override
+	public List<Double> getNodeEventTimeList()
+	{
 		return this.nodeTree.getEventTimeList();
+	}
+	
+	@Override
+	public List<Double> getEdgeEventTimeList()
+	{
+		return this.edgeTree.getEventTimeList();
 	}
 
 	@Override

@@ -105,6 +105,13 @@ public interface Sink<T>
 	public void addedNodeAttribute(DynNetwork<T> dynNetwork, CyNode currentNode, String name, String value, String Type, String start, String end);
 	
 	/**
+	 * Process added graph graphic attribute event.
+	 * @param dynNetwork
+	 * @param fill
+	 */
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill);
+	
+	/**
 	 * Process added node graphic attribute event.
 	 * @param dynNetwork
 	 * @param currentNode

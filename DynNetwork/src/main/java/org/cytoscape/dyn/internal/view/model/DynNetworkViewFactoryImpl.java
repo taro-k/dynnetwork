@@ -52,6 +52,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	private final CyNetworkViewManager networkViewManager;
 	private final VisualMappingManager vmm;
 	
+	private final Stack<GraphGraphicsAttribute<T>> graphGraphicsList;
 	private final Stack<NodeGraphicsAttribute<T>> nodeGraphicsList;
 	private final Stack<EdgeGraphicsAttribute<T>> edgeGraphicsList;
 	
@@ -68,12 +69,14 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 			final CyNetworkViewManager networkViewManager,
 			final VisualMappingManager vmm)
 	{
+		
 		this.viewManager = viewManager;
 		this.cyNetworkViewFactory = cyNetworkViewFactory;
 		this.networkViewManager = networkViewManager;
 		this.vmm = vmm;
 		
 		this.graphicsTypeMap = new GraphicsTypeMap();
+		this.graphGraphicsList = new Stack<GraphGraphicsAttribute<T>>();
 		this.nodeGraphicsList = new Stack<NodeGraphicsAttribute<T>>();
 		this.edgeGraphicsList = new Stack<EdgeGraphicsAttribute<T>>();
 	}
@@ -99,6 +102,12 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	}
 	
 	@Override
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill) 
+	{
+		this.graphGraphicsList.push(new GraphGraphicsAttribute<T>(dynNetwork,fill));
+	}
+	
+	@Override
 	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline) 
 	{
 		this.nodeGraphicsList.push(new NodeGraphicsAttribute<T>(dynNetwork,currentNode,type,height,width,x,y,fill,linew,outline));
@@ -108,6 +117,15 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill) 
 	{
 		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill));
+	}
+	
+	@Override
+	public void setGraphGraphics(DynNetwork<T> dynNetwork, String fill)
+	{
+		CyNetworkView view = networkViewManager.getNetworkViews(dynNetwork.getNetwork()).iterator().next();
+		
+		if (fill!=null)
+			view.setVisualProperty(BasicVisualLexicon.NETWORK_BACKGROUND_PAINT, decodeHEXColor(fill));
 	}
 	
 	@Override
@@ -150,7 +168,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 			view.getEdgeView(currentEdge).setVisualProperty(BasicVisualLexicon.EDGE_WIDTH, new Double(width));
 		
 		if (fill!=null)
-			view.getEdgeView(currentEdge).setVisualProperty(BasicVisualLexicon.EDGE_PAINT, decodeHEXColor(fill));
+			view.getEdgeView(currentEdge).setVisualProperty(BasicVisualLexicon.EDGE_UNSELECTED_PAINT, decodeHEXColor(fill));
 	}
 
 	@Override
@@ -204,6 +222,9 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 	@Override
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{	
+		while (!graphGraphicsList.isEmpty())
+			graphGraphicsList.pop().add(this);
+		
 		while (!nodeGraphicsList.isEmpty())
 			nodeGraphicsList.pop().add(this);
 		

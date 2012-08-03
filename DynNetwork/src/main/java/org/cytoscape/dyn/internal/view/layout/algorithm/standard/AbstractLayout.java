@@ -61,6 +61,8 @@ abstract public class AbstractLayout<T> implements Layout<T>
 	protected DynNetworkSnapshot<T> graph;
     protected Map<CyNode, Point2D> locations;
     private Set<CyNode> dontmove = new HashSet<CyNode>();
+    
+    private Random random = new Random(new Date().getTime());
 
     /**
      * <code> AbstractLayout </code> constructor.
@@ -137,27 +139,48 @@ abstract public class AbstractLayout<T> implements Layout<T>
 	@Override
 	public double getX(CyNode node) 
 	{
-        assert getCoordinates(node) != null : "Cannot getX for an unmapped vertex " + node;
-        return getCoordinates(node).getX();
+		assert this.locations.get(node)!=null : "Cannot getX for an unmapped vertex " + node;
+		return this.locations.get(node).getX();
 	}
 
 	@Override
 	public double getY(CyNode node) 
 	{
-        assert getCoordinates(node) != null : "Cannot getY for an unmapped vertex " + node;
-        return getCoordinates(node).getY();
+		assert this.locations.get(node)!=null : "Cannot getY for an unmapped vertex " + node;
+		return this.locations.get(node).getY();
 	}
 	
+	// Estimate central of gravity for initial position.
     protected void updateLocations()
     {
-    	Random random = new Random(new Date().getTime());
     	for (CyNode node : graph.getNodes())
+    	{
+    		double gx,gy;
+    		int lenght;
     		if (!this.locations.containsKey(node))
-    			this.locations.put(node,new Point2D.Double(
-    					random.nextDouble() * this.size.width,
-    					random.nextDouble() * this.size.height));
+    		{
+    			gx = 0;
+        		gy = 0;
+        		lenght = 0;
+        		
+    			for (CyNode n : graph.getNeighbors(node)) 
+    				if (this.locations.containsKey(n))
+    				{
+    					gx += this.locations.get(n).getX();
+    					gy += this.locations.get(n).getY();
+    					lenght++;
+    				}
+
+    			if (lenght!=0)
+    				this.locations.put(node,new Point2D.Double(gx/lenght,gy/lenght));
+    			else
+    				this.locations.put(node,new Point2D.Double(
+        					random.nextDouble() * this.size.width,
+        					random.nextDouble() * this.size.height));
+    		}
+    	}
     }
-	
+
 	protected Point2D getCoordinates(CyNode node) 
 	{
         return locations.get(node);

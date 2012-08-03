@@ -94,6 +94,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private double maxTime;
 	
 	private int visibility = 0;
+	private int hiddenVisibility = 30;
 	private int smoothness;
 	
 	private volatile boolean valueIsAdjusting = false;
@@ -180,7 +181,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			if (source==seeAllCheck)
 			{
 				if (source.isSelected())
-					this.visibility = 20;
+					this.visibility = hiddenVisibility;
 				else
 					this.visibility = 0;
 				if (!valueIsAdjusting)
@@ -373,7 +374,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		dynVizPanel = new JPanel();
 		dynVizPanel.setLayout(new GridLayout(3,1));
 		dynVizPanel.add(currentTime);
-		dynVizPanel.add(slider);;
+		dynVizPanel.add(slider);
 		dynVizPanel.add(buttonPanel);
 
 		NameIDObj[] itemsTimeResolution = { 

@@ -79,16 +79,22 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 		networkSink.addedNodeAttribute(network, currentNode, name, value, type, start, end);
 	}
 	
-	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
-			String type, String height, String width, String x, String y, String fill, String linew, String outline)
-	{
-		viewSink.addedNodeGraphics(network, currentNode, type, height, width, x, y, fill, linew, outline);
-	}
-	
 	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge, 
 			String name, String value, String type, String start, String end)
 	{
 		networkSink.addedEdgeAttribute(network, currentEdge, name, value, type, start, end);
+	}
+	
+	protected void addGraphGraphics(DynNetwork<T> network, 
+			String fill)
+	{
+		viewSink.addedGraphGraphics(network, fill);
+	}
+	
+	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
+			String type, String height, String width, String x, String y, String fill, String linew, String outline)
+	{
+		viewSink.addedNodeGraphics(network, currentNode, type, height, width, x, y, fill, linew, outline);
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 

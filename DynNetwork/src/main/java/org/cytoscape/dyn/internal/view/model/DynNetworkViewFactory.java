@@ -35,6 +35,13 @@ import org.cytoscape.model.CyNode;
 public interface DynNetworkViewFactory<T> extends Sink<T>
 {
 	/**
+	 * Set graph graphics attributes.
+	 * @param dynNetwork
+	 * @param fill
+	 */
+	public void setGraphGraphics(DynNetwork<T> dynNetwork, String fill);
+	
+	/**
 	 * Set node graphics attributes.
 	 * @param dynNetwork
 	 * @param currentNode

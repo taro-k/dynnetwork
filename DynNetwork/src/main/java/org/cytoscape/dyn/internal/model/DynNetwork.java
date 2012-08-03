@@ -244,6 +244,18 @@ public interface DynNetwork<T>
 	public List<Double> getEventTimeList();
 	
 	/**
+	 * Get a list of times at which node events occur.
+	 * @return
+	 */
+	public List<Double> getNodeEventTimeList();
+	
+	/**
+	 * Get a list of times at which edge events occur.
+	 * @return
+	 */
+	public List<Double> getEdgeEventTimeList();
+	
+	/**
 	 * Get dynamic attribute for given network and name.
 	 * @param network
 	 * @param column

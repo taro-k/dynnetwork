@@ -171,6 +171,11 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 				orphanEdgeList.peek().addAttribute(currentNetwork, name, value, type, start, end);
 			break;
 			
+		case NET_GRAPHICS:
+			fill = atts.getValue("fill");
+			this.addGraphGraphics(currentNetwork, fill);
+			break;
+			
 		case NODE_GRAPHICS:
 			type = atts.getValue("type");
 			h = atts.getValue("h");
@@ -232,7 +237,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
 			String width, String fill)
 	{
-		networkSink.addedEdgeGraphics(network, currentEdge, width, fill);
+		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
 	}
 	
 	@Override
