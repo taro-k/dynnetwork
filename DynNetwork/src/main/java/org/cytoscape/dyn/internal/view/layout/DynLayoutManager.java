@@ -38,6 +38,13 @@ public interface DynLayoutManager<T>
 	 * @param dynLayout
 	 */
 	public void addDynLayout(DynLayout<T> dynLayout);
+	
+	/**
+	 * Add layout parameters.
+	 * @param dynLayout
+	 * @param context
+	 */
+	public void addDynContext(DynLayout<T> dynLayout, Object context);
 
 	/**
 	 * Get network view.
@@ -45,6 +52,13 @@ public interface DynLayoutManager<T>
 	 * @return network
 	 */
 	public DynLayout<T> getDynLayout(CyNetworkView view);
+	
+	/**
+	 * Get layout parameters.
+	 * @param dynLayout
+	 * @return context
+	 */
+	public Object getDynContext(DynLayout<T> dynLayout);
 	
 	/**
 	 * Remove DynLayout associated with view if exists.

@@ -153,10 +153,15 @@ public abstract class AbstractDynIntervalTree<T> implements DynIntervalTree<T>
 	{
 		List<Double> timeList = new ArrayList<Double>();
 		for (DynInterval<T> interval : this.getIntervals())
-			timeList.add(interval.getStart());
+		{
+			if (interval.getStart()!=Double.NEGATIVE_INFINITY && !timeList.contains(interval.getStart()))
+				timeList.add(interval.getStart());
+			if (interval.getEnd()!=Double.POSITIVE_INFINITY && !timeList.contains(interval.getEnd()))
+				timeList.add(interval.getEnd());
+		}
 		return timeList;
 	}
-	
+
 	protected void addInterval(long id, DynInterval<T> interval)
 	{
 		if (!this.intervalMap.containsKey(id))

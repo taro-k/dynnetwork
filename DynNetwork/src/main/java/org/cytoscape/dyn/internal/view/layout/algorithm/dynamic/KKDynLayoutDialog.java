@@ -1,3 +1,22 @@
+/*
+ * DynNetwork plugin for Cytoscape 3.0 (http://www.cytoscape.org/).
+ * Copyright (C) 2012 Sabina Sara Pfister
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
 import java.awt.BorderLayout;
@@ -5,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -12,24 +32,35 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
+/**
+ * <code> KKDynLayoutDialog </code> implements the dialog to set the parameters of the 
+ * Dynamic Kamada Kawai Layout{@link KKDynLayout}.
+ * 
+ * @author Sabina Sara Pfister
+ *
+ * @param <T>
+ */
 public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, ChangeListener
 {
 	private static final long serialVersionUID = 1L;
 
+	private final JFrame parent;
 	private final DynNetworkView<T> dynView;
+	private final KKDynLayoutContext context;
 	
-	private double maxTime;
-	private boolean cancel;
+	private List<Double> events;
 	
 	private JLabel currentPast;
 	private JLabel currentFuture;
@@ -40,28 +71,46 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
     private JSlider sliderPast;
     private JSlider sliderFuture;
     private JSlider sliderIterations;
+    private JComboBox typeComboBox;
     private Hashtable<Integer, JLabel> labelTablePast;
     private Hashtable<Integer, JLabel> labelTableFuture;
     private Hashtable<Integer, JLabel> labelTableIterations;
 	
+    /**
+     * <code> KKDynLayoutDialog </code> constructor.
+     * @param parent
+     * @param dynView
+     * @param context
+     */
 	public KKDynLayoutDialog(
 			final JFrame parent, 
-			final DynNetworkView<T> dynView) 
+			final DynNetworkView<T> dynView,
+			final KKDynLayoutContext context) 
 	{
 		super(parent, "Dynamic Kamada Kawai", true);
+		this.parent = parent;
 		this.dynView = dynView;
-		initComponents();
+		this.context = context;
+		context.m_cancel = true;
+		initComponents(context.m_event_type, context.m_max_iterations,context.m_past_events,context.m_future_events);
 	}
 
-	private void initComponents() 
+	private void initComponents(int type, int iterations, int past, int future) 
 	{	
-		List<Double> events = dynView.getNetwork().getNodeEventTimeList();
-		maxTime = getMaxDiff(events);
+		JPanel topPanel = new JPanel(new GridLayout(6,2));
 		
-		JPanel topPanel = new JPanel(new GridLayout(6,1));
+		NameIDObj[] itemsTimeResolution = { 
+				new NameIDObj(0,   "Nodes"), 
+				new NameIDObj(1,   "Edges"),
+				new NameIDObj(2,   "Nodes & Edges") };
+		typeComboBox  = new JComboBox(itemsTimeResolution);
+		typeComboBox.setSelectedIndex(type);
+		typeComboBox.addActionListener(this);
 		
-		currentItertions = new JLabel("Maximum iterations = 10");
-		sliderIterations = new JSlider(JSlider.HORIZONTAL, 0, 1000, 10);
+		events = getEvents(((NameIDObj)typeComboBox.getSelectedItem()).id);
+		
+		currentItertions = new JLabel("Maximum iterations = " + Math.max(1, iterations));
+		sliderIterations = new JSlider(JSlider.HORIZONTAL, 0, 1000, iterations);
 		labelTableIterations = new Hashtable<Integer, JLabel>();
 		labelTableIterations.put(new Integer( 0 ),new JLabel("0") );
 		labelTableIterations.put(new Integer( 500 ),new JLabel("500") );
@@ -73,37 +122,40 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		sliderIterations.setPaintLabels(true);
 		sliderIterations.addChangeListener(this);
 		
-		currentPast = new JLabel("Past events = 0");
-		sliderPast = new JSlider(JSlider.HORIZONTAL, 0, events.size(), 0);
+		currentPast = new JLabel("Past events = " + past);
+		sliderPast = new JSlider(JSlider.HORIZONTAL, 0, events.size(), past);
 		labelTablePast = new Hashtable<Integer, JLabel>();
 		labelTablePast.put(new Integer( 0 ),new JLabel("0") );
 		labelTablePast.put(new Integer( events.size() ),new JLabel(Integer.toString(events.size())) );
 		sliderPast.setLabelTable(labelTablePast);
-		sliderPast.setMajorTickSpacing(250);
-		sliderPast.setMinorTickSpacing(50);
+		sliderPast.setMajorTickSpacing(events.size()/4);
 		sliderPast.setPaintTicks(true);
 		sliderPast.setPaintLabels(true);
 		sliderPast.addChangeListener(this);
 		
-		currentFuture = new JLabel("Future events = 0");
-		sliderFuture = new JSlider(JSlider.HORIZONTAL, 0, events.size(), 0);
+		currentFuture = new JLabel("Future events = " + future);
+		sliderFuture = new JSlider(JSlider.HORIZONTAL, 0, events.size(), future);
 		labelTableFuture = new Hashtable<Integer, JLabel>();
 		labelTableFuture.put(new Integer( 0 ),new JLabel("0") );
 		labelTableFuture.put(new Integer( events.size() ),new JLabel(Integer.toString(events.size())) );
 		sliderFuture.setLabelTable(labelTableFuture);
-		sliderFuture.setMajorTickSpacing(250);
-		sliderFuture.setMinorTickSpacing(50);
+		sliderFuture.setMajorTickSpacing(events.size()/4);
 		sliderFuture.setPaintTicks(true);
 		sliderFuture.setPaintLabels(true);
 		sliderFuture.addChangeListener(this);
 		
+		topPanel.add(new JLabel("Event type      "));
+		topPanel.add(typeComboBox);
+		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
+		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(currentItertions);
 		topPanel.add(sliderIterations);
 		topPanel.add(currentPast);
 		topPanel.add(sliderPast);
 		topPanel.add(currentFuture);
 		topPanel.add(sliderFuture);
-		
+		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
+		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		
 		this.okButton = new JButton("OK");
         this.okButton.addActionListener(this);
@@ -118,14 +170,14 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		bottomPanel.add(this.cancelButton);
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.setBorder(BorderFactory.createEmptyBorder(9,9,9,9));
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 		mainPanel.add(topPanel, BorderLayout.CENTER);
 		mainPanel.add(bottomPanel, BorderLayout.PAGE_END);
 		
 		this.add(mainPanel);
 
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(parent);
 		setSize(700,300);
 		pack();
 
@@ -135,17 +187,33 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 	@Override
 	public void actionPerformed(ActionEvent event) 
 	{
-		JButton source = (JButton)event.getSource();
-		if (source.equals(okButton))
+		if (event.getSource() instanceof JButton)
 		{
-			setVisible(false); 
-		    dispose();
+			JButton source = (JButton)event.getSource();
+			if (source.equals(okButton))
+			{
+				context.m_cancel = false;
+				context.m_event_type = ((NameIDObj)typeComboBox.getSelectedItem()).id;
+				context.m_max_iterations = Math.max(1,sliderIterations.getValue());
+				context.m_past_events = sliderPast.getValue();
+				context.m_future_events = sliderFuture.getValue();
+				setVisible(false); 
+				dispose();
+			}
+			else if (source.equals(cancelButton))
+			{
+				setVisible(false); 
+				dispose();
+			}
 		}
-		else if (source.equals(cancelButton))
+		else if (event.getSource() instanceof JComboBox)
 		{
-			this.cancel = true;
-			setVisible(false); 
-		    dispose();
+			JComboBox source = (JComboBox)event.getSource();
+			if (source.equals(typeComboBox))
+			{
+				events = getEvents(((NameIDObj)typeComboBox.getSelectedItem()).id);
+				updateGui();
+			}
 		}
 	}
 	
@@ -161,46 +229,62 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 			currentFuture.setText("Future events = " + Integer.toString(sliderFuture.getValue()));
 	}
 	
-	public double getIterationRate() 
+	private List<Double> getEvents(int eventType)
 	{
-		return (Math.max(1, sliderIterations.getValue())/maxTime)-1;
-	}
-
-	public int getPastEvents() 
-	{
-		return sliderPast.getValue();
-	}
-
-	public int getFutureEvents() 
-	{
-		return sliderFuture.getValue();
-	}
-
-	public boolean isCancel() 
-	{
-		return cancel;
-	}
-
-//	private double getMinDiff(List<Double> eventList)
-//	{
-//		double min = Double.POSITIVE_INFINITY;
-//		for (int i=0; i<eventList.size()-1; i++)
-//			min = Math.min(min,eventList.get(i+1)-eventList.get(i));
-//		if (min==Double.POSITIVE_INFINITY)
-//			return 0;
-//		else 
-//			return min;
-//		}
-	
-	private double getMaxDiff(List<Double> eventList)
-	{
-		double max = Double.NEGATIVE_INFINITY;
-		for (int i=0; i<eventList.size()-1; i++)
-			max = Math.max(max,eventList.get(i+1)-eventList.get(i));
-		if (max==Double.NEGATIVE_INFINITY)
-			return 0;
-		else 
-			return max;
+		switch(eventType)
+		{
+		case 0:
+			return dynView.getNetwork().getNodeEventTimeList();
+		case 1:
+			return dynView.getNetwork().getEdgeEventTimeList();
+		case 2:
+			return dynView.getNetwork().getEventTimeList();
 		}
+		return new ArrayList<Double>();
+	}
 	
+	private void updateGui()
+	{
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				labelTablePast.clear();
+				labelTablePast.put(new Integer( 0 ),new JLabel("0") );
+				labelTablePast.put(new Integer( events.size() ),new JLabel(Integer.toString(events.size())) );
+				sliderPast.setMaximum(events.size());
+				sliderPast.setLabelTable(labelTablePast);
+				sliderPast.setMajorTickSpacing(events.size()/4);
+				sliderPast.setPaintTicks(true);
+				sliderPast.setPaintLabels(true);
+				
+				labelTableFuture.clear();
+				labelTableFuture.put(new Integer( 0 ),new JLabel("0") );
+				labelTableFuture.put(new Integer( events.size() ),new JLabel(Integer.toString(events.size())) );
+				sliderFuture.setMaximum(events.size());
+				sliderFuture.setLabelTable(labelTablePast);
+				sliderFuture.setMajorTickSpacing(events.size()/4);
+				sliderFuture.setPaintTicks(true);
+				sliderFuture.setPaintLabels(true);
+			}
+		});
+	}
+	
+}
+
+final class NameIDObj
+{
+	int id;
+	String name;
+
+	NameIDObj(int id, String name)
+	{
+		this.id = id;
+		this.name = name;
+	}
+
+	public String toString()
+	{
+		return name;
+	}
 }

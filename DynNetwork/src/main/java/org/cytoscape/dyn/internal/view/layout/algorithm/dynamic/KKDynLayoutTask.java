@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +40,7 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> SmoothKKDynLayoutTask </code> is responsible for the generation of force-based network
+ * <code> KKDynLayoutTask </code> is responsible for the generation of force-based network
  * dynamics by associating to each nodes in the network appropriate intervals of node positions,
  * which are stored in {@link DynLayout}. The algorithm is based on the Kamada-Kawai algorithm 
  * for node layout. Following options are available: set the number of maximum iterations per event
@@ -54,65 +55,54 @@ import org.cytoscape.work.undo.UndoSupport;
  *
  * @param <T>
  */
-public class KKDynLayoutTask<T> extends AbstractLayoutTask 
+public final class KKDynLayoutTask<T> extends AbstractLayoutTask 
 {
-    
 	private final DynLayout<T> layout;
+	private final KKDynLayoutContext context;
 	private final CyNetworkView view;
 	private final DynNetworkView<T> dynView;
 	
 	private DynNetworkSnapshot<T> snap;
 	private KKLayout<T> kklayout;
 	
-	private final double currentTime;
-	private final boolean cancel;
-	
-	private final int pastEvents;
-	private final int futureEvents;
-	private final double iterationRate;
+	private final DynInterval<T> timeInterval;
+	private final int visibility;
 	
 	/**
-	 * <code> SmoothKKDynLayoutTask </code> constructor.
+	 * <code> KKDynLayoutTask </code> constructor.
 	 * @param name
 	 * @param layout
+	 * @param context
 	 * @param dynView
 	 * @param nodesToLayOut
 	 * @param layoutAttribute
 	 * @param undo
 	 * @param currentTime
-	 * @param pastEvents
-	 * @param futureEvents
-	 * @param maxItertions
-	 * @param cancel
 	 */
     public KKDynLayoutTask(
                     final String name,
                     final DynLayout<T> layout,
+                    final KKDynLayoutContext context,
                     final DynNetworkView<T> dynView,
                     final Set<View<CyNode>> nodesToLayOut, 
                     final String layoutAttribute,
                     final UndoSupport undo,
-                    final double currentTime,
-                    final int pastEvents,
-                	final int futureEvents,
-                	final double maxItertions,
-                    final boolean cancel)
+                    final DynInterval<T> timeInterval,
+                    final int visibility)
     {
             super(name, layout.getNetworkView(), nodesToLayOut, layoutAttribute, undo);
             this.layout = layout;
+            this.context = context;
             this.view = layout.getNetworkView();
             this.dynView = dynView;
-            this.currentTime = currentTime;
-            this.pastEvents = pastEvents;
-            this.futureEvents = futureEvents;
-            this.iterationRate = maxItertions;
-            this.cancel = cancel;
+            this.timeInterval = timeInterval;
+            this.visibility = visibility;
     }
 
 	@Override
 	protected void doLayout(TaskMonitor taskMonitor)
 	{	
-		if (!cancel && networkView!=null && dynView!=null)
+		if (!context.m_cancel && networkView!=null && dynView!=null)
 		{
 			taskMonitor.setTitle("Compute Dynamic Kamada Kawai Force Layout");
 			taskMonitor.setStatusMessage("Running energy minimization...");
@@ -122,7 +112,10 @@ public class KKDynLayoutTask<T> extends AbstractLayoutTask
 			
 			snap = new DynNetworkSnapshotImpl<T>(dynView);
 			kklayout = new KKLayout<T>(snap,new Dimension(size,size));
-			List<Double> events = dynView.getNetwork().getNodeEventTimeList();
+			List<Double> events = getEvents(context.m_event_type);
+			
+			double maxTime = getMaxDiff(events);
+			double iterationRate = context.m_max_iterations/maxTime;
 			
 			// Initialize node positions at the center of the screen
 			initializePositions(size);
@@ -131,31 +124,32 @@ public class KKDynLayoutTask<T> extends AbstractLayoutTask
 			kklayout.setAdjustForGravity(true);
 			kklayout.setExchangeVertices(true);
 			kklayout.setMaxIterations(2000);
-			
-			taskMonitor.setProgress(0.5);
 
 			// Compute incremental KK. The number of iterations is proportional to the time to the next event.
 			double t0,t1;
 			for (int t=0;t<events.size()-1;t++)
 			{
-				t0 = events.get(Math.max(0,t-pastEvents));
-				t1 = events.get(Math.min(events.size()-1,t+1+futureEvents));
+				t0 = events.get(Math.max(0,t-context.m_past_events));
+				t1 = events.get(Math.min(events.size()-1,t+1+context.m_future_events));
 				snap.setInterval(new DynInterval<T>(t0,t1));
 				kklayout.setDistance(new UnweightedShortestPath<T>(snap));
 				kklayout.initialize();
 				kklayout.run();
-				updateGraph(new DynInterval<T>(events.get(t),events.get(Math.min(events.size()-1,t+1))));
+				updateGraph(new DynInterval<T>(events.get(t),events.get(t+1)));
 				
+				kklayout.setAdjustForGravity(false);
 				kklayout.setExchangeVertices(false);
-				kklayout.setMaxIterations((int) (iterationRate*(events.get(t+1)-events.get(t))));
+				kklayout.setMaxIterations(Math.max(1,(int) (iterationRate*(events.get(t+1)-events.get(t)))));
 
-				taskMonitor.setStatusMessage("Running energy minimization..." + t + "/" + (events.size()-1));
+				if (t%10==0)
+					taskMonitor.setProgress(((double)t)/(double) events.size());
 			}
-
+			
+			layout.finalize();
 			taskMonitor.setProgress(1);
 			
 			// Set the current network view.
-			layout.initNodePositions(currentTime);
+			layout.initNodePositions(timeInterval);
 			view.fitContent();
     		view.updateView();
 		}
@@ -169,7 +163,7 @@ public class KKDynLayoutTask<T> extends AbstractLayoutTask
 			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, size/2);
 		}
 	}
-	
+
 	private void updateGraph(DynInterval<T> interval)
 	{
 		for (CyNode node : kklayout.getGraph().getNodes())
@@ -177,6 +171,31 @@ public class KKDynLayoutTask<T> extends AbstractLayoutTask
 			layout.insertNodePositionX(node, new DynInterval<T>(kklayout.getX(node),interval.getStart(),interval.getEnd()));
 			layout.insertNodePositionY(node, new DynInterval<T>(kklayout.getY(node),interval.getStart(),interval.getEnd()));
 		}
+	}
+	
+	private List<Double> getEvents(int eventType)
+	{
+		switch(eventType)
+		{
+		case 0:
+			return dynView.getNetwork().getNodeEventTimeList();
+		case 1:
+			return dynView.getNetwork().getEdgeEventTimeList();
+		case 2:
+			return dynView.getNetwork().getEventTimeList();
+		}
+		return new ArrayList<Double>();
+	}
+
+	private double getMaxDiff(List<Double> eventList)
+	{
+		double max = Double.NEGATIVE_INFINITY;
+		for (int i=0; i<eventList.size()-1; i++)
+			max = Math.max(max,eventList.get(i+1)-eventList.get(i));
+		if (max==Double.NEGATIVE_INFINITY)
+			return 0;
+		else 
+			return max;
 	}
 
 }

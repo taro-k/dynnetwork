@@ -85,8 +85,16 @@ public class Transformator
 		{
 			timeStart = System.currentTimeMillis();
 			
-			onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
-			offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+			if (i<iterations-1)
+			{
+				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
+				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+			}
+			else
+			{
+				onCounter = visibility;
+				offCounter = 255;
+			}
 
 			for (DynInterval<T> interval : nodes)
 				if (interval.isOn())
@@ -101,21 +109,15 @@ public class Transformator
 					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
 
 			timeEnd = System.currentTimeMillis();
-			if (timeEnd-timeStart<delay)
+			if (round(timeEnd-timeStart)<delay)
 				try {
-					Thread.sleep(delay-(int) (timeEnd-timeStart));
+					Thread.sleep(delay-round(timeEnd-timeStart));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				view.updateView();
 		}
-		
-		for (DynInterval<T> interval : nodes)
-			if (interval.isOn())
-				updateTransparency(view, dynNetwork.getNode(interval),255);
-			else
-				updateTransparency(view, dynNetwork.getNode(interval),visibility);
 		
 		view.updateView();
 	}
@@ -153,8 +155,16 @@ public class Transformator
 		{
 			timeStart = System.currentTimeMillis();
 			
-			onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
-			offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+			if (i<iterations-1)
+			{
+				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
+				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+			}
+			else
+			{
+				onCounter = visibility;
+				offCounter = 255;
+			}
 
 			for (DynInterval<T> interval : nodes)
 				if (interval.isOn())
@@ -167,35 +177,29 @@ public class Transformator
 					updateTransparency(view, dynNetwork.getEdge(interval),offCounter);
 				else
 					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
-
+			
 			for (DynInterval<T> interval : nodesPosX)
 				if (!interval.isOn() && interval.getOffValue()!=null)
 					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
 				else if (interval.isOn())
 					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
-			
+
 			for (DynInterval<T> interval : nodesPosY)
 				if (!interval.isOn() && interval.getOffValue()!=null)
 					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
 				else if (interval.isOn())
 					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
-			
+				
 			timeEnd = System.currentTimeMillis();
-			if (timeEnd-timeStart<delay)
+			if (round(timeEnd-timeStart)<delay)
 				try {
-					Thread.sleep(delay-(int) (timeEnd-timeStart));
+					Thread.sleep(delay-round(timeEnd-timeStart));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
 				view.updateView();
 		}
-		
-		for (DynInterval<T> interval : nodes)
-			if (interval.isOn())
-				updateTransparency(view, dynNetwork.getNode(interval),255);
-			else
-				updateTransparency(view, dynNetwork.getNode(interval),visibility);
 		
 		view.updateView();
 	}
@@ -249,29 +253,34 @@ public class Transformator
 			switch(smoothness)
 			{
 			case 250:
-				this.alpha = 0.5;
+				this.alpha = 0.35;
 				break;
 			case 500:
-				this.alpha = 0.4;
-				break;
-			case 750:
-				this.alpha = 0.3;
-				break;
-			case 1000:
 				this.alpha = 0.2;
 				break;
+			case 750:
+				this.alpha = 0.15;
+				break;
+			case 1000:
+				this.alpha = 0.10;
+				break;
 			case 2000:
-				this.alpha = 0.1;
+				this.alpha = 0.05;
 				break;
 			case 3000:
-				this.alpha = 0.04;
+				this.alpha = 0.03;
 				break;
 			case 4000:
-				this.alpha = 0.03;
+				this.alpha = 0.025;
 				break;
 			}
 
 		}
+	}
+	
+	private int round(double value)
+	{
+		return (int) value;
 	}
 
 }

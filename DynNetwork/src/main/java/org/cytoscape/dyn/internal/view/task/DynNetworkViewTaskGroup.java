@@ -126,11 +126,13 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 	
 	private void setParameters()
 	{
-		this.time = this.panel.getTime();
-		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
-		else
-			timeInterval = new DynInterval<T>(time, time);
+//		this.time = this.panel.getTime();
+//		if (time>=panel.getMaxTime())
+//			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+//		else
+//			timeInterval = new DynInterval<T>(time, time);
+		
+		timeInterval = new DynInterval<T>(panel.getTime(), panel.getTime()>=panel.getMaxTime()?panel.getTime()+0.0000001:panel.getTime());
 		this.visibility = this.panel.getVisibility();
 	}
 

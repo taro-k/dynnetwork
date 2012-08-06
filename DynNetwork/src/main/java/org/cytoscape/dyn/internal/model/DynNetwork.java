@@ -236,7 +236,7 @@ public interface DynNetwork<T>
 	 * @return list of not overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval);
-	
+
 	/**
 	 * Get a list of times at which events occur.
 	 * @return

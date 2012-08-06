@@ -23,9 +23,11 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.layout.DynLayout;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.view.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutAlgorithm;
@@ -35,7 +37,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.undo.UndoSupport;
 
 /**
- * <code> SmoothKKDynLayout </code> instantiate the dynamic layout algorithm task 
+ * <code> KKDynLayout </code> instantiate the dynamic layout algorithm task 
  * {@link KKDynLayoutTask}.
  * 
  * @author Sabina Sara Pfister
@@ -43,58 +45,84 @@ import org.cytoscape.work.undo.UndoSupport;
  * @param <T>
  * @param <C>
  */
-public class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
+public final class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
 {
 	private final DynCytoPanel<T,C> panel;
-    private final DynLayoutFactory<T> dynLaoutFactory;
+    private final DynLayoutFactory<T> dynLayoutFactory;
     private final DynNetworkViewManager<T> viewManager;
+    private final DynLayoutManager<T> layoutManager;
+    
+    private double time;
+    private DynInterval<T> timeInterval;
+    
+    private DynLayout<T> layout;
+    private KKDynLayoutContext context;
     
     /**
-     * <code> SmoothKKDynLayout </code> constructor.
+     * <code> KKDynLayout </code> constructor.
      * @param computerName
      * @param humanName
      * @param undoSupport
      * @param panel
-     * @param dynLaoutFactory
+     * @param dynLayoutFactory
      */
     public KKDynLayout(
                     final String computerName, 
                     final String humanName,
                     final UndoSupport undoSupport,
                     final DynCytoPanel<T, C> panel,
-                    final DynLayoutFactory<T> dynLaoutFactory,
-                    final DynNetworkViewManager<T> viewManager)
+                    final DynLayoutFactory<T> dynLayoutFactory,
+                    final DynNetworkViewManager<T> viewManager,
+                    final DynLayoutManager<T> layoutManager)
     {
             super(computerName, humanName, undoSupport);
             this.panel = panel;
-            this.dynLaoutFactory = dynLaoutFactory;
+            this.dynLayoutFactory = dynLayoutFactory;
             this.viewManager = viewManager;
+            this.layoutManager = layoutManager;
     }
 
     @Override
     public TaskIterator createTaskIterator(
-                    CyNetworkView networkView,
-                    Object layoutContext, 
-                    Set<View<CyNode>> nodesToLayOut,
-                    String layoutAttribute)
-    {
+    		CyNetworkView networkView,
+    		Object layoutContext, 
+    		Set<View<CyNode>> nodesToLayOut,
+    		String layoutAttribute)
+    {    	
+    	setParameters();
     	
-    		dynLaoutFactory.removeLayout(networkView);
-    		DynLayout<T> layout = dynLaoutFactory.createLayout(networkView);
+    	if(layoutManager.getDynLayout(networkView)!=null)
+    	{
+    		layout = layoutManager.getDynLayout(networkView);
+    		context = (KKDynLayoutContext) layoutManager.getDynContext(layoutManager.getDynLayout(networkView));
+    		layout.removeAllIntervals();
+    	}
+    	else
+    	{
+    		context = new KKDynLayoutContext();
+    		layout = dynLayoutFactory.createLayout(networkView, context);
+    	}
     		
-    		KKDynLayoutDialog<T> dlg = new KKDynLayoutDialog<T>(new JFrame(), viewManager.getDynNetworkView(networkView));
+    	new KKDynLayoutDialog<T>(new JFrame(), viewManager.getDynNetworkView(networkView), context);
 
-            return new TaskIterator(new KKDynLayoutTask<T>(
-            		getName(), 
-            		layout, 
-            		viewManager.getDynNetworkView(networkView), 
-            		nodesToLayOut, layoutAttribute, 
-            		undoSupport,
-            		panel.getTime(),
-            		dlg.getPastEvents(),
-            		dlg.getFutureEvents(),
-            		dlg.getIterationRate(),
-            		false));
+    	return new TaskIterator(new KKDynLayoutTask<T>(getName(),layout, context,viewManager.getDynNetworkView(networkView), nodesToLayOut, layoutAttribute, undoSupport,timeInterval,panel.getVisibility()));
     }
+    
+    @Override
+    public Object createLayoutContext() 
+    {
+		return new KKDynLayoutContext();
+	}
+    
+	private void setParameters()
+	{
+		this.time = this.panel.getTime();
+		if (time>=panel.getMaxTime())
+			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			timeInterval = new DynInterval<T>(time, time);
+
+	}
+    
 
 }

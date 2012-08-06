@@ -60,13 +60,13 @@ public interface DynIntervalTree<T>
 	/**
 	 * Get all intervals corresponding to this object id
 	 * @param object id
-	 * @return
+	 * @return interval list
 	 */
 	public List<DynInterval<T>> getIntervals(long id);
 	
 	/**
-	 * Get a list of times at which events occur.
-	 * @return
+	 *  Get a list of times at which events occur.
+	 * @return time list
 	 */
 	public List<Double> getEventTimeList();
 	

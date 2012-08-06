@@ -39,6 +39,14 @@ public interface DynLayoutFactory<T>
 	public DynLayout<T> createLayout(CyNetworkView view);
 	
 	/**
+	 * Create layout for view.
+	 * @param view
+	 * @param context
+	 * @return
+	 */
+	public DynLayout<T> createLayout(CyNetworkView view, Object context);
+	
+	/**
 	 * Remove layout from view.
 	 * @param view
 	 * @return

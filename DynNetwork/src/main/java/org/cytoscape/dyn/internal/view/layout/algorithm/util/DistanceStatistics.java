@@ -50,14 +50,14 @@ public class DistanceStatistics
     
 	/**
 	 * Returns the diameter of the graph> using the metric 
-     * specified by the given distance. Ff <code>use_max == true</code>, the value returned
+     * specified by the given distance. The value returned
      * will be the the maximum shortest path length over all pairs of connected 
      * nodes.
 	 * @param <T>
 	 * @param g
 	 * @param d
 	 * @param use_max
-	 * @return diamter
+	 * @return diameter
 	 */
     public static <T> double diameter(DynNetworkSnapshot<T> g, Distance<T> d, boolean use_max)
     {

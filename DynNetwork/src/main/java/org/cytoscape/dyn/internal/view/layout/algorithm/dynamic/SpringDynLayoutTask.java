@@ -125,7 +125,7 @@ public class SpringDynLayoutTask<T> extends AbstractLayoutTask
 			updateGraph();
 
 			taskMonitor.setProgress(1);
-			layout.initNodePositions(currentTime);
+//			layout.initNodePositions(currentTime);
 			view.fitContent();
     		view.updateView();
 		}

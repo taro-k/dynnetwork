@@ -21,6 +21,7 @@ package org.cytoscape.dyn.internal.model;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -301,25 +302,27 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		return edgeTreeAttr.search(interval);
 	}
-	
+
 	@Override
 	public List<Double> getEventTimeList()
 	{
-		List<Double> list = this.nodeTree.getEventTimeList();
-		list.addAll(this.edgeTree.getEventTimeList());
-		return list;
+		List<Double> timeList = this.nodeTree.getEventTimeList();
+		for (Double d : this.edgeTree.getEventTimeList())
+			if (!timeList.contains(d))
+				timeList.add(d);
+		return sortList(timeList);
 	}
 	
 	@Override
 	public List<Double> getNodeEventTimeList()
 	{
-		return this.nodeTree.getEventTimeList();
+		return sortList(this.nodeTree.getEventTimeList());
 	}
 	
 	@Override
 	public List<Double> getEdgeEventTimeList()
 	{
-		return this.edgeTree.getEventTimeList();
+		return sortList(this.edgeTree.getEventTimeList());
 	}
 
 	@Override
@@ -754,7 +757,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			{
 				System.out.println("graph" + "\t" + this.getNetworkLabel() + "\t" + attr.getKey().getColumn() + 
 						"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				graphTreeAttr.insert(interval, attr.getRow());
 			}
 
 		for (DynAttribute<T> attr : nodeTable.values())
@@ -763,7 +765,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				if (this.getNode(interval)!=null)
 					System.out.println("node" + "\t" + this.getNodeLabel(this.getNode(interval)) + "\t" + attr.getKey().getColumn() + 
 							"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				nodeTreeAttr.insert(interval, attr.getRow());
 			}
 
 		for (DynAttribute<T> attr : edgeTable.values())
@@ -772,7 +773,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				if (this.getEdge(interval)!=null)
 					System.out.println("edge" + "\t" + this.getEdgeLabel(this.getEdge(interval)) + "\t" + attr.getKey().getColumn() + 
 							"\t" + interval.getOnValue() + "\t" + formatter.format(interval.getStart()) + "\t" + formatter.format(interval.getEnd()));
-				edgeTreeAttr.insert(interval, attr.getRow());
 			}
 	}
 	
@@ -832,6 +832,18 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		}
 		else
 			return null;
+	}
+	
+	private List<Double> sortList(List<Double> timeList)
+	{
+		double mintime = this.getMinTime();
+		double maxTime = this.getMaxTime();
+		if (!timeList.contains(mintime))
+			timeList.add(mintime);
+		if (!timeList.contains(maxTime))
+			timeList.add(maxTime);
+		Collections.sort(timeList);
+		return timeList;
 	}
 	
 }

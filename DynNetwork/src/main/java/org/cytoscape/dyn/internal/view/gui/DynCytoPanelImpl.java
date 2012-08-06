@@ -378,26 +378,27 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		dynVizPanel.add(buttonPanel);
 
 		NameIDObj[] itemsTimeResolution = { 
-				new NameIDObj(10,   "1/10   "), 
-				new NameIDObj(25,   "1/25   "),
-				new NameIDObj(50,   "1/50   "),
-				new NameIDObj(75,   "1/75   "),
-				new NameIDObj(100,  "1/100  "), 
-				new NameIDObj(1000, "1/1000 "), 
-				new NameIDObj(10000,"1/10000") };
+				new NameIDObj(10,   "1/10    "), 
+				new NameIDObj(25,   "1/25    "),
+				new NameIDObj(50,   "1/50    "),
+				new NameIDObj(75,   "1/75    "),
+				new NameIDObj(100,  "1/100   "), 
+				new NameIDObj(1000, "1/1000  "),
+				new NameIDObj(10000, "1/10000 "),
+				new NameIDObj(100000,"1/100000") };
 		resolutionComboBox  = new JComboBox(itemsTimeResolution);
 		resolutionComboBox.setSelectedIndex(1);
 		resolutionComboBox.addActionListener(this);
 		
 		NameIDObj[] itemsSmoothness = { 
-				new NameIDObj(0,   "0 ms   "), 
-				new NameIDObj(250, "250 ms "),
-				new NameIDObj(500, "500 ms "),
-				new NameIDObj(750, "750 ms "),
-				new NameIDObj(1000,"1000 ms"),
-				new NameIDObj(2000,"2000 ms"),
-				new NameIDObj(2000,"3000 ms"),
-				new NameIDObj(2000,"4000 ms")};
+				new NameIDObj(0,   "0 ms    "), 
+				new NameIDObj(250, "250 ms  "),
+				new NameIDObj(500, "500 ms  "),
+				new NameIDObj(750, "750 ms  "),
+				new NameIDObj(1000,"1000 ms "),
+				new NameIDObj(2000,"2000 ms "),
+				new NameIDObj(3000,"3000 ms "),
+				new NameIDObj(4000,"4000 ms ")};
 		smoothnessComboBox  = new JComboBox(itemsSmoothness);
 		smoothnessComboBox.setSelectedIndex(2);
 		smoothnessComboBox.addActionListener(this);

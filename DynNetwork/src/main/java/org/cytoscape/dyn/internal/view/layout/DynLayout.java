@@ -64,64 +64,89 @@ public interface DynLayout<T>
 	/**
 	 * Get X position intervals for node.
 	 * @param node
-	 * @return
+	 * @return list of X intervals for node
 	 */
 	public List<DynInterval<T>> getIntervalsX(CyNode node);
 	
 	/**
+	 * Get X position intervals.
+	 * @param node
+	 * @return list of X intervals
+	 */
+	public List<DynInterval<T>> getIntervalsX();
+	
+	/**
 	 * Get all Y intervals for node.
 	 * @param node
-	 * @return
+	 * @return list of Y intervals for node
 	 */
 	public List<DynInterval<T>> getIntervalsY(CyNode node);
 
 	/**
+	 * Get all Y intervals.
+	 * @param node
+	 * @return list of Y intervals
+	 */
+	public List<DynInterval<T>> getIntervalsY();
+	
+	/**
 	 * Search X positions of visible nodes
 	 * @param interval
-	 * @return
+	 * @return list of X positions of visible nodes
 	 */
 	public List<DynInterval<T>> searchNodePositionsX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of visible nodes
 	 * @param interval
-	 * @return
+	 * @return list of Y positions of visible nodes
 	 */
 	public List<DynInterval<T>> searchNodePositionsY(DynInterval<T> interval);
 	
 	/**
 	 * Search X positions of visible nodes that changed from the last time interval.
 	 * @param interval
-	 * @return
+	 * @return list of X positions of visible nodes that changed from the last time interval
 	 */
 	public List<DynInterval<T>> searchChangedNodePositionsX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of visible nodes that changed from the last time interval.
 	 * @param interval
-	 * @return
+	 * @return list of Y positions of visible nodes that changed from the last time interval
 	 */
 	public List<DynInterval<T>> searchChangedNodePositionsY(DynInterval<T> interval);
 
 	/**
 	 * Search X positions of not visible nodes.
 	 * @param interval
-	 * @return
+	 * @return list of X positions of not visible nodes
 	 */
 	public List<DynInterval<T>> searchNodePositionsNotX(DynInterval<T> interval);
 	
 	/**
 	 * Search Y positions of not visible nodes.
 	 * @param interval
-	 * @return
+	 * @return list of Y positions of not visible nodes
 	 */
 	public List<DynInterval<T>> searchNodePositionsNotY(DynInterval<T> interval);
 	
 	/**
 	 * Initialize node positions.
-	 * @param time
+	 * @param time interval
 	 */
-	public void initNodePositions(double time);
+	public void initNodePositions(DynInterval<T> timeInterval);
+	
+	/**
+	 * Finalize layout. We perform here all operations that require the network layout
+	 * to be finished.
+	 */
+	public void finalize();
+	
+	/**
+	 * Print intervals.
+	 */
+	public void print();
 	
 	/**
 	 * Get network view.

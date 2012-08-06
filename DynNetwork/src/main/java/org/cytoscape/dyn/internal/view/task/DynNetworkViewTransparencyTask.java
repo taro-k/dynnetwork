@@ -106,6 +106,7 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
+		
 		this.visibility = this.panel.getVisibility();
 	}
 

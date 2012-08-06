@@ -45,8 +45,17 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 	@Override
 	public DynLayout<T> createLayout(CyNetworkView view)
 	{
-		DynLayoutImpl<T> layout = new DynLayoutImpl<T>(view);
+		DynLayout<T> layout = new DynLayoutImpl<T>(view);
 		layoutManager.addDynLayout(layout);
+		return layout;
+	}
+	
+	@Override
+	public DynLayout<T> createLayout(CyNetworkView view, Object context)
+	{
+		DynLayout<T> layout = new DynLayoutImpl<T>(view);
+		layoutManager.addDynLayout(layout);
+		layoutManager.addDynContext(layout, context);
 		return layout;
 	}
 

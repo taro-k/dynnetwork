@@ -36,6 +36,7 @@ import org.cytoscape.view.model.CyNetworkView;
 public final class DynLayoutManagerImpl<T> implements DynLayoutManager<T>
 {
 	private final Map<CyNetworkView, DynLayout<T>> dynLayoutMap;
+	private final Map<DynLayout<T>, Object> dynContextMap;
 	
 	/**
 	 * <code> DynLayoutManagerImpl </code> constructor.
@@ -43,12 +44,19 @@ public final class DynLayoutManagerImpl<T> implements DynLayoutManager<T>
 	public DynLayoutManagerImpl()
 	{
 		this.dynLayoutMap = new WeakHashMap<CyNetworkView, DynLayout<T>>();
+		this.dynContextMap = new WeakHashMap<DynLayout<T>, Object>();
 	}
 
 	@Override
 	public void addDynLayout(DynLayout<T> dynLayout)
 	{
 		this.dynLayoutMap.put(dynLayout.getNetworkView(), dynLayout);
+	}
+	
+	@Override
+	public void addDynContext(DynLayout<T> dynLayout, Object context)
+	{
+		this.dynContextMap.put(dynLayout, context);
 	}
 
 	@Override
@@ -58,12 +66,22 @@ public final class DynLayoutManagerImpl<T> implements DynLayoutManager<T>
 	}
 	
 	@Override
+	public Object getDynContext(DynLayout<T> dynLayout)
+	{
+		return dynContextMap.get(dynLayout);
+	}
+	
+	@Override
 	public void removeDynLayout(CyNetworkView view)
 	{
 		if (dynLayoutMap.containsKey(view))
+		{
+			if (dynContextMap.containsKey(dynLayoutMap.get(view)))
+				dynContextMap.remove(dynLayoutMap.get(view));
 			dynLayoutMap.remove(view);
+		}
 	}
-	
+
 	@Override
 	public Collection<DynLayout<T>> getDynNetworks() 
 	{
