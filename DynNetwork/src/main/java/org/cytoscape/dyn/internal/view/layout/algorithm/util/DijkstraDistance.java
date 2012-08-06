@@ -108,9 +108,6 @@ public class DijkstraDistance<T> implements Distance<T>
             }
         }
         
-        // if we've exceeded the max distance or max # of distances we're willing to calculate, or
-        // if we already have all the distances we need, 
-        // terminate
         if (sd.reached_max ||
             (targets != null && to_get.isEmpty()) ||
             (sd.distances.size() >= numDests))
@@ -126,8 +123,6 @@ public class DijkstraDistance<T> implements Distance<T>
             to_get.remove(v);
             if (v_dist > this.max_distance) 
             {
-                // we're done; put this vertex back in so that we're not including
-                // a distance beyond what we specified
                 sd.restoreVertex(v, v_dist);
                 sd.reached_max = true;
                 break;

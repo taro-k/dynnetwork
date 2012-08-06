@@ -76,6 +76,18 @@ public class DijkstraShortestPath<T> extends DijkstraDistance<T> implements Shor
         super(g, nev);
     }
     
+    /**
+     * <code> DijkstraShortestPath </code> constructor.
+     * @param g
+     * @param nev
+     * @param max_targets
+     */
+    public DijkstraShortestPath(DynNetworkSnapshot<T> g, Map<CyEdge, ? extends Number> nev, int max_targets)
+    {
+        super(g, nev);
+        super.setMaxTargets(max_targets);
+    }
+    
     @Override
     protected SourceData getSourceData(CyNode source)
     {
@@ -120,7 +132,7 @@ public class DijkstraShortestPath<T> extends DijkstraDistance<T> implements Shor
      * in the graph (including the <code>source</code> vertex) 
      * to the last edge on the shortest path from the 
      * <code>source</code> vertex.
-     * @param source    the vertex from which distances are measured
+     * @param source
      */
     public Map<CyNode,CyEdge> getIncomingEdgeMap(CyNode source)
 	{
@@ -133,7 +145,7 @@ public class DijkstraShortestPath<T> extends DijkstraDistance<T> implements Shor
      * occurrence on this path.
      * @param source
      * @param target
-     * @return
+     * @return edge list
      */
 	public List<CyEdge> getPath(CyNode source, CyNode target)
 	{
@@ -175,7 +187,7 @@ public class DijkstraShortestPath<T> extends DijkstraDistance<T> implements Shor
      * to the incoming edge along the path from that vertex.
      * @param source
      * @param numDests
-     * @return
+     * @return map of closest nodes
      */
 	public LinkedHashMap<CyNode,CyEdge> getIncomingEdgeMap(CyNode source, int numDests)
 	{
