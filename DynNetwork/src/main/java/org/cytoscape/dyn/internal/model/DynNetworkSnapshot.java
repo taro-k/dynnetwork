@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
@@ -142,6 +143,13 @@ public interface DynNetworkSnapshot<T>
 	 * @return edge list
 	 */
 	public List<CyEdge> getEdges();
+	
+	/**
+	 * Get weight map for given attribute.
+	 * @param attName
+	 * @return
+	 */
+	public Map<CyEdge,? extends Number> getWeightMap(String attName);
 	
 	/**
 	 * Get degree.

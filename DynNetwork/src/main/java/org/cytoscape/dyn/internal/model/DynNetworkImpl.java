@@ -35,6 +35,7 @@ import org.cytoscape.dyn.internal.model.attribute.DynStringAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
 import org.cytoscape.group.CyGroupManager;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
@@ -314,15 +315,16 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
-	public List<Double> getNodeEventTimeList()
+	public List<Double> getEventTimeList(String attName)
 	{
-		return sortList(this.nodeTree.getEventTimeList());
-	}
-	
-	@Override
-	public List<Double> getEdgeEventTimeList()
-	{
-		return sortList(this.edgeTree.getEventTimeList());
+		List<Double> timeList = this.nodeTree.getEventTimeList();
+		for (Double d : this.edgeTree.getEventTimeList())
+			if (!timeList.contains(d))
+				timeList.add(d);
+		for (Double d : this.edgeTreeAttr.getEventTimeList(attName))
+			if (!timeList.contains(d))
+				timeList.add(d);
+		return sortList(timeList);
 	}
 
 	@Override
@@ -455,6 +457,36 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	public T readEdgeTable(CyEdge edge, String name, T value) 
 	{
 		return (T) network.getRow(edge).get(name, value.getClass());
+	}
+	
+	@Override
+	public List<String> getGraphAttributes() 
+	{
+		List<String> list = new ArrayList<String>();
+		for (CyColumn col : network.getDefaultNetworkTable().getColumns())
+			if (col.getType()==Double.class)
+				list.add(col.getName());
+		return list;
+	}
+	
+	@Override
+	public List<String> getNodeAttributes() 
+	{
+		List<String> list = new ArrayList<String>();
+		for (CyColumn col : network.getDefaultNodeTable().getColumns())
+			if (col.getType()==Double.class)
+				list.add(col.getName());
+		return list;
+	}
+
+	@Override
+	public List<String> getEdgeAttributes() 
+	{
+		List<String> list = new ArrayList<String>();
+		for (CyColumn col : network.getDefaultEdgeTable().getColumns())
+			if (col.getType()==Double.class && !col.getName().equals("start") && !col.getName().equals("end"))
+				list.add(col.getName());
+		return list;
 	}
 	
 	@Override

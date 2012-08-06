@@ -237,6 +237,24 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
+	public Map<CyEdge,? extends Number> getWeightMap(String attName)
+	{
+		Map<CyEdge,Double> weightMap = new HashMap<CyEdge,Double>();
+		for (CyEdge edge : edgeList)
+			weightMap.put(edge, new Double(1));
+		
+		for (DynInterval i : network.searchEdgesAttr(this.interval))
+		{
+			CyEdge edge = network.getEdge(i);
+			if (edge!=null && i.getAttribute().getColumn().equals(attName))
+				weightMap.put(edge, (Double)i.getOnValue());
+		}
+//		Double value = (Double) network.getNetwork().getRow(edge).get(attName, (Class<T>) attributeMap.get(attName));
+		return weightMap;
+	}
+	
+	@Override
 	public int getDegree(CyNode node)
 	{
 		return this.inDegree(node)+this.outDegree(node);

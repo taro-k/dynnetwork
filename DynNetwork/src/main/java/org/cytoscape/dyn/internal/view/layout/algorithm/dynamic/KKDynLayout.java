@@ -105,7 +105,7 @@ public final class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
     		
     	new KKDynLayoutDialog<T>(new JFrame(), viewManager.getDynNetworkView(networkView), context);
 
-    	return new TaskIterator(new KKDynLayoutTask<T>(getName(),layout, context,viewManager.getDynNetworkView(networkView), nodesToLayOut, layoutAttribute, undoSupport,timeInterval,panel.getVisibility()));
+    	return new TaskIterator(new KKDynLayoutTask<T>(getName(),layout, context,viewManager.getDynNetworkView(networkView), nodesToLayOut, layoutAttribute, undoSupport,timeInterval));
     }
     
     @Override

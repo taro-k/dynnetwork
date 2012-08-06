@@ -19,12 +19,14 @@
 
 package org.cytoscape.dyn.internal.view.layout.algorithm.dynamic;
 
+import java.util.List;
+
 import org.cytoscape.work.Tunable;
 
 /**
  * <code> KKDynLayoutContext </code> encodes the parameters for the Dynamic Kamada Kawai Layout. 
  * 
- * @author sabina
+ * @author Sabina Sara Pfister
  *
  */
 public class KKDynLayoutContext 
@@ -36,10 +38,28 @@ public class KKDynLayoutContext
 	public int m_event_type = 0;
 	
 	/**
+	 * Attribute name.
+	 */
+	@Tunable(description="Event type")
+	public String m_attribute_name;
+	
+	/**
+	 * Event list.
+	 */
+	@Tunable(description="Event list")
+	public  List<Double> m_event_list;
+	
+	/**
 	 * Maximum number of iterations.
 	 */
 	@Tunable(description="Maximum number of iterations")
 	public int m_max_iterations = 10;
+	
+	/**
+	 * Iteration rate.
+	 */
+	@Tunable(description="Iteration rate")
+	public double m_iteration_rate;
 	
 	/**
 	 * Number of past events to consider.

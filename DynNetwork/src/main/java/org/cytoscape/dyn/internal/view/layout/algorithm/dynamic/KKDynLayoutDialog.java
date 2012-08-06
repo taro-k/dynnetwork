@@ -24,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
     private JSlider sliderPast;
     private JSlider sliderFuture;
     private JSlider sliderIterations;
-    private JComboBox typeComboBox;
+    private JComboBox attrComboBox;
     private Hashtable<Integer, JLabel> labelTablePast;
     private Hashtable<Integer, JLabel> labelTableFuture;
     private Hashtable<Integer, JLabel> labelTableIterations;
@@ -92,22 +91,23 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		this.dynView = dynView;
 		this.context = context;
 		context.m_cancel = true;
-		initComponents(context.m_event_type, context.m_max_iterations,context.m_past_events,context.m_future_events);
+		initComponents(context.m_event_type,context.m_max_iterations,context.m_past_events,context.m_future_events);
 	}
 
 	private void initComponents(int type, int iterations, int past, int future) 
 	{	
-		JPanel topPanel = new JPanel(new GridLayout(6,2));
+		JPanel topPanel = new JPanel(new GridLayout(7,2));
 		
-		NameIDObj[] itemsTimeResolution = { 
-				new NameIDObj(0,   "Nodes"), 
-				new NameIDObj(1,   "Edges"),
-				new NameIDObj(2,   "Nodes & Edges") };
-		typeComboBox  = new JComboBox(itemsTimeResolution);
-		typeComboBox.setSelectedIndex(type);
-		typeComboBox.addActionListener(this);
+		List<String> attList = dynView.getNetwork().getEdgeAttributes();
+		NameIDObj[] itemsAttributes = new NameIDObj[attList.size()+1];
+		itemsAttributes[0] = new NameIDObj(0,   "none");
+		for (int i=0;i<attList.size();i++)
+			itemsAttributes[i+1] = new NameIDObj(i+1,attList.get(i));
+		attrComboBox  = new JComboBox(itemsAttributes);
+		attrComboBox.setSelectedIndex(context.m_event_type);
+		attrComboBox.addActionListener(this);
 		
-		events = getEvents(((NameIDObj)typeComboBox.getSelectedItem()).id);
+		events = getEvents(((NameIDObj)attrComboBox.getSelectedItem()).id);
 		
 		currentItertions = new JLabel("Maximum iterations = " + Math.max(1, iterations));
 		sliderIterations = new JSlider(JSlider.HORIZONTAL, 0, 1000, iterations);
@@ -144,8 +144,8 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		sliderFuture.setPaintLabels(true);
 		sliderFuture.addChangeListener(this);
 		
-		topPanel.add(new JLabel("Event type      "));
-		topPanel.add(typeComboBox);
+		topPanel.add(new JLabel("Distance Edge Attribute"));
+		topPanel.add(attrComboBox);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(currentItertions);
@@ -193,7 +193,10 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 			if (source.equals(okButton))
 			{
 				context.m_cancel = false;
-				context.m_event_type = ((NameIDObj)typeComboBox.getSelectedItem()).id;
+				context.m_event_type = ((NameIDObj)attrComboBox.getSelectedItem()).id;
+				context.m_attribute_name = ((NameIDObj)attrComboBox.getSelectedItem()).name;
+				context.m_iteration_rate = context.m_max_iterations/getMaxDiff(events);
+				context.m_event_list = filterEvents(events, context.m_iteration_rate);
 				context.m_max_iterations = Math.max(1,sliderIterations.getValue());
 				context.m_past_events = sliderPast.getValue();
 				context.m_future_events = sliderFuture.getValue();
@@ -209,9 +212,9 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		else if (event.getSource() instanceof JComboBox)
 		{
 			JComboBox source = (JComboBox)event.getSource();
-			if (source.equals(typeComboBox))
+			if (source.equals(attrComboBox))
 			{
-				events = getEvents(((NameIDObj)typeComboBox.getSelectedItem()).id);
+				events = getEvents(((NameIDObj)attrComboBox.getSelectedItem()).id);
 				updateGui();
 			}
 		}
@@ -231,16 +234,29 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 	
 	private List<Double> getEvents(int eventType)
 	{
-		switch(eventType)
-		{
-		case 0:
-			return dynView.getNetwork().getNodeEventTimeList();
-		case 1:
-			return dynView.getNetwork().getEdgeEventTimeList();
-		case 2:
+		if (eventType==0)
 			return dynView.getNetwork().getEventTimeList();
-		}
-		return new ArrayList<Double>();
+		else
+			return dynView.getNetwork().getEventTimeList(((NameIDObj)attrComboBox.getSelectedItem()).name);
+	}
+	
+	private List<Double> filterEvents(List<Double> events, double iterationRate)
+	{
+		for (int t=events.size()-1;t>0;t--)
+			if ((int) (iterationRate*(events.get(t)-events.get(t-1)))==0)
+				events.remove(t-1);	
+		return events;
+	}
+
+	private double getMaxDiff(List<Double> eventList)
+	{
+		double max = Double.NEGATIVE_INFINITY;
+		for (int i=0; i<eventList.size()-1; i++)
+			max = Math.max(max,eventList.get(i+1)-eventList.get(i));
+		if (max==Double.NEGATIVE_INFINITY)
+			return 0;
+		else 
+			return max;
 	}
 	
 	private void updateGui()

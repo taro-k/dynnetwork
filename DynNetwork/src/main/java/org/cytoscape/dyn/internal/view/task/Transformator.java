@@ -119,7 +119,7 @@ public class Transformator
 				view.updateView();
 		}
 		
-		view.updateView();
+//		view.updateView();
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class Transformator
 				view.updateView();
 		}
 		
-		view.updateView();
+//		view.updateView();
 	}
 
 	private final <T> void updateTransparency(final DynNetworkView<T> view, final CyNode node, final int value)

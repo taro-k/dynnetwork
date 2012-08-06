@@ -70,6 +70,13 @@ public interface DynIntervalTree<T>
 	 */
 	public List<Double> getEventTimeList();
 	
+	/**
+	 * Get a list of times at which events occur filtered by attribute name.
+	 * @param attName
+	 * @return time list
+	 */
+	public List<Double> getEventTimeList(String attName);
+	
     /**
      * Search overlapping intervals in the tree.
 	 * @param interval

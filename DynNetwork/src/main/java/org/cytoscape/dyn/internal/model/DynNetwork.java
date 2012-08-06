@@ -239,21 +239,16 @@ public interface DynNetwork<T>
 
 	/**
 	 * Get a list of times at which events occur.
-	 * @return
+	 * @return time list
 	 */
 	public List<Double> getEventTimeList();
 	
 	/**
-	 * Get a list of times at which node events occur.
+	 * Get a list of times at which events occur filtered by attribute name.
+	 * @param attName
 	 * @return
 	 */
-	public List<Double> getNodeEventTimeList();
-	
-	/**
-	 * Get a list of times at which edge events occur.
-	 * @return
-	 */
-	public List<Double> getEdgeEventTimeList();
+	public List<Double> getEventTimeList(String attName);
 	
 	/**
 	 * Get dynamic attribute for given network and name.
@@ -409,6 +404,24 @@ public interface DynNetwork<T>
 	 * @return
 	 */
 	public T readEdgeTable(CyEdge edge, String name, T value);
+	
+	/**
+	 * Get a list of double attributes for this network.
+	 * @return double attribute map
+	 */
+	public List<String>  getGraphAttributes() ;
+	
+	/**
+	 * Get a list of double attributes for nodes.
+	 * @return double attribute map
+	 */
+	public List<String>  getNodeAttributes();
+	
+	/**
+	 * Get a list of double attributes for edges.
+	 * @return double attribute list
+	 */
+	public List<String>  getEdgeAttributes();
 	
 	/**
 	 * Finalize network. We perform here all operations that require the network construction
