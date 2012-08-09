@@ -50,7 +50,7 @@ import org.cytoscape.work.TunableSetter;
 
 /**
  * <code> MenuActionLoadXGMML </code> launches an ActionEvent from the menu 
- * "File/Dynamic XGMML Loader" to import dynamic networks into Cytoscape, and is
+ * "File/Import/Dynamic Network/XGMML File..." to import dynamic networks into Cytoscape, and is
  * also responsible to create the panel {@link CytoPanel} to control the visalization
  * of dynamic graphical information.
  * 
@@ -101,8 +101,8 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     		final StreamUtil streamUtil,
     		final TunableSetter tunableSetterServiceRef)
     {
-        super("Dynamic XGMML Loader");
-        setPreferredMenu("File");
+        super("XGMML File...");
+        this.setPreferredMenu("File.Import.Dynamic Network");
         this.desktopApp = desktopApp;
         this.appManager = appManager;
         this.cytoPanelWest = desktopApp.getCytoPanel(CytoPanelName.WEST);

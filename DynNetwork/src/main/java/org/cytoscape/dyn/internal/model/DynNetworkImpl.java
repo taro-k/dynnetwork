@@ -464,7 +464,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		List<String> list = new ArrayList<String>();
 		for (CyColumn col : network.getDefaultNetworkTable().getColumns())
-			if (col.getType()==Double.class)
+			if ((col.getType()==Double.class || col.getType()==Integer.class) && !col.getName().equals("start") && !col.getName().equals("end"))
 				list.add(col.getName());
 		return list;
 	}
@@ -474,7 +474,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		List<String> list = new ArrayList<String>();
 		for (CyColumn col : network.getDefaultNodeTable().getColumns())
-			if (col.getType()==Double.class)
+			if ((col.getType()==Double.class || col.getType()==Integer.class) && !col.getName().equals("start") && !col.getName().equals("end"))
 				list.add(col.getName());
 		return list;
 	}
@@ -484,7 +484,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		List<String> list = new ArrayList<String>();
 		for (CyColumn col : network.getDefaultEdgeTable().getColumns())
-			if (col.getType()==Double.class && !col.getName().equals("start") && !col.getName().equals("end"))
+			if ((col.getType()==Double.class || col.getType()==Integer.class) && !col.getName().equals("start") && !col.getName().equals("end"))
 				list.add(col.getName());
 		return list;
 	}

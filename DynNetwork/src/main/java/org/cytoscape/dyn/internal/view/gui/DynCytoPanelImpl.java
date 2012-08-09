@@ -49,6 +49,7 @@ import org.cytoscape.application.events.SetCurrentNetworkViewListener;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
@@ -265,6 +266,15 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	public double getTime() 
 	{
 		return this.time;
+	}
+	
+	@Override
+	public DynInterval<T> getTimeInterval() 
+	{
+		if (time>=maxTime)
+			return new DynInterval<T>(time-0.0000001, time+0.0000001);
+		else
+			return new DynInterval<T>(time, time);
 	}
 	
 	@Override

@@ -111,9 +111,6 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 			kklayout = new KKLayout<T>(snap,new Dimension(size,size));
 			List<Double> events = context.m_event_list;
 			
-			// Initialize node positions at the center of the screen
-			initializePositions(size);
-			
 			// Full KK evaluation to initialize the network at time t=0
 			kklayout.setAdjustForGravity(true);
 			kklayout.setExchangeVertices(true);
@@ -135,9 +132,6 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 				kklayout.initialize();
 				kklayout.run();
 				updateGraph(new DynInterval<T>(events.get(t),events.get(t+1)));
-				
-				kklayout.setAdjustForGravity(false);
-				kklayout.setExchangeVertices(false);
 				kklayout.setMaxIterations((int) (context.m_iteration_rate*(events.get(t+1)-events.get(t))));
 
 				if (t%10==0)
@@ -151,6 +145,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 			taskMonitor.setProgress(1);
 			
 			// Set the current network view
+			initializePositions(size);
 			layout.initNodePositions(timeInterval);
 			view.fitContent();
     		view.updateView();
@@ -158,12 +153,30 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 	}
 	
 	private void initializePositions(int size)
-	{
+	{ 
+		double angle = 0;
+		double total = dynView.getNetworkView().getModel().getNodeList().size();
 		for (CyNode node : dynView.getNetworkView().getModel().getNodeList())
 		{
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, size/2);
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, size/2);
+			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (size/2)*Math.cos(angle)+size/2);
+			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (size/2)*Math.sin(angle)+size/2);
+			angle = angle + 2*Math.PI/total;
 		}
+		
+		for (DynInterval<T> i : layout.getIntervalsX())
+		{
+			CyNode node = dynView.getNetwork().getNode(i);
+			if (node!=null)
+				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
+		}
+			
+		for (DynInterval<T> i : layout.getIntervalsY())
+		{
+			CyNode node = dynView.getNetwork().getNode(i);
+			if (node!=null)
+				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
+		}	
+			
 	}
 
 	private void updateGraph(DynInterval<T> interval)

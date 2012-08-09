@@ -210,6 +210,7 @@ public class Transformator
 		{
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
+//			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,0);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
 		}
 	}

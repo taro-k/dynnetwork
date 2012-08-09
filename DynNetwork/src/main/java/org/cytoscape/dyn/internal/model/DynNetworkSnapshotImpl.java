@@ -248,7 +248,10 @@ public final class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		{
 			CyEdge edge = network.getEdge(i);
 			if (edge!=null && i.getAttribute().getColumn().equals(attName))
-				weightMap.put(edge, (Double)i.getOnValue());
+				if (i.getOnValue() instanceof Integer)
+					weightMap.put(edge, new Double((Integer)i.getOnValue()));
+				else
+					weightMap.put(edge, (Double)i.getOnValue());
 		}
 //		Double value = (Double) network.getNetwork().getRow(edge).get(attName, (Class<T>) attributeMap.get(attName));
 		return weightMap;

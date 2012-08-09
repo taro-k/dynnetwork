@@ -27,6 +27,8 @@ import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.dyn.internal.action.MenuActionLoadXGMML;
+import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleEdges;
+import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleNodes;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
@@ -40,6 +42,7 @@ import org.cytoscape.dyn.internal.view.layout.algorithm.dynamic.KKDynLayout;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
+import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.group.events.GroupCollapsedListener;
@@ -99,7 +102,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	StreamUtil streamUtil = getService(context,StreamUtil.class);
     	TunableSetter tunableSetterServiceRef = getService(context,TunableSetter.class);
     	UndoSupport undo = getService(context,UndoSupport.class);
-
+    	CyEventHelper cyEventHelperRef = getService(context,CyEventHelper.class);
+    	
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
 		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
@@ -112,7 +116,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
 //    	CyLayoutAlgorithm dynSpringLayout = new SpringDynLayout<T,C>("Dynamic Layouts", "Spring DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager);
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	
-    	MenuActionLoadXGMML<T,C> action = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
+    	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
+    	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,undo,cyEventHelperRef,taskManager,dynCytoPanel);
+    	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,undo,cyEventHelperRef,taskManager,dynCytoPanel);
 
     	Properties myLayoutProps = new Properties();
         myLayoutProps.setProperty("preferredMenu","Dynamic Layouts");
@@ -122,7 +128,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		registerService(context,dynNetViewManager,DynNetworkViewManager.class, new Properties());
 		registerService(context,dynNetworkViewFactory,DynNetworkViewFactoryImpl.class, new Properties());
 		registerService(context,dynCytoPanel,CytoPanelComponent.class, new Properties());
-    	registerService(context,action,CyAction.class, new Properties());   	
+    	registerService(context,loadAction,CyAction.class, new Properties());  
+    	registerService(context,selectNodesAction,CyAction.class, new Properties()); 
+    	registerService(context,selectEdgesAction,CyAction.class, new Properties()); 
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
     	registerService(context,dynCytoPanel,GroupCollapsedListener.class, new Properties());
     	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);

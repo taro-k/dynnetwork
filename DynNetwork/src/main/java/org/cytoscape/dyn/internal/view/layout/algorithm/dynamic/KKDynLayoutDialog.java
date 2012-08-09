@@ -96,7 +96,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 
 	private void initComponents(int type, int iterations, int past, int future) 
 	{	
-		JPanel topPanel = new JPanel(new GridLayout(7,2));
+		JPanel topPanel = new JPanel(new GridLayout(6,2));
 		
 		List<String> attList = dynView.getNetwork().getEdgeAttributes();
 		NameIDObj[] itemsAttributes = new NameIDObj[attList.size()+1];
@@ -240,13 +240,26 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 			return dynView.getNetwork().getEventTimeList(((NameIDObj)attrComboBox.getSelectedItem()).name);
 	}
 	
+	// Compute when events trigger layout iterations based on the given iteration rate
 	private List<Double> filterEvents(List<Double> events, double iterationRate)
 	{
+		double itertions = 0;
+		double increment = 0;
 		for (int t=events.size()-1;t>0;t--)
-			if ((int) (iterationRate*(events.get(t)-events.get(t-1)))==0)
+		{
+			itertions = iterationRate*(events.get(t)-events.get(t-1));
+			if (increment<1 && Math.floor(itertions)==0)
+			{
+				increment = increment+itertions-Math.floor(itertions);
 				events.remove(t-1);	
+			}
+			else
+				increment = 0;
+		}
 		return events;
 	}
+	
+	
 
 	private double getMaxDiff(List<Double> eventList)
 	{

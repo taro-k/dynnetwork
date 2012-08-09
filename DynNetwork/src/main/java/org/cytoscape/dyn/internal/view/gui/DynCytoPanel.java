@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.view.gui;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 
 /**
  * <code> DynCytoPanel </code> is the interface for the a dynamic panel to
@@ -48,6 +49,12 @@ public interface DynCytoPanel<T,C> extends CytoPanelComponent
 	 * @return
 	 */
 	public double getTime();
+	
+	/**
+	 * Return current time interval.
+	 * @return
+	 */
+	public DynInterval<T> getTimeInterval();
 	
 	/**
 	 * Get minimum time.

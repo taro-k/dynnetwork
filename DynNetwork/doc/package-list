@@ -9,6 +9,7 @@ org.cytoscape.dyn.internal.io.util
 org.cytoscape.dyn.internal.model
 org.cytoscape.dyn.internal.model.attribute
 org.cytoscape.dyn.internal.model.tree
+org.cytoscape.dyn.internal.task.select
 org.cytoscape.dyn.internal.view.gui
 org.cytoscape.dyn.internal.view.layout
 org.cytoscape.dyn.internal.view.layout.algorithm.dynamic

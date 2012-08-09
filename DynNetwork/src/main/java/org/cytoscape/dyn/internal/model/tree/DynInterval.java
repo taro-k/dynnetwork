@@ -316,7 +316,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	{
 		this.attribute = attribute;
 	}
-	
+
 	/**
 	 * Get is on. Is used to know if this interval was turned on or off.
 	 * @return
