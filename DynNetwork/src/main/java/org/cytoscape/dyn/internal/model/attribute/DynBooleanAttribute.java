@@ -19,7 +19,7 @@
 
 package org.cytoscape.dyn.internal.model.attribute;
 
-import org.cytoscape.dyn.internal.io.util.KeyPairs;
+import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 
 /**

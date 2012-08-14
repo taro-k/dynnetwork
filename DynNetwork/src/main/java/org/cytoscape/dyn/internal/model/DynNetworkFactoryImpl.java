@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.cytoscape.dyn.internal.io.util.AttributeTypeMap;
+import org.cytoscape.dyn.internal.io.read.util.AttributeTypeMap;
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;

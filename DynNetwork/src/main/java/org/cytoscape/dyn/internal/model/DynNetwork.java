@@ -367,7 +367,7 @@ public interface DynNetwork<T>
 	 * Read graph table.
 	 * @param name
 	 * @param value
-	 * @return
+	 * @return value
 	 */
 	public T readGraphTable(String name, T value);
 	
@@ -384,7 +384,7 @@ public interface DynNetwork<T>
 	 * @param node
 	 * @param name
 	 * @param value
-	 * @return
+	 * @return value
 	 */
 	public T readNodeTable(CyNode node, String name, T value);
 	
@@ -401,7 +401,7 @@ public interface DynNetwork<T>
 	 * @param edge
 	 * @param name
 	 * @param value
-	 * @return
+	 * @return value
 	 */
 	public T readEdgeTable(CyEdge edge, String name, T value);
 	

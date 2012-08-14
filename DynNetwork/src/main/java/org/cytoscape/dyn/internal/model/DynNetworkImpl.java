@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cytoscape.dyn.internal.io.util.KeyPairs;
+import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynBooleanAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynDoubleAttribute;

@@ -46,7 +46,7 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 {
 	private final CyGroup group;
 	
-	private double time;
+//	private double time;
 	private int visibility;
 
 	/**
