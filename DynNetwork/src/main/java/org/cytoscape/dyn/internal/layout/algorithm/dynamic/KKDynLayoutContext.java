@@ -52,7 +52,7 @@ public class KKDynLayoutContext
 	 * Maximum number of iterations.
 	 */
 	@Tunable(description="Maximum number of iterations")
-	public int m_max_iterations = 10;
+	public int m_max_iterations = 100;
 	
 	/**
 	 * Iteration rate.

@@ -167,14 +167,20 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
 			if (node!=null)
+			{
+				System.out.println(node.getSUID() + " x=" + (Double) i.getOnValue() + " start=" + i.getStart()+ " end=" + i.getEnd());
 				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
+			}
 		}
 			
 		for (DynInterval<T> i : layout.getIntervalsY())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
 			if (node!=null)
+			{
+				System.out.println(node.getSUID() + " y=" + (Double) i.getOnValue() + " start=" + i.getStart()+ " end=" + i.getEnd());
 				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
+			}
 		}	
 			
 	}

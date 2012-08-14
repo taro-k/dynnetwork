@@ -195,9 +195,9 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 				context.m_cancel = false;
 				context.m_event_type = ((NameIDObj)attrComboBox.getSelectedItem()).id;
 				context.m_attribute_name = ((NameIDObj)attrComboBox.getSelectedItem()).name;
+				context.m_max_iterations = Math.max(1,sliderIterations.getValue());
 				context.m_iteration_rate = context.m_max_iterations/getMaxDiff(events);
 				context.m_event_list = filterEvents(events, context.m_iteration_rate);
-				context.m_max_iterations = Math.max(1,sliderIterations.getValue());
 				context.m_past_events = sliderPast.getValue();
 				context.m_future_events = sliderFuture.getValue();
 				setVisible(false); 
@@ -248,6 +248,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		for (int t=events.size()-1;t>0;t--)
 		{
 			itertions = iterationRate*(events.get(t)-events.get(t-1));
+			System.out.println("event " + t + " iterations=" + itertions + " increment" + increment);
 			if (increment<1 && Math.floor(itertions)==0)
 			{
 				increment = increment+itertions-Math.floor(itertions);
