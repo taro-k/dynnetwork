@@ -48,8 +48,6 @@ public class SelectUtils
 	private void setSelected(final CyNetwork network, final Collection<? extends CyIdentifiable> objects, final boolean select, final double start, final double end)
 	{
 		for (final CyIdentifiable nodeOrEdge : objects)
-			if ((Double) network.getRow(nodeOrEdge).get("start", Double.class)<=start &&
-					(Double) network.getRow(nodeOrEdge).get("end", Double.class)>end)
 				network.getRow(nodeOrEdge).set(CyNetwork.SELECTED, select);
 	}
 }

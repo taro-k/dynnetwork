@@ -183,59 +183,108 @@ public interface DynNetwork<T>
 	public List<DynInterval<T>> getIntervals(CyEdge edge);
 	
 	/**
-	 * Search overlapping intervals for nodes given an interval
-	 * from the last search.
+	 * Search overlapping intervals for nodes given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchNodes(DynInterval<T> interval);
 	
 	/**
-	 * Search overlapping intervals for edges given an interval
-	 * from the last search.
+	 * Search nodes given an interval.
+	 * @param interval
+	 * @return list of nodes
+	 */
+	public List<CyNode> getVisibleNodeList(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for edges given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdges(DynInterval<T> interval);
 	
 	/**
-	 * Search overlapping intervals for graph attributes given an interval
+	 * Search edges given an interval.
+	 * @param interval
+	 * @return list of edges
+	 */
+	public List<CyEdge> getVisibleEdgeList(DynInterval<T> interval);
+	
+	/**
+	 * Search overlapping intervals for graph attributes given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval);
 	
 	/**
-	 * Search overlapping intervals for node attributes given an interval
-	 * from the last search.
+	 * Search overlapping intervals for graph attributes given an interval
+	 * filtered by the given attribute name
+	 * @param interval
+	 * @param attName
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval, String attName);
+	
+	/**
+	 * Search overlapping intervals for node attributes given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval);
 	
 	/**
-	 * Search overlapping intervals for edge attributes given an interval
-	 * from the last search.
+	 * Search overlapping intervals for node attributes given an interval
+	 * filtered by the given attribute name
+	 * @param interval
+	 * @param attName
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval, String attName);
+	
+	/**
+	 * Search overlapping intervals for edge attributes given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval);
 	
 	/**
-	 * Search not overlapping intervals for nodes given an interval
-	 * from the last search.
+	 * Search overlapping intervals for edge attributes given an interval.
+	 * filtered by the given attribute name.
+	 * @param interval
+	 * @param attName
+	 * @return list of overlapping intervals
+	 */
+	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval, String attName);
+	
+	/**
+	 * Search not overlapping intervals for nodes given an interval.
 	 * @param interval
 	 * @return list of not overlapping intervals
 	 */
 	public List<DynInterval<T>> searchNodesNot(DynInterval<T> interval);
 	
 	/**
-	 * Search not overlapping intervals for edges given an interval
-	 * from the last search.
+	 * Search nodes outside the interval.
+	 * @param interval
+	 * @return list of invisible nodes
+	 */
+	public List<CyNode> getVisibleNodeNotList(DynInterval<T> interval);
+	
+	/**
+	 * Search not overlapping intervals for edges given an interval.
 	 * @param interval
 	 * @return list of not overlapping intervals
 	 */
 	public List<DynInterval<T>> searchEdgesNot(DynInterval<T> interval);
+	
+	/**
+	 * Search edges outside the interval.
+	 * @param interval
+	 * @return list of invisible edges
+	 */
+	public List<CyEdge> getVisibleEdgeNotList(DynInterval<T> interval);
 
 	/**
 	 * Get a list of times at which events occur.

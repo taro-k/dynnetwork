@@ -19,6 +19,7 @@
 
 package org.cytoscape.dyn.internal.task.select;
 
+import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTaskFactory;
@@ -34,11 +35,13 @@ import org.cytoscape.work.undo.UndoSupport;
  * @author Sabina Sara Pfister
  *
  */
-public class SelectAllVisibleNodesTaskFactoryImpl extends AbstractNetworkTaskFactory implements SelectAllNodesTaskFactory
+public class SelectAllVisibleNodesTaskFactoryImpl<T> extends AbstractNetworkTaskFactory implements SelectAllNodesTaskFactory
 {
 	private final UndoSupport undoSupport;
 	private CyNetworkViewManager networkViewManager;
 	private final CyEventHelper eventHelper;
+	
+	private final DynNetworkManager<T> dynNetworkManager;
 	
 	private final double start;
 	private final double end;
@@ -47,6 +50,7 @@ public class SelectAllVisibleNodesTaskFactoryImpl extends AbstractNetworkTaskFac
 	 * <code> SelectAllVisibleNodesTaskFactoryImpl </code> constructor.
 	 * @param undoSupport
 	 * @param networkViewManager
+	 * @param dynNetworkManager
 	 * @param eventHelper
 	 * @param start
 	 * @param end
@@ -54,6 +58,7 @@ public class SelectAllVisibleNodesTaskFactoryImpl extends AbstractNetworkTaskFac
 	public SelectAllVisibleNodesTaskFactoryImpl(
 			final UndoSupport undoSupport,
 	        final CyNetworkViewManager networkViewManager,
+	        final DynNetworkManager<T> dynNetworkManager,
 	        final CyEventHelper eventHelper,
 	        final double start,
 	        final double end)
@@ -61,6 +66,7 @@ public class SelectAllVisibleNodesTaskFactoryImpl extends AbstractNetworkTaskFac
 		this.undoSupport        = undoSupport;
 		this.networkViewManager = networkViewManager;
 		this.eventHelper        = eventHelper;
+		this.dynNetworkManager  = dynNetworkManager;
 		this.start              = start;
 		this.end                = end;
 	}
@@ -68,7 +74,8 @@ public class SelectAllVisibleNodesTaskFactoryImpl extends AbstractNetworkTaskFac
 	@Override
 	public TaskIterator createTaskIterator(CyNetwork network) 
 	{
-		return new TaskIterator(new SelectAllVisibleNodesTask(undoSupport, network,networkViewManager, eventHelper, start, end));
+		return new TaskIterator(
+				new SelectAllVisibleNodesTask<T>(undoSupport, network,dynNetworkManager.getDynNetwork(network),networkViewManager, eventHelper, start, end));
 	}
 	
 }

@@ -232,6 +232,7 @@ public class ForceDirectedDynLayoutDialog<T> extends JDialog implements ActionLi
 			currentFuture.setText("Future events = " + Integer.toString(sliderFuture.getValue()));
 	}
 	
+	// Get a list of times when events happen
 	private List<Double> getEvents(int eventType)
 	{
 		if (eventType==0)
@@ -240,7 +241,8 @@ public class ForceDirectedDynLayoutDialog<T> extends JDialog implements ActionLi
 			return dynView.getNetwork().getEventTimeList(((NameIDObj)attrComboBox.getSelectedItem()).name);
 	}
 	
-	// Compute when events trigger layout iterations based on the given iteration rate
+	// Compute when events trigger layout iterations based on the given iteration rate and
+	// merge events that don't trigger any iteration.
 	private List<Double> filterEvents(List<Double> events, double iterationRate)
 	{
 		double itertions = 0;

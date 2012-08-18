@@ -267,6 +267,19 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		return nodeTree.search(interval);
 	}
+	
+	@Override
+	public List<CyNode> getVisibleNodeList(DynInterval<T> interval) 
+	{
+		List<CyNode> nodeList = new ArrayList<CyNode>();
+		for (DynInterval<T> i : nodeTree.search(interval))
+		{
+			CyNode node = this.getNode(i);
+			if (node!=null)
+				nodeList.add(node);
+		}
+		return nodeList;
+	}
 
 	@Override
 	public List<DynInterval<T>> searchEdges(DynInterval<T> interval)
@@ -275,9 +288,36 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@Override
+	public List<CyEdge> getVisibleEdgeList(DynInterval<T> interval) 
+	{
+		List<CyEdge> edgeList = new ArrayList<CyEdge>();
+		for (DynInterval<T> i : edgeTree.search(interval))
+		{
+			CyEdge edge = this.getEdge(i);
+			if (edge!=null)
+				edgeList.add(edge);
+		}
+		return edgeList;
+	}
+	
+	@Override
 	public List<DynInterval<T>> searchNodesNot(DynInterval<T> interval)
 	{
 		return nodeTree.searchNot(interval);
+	}
+	
+
+	@Override
+	public List<CyNode> getVisibleNodeNotList(DynInterval<T> interval) 
+	{
+		List<CyNode> nodeList = new ArrayList<CyNode>();
+		for (DynInterval<T> i : nodeTree.searchNot(interval))
+		{
+			CyNode node = this.getNode(i);
+			if (node!=null)
+				nodeList.add(node);
+		}
+		return nodeList;
 	}
 
 	@Override
@@ -286,10 +326,34 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		return edgeTree.searchNot(interval);
 	}
 	
+
+	@Override
+	public List<CyEdge> getVisibleEdgeNotList(DynInterval<T> interval) 
+	{
+		List<CyEdge> edgeList = new ArrayList<CyEdge>();
+		for (DynInterval<T> i : edgeTree.searchNot(interval))
+		{
+			CyEdge edge = this.getEdge(i);
+			if (edge!=null)
+				edgeList.add(edge);
+		}
+		return edgeList;
+	}
+	
 	@Override
 	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval)
 	{
 		return graphTreeAttr.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval,String attName) 
+	{
+		List<DynInterval<T>> list = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : graphTreeAttr.search(interval))
+			if (i.getAttribute().getColumn().equals(attName))
+				list.add(i);
+		return list;
 	}
 
 	@Override
@@ -299,9 +363,29 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 
 	@Override
+	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval,String attName) 
+	{
+		List<DynInterval<T>> list = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : nodeTreeAttr.search(interval))
+			if (i.getAttribute().getColumn().equals(attName))
+				list.add(i);
+		return list;
+	}
+
+	@Override
 	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval)
 	{
 		return edgeTreeAttr.search(interval);
+	}
+	
+	@Override
+	public List<DynInterval<T>> searchEdgesAttr(DynInterval<T> interval,String attName) 
+	{
+		List<DynInterval<T>> list = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : edgeTreeAttr.search(interval))
+			if (i.getAttribute().getColumn().equals(attName))
+				list.add(i);
+		return list;
 	}
 
 	@Override
@@ -568,7 +652,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
 		if (this.graphTable.containsKey(key))
-			this.graphTable.get(key).addInterval(interval);
+			checkGraphIntervals(this.graphTable.get(key), interval);
 		else
 		{
 			DynAttribute<T> attribute = null;
@@ -582,13 +666,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
 			this.graphTable.put(key, attribute);
 		}
-		overwriteGraphIntervals(this.graphTable.get(key), interval);
-
+		
 		if (!column.equals(CyNetwork.NAME))
 			this.graphTable.get(new KeyPairs(CyNetwork.NAME, this.network.getSUID()))
 			.addChildren(this.graphTable.get(key));
-		
-		extendInterval(graphTable.get(key).getPredecessor(interval), interval, graphTable.get(key).getSuccesor(interval));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -596,7 +677,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		KeyPairs key = new KeyPairs(column, node.getSUID());
 		if (this.nodeTable.containsKey(key))
-			this.nodeTable.get(key).addInterval(interval);
+			checkNodeIntervals(this.nodeTable.get(key), interval);
 		else
 		{
 			DynAttribute<T> attribute = null;
@@ -610,13 +691,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
 			this.nodeTable.put(key, attribute);
 		}
-		overwriteNodeIntervals(this.nodeTable.get(key), interval);
-
+		
 		if (!column.equals(CyNetwork.NAME))
 			this.nodeTable.get(new KeyPairs(CyNetwork.NAME, node.getSUID()))
 			.addChildren(this.nodeTable.get(key));
-		
-		extendInterval(nodeTable.get(key).getPredecessor(interval), interval, nodeTable.get(key).getSuccesor(interval));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -624,7 +702,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	{
 		KeyPairs key = new KeyPairs(column, edge.getSUID());
 		if (this.edgeTable.containsKey(key))
-			this.edgeTable.get(key).addInterval(interval);
+			checkEdgeIntervals(this.edgeTable.get(key), interval);
 		else
 		{
 			DynAttribute<T> attribute = null;
@@ -638,27 +716,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
 			this.edgeTable.put(key, attribute);
 		}
-		overwriteEdgeIntervals(this.edgeTable.get(key), interval);
 
 		if (!column.equals(CyNetwork.NAME))
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
-		
-		extendInterval(edgeTable.get(key).getPredecessor(interval), interval, edgeTable.get(key).getSuccesor(interval));
-	}
-	
-	private void extendInterval(DynInterval<T> previous, DynInterval<T> interval, DynInterval<T> next)
-	{
-		if (previous!=null)
-		{
-			interval.setStart(previous.getStart());
-			interval.getAttribute().removeInterval(previous);
-		}
-		if (next!=null)
-		{
-			interval.setEnd(previous.getEnd());
-			interval.getAttribute().removeInterval(previous);
-		}
 	}
 
 	private synchronized void setMinMaxTime(DynInterval<T> interval)
@@ -706,7 +767,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void overwriteGraphIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	private void checkGraphIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
 			if (interval!=i && i.compareTo(interval)>0)
@@ -719,18 +780,28 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					i.setStart(interval.getEnd());
 				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
 					interval.setEnd(i.getStart());
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()==i.getStart() && interval.getOnValue().equals(i.getOnValue()))
+				{
+					String label = this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for graph label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					return;
+				}
 				else
 				{
 					String label = this.readGraphTable(CyNetwork.NAME, (T) "string").toString();
 					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for graph label=" + label + 
 							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
 							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					return;
 				}
 			}
+		attr.addInterval(interval);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void overwriteNodeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	private void checkNodeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
 			if (interval!=i && i.compareTo(interval)>0)
@@ -743,18 +814,28 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					i.setStart(interval.getEnd());
 				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
 					interval.setEnd(i.getStart());
-				else
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()==i.getStart() && interval.getOnValue().equals(i.getOnValue()))
 				{
-					String label = this.readNodeTable(this.getNode(interval),CyNetwork.NAME, (T) "string").toString();
-					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for node label=" + label + 
+					String label = this.readNodeTable(network.getNode(attr.getRow()),CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for node label=" + label + 
 							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
 							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					throw new NullPointerException("return value is null at method AAA");
+				}
+				else
+				{
+					String label = this.readNodeTable(network.getNode(attr.getRow()),CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: skipping inconsistent attribute interval for node label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					throw new NullPointerException("return value is null at method AAA");
 				}
 			}
+		attr.addInterval(interval);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void overwriteEdgeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
+	private void checkEdgeIntervals(DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
 			if (interval!=i && i.compareTo(interval)>0)
@@ -767,14 +848,24 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					i.setStart(interval.getEnd());
 				else if (interval.getEnd()==i.getEnd() && interval.getStart()<i.getStart())
 					interval.setEnd(i.getStart());
+				else if (interval.getEnd()==i.getEnd() && interval.getStart()==i.getStart() && interval.getOnValue().equals(i.getOnValue()))
+				{
+					String label = this.readEdgeTable(network.getEdge(attr.getRow()),CyNetwork.NAME, (T) "string").toString();
+					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for edge label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					return;
+				}
 				else
 				{   
-					String label = this.readEdgeTable(this.getEdge(interval),CyNetwork.NAME, (T) "string").toString();
+					String label = this.readEdgeTable(network.getEdge(attr.getRow()),CyNetwork.NAME, (T) "string").toString();
 					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
 							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
 							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					return;
 				}
 			}
+		attr.addInterval(interval);
 	}
 	
 	@Override

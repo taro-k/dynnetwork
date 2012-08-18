@@ -32,7 +32,6 @@ import org.cytoscape.model.CyNode;
  */
 public class KeyPairs 
 {
-	
 	private String column;
 	private Long row;
 	
@@ -81,7 +80,7 @@ public class KeyPairs
 		KeyPairs o = (KeyPairs) obj;
 		if (this.row==o.row && this.column.equals(o.column))
 			return true;
-		return true;
+		return false;
 	}
 	
 }

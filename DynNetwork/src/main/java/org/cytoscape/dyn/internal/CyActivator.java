@@ -118,8 +118,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
-    	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,undo,cyEventHelperRef,taskManager,dynCytoPanel);
-    	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,undo,cyEventHelperRef,taskManager,dynCytoPanel);
+    	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
+    	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
 
     	Properties myLayoutProps = new Properties();
         myLayoutProps.setProperty("preferredMenu","Dynamic Layouts");

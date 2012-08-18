@@ -91,7 +91,9 @@ public final class KKDynLayout<T,C> extends AbstractLayoutAlgorithm
     {    	
     	setParameters();
     	
-    	if(layoutManager.getDynLayout(networkView)!=null && layoutManager.getDynLayout(networkView) instanceof KKDynLayoutContext)
+    	if(layoutManager.getDynLayout(networkView)!=null 
+    			&& layoutManager.getDynContext(layoutManager.getDynLayout(networkView))!=null
+    			&& layoutManager.getDynContext(layoutManager.getDynLayout(networkView)) instanceof KKDynLayoutContext)
     	{
     		layout = layoutManager.getDynLayout(networkView);
     		context = (KKDynLayoutContext) layoutManager.getDynContext(layoutManager.getDynLayout(networkView));

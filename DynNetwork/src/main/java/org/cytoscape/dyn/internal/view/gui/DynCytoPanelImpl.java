@@ -272,7 +272,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	public DynInterval<T> getTimeInterval() 
 	{
 		if (time>=maxTime)
-			return new DynInterval<T>(time-0.0000001, time+0.0000001);
+			return new DynInterval<T>(time-0.0000001, time-0.0000001);
 		else
 			return new DynInterval<T>(time, time);
 	}

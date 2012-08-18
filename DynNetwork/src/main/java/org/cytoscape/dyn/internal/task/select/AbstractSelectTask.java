@@ -21,6 +21,7 @@ package org.cytoscape.dyn.internal.task.select;
 
 import java.util.Collection;
 
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.task.AbstractNetworkTask;
@@ -34,24 +35,29 @@ import org.cytoscape.work.TaskMonitor;
  * @author Cytoscape
  *
  */
-public class AbstractSelectTask extends AbstractNetworkTask 
+public class AbstractSelectTask<T> extends AbstractNetworkTask 
 {
 	protected final CyNetworkViewManager networkViewManager;
 	protected final SelectUtils selectUtils;
 	protected final CyEventHelper eventHelper;
+	
+	protected final DynNetwork<T> dynNet;
 
 	/**
 	 * <code> AbstractSelectTask </code> constructor.
 	 * @param net
+	 * @param dynNet
 	 * @param networkViewManager
 	 * @param eventHelper
 	 */
 	public AbstractSelectTask(
-			final CyNetwork net, 
+			final CyNetwork net,
+			final DynNetwork<T> dynNet,
 			final CyNetworkViewManager networkViewManager, 
 			final CyEventHelper eventHelper) 
 	{
 		super(net);
+		this.dynNet = dynNet;
 		this.networkViewManager = networkViewManager;
 		this.selectUtils = new SelectUtils();
 		this.eventHelper = eventHelper;

@@ -106,6 +106,8 @@ public final class DynNetworkViewTaskGroup<T,C> extends AbstractDynNetworkViewTa
 			if (node!=null && nodeList.contains(node))
 			{
 				view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY, 255);
+				view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, 255);
+				view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, 255);
 			}
 		}
 		

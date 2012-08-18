@@ -248,7 +248,6 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		for (int t=events.size()-1;t>0;t--)
 		{
 			itertions = iterationRate*(events.get(t)-events.get(t-1));
-			System.out.println("event " + t + " iterations=" + itertions + " increment" + increment);
 			if (increment<1 && Math.floor(itertions)==0)
 			{
 				increment = increment+itertions-Math.floor(itertions);

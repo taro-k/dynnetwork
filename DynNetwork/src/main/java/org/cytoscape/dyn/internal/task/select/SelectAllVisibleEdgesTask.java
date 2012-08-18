@@ -21,9 +21,10 @@ package org.cytoscape.dyn.internal.task.select;
 
 import java.util.Collection;
 
+import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyTableUtil;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.work.TaskMonitor;
@@ -35,21 +36,33 @@ import org.cytoscape.work.undo.UndoSupport;
  * @author Sabina Sara Pfister
  *
  */
-public class SelectAllVisibleEdgesTask extends AbstractSelectTask 
+public class SelectAllVisibleEdgesTask<T> extends AbstractSelectTask<T> 
 {
 	private final UndoSupport undoSupport;
 	
 	private double start;
 	private double end;
 
+	/**
+	 * <code> SelectAllVisibleEdgesTask </code> constructor.
+	 * @param undoSupport
+	 * @param net
+	 * @param dynNet
+	 * @param networkViewManager
+	 * @param eventHelper
+	 * @param start
+	 * @param end
+	 */
 	public SelectAllVisibleEdgesTask(
-			final UndoSupport undoSupport, final CyNetwork net,
+			final UndoSupport undoSupport, 
+			final CyNetwork net,
+			final DynNetwork<T> dynNet,
 	        final CyNetworkViewManager networkViewManager,
 	        final CyEventHelper eventHelper,
 	        final double start,
 			final double end)
 	{
-		super(net, networkViewManager, eventHelper);
+		super(net, dynNet, networkViewManager, eventHelper);
 		this.undoSupport = undoSupport;
 		this.start = start;
 		this.end = end;
@@ -69,7 +82,8 @@ public class SelectAllVisibleEdgesTask extends AbstractSelectTask
 			new SelectionEdit(eventHelper, "Select All Visible Edges", network, view,
 			                  SelectionEdit.SelectionFilter.EDGES_ONLY));
 		tm.setProgress(0.2);
-		selectUtils.setSelectedEdges(network,CyTableUtil.getEdgesInState(network, CyNetwork.SELECTED, false), true, start, end);
+		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeNotList(new DynInterval<T>(start,end)), false, start, end);
+		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeList(new DynInterval<T>(start,end)), true, start, end);
 		tm.setProgress(0.6);
 		updateView();
 		tm.setProgress(1.0);

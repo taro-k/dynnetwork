@@ -145,11 +145,10 @@ public interface DynNetworkSnapshot<T>
 	public List<CyEdge> getEdges();
 	
 	/**
-	 * Get weight map for given attribute.
-	 * @param attName
-	 * @return
+	 * Get distance map for given edge attribute (set up with the constructor).
+	 * @return distance map for edge
 	 */
-	public Map<CyEdge,? extends Number> getWeightMap(String attName);
+	public Map<CyEdge,? extends Number> getWeightMap();
 	
 	/**
 	 * Get degree.

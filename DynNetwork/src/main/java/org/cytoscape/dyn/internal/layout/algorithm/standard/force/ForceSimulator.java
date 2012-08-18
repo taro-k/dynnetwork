@@ -209,7 +209,6 @@ public class ForceSimulator
     }
     
     /**
-     * 
      * Add a Spring to the simulation.
      * @param item1 the first endpoint of the spring
      * @param item2 the second endpoint of the spring
@@ -225,6 +224,15 @@ public class ForceSimulator
         Spring s = Spring.getFactory().getSpring(item1, item2, coeff, damp, length);
         springs.add(s);
         return s;
+    }
+    
+    /**
+     * Remove Spring.
+     * @param s
+     */
+    public void removeSpring(Spring s) 
+    {
+        springs.remove(s);
     }
     
     /**

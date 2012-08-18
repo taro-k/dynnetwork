@@ -118,8 +118,6 @@ public class Transformator
 
 				view.updateView();
 		}
-		
-//		view.updateView();
 	}
 
 	/**
@@ -200,8 +198,6 @@ public class Transformator
 
 				view.updateView();
 		}
-		
-//		view.updateView();
 	}
 
 	private final <T> void updateTransparency(final DynNetworkView<T> view, final CyNode node, final int value)
@@ -210,7 +206,6 @@ public class Transformator
 		{
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
-//			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,0);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
 		}
 	}

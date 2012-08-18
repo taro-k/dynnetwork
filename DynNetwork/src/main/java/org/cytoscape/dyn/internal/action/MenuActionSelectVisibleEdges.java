@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.dyn.internal.model.DynNetworkManager;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.task.select.SelectAllVisibleEdgesTaskFactoryImpl;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
@@ -47,6 +48,7 @@ public class MenuActionSelectVisibleEdges<T,C> extends AbstractCyAction
 	
 	private final CyApplicationManager appManager;
 	private final CyNetworkViewManager viewManager;
+	private final DynNetworkManager<T> dynNetworkManager;
 	private final UndoSupport undoSupport;
 	private final CyEventHelper cyEventHelper;
 	private final TaskManager<T,C> taskManager;
@@ -55,12 +57,14 @@ public class MenuActionSelectVisibleEdges<T,C> extends AbstractCyAction
 	/**
 	 * <code> MenuActionSelectVisibleEdges </code> constructor.
 	 * @param viewManager
+	 * @param dynNetworkManager
 	 * @param undoSupport
 	 * @param cyEventHelper
 	 */
     public MenuActionSelectVisibleEdges(
     		final CyApplicationManager appManager,
     		final CyNetworkViewManager viewManager,
+    		final DynNetworkManager<T> dynNetworkManager,
     		final UndoSupport undoSupport,
     		final CyEventHelper cyEventHelper,
     		final TaskManager<T,C> taskManager,
@@ -70,6 +74,7 @@ public class MenuActionSelectVisibleEdges<T,C> extends AbstractCyAction
         this.setPreferredMenu("Select");
         this.appManager = appManager;
         this.viewManager = viewManager;
+        this.dynNetworkManager  = dynNetworkManager;
         this.undoSupport = undoSupport;
         this.cyEventHelper = cyEventHelper;
         this.taskManager = taskManager;
@@ -82,7 +87,7 @@ public class MenuActionSelectVisibleEdges<T,C> extends AbstractCyAction
     public void actionPerformed(ActionEvent e)
     {
     	DynInterval<T> timeInterval = myDynPanel.getTimeInterval();
-    	SelectAllVisibleEdgesTaskFactoryImpl selectAllEdgesTaskFactory = new SelectAllVisibleEdgesTaskFactoryImpl(undoSupport,viewManager,cyEventHelper,timeInterval.getStart(),timeInterval.getEnd());
+    	SelectAllVisibleEdgesTaskFactoryImpl<T> selectAllEdgesTaskFactory = new SelectAllVisibleEdgesTaskFactoryImpl<T>(undoSupport,viewManager,dynNetworkManager,cyEventHelper,timeInterval.getStart(),timeInterval.getEnd());
     	taskManager.execute(selectAllEdgesTaskFactory.createTaskIterator(appManager.getCurrentNetwork()));
     }
 

@@ -106,7 +106,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 			kklayout = new ForceDirectedLayout<T>(snap,new Dimension(size,size));
 			List<Double> events = context.m_event_list;
 			
-			snap.setInterval(new DynInterval<T>(events.get(0),events.get(events.size()-1)));
+//			snap.setInterval(new DynInterval<T>(events.get(0),events.get(events.size()-1)));
 			kklayout.setDefaultSpringCoefficient( 0.0000002);
 			kklayout.setDefaultDampingCoefficient(0.0000001);
 			kklayout.setMaxIterations(100);
@@ -181,7 +181,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 			CyNode node = dynView.getNetwork().getNode(i);
 			if (node!=null)
 				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
-		}	
+		}
 			
 	}
 

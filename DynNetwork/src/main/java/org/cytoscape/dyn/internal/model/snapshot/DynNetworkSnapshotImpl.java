@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.model.snapshot;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,15 +52,19 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	protected final Map<CyNode,List<CyEdge>> outEdges;
 	
 	private String attName;
-	private Class<?> type;
 	
-	private final Map<CyEdge,Double> weightMap;
+	private DynInterval<T> timeInterval;
 	
-	private DynInterval<T> interval;
 	private List<DynInterval<T>> currentNodes;
 	private List<DynInterval<T>> currentEdges;
+	private List<DynInterval<T>> currentEdgesAttr;
+	
 	private final Map<CyNode,DynInterval<T>> nodeIntervals;
 	private final Map<CyEdge,DynInterval<T>> edgeIntervals;
+	private final Map<CyEdge,DynInterval<T>> edgeAttrIntervals;
+	private final Map<CyEdge,List<Double>> edgeAttrValues;
+	
+	private final Map<CyEdge,Double> weightMap;
 
 	/**
 	 * <code> DynNetworkSnapshotImpl </code> constructor.
@@ -78,8 +83,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		
 		this.currentNodes = new ArrayList<DynInterval<T>>();
 		this.currentEdges = new ArrayList<DynInterval<T>>();
+		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
+		
 		this.nodeIntervals = new HashMap<CyNode,DynInterval<T>>();
 		this.edgeIntervals = new HashMap<CyEdge,DynInterval<T>>();
+		this.edgeAttrIntervals = new HashMap<CyEdge,DynInterval<T>>();
+		this.edgeAttrValues = new HashMap<CyEdge,List<Double>>();
 		
 		this.weightMap = new HashMap<CyEdge,Double>();
 	}
@@ -93,20 +102,19 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 		this(view);
 		this.attName = attName;
-		this.type = this.network.getNetwork().getDefaultEdgeTable().getColumn(attName).getType();
 	}
 	
 	@Override
-	public void setInterval(DynInterval<T> interval) 
+	public void setInterval(DynInterval<T> timeInterval) 
 	{
-		this.interval = interval; 
+		this.timeInterval = timeInterval; 
 		
-		for (DynInterval<T> i : getChangedNodeIntervals(interval))
+		for (DynInterval<T> i : getChangedNodeIntervals(timeInterval))
 			if (i.isOn())
 			{
 				CyNode node = network.getNode(i);
 				addNode(node);
-				nodeIntervals.put(node, interval);
+				nodeIntervals.put(node, i);
 			}
 			else
 			{
@@ -114,12 +122,13 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 				removeNode(node);
 				nodeIntervals.remove(node);
 			}
-		for (DynInterval<T> i : getChangedEdgeIntervals(interval))
+		
+		for (DynInterval<T> i : getChangedEdgeIntervals(timeInterval))
 			if (i.isOn())
 			{
 				CyEdge edge = network.getEdge(i);
 				addEdge(edge);
-				edgeIntervals.put(edge, interval);
+				edgeIntervals.put(edge, i);
 			}
 			else
 			{
@@ -127,6 +136,24 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 				removeEdge(network.getEdge(i));
 				edgeIntervals.remove(edge);
 			}
+		
+		if (attName!=null && !attName.equals("none"))
+		{
+			for (DynInterval<T> i : getChangedEdgeAttrIntervals(timeInterval))
+				if (i.isOn())
+				{
+					CyEdge edge = network.getEdge(i);
+					addEdgeAttr(edge, i);
+					edgeAttrIntervals.put(edge, i);
+				}
+				else
+				{
+					CyEdge edge = network.getEdge(i);
+					removeEdgeAttr(edge);
+					edgeAttrIntervals.remove(edge);
+				}
+			updateEdgeAttr();
+		}
 	}
 	
 	@Override
@@ -224,6 +251,7 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		return false;
 	}
 	
+	@Override
 	public boolean isIncident(CyNode node, CyEdge edge)
 	{
 		if (edge.getSource()==node || edge.getTarget()==node)
@@ -261,21 +289,8 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 	
 	@Override
-	public Map<CyEdge,? extends Number> getWeightMap(String attName)
+	public Map<CyEdge,? extends Number> getWeightMap()
 	{
-//		Map<CyEdge,Double> weightMap = new HashMap<CyEdge,Double>();
-//		for (CyEdge edge : edgeList)
-//			weightMap.put(edge, new Double(1));
-//		
-//		for (DynInterval i : network.searchEdgesAttr(this.interval))
-//		{
-//			CyEdge edge = network.getEdge(i);
-//			if (edge!=null && i.getAttribute().getColumn().equals(attName))
-//				if (i.getOnValue() instanceof Integer)
-//					weightMap.put(edge, new Double((Integer)i.getOnValue()));
-//				else
-//					weightMap.put(edge, (Double)i.getOnValue());
-//		}
 		return weightMap;
 	}
 	
@@ -382,138 +397,11 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 		return view;
 	}
-
-	protected void addNode(CyNode node)
-	{
-		if (node!=null)
-		{
-			this.nodeList.add(node);
-			for (CyEdge edge : this.edgeList)
-				if (edge.getSource()==node)
-					addOutEdge(node, edge);
-				else if (edge.getTarget()==node)
-					addInEdge(node, edge);
-		}
-	}
-
-	protected void removeNode(CyNode node)
-	{
-		if (node!=null)
-		{
-			this.inEdges.remove(node);
-			this.outEdges.remove(node);
-			this.nodeList.remove(node);
-		}
-	}
 	
-	@SuppressWarnings("unchecked")
-	protected void addEdge(CyEdge edge)
-	{
-		if (edge!=null)
-		{
-			this.edgeList.add(edge);
-			for (CyNode node : this.nodeList)
-			{
-				if (edge.getSource()==node)
-					addOutEdge(node, edge);
-				if (edge.getTarget()==node)
-					addInEdge(node, edge);
-			}
-			
-			if (this.attName==null)
-				weightMap.put(edge, new Double(1));
-			else
-			{
-				T value = (T) this.network.getNetwork().getRow(edge).get(attName, type);
-				if (value instanceof Integer)
-					weightMap.put(edge, new Double((Integer)value));
-				else
-					weightMap.put(edge, (Double)value);
-			}
-		}
-	}
-
-	protected void removeEdge(CyEdge edge)
-	{
-		if (edge!=null)
-		{
-			for (CyNode node : this.inEdges.keySet())
-				this.inEdges.get(node).remove(edge);
-			for (CyNode node : this.outEdges.keySet())
-				this.outEdges.get(node).remove(edge);
-			this.edgeList.remove(edge);
-			weightMap.remove(edge);
-		}
-	}
-
-	protected void addInEdge(CyNode node, CyEdge edge)
-	{
-		if (this.inEdges.containsKey(node))
-		{
-			if(!this.inEdges.get(node).contains(edge))
-				this.inEdges.get(node).add(edge);
-		}
-		else
-		{
-			ArrayList<CyEdge> list = new ArrayList<CyEdge>();
-			list.add(edge);
-			this.inEdges.put(node, list);
-		}
-	}
-
-	protected void addOutEdge(CyNode node, CyEdge edge)
-	{
-		if (this.outEdges.containsKey(node))
-		{
-			if(!this.outEdges.get(node).contains(edge))
-				this.outEdges.get(node).add(edge);
-		}
-		else
-		{
-			ArrayList<CyEdge> list = new ArrayList<CyEdge>();
-			list.add(edge);
-			this.outEdges.put(node, list);
-		}
-	}
-
-	private List<DynInterval<T>> getChangedNodeIntervals(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = network.searchNodes(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
-		currentNodes = tempList;
-		return changedList;
-	}
-	
-	private List<DynInterval<T>> getChangedEdgeIntervals(DynInterval<T> interval)
-	{
-		List<DynInterval<T>> tempList = network.searchEdges(interval);
-		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
-		currentEdges = tempList;
-		return changedList;
-	}
-
-	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
-	{
-		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
-		for (DynInterval<T> i : list1)
-			if (!list2.contains(i))
-			{
-				diff.add(i);
-				i.setOn(false);
-			}
-		for (DynInterval<T> i : list2)
-			if (!list1.contains(i))
-			{
-				diff.add(i);
-				i.setOn(true);
-			}
-		return diff;
-	}
-
 	@Override
 	public DynInterval<T> getInterval()
 	{
-		return this.interval;
+		return this.timeInterval;
 	}
 	
 	@Override
@@ -550,6 +438,173 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			for (CyNode n: this.getSuccessors(node))
 				System.out.println("    s-node:" + network.getNodeLabel(n));
 		}
+	}
+
+	protected void addNode(CyNode node)
+	{
+		if (node!=null)
+		{
+			this.nodeList.add(node);
+			for (CyEdge edge : this.edgeList)
+				if (edge.getSource()==node)
+					addOutEdge(node, edge);
+				else if (edge.getTarget()==node)
+					addInEdge(node, edge);
+		}
+	}
+
+	protected void removeNode(CyNode node)
+	{
+		if (node!=null)
+		{
+			this.inEdges.remove(node);
+			this.outEdges.remove(node);
+			this.nodeList.remove(node);
+		}
+	}
+	
+	protected void addEdge(CyEdge edge)
+	{
+		if (edge!=null)
+		{
+			this.edgeList.add(edge);
+			for (CyNode node : this.nodeList)
+			{
+				if (edge.getSource()==node)
+					addOutEdge(node, edge);
+				if (edge.getTarget()==node)
+					addInEdge(node, edge);
+			}
+			
+			edgeAttrValues.put(edge, new ArrayList<Double>());
+			weightMap.put(edge, new Double(1));
+		}
+	}
+
+	protected void removeEdge(CyEdge edge)
+	{
+		if (edge!=null)
+		{
+			for (CyNode node : this.inEdges.keySet())
+				this.inEdges.get(node).remove(edge);
+			for (CyNode node : this.outEdges.keySet())
+				this.outEdges.get(node).remove(edge);
+			this.edgeList.remove(edge);
+			weightMap.remove(edge);
+			edgeAttrValues.remove(edge);
+		}
+	}
+
+	protected void addEdgeAttr(CyEdge edge, DynInterval<T> i)
+	{
+		if (edge!=null)
+		{
+			if (i.getOnValue() instanceof Integer)
+				edgeAttrValues.get(edge).add(new Double((Integer)i.getOnValue()));
+			else if (i.getOnValue() instanceof Double)
+				edgeAttrValues.get(edge).add((Double)i.getOnValue());
+		}
+	}
+	
+	protected void updateEdgeAttr()
+	{
+		for (CyEdge edge : edgeAttrValues.keySet())
+			if (edge!=null)
+				weightMap.put(edge, getAverage(edgeAttrValues.get(edge)));
+	}
+	
+	protected void removeEdgeAttr(CyEdge edge)
+	{
+		if (edge!=null)
+		{
+			edgeAttrIntervals.remove(edge);
+			edgeAttrValues.put(edge, new ArrayList<Double>());
+		}
+	}
+
+	protected void addInEdge(CyNode node, CyEdge edge)
+	{
+		if (this.inEdges.containsKey(node))
+		{
+			if(!this.inEdges.get(node).contains(edge))
+				this.inEdges.get(node).add(edge);
+		}
+		else
+		{
+			ArrayList<CyEdge> list = new ArrayList<CyEdge>();
+			list.add(edge);
+			this.inEdges.put(node, list);
+		}
+	}
+
+	protected void addOutEdge(CyNode node, CyEdge edge)
+	{
+		if (this.outEdges.containsKey(node))
+		{
+			if(!this.outEdges.get(node).contains(edge))
+				this.outEdges.get(node).add(edge);
+		}
+		else
+		{
+			ArrayList<CyEdge> list = new ArrayList<CyEdge>();
+			list.add(edge);
+			this.outEdges.put(node, list);
+		}
+	}
+	
+	private List<DynInterval<T>> getChangedNodeIntervals(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = network.searchNodes(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentNodes, tempList);
+		currentNodes = tempList;
+		return changedList;
+	}
+	
+	private List<DynInterval<T>> getChangedEdgeIntervals(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = network.searchEdges(interval);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdges, tempList);
+		currentEdges = tempList;
+		return changedList;
+	}
+	
+	private List<DynInterval<T>> getChangedEdgeAttrIntervals(DynInterval<T> interval)
+	{
+		List<DynInterval<T>> tempList = network.searchEdgesAttr(interval,attName);
+		List<DynInterval<T>> changedList = nonOverlap(currentEdgesAttr, tempList);
+		currentEdgesAttr = tempList;
+		return changedList;
+	}
+
+	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
+	{
+		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : list1)
+			if (!list2.contains(i))
+			{
+				diff.add(i);
+				i.setOn(false);
+			}
+		for (DynInterval<T> i : list2)
+			if (!list1.contains(i))
+			{
+				diff.add(i);
+				i.setOn(true);
+			}
+		return diff;
+	}
+	
+	private Double getAverage(Collection<Double> collection)
+	{
+		if (collection.size()>0)
+		{
+			double sum = 0;
+			for (Double item : collection)
+				sum =+ item;
+			return sum/collection.size();
+		}
+		else
+			return new Double(1);
 	}
 
 }

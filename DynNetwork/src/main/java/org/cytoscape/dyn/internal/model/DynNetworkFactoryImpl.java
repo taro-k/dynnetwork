@@ -192,11 +192,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
 		DynInterval<T> interval = getInterval((Class<T>) String.class,(T)label,start,end);
 		if (interval.getStart()<=interval.getEnd())
-		{
 			dynNetwork.insertGraph(CyNetwork.NAME, interval);
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "start", interval.getStart());
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), "end", interval.getEnd());
-		}
 		else
 		{
 			System.out.println("\nXGMML Parser Error: invalid interval for graph label=" + label + " start=" + start + " end=" + end + "\n");
@@ -214,11 +210,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		else
 			interval = getInterval((Class<T>) String.class,dynNetwork,group.getGroupNode(),(T)label,start,end);
 		if (interval.getStart()<=interval.getEnd())
-		{
 			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "start", interval.getStart());
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, "end", interval.getEnd());
-		}
 		else
 		{
 			System.out.println("\nXGMML Parser Error: invalid interval for node label=" + label + " start=" + start + " end=" + end + "\n");
@@ -232,11 +224,7 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		dynNetwork.getNetwork().getRow(edge).set(CyNetwork.NAME, label);
 		DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,edge.getSource(),edge.getTarget(),(T)label,start,end);
 		if (interval.getStart()<=interval.getEnd())
-		{
 			dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "start", interval.getStart());
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, "end", interval.getEnd());
-		}
 		else
 		{
 			System.out.println("\nXGMML Parser Error: invalid interval for edge label=" + label + " start=" + start + " end=" + end + "\n");
@@ -265,6 +253,10 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
+		if (attName.equals("Neurog1"))
+			System.out.println("insert Ng1 in node=" + dynNetwork.getNodeLabel(node) + " " + node.getSUID() + " val= " + attValue);
+		if (attName.equals("Neurog2"))
+			System.out.println("insert Ng2 in node=" + dynNetwork.getNodeLabel(node) + " " + node.getSUID() + " val= " + attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end);
 		if (interval.getStart()<=interval.getEnd())
 		{

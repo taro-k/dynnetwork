@@ -52,14 +52,20 @@ public interface DynAttribute<T>
 	
 	/**
 	 * Get time interval list of this attribute.
-	 * @return
+	 * @return interval list
 	 */
     public List<DynInterval<T>> getIntervalList();
+    
+	/**
+	 * Get time interval list of this attribute overlapping with interval.
+	 * @return interval list
+	 */
+    public List<DynInterval<T>> getIntervalList(DynInterval<T> interval);
     
     /**
      * Get time interval of this attribute and of its children.
      * @param list
-     * @return
+     * @return interval list
      */
     public List<DynInterval<T>> getRecursiveIntervalList(ArrayList<DynInterval<T>> list);
 
@@ -72,19 +78,19 @@ public interface DynAttribute<T>
 
     /**
      * Get key reference to the value mapped by this attribute in CyTable.
-     * @return
+     * @return pair of keys (row, column)
      */
     public KeyPairs getKey();
 	
     /**
      * Get the column reference to the value mapped by this attribute in CyTable.
-     * @return
+     * @return column
      */
 	public String getColumn();
 	
 	/**
 	 * Get the row reference to the value mapped by this attribute in CyTable.
-	 * @return
+	 * @return row
 	 */
 	public long getRow();
 	
@@ -107,31 +113,31 @@ public interface DynAttribute<T>
 
 	/**
 	 * Get class type.
-	 * @return
+	 * @return class type
 	 */
 	public Class<T> getType();
 	
 	/**
 	 * Get minimum value present in the time interval list.
-	 * @return
+	 * @return minimum value
 	 */
 	public T getMinValue();
 	
 	/**
 	 * Get maximum value present in the time interval list.
-	 * @return
+	 * @return maximum value
 	 */
 	public T getMaxValue();
 
 	/**
 	 * Get minimum time present in the time interval list.
-	 * @return
+	 * @return minimum time
 	 */
     public double getMinTime();
 
     /**
      * Get maximum time present in the time interval list.
-     * @return
+     * @return maximum time
      */
 	public double getMaxTime();
 	

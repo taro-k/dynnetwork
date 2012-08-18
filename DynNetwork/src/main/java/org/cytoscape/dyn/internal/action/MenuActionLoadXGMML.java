@@ -128,6 +128,8 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
     	LoadDynNetworkViewFactoryImpl<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
 
+//    	System.out.println("WTF????");
+    	
     	Task loadTask = loadFactory.creatTaskIterator(file).next();
     	Task loadViewTask = loadViewFactory.creatTaskIterator().next();
     	Task loadPanelTask = new DynCytoPanelTask<T,C>(myDynPanel, cytoPanelWest);

@@ -91,7 +91,9 @@ public final class ForceDirectedDynLayout<T,C> extends AbstractLayoutAlgorithm
     {    	
     	setParameters();
     	
-    	if(layoutManager.getDynLayout(networkView)!=null && layoutManager.getDynLayout(networkView) instanceof ForceDirectedLayoutContext)
+    	if(layoutManager.getDynLayout(networkView)!=null 
+    			&& layoutManager.getDynContext(layoutManager.getDynLayout(networkView))!=null
+    			&& layoutManager.getDynContext(layoutManager.getDynLayout(networkView)) instanceof ForceDirectedLayoutContext)
     	{
     		layout = layoutManager.getDynLayout(networkView);
     		context = (ForceDirectedLayoutContext) layoutManager.getDynContext(layoutManager.getDynLayout(networkView));

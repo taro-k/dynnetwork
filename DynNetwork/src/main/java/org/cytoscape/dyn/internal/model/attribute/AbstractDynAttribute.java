@@ -70,8 +70,21 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	@Override
 	public void addInterval(DynInterval<T> interval)
 	{
-		intervalList.add(interval);
-		interval.setAttribute(this);
+		if (interval!=null)
+		{
+			DynInterval<T> previous = this.getPredecessor(interval);
+			DynInterval<T> next = this.getSuccesor(interval);
+
+			if (previous!=null)
+				previous.setEnd(interval.getEnd());
+			else if (next!=null)
+				next.setStart(interval.getStart());
+			else
+			{
+				intervalList.add(interval);
+				interval.setAttribute(this);
+			}
+		}
 	}
 	
 	@Override
@@ -84,6 +97,16 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
     public List<DynInterval<T>> getIntervalList()
     {
 		return intervalList;
+	}
+	
+	@Override
+    public List<DynInterval<T>> getIntervalList(DynInterval<T> interval)
+    {
+		List<DynInterval<T>> list = new ArrayList<DynInterval<T>>();
+		for (DynInterval<T> i : intervalList)
+			if (i.compareTo(interval)>0)
+				list.add(i);
+		return list;
 	}
     
 	@Override

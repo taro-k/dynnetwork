@@ -103,7 +103,7 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	{
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		

@@ -32,6 +32,7 @@
 package org.cytoscape.dyn.internal.layout.algorithm.standard; 
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,8 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 	private ForceSimulator m_fsim;
 	private Map<CyNode,ForceItem> forceItems;
 	private Map<CyEdge,Spring> springItems;
+	private List<CyNode> nodeList;
+	private List<CyEdge> edgeList;
 	
 	private long timestep;
 	private int currentIteration;
@@ -83,9 +86,6 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 	
 	// default node mass
 	private double defaultNodeMass = 1.0;
-	
-	// weight map
-	private Map<CyEdge, ? extends Number> weightMap;
 
 	/**
 	 * <code> ForceDirectedLayout </code> constructor.
@@ -102,6 +102,9 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 		
 		forceItems = new HashMap<CyNode, ForceItem>();
 		springItems = new HashMap<CyEdge, Spring>(); 
+		
+		nodeList = new ArrayList<CyNode>();
+		edgeList = new ArrayList<CyEdge>();
 		
 		timestep = 1000L;
 	}
@@ -172,12 +175,25 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 		super.updateLocationsDirected();
 		
 		currentIteration = 0;
-		weightMap = graph.getWeightMap("");
 		
-		List<CyNode> nodeList = graph.getNodes();
-		List<CyEdge> edgeList = graph.getEdges();
+		// remove nodes
+		for (CyNode ln : nodeList)
+			if (!graph.conatinsNode(ln))
+			{
+				m_fsim.removeItem(forceItems.get(ln));
+				forceItems.remove(ln);
+			}
 		
+		// remove edges
+		for (CyEdge le : edgeList)
+			if (!graph.conatinsEdge(le))
+			{
+				m_fsim.removeSpring(springItems.get(le));
+				springItems.remove(le);
+			}
+
 		// initialize nodes
+		nodeList = graph.getNodes();
 		for (CyNode ln: nodeList) 
 		{
 			ForceItem fitem = forceItems.get(ln); 
@@ -193,6 +209,7 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 		}
 		
 		// initialize edges
+		edgeList = graph.getEdges();
 		for (CyEdge e: edgeList) 
 		{
 			CyNode n1 = e.getSource();
@@ -209,7 +226,7 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 						f2, 
 						(float) defaultSpringCoefficient, 
 						(float) defaultDampingCoefficient,
-						(float) defaultSpringLength*weightMap.get(e).floatValue()); 
+						(float) defaultSpringLength*graph.getWeightMap().get(e).floatValue()); 
 				springItems.put(e, sitem);
 			}
 		}
