@@ -253,10 +253,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		if (attName.equals("Neurog1"))
-			System.out.println("insert Ng1 in node=" + dynNetwork.getNodeLabel(node) + " " + node.getSUID() + " val= " + attValue);
-		if (attName.equals("Neurog2"))
-			System.out.println("insert Ng2 in node=" + dynNetwork.getNodeLabel(node) + " " + node.getSUID() + " val= " + attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end);
 		if (interval.getStart()<=interval.getEnd())
 		{

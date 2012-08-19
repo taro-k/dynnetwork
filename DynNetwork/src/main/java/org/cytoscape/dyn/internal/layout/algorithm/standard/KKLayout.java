@@ -33,7 +33,6 @@ package org.cytoscape.dyn.internal.layout.algorithm.standard;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.util.ConcurrentModificationException;
 
 import org.cytoscape.dyn.internal.layout.algorithm.standard.distance.Distance;
 import org.cytoscape.dyn.internal.layout.algorithm.standard.distance.DistanceStatistics;
@@ -202,20 +201,14 @@ public final class KKLayout<T> extends AbstractLayout<T>
     		vertices = (CyNode[])graph.getNodes().toArray(new CyNode[graph.getNodes().size()]);
     		xydata = new Point2D[n];
 
-    		while(true) 
-    		{
-    			try {
-    				int index = 0;
-    				for(CyNode node : graph.getNodes()) 
-    				{
-    					Point2D xyd = transform(node);
-    					vertices[index] = node;
-    					xydata[index] = xyd;
-    					index++;
-    				}
-    				break;
-    			} catch(ConcurrentModificationException cme) {}
-    		}
+    		int index = 0;
+			for(CyNode node : graph.getNodes()) 
+			{
+				Point2D xyd = transform(node);
+				vertices[index] = node;
+				xydata[index] = xyd;
+				index++;
+			}
 
     		diameter = DistanceStatistics.diameter(graph, distance, true);
 
@@ -233,6 +226,8 @@ public final class KKLayout<T> extends AbstractLayout<T>
     					dist = Math.min(d_ij.doubleValue(), dist);
     				if (d_ji != null)
     					dist = Math.min(d_ji.doubleValue(), dist);
+    				if (dist==0)
+    					dist = 0.00001;
     				dm[i][j] = dm[j][i] = dist;
     			}
     		}
@@ -251,12 +246,12 @@ public final class KKLayout<T> extends AbstractLayout<T>
 			+ " E=" + energy
 			;
 
-			int n = getGraph().getNodeCount();
+			int n = graph.getNodeCount();
 			if (n == 0)
 				return;
 
 			double maxDeltaM = 0;
-			int pm = -1;            // the node having max deltaM
+			int pm = -1;            
 			for (int i = 0; i < n; i++) 
 			{
 				if (isLocked(vertices[i]))
@@ -275,6 +270,11 @@ public final class KKLayout<T> extends AbstractLayout<T>
 			for (int i = 0; i < 100; i++) 
 			{
 				double[] dxy = calcDeltaXY(pm);
+				if (Double.isNaN(dxy[0]))
+				{
+					System.out.println(xydata[pm].getX() + " " + dxy[0]);
+					throw new NullPointerException();
+				}
 				xydata[pm].setLocation(xydata[pm].getX()+dxy[0], xydata[pm].getY()+dxy[1]);
 
 				double deltam = calcDeltaM(pm);
@@ -355,7 +355,7 @@ public final class KKLayout<T> extends AbstractLayout<T>
 				double dy = xydata[m].getY() - xydata[i].getY();
 				double d = Math.sqrt(dx * dx + dy * dy);
 				double ddd = d * d * d;
-
+				
 				dE_dxm += k_mi * (1 - l_mi / d) * dx;
 				dE_dym += k_mi * (1 - l_mi / d) * dy;
 				d2E_d2xm += k_mi * (1 - l_mi * dy * dy / ddd);

@@ -820,7 +820,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for node label=" + label + 
 							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
 							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
-					throw new NullPointerException("return value is null at method AAA");
+					return;
 				}
 				else
 				{
@@ -828,7 +828,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 					System.out.println("\nXGMML Parser Warning: skipping inconsistent attribute interval for node label=" + label + 
 							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
 							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
-					throw new NullPointerException("return value is null at method AAA");
+					return;
 				}
 			}
 		attr.addInterval(interval);
