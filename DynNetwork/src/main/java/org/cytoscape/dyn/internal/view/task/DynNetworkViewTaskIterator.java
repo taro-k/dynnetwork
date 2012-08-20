@@ -133,6 +133,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
+		// update node and edges visual properties
+		if (layout!=null)
+			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness);
+		else
+			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness);
+		
 		// update graph attributes
 		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
 			updateAttr(interval);
@@ -144,12 +150,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		// update edge attributes
 		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
 			updateAttr(dynNetwork.getEdge(interval),interval);
-		
-		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness);
 		
 		panel.setNodes(view.getVisibleNodes());
 		panel.setEdges(view.getVisibleEdges());
