@@ -20,7 +20,7 @@
 	<packaging>bundle</packaging>
 	<name>${bundle.symbolicName}</name>
 
-	<version>1.0.0</version>
+	<version>1.0.0-beta</version>
 
 	<description>Written By Sabina Sara Pfister, 2012</description>
 	
