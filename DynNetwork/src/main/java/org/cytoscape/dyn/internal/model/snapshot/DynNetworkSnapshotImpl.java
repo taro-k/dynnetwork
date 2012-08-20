@@ -152,7 +152,7 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 					removeEdgeAttr(edge);
 					edgeAttrIntervals.remove(edge);
 				}
-			updateEdgeAttr();
+//			updateEdgeAttr();
 		}
 	}
 	
@@ -500,9 +500,11 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		if (edge!=null)
 		{
 			if (i.getOnValue() instanceof Integer)
-				edgeAttrValues.get(edge).add(new Double((Integer)i.getOnValue()));
+				weightMap.put(edge, new Double((Integer)i.getOnValue()));
+//				edgeAttrValues.get(edge).add(new Double((Integer)i.getOnValue()));
 			else if (i.getOnValue() instanceof Double)
-				edgeAttrValues.get(edge).add((Double)i.getOnValue());
+				weightMap.put(edge, new Double((Double)i.getOnValue()));
+//				edgeAttrValues.get(edge).add((Double)i.getOnValue());
 		}
 	}
 	

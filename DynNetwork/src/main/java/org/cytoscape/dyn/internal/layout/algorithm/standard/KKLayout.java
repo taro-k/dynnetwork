@@ -226,8 +226,8 @@ public final class KKLayout<T> extends AbstractLayout<T>
     					dist = Math.min(d_ij.doubleValue(), dist);
     				if (d_ji != null)
     					dist = Math.min(d_ji.doubleValue(), dist);
-    				if (dist==0)
-    					dist = 0.00001;
+//    				if (dist==0)
+//    					dist = 0.00001;
     				dm[i][j] = dm[j][i] = dist;
     			}
     		}
@@ -270,11 +270,6 @@ public final class KKLayout<T> extends AbstractLayout<T>
 			for (int i = 0; i < 100; i++) 
 			{
 				double[] dxy = calcDeltaXY(pm);
-				if (Double.isNaN(dxy[0]))
-				{
-					System.out.println(xydata[pm].getX() + " " + dxy[0]);
-					throw new NullPointerException();
-				}
 				xydata[pm].setLocation(xydata[pm].getX()+dxy[0], xydata[pm].getY()+dxy[1]);
 
 				double deltam = calcDeltaM(pm);

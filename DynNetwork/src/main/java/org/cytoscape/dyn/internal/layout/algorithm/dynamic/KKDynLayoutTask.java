@@ -183,7 +183,6 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 	{
 		for (CyNode node : kklayout.getGraph().getNodes())
 		{
-//			System.out.println("x=" + kklayout.getX(node) + " " + interval.getStart() + " " + interval.getEnd() + " " + this.dynView.getNetwork().getNodeLabel(node));
 			layout.insertNodePositionX(node, new DynInterval<T>(kklayout.getX(node),interval.getStart(),interval.getEnd()));
 			layout.insertNodePositionY(node, new DynInterval<T>(kklayout.getY(node),interval.getStart(),interval.getEnd()));
 		}

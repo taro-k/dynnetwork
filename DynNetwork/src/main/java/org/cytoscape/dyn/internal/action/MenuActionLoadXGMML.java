@@ -127,8 +127,6 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     	File file = fileUtil.getFile(desktopApp.getJFrame(), "Load Dynamic Network", FileUtil.LOAD, getFilters());
     	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
     	LoadDynNetworkViewFactoryImpl<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
-
-//    	System.out.println("WTF????");
     	
     	Task loadTask = loadFactory.creatTaskIterator(file).next();
     	Task loadViewTask = loadViewFactory.creatTaskIterator().next();
