@@ -43,46 +43,45 @@ public interface DynCytoPanel<T,C> extends CytoPanelComponent
 	 * @param valueIsAdjusting
 	 */
 	public void setValueIsAdjusting(boolean valueIsAdjusting);
-
+	
 	/**
 	 * Get current time.
-	 * @return
+	 * @return time
 	 */
 	public double getTime();
 	
 	/**
 	 * Return current time interval.
-	 * @return
+	 * @return time interval
 	 */
 	public DynInterval<T> getTimeInterval();
 	
 	/**
 	 * Get minimum time.
-	 * @return
+	 * @return minimum time
 	 */
 	public double getMinTime();
 	
 	/**
 	 * Set minimum time.
-	 * @return
+	 * @return minimum time
 	 */
 	public void setMinTime(double minTime);
 	
 	/**
 	 * Get maximum time.
-	 * @return
+	 * @return maximum time
 	 */
 	public double getMaxTime();
 
 	/**
 	 * Set maximum time.
-	 * @return
 	 */
 	public void setMaxTime(double maxTime);
 	
 	/**
 	 * Get slider maximum value;
-	 * @return
+	 * @return max slider
 	 */
 	public int getSliderMax();
 	
@@ -99,14 +98,20 @@ public interface DynCytoPanel<T,C> extends CytoPanelComponent
 	public void setEdges(int edges);
 	
 	/**
-	 * Get visibility;
-	 * @return
+	 * Get visibility.
+	 * @return visibility
 	 */
 	public int getVisibility();
 	
 	/**
-	 * Get smoothness;
-	 * @return
+	 * Get smoothness.
+	 * @return smoothness
 	 */
 	public int getSmoothness();
+	
+	/**
+	 * Get time resolution interval.
+	 * @return deltat
+	 */
+	public double getDeltat();
 }

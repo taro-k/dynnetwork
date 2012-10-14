@@ -54,6 +54,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	private int visibility;
 	private int oldVisibility;
 	private int smoothness;
+	private double deltat;
 	
 	/**
 	 * <code> DynNetworkViewTaskIterator </code> constructor.
@@ -68,7 +69,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout<T> layout,
-			final Transformator transformator,
+			final Transformator<T> transformator,
 			final BlockingQueue queue,
 			final JSlider slider,
 			final int timestep)
@@ -133,12 +134,6 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
-		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness);
-		
 		// update graph attributes
 		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
 			updateAttr(interval);
@@ -150,6 +145,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		// update edge attributes
 		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
 			updateAttr(dynNetwork.getEdge(interval),interval);
+		
+		// update node and edges visual properties
+		if (layout!=null)
+			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness,deltat);
+		else
+			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness,deltat);
 		
 		panel.setNodes(view.getVisibleNodes());
 		panel.setEdges(view.getVisibleEdges());
@@ -201,6 +202,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;
 		this.smoothness = panel.getSmoothness();
+		this.deltat = this.panel.getDeltat();
 	}
 	
 }

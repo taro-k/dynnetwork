@@ -299,6 +299,12 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		// do nothing
 		return null;
 	}
+	
+	@Override
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
+	{
+		// Do nothing
+	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
 	{

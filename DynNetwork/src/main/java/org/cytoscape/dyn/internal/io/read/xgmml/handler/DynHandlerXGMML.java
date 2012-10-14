@@ -70,7 +70,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	private String width;
 	private String outline;
 	
-	
 	private int ID = 0;
 	
 	/**

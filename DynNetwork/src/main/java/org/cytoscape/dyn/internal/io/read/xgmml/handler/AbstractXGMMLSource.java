@@ -120,7 +120,7 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	
 	protected void deleteGraphAttribute(DynNetwork<T> currentNetwork, CyNetwork netwrok, String label)
 	{
-//		sink.deletedGraphAttribute(currentNetwork, netwrok, label);
+//		sink.deletedGraphAttribute(currentNetwork, network, label);
 	}
 	
 	protected void deleteNodeAttribute(DynNetwork<T> currentNetwork, CyNode node, String label)

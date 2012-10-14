@@ -92,7 +92,7 @@ public final class KKLayout<T> extends AbstractLayout<T>
 
     // A multiplicative factor which specifies the fraction of the graph's diameter to be 
     // used as the inter-vertex distance between disconnected vertices.
-    private double disconnected_multiplier = 0.5;
+    private double disconnected_multiplier = 1;
     
 	/**
 	 * <code> KKLayout </code> constructor.

@@ -44,7 +44,7 @@ public interface Sink<T>
 	 * @param start
 	 * @param end
 	 * @param directed
-	 * @return
+	 * @return network
 	 */
 	public DynNetwork<T> addedGraph(String id, String label, String start, String end, String directed);
 	
@@ -56,7 +56,7 @@ public interface Sink<T>
 	 * @param label
 	 * @param start
 	 * @param end
-	 * @return
+	 * @return node
 	 */
 	public CyNode addedNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end);
 	
@@ -69,7 +69,7 @@ public interface Sink<T>
 	 * @param target
 	 * @param start
 	 * @param end
-	 * @return
+	 * @return edge
 	 */
 	public CyEdge addedEdge(DynNetwork<T> dynNetwork, String id, String label, String source, String target, String start, String end);
 	
@@ -77,7 +77,7 @@ public interface Sink<T>
 	 * Process added group event.
 	 * @param dynNetwork
 	 * @param currentNode
-	 * @return
+	 * @return group
 	 */
 	public CyGroup addedGroup(DynNetwork<T> dynNetwork, CyNode currentNode);
 	
@@ -176,7 +176,14 @@ public interface Sink<T>
 	/**
 	 * Process create view event.
 	 * @param dynNetwork
-	 * @return
+	 * @return dynNetworkView
 	 */
 	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
+	
+	/**
+	 * Process update view event.
+	 * @param dynNetwork
+	 * @param currentTime
+	 */
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime);
 }

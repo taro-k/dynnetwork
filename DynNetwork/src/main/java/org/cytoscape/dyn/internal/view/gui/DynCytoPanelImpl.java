@@ -26,8 +26,11 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -46,8 +49,10 @@ import javax.swing.event.ChangeListener;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.events.SetCurrentNetworkViewEvent;
 import org.cytoscape.application.events.SetCurrentNetworkViewListener;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.dyn.internal.io.write.graphics.SVGWriterFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -63,6 +68,8 @@ import org.cytoscape.dyn.internal.view.task.Transformator;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.events.GroupCollapsedEvent;
 import org.cytoscape.group.events.GroupCollapsedListener;
+import org.cytoscape.util.swing.FileChooserFilter;
+import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -80,12 +87,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 {
 	private static final long serialVersionUID = 1L;
 	
+	private final CySwingApplication desktopApp;
 	private final TaskManager<T,C> taskManager;
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
 	private final DynLayoutManager<T> layoutManager;
-	private final Transformator transformator;
+	private final Transformator<T> transformator;
+	private final FileUtil fileUtil;
 	
 	private DynNetwork<T> network;
 	private DynNetworkView<T> view;
@@ -104,7 +113,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private DynNetworkViewTask<T,C> singleTask;
 	private DynNetworkViewTaskIterator<T,C> recursiveTask;
 
-	private JPanel buttonPanel;
+	private JPanel buttonPanel,recordPanel;
 	private JPanel dynVizPanel;
 	private JPanel featurePanel;
 	private JPanel measurePanel;
@@ -114,13 +123,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private JSlider slider;
 	private JComboBox resolutionComboBox;
 	private JComboBox smoothnessComboBox;
-	private JButton forwardButton, backwardButton,stopButton,vizmapButton;
+	private JButton forwardButton, backwardButton,stopButton,vizmapButton,recordButton;
 	private JCheckBox seeAllCheck;
 	private Hashtable<Integer, JLabel> labelTable;
 	private DecimalFormat formatter,formatter2;
 
 	/**
 	 * <code> DynCytoPanelImpl </code> constructor.
+	 * @param desktopApp
 	 * @param taskManager
 	 * @param appManager
 	 * @param viewManager
@@ -130,16 +140,21 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	 * @param passthroughFactory
 	 */
 	public DynCytoPanelImpl(
+			final CySwingApplication desktopApp,
 			final TaskManager<T,C> taskManager,
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
-			final DynLayoutManager<T> layoutManager)
+			final DynLayoutManager<T> layoutManager,
+			final FileUtil fileUtil)
 	{
+		this.desktopApp = desktopApp;
 		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
 		this.layoutManager = layoutManager;
-		this.transformator = new Transformator();
+		this.transformator = new Transformator<T>();
+		this.fileUtil = fileUtil;
+		
 		this.queue = new BlockingQueue();
 		initComponents();
 	}
@@ -147,6 +162,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	@Override
 	public synchronized void stateChanged(ChangeEvent event)
 	{
+		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
 		if (event.getSource() instanceof JSlider)
 			if (view!=null)
 			{
@@ -160,6 +176,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	@Override
 	public synchronized void actionPerformed(ActionEvent event)
 	{
+		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
 		if (view!=null && event.getSource() instanceof JButton)
 		{
 			if (recursiveTask!=null)
@@ -175,6 +192,39 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			else if (source.equals(vizmapButton))
 				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
 						view,view.getCurrentVisualStyle(), queue)));
+			else if (source.equals(recordButton))
+			{
+				if (recordButton.getBackground().equals(Color.red))
+				{
+					recordButton.setBackground(forwardButton.getBackground());
+					transformator.removeSink(null);
+				}
+				else
+				{
+					recordButton.setBackground(Color.red);
+					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save SVG Image Sequence", FileUtil.SAVE, getFilters());
+					if (file!=null)
+					{
+						SVGWriterFactory<T> writerFactory = new SVGWriterFactory<T>(appManager.getCurrentRenderingEngine(),file);
+						transformator.addSink(writerFactory);
+						updateView();
+					}
+					else
+					{
+						recordButton.setBackground(forwardButton.getBackground());
+						transformator.removeSink(null);
+					}
+				}
+			}
+		}
+		else if (event.getSource() instanceof JButton)
+		{
+			JButton source = (JButton)event.getSource();
+			if (source.equals(recordButton) && recordButton.getBackground().equals(Color.red))
+			{
+				recordButton.setBackground(forwardButton.getBackground());
+				transformator.removeSink(null);
+			}	
 		}
 		else if (event.getSource() instanceof JCheckBox)
 		{
@@ -230,6 +280,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	@Override
 	public synchronized void handleEvent(GroupCollapsedEvent e)
 	{
+		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
 		if (recursiveTask!=null)
 			recursiveTask.cancel();
 		
@@ -303,6 +354,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	public int getSmoothness() 
 	{
 		return smoothness;
+	}
+	
+	@Override
+	public double getDeltat()
+	{
+		return (maxTime-minTime)/((NameIDObj)resolutionComboBox.getSelectedItem()).id;
 	}
 
 	@Override
@@ -381,11 +438,18 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		buttonPanel.add(stopButton);
 		buttonPanel.add(forwardButton);
 		
+		recordPanel = new JPanel();
+		recordPanel.setLayout(new GridBagLayout());
+		recordButton = new JButton("                  Record                  ");
+		recordButton.addActionListener(this);
+		recordPanel.add(recordButton);
+		
 		dynVizPanel = new JPanel();
-		dynVizPanel.setLayout(new GridLayout(3,1));
+		dynVizPanel.setLayout(new GridLayout(4,1));
 		dynVizPanel.add(currentTime);
 		dynVizPanel.add(slider);
 		dynVizPanel.add(buttonPanel);
+		dynVizPanel.add(recordPanel);
 
 		NameIDObj[] itemsTimeResolution = { 
 				new NameIDObj(10,   "1/10    "), 
@@ -477,7 +541,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				);
 				layout.setVerticalGroup(
 				   layout.createSequentialGroup()
-				      .addComponent(dynVizPanel, 170,
+				      .addComponent(dynVizPanel, 190,
 				    		  GroupLayout.DEFAULT_SIZE, 270)
 				      .addComponent(featurePanel,  GroupLayout.DEFAULT_SIZE,
 				    		  200 , Short.MAX_VALUE)
@@ -532,6 +596,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				slider.setPaintLabels(true);
 			}
 		});
+	}
+	
+	private List<FileChooserFilter> getFilters()
+	{
+		List<FileChooserFilter> filters = new ArrayList<FileChooserFilter>();
+    	filters.add(new FileChooserFilter("SVG Image", "svg"));
+    	return filters;
 	}
 
 }

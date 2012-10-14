@@ -36,11 +36,12 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  * @author Sabina Sara Pfister
  *
  */
-public class Transformator
+public class Transformator<T> extends AbstractTransformator<T>
 {
 	private double alpha;
     private int iterations;
     private int delay;
+    private double deltat;
 	
 	private double timeStart;
 	private double timeEnd;
@@ -58,19 +59,19 @@ public class Transformator
 	
 	/**
 	 * Run transformation on given interval lists.
-	 * @param <T>
 	 * @param interval list changedNodes
 	 * @param interval list changedEdges
 	 * @param interval list changedNodePositions
 	 */
-	public <T> void run(
+	public void run(
 			final DynNetwork<T> dynNetwork,
 			final DynNetworkView<T> view,
 			final DynInterval<T> timeInterval,
 			final int visibility,
-			final int smoothness)
+			final int smoothness,
+			final double deltat)
 	{
-		setSmoothness(smoothness);
+		setSmoothness(smoothness,deltat);
 		
 		this.onCounter = 255;
 		this.offCounter = visibility;
@@ -78,7 +79,7 @@ public class Transformator
 		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
 		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
 		
-		if (nodes.isEmpty() && edges.isEmpty())
+		if (sink==null && nodes.isEmpty() && edges.isEmpty())
 			return;
 		
 		for (int i=0;i<iterations;i++)
@@ -117,26 +118,28 @@ public class Transformator
 				}
 
 				view.updateView();
+				if (sink!=null)
+					sink.updateView(dynNetwork,timeInterval.getStart()+i*this.deltat);
 		}
 	}
 
 	/**
 	 * Run transformation on given interval lists.
-	 * @param <T>
 	 * @param interval list changedNodes
 	 * @param interval list changedEdges
 	 * @param interval list changedNodePositions
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> void run(
+	public void run(
 			final DynNetwork<T> dynNetwork,
 			final DynNetworkView<T> view,
 			final DynInterval<T> timeInterval,
 			final DynLayout layout,
 			final int visibility,
-			final int smoothness)
+			final int smoothness,
+			final double deltat)
 	{	
-		setSmoothness(smoothness);
+		setSmoothness(smoothness,deltat);
 		
 		this.onCounter = 255;
 		this.offCounter = visibility;
@@ -146,7 +149,7 @@ public class Transformator
 		List<DynInterval<T>> nodesPosX = layout.searchChangedNodePositionsX(timeInterval);
 		List<DynInterval<T>> nodesPosY = layout.searchChangedNodePositionsY(timeInterval);
 
-		if (nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
+		if (sink==null && nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
 			return;
 		
 		for (int i=0;i<iterations;i++)
@@ -187,7 +190,7 @@ public class Transformator
 					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
 				else if (interval.isOn())
 					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
-				
+
 			timeEnd = System.currentTimeMillis();
 			if (round(timeEnd-timeStart)<delay)
 				try {
@@ -197,10 +200,12 @@ public class Transformator
 				}
 
 				view.updateView();
+				if (sink!=null)
+					sink.updateView(dynNetwork,timeInterval.getStart()+i*this.deltat);
 		}
 	}
 
-	private final <T> void updateTransparency(final DynNetworkView<T> view, final CyNode node, final int value)
+	private final void updateTransparency(final DynNetworkView<T> view, final CyNode node, final int value)
 	{
 		if (node!=null)
 		{
@@ -210,7 +215,7 @@ public class Transformator
 		}
 	}
 	
-	private final <T> void updateTransparency(final DynNetworkView<T> view, final CyEdge edge, final int value)
+	private final void updateTransparency(final DynNetworkView<T> view, final CyEdge edge, final int value)
 	{
 		if (edge!=null)
 		{
@@ -219,21 +224,21 @@ public class Transformator
 		}
 	}
 
-	private final <T> void updatePositionX(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
+	private final void updatePositionX(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
 	{
 		if (node!=null)
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
 					(1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*value);
 	}
 	
-	private final <T> void updatePositionY(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
+	private final void updatePositionY(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
 	{
 		if (node!=null)
 			view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
 					(1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*value);
 	}
 	
-	private void setSmoothness(int smoothness)
+	private void setSmoothness(int smoothness, double deltat)
 	{
 		if (smoothness==0)
 		{
@@ -270,8 +275,9 @@ public class Transformator
 				this.alpha = 0.025;
 				break;
 			}
-
 		}
+
+		this.deltat = deltat/iterations;
 	}
 	
 	private int round(double value)

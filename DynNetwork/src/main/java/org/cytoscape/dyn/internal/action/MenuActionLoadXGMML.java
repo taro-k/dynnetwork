@@ -29,13 +29,14 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.dyn.internal.io.loaddynnetwork.LoadDynNetworkFileTaskFactoryImpl;
-import org.cytoscape.dyn.internal.io.loaddynnetwork.LoadDynNetworkViewFactoryImpl;
+import org.cytoscape.dyn.internal.io.load.LoadDynNetworkFileTaskFactoryImpl;
+import org.cytoscape.dyn.internal.io.load.LoadDynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynParser;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
+import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelTask;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
@@ -51,7 +52,7 @@ import org.cytoscape.work.TunableSetter;
 /**
  * <code> MenuActionLoadXGMML </code> launches an ActionEvent from the menu 
  * "File/Import/Dynamic Network/XGMML File..." to import dynamic networks into Cytoscape, and is
- * also responsible to create the panel {@link CytoPanel} to control the visalization
+ * also responsible to create the panel {@link CytoPanel} to control the visualization
  * of dynamic graphical information.
  * 
  * @author Sabina Sara Pfister
@@ -67,7 +68,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	private final CyApplicationManager appManager;
 	
 	private final CytoPanel cytoPanelWest;
-	private final DynCytoPanelImpl<T,C> myDynPanel;
+	private final DynCytoPanel<T,C> myDynPanel;
 	private final TaskManager<T,C> taskManager;
 	private final DynNetworkManager<T> dynNetworkManager;
 	private final DynNetworkFactory<T> dynNetworkFactory;

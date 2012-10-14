@@ -19,6 +19,9 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
+import java.awt.Color;
+import java.awt.Paint;
+
 import org.cytoscape.dyn.internal.layout.DynLayout;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -27,6 +30,7 @@ import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> AbstractDynNetworkViewTask </code> is the abstract calls all visual task
@@ -43,7 +47,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynNetworkView<T> view;
 	protected final DynNetwork<T> dynNetwork;
 	protected final DynLayout<T> layout;
-	protected final Transformator transformator;
+	protected final Transformator<T> transformator;
 	protected final BlockingQueue queue;
 	
 	protected double timeStart;
@@ -66,7 +70,7 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
 			final DynLayout<T> layout,
-			final Transformator transformator,
+			final Transformator<T> transformator,
 			final BlockingQueue queue) 
 	{
 		this.panel = panel;
@@ -99,7 +103,12 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected void updateAttr(CyNode node, DynInterval<T> interval)
 	{
 		if (node!=null)
+		{
 			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+			// TODO: remove this, it's a hack!
+			if (interval.getAttribute().getColumn().equals("color"))
+				view.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, decodeHEXColor((String)interval.getOnValue()));
+		}
 	}
 	
 	protected void updateAttr(CyEdge edge, DynInterval<T> interval)
@@ -107,5 +116,12 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 		if (edge!=null)
 			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 	}
+	
+	private static Paint decodeHEXColor(String nm) throws NumberFormatException
+    {
+    	Integer intval = Integer.decode(nm);
+    	int i = intval.intValue();
+    	return new Color((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
+    }
 	
 }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.io.loaddynnetwork;
+package org.cytoscape.dyn.internal.io.load;
 
 import java.io.File;
 import java.util.HashMap;

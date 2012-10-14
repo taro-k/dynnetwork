@@ -241,4 +241,10 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
     	return new Color((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
     }
 
+	@Override
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
+	{
+		// Do nothing
+	}
+
 }

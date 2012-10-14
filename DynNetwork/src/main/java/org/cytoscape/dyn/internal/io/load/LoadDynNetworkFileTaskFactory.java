@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.io.loaddynnetwork;
+package org.cytoscape.dyn.internal.io.load;
 
 import java.io.File;
 
@@ -28,7 +28,7 @@ import org.cytoscape.work.TaskIterator;
  * <code> LoadDynNetworkFileTaskFactory </code> is interface that provides 
  * a task iterator for loading dynamic networks from files.
  * 
- * @author rozagh
+ * @author Sabina Sara Pfister
  *
  */
 public interface LoadDynNetworkFileTaskFactory extends TaskFactory

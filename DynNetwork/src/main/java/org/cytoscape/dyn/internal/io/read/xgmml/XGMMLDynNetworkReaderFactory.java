@@ -35,24 +35,25 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public final class XGMMLDynNetworkReaderFactory extends AbstractDynNetworkReaderFactory
 {
-	private final DefaultHandler parser;
+        private final DefaultHandler parser;
 
-	/**
-	 * <code> XGMMLDynNetworkReaderFactory </code> constructor.
-	 * @param filter
-	 * @param parser
-	 */
-	public XGMMLDynNetworkReaderFactory(
-			final CyFileFilter filter,
-			final DefaultHandler parser)
-	{
-		super(filter);
-		this.parser = parser;
-	}
+        /**
+         * <code> XGMMLDynNetworkReaderFactory </code> constructor.
+         * @param filter
+         * @param parser
+         */
+        public XGMMLDynNetworkReaderFactory(
+                        final CyFileFilter filter,
+                        final DefaultHandler parser)
+        {
+                super(filter);
+                this.parser = parser;
+        }
 
-	@Override
-	public TaskIterator createTaskIterator(InputStream inputStream, String inputName)
-	{
-		return new TaskIterator(new XGMMLDynNetworkReader(inputStream, parser));
-	}
+        @Override
+        public TaskIterator createTaskIterator(InputStream inputStream, String inputName)
+        {
+                return new TaskIterator(new XGMMLDynNetworkReader(inputStream, parser));
+        }
 }
+
