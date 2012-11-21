@@ -635,9 +635,21 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 //		try {
 			if (i.getOnValue() instanceof Integer)
-				return (double) ((Integer)i.getOnValue());
+				if ((Integer)i.getOnValue()!=0)
+					return (double) ((Integer)i.getOnValue());
+				else
+				{
+					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
+					throw new NullPointerException("Value of " + attName + " cannot be zero!");
+				}
 			else if (i.getOnValue() instanceof Double)
-				return (double) ((Double)i.getOnValue());
+				if ((Double)i.getOnValue()!=0)
+					return (double) ((Double)i.getOnValue());
+				else
+				{
+					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
+					throw new NullPointerException("Value of " + attName + " cannot be zero!");
+				}
 			else
 //			if (i.getOnValue() instanceof Integer)
 //				return (double) ((Integer)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
