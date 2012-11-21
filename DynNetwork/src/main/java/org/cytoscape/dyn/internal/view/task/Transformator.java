@@ -210,8 +210,8 @@ public class Transformator<T> extends AbstractTransformator<T>
 		if (node!=null)
 		{
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
 			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
+			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
 		}
 	}
 	

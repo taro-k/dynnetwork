@@ -323,8 +323,10 @@ public final class KKLayout<T> extends AbstractLayout<T>
 		}
 		gx /= xydata.length;
 		gy /= xydata.length;
-		double diffx = width / 2 - gx;
-		double diffy = height / 2 - gy;
+//		double diffx = width / 2 - gx;
+//		double diffy = height / 2 - gy;
+		double diffx = 0 - gx;
+		double diffy = 0 - gy;
 		for (int i = 0; i < xydata.length; i++) 
             xydata[i].setLocation(xydata[i].getX()+diffx, xydata[i].getY()+diffy);
 	}
@@ -356,6 +358,7 @@ public final class KKLayout<T> extends AbstractLayout<T>
 				d2E_d2xm += k_mi * (1 - l_mi * dy * dy / ddd);
 				d2E_dxmdym += k_mi * l_mi * dx * dy / ddd;
 				d2E_d2ym += k_mi * (1 - l_mi * dx * dx / ddd);
+			
 			}
 		}
 		
@@ -405,7 +408,6 @@ public final class KKLayout<T> extends AbstractLayout<T>
 				double dx = xydata[i].getX() - xydata[j].getX();
 				double dy = xydata[i].getY() - xydata[j].getY();
 				double d = Math.sqrt(dx * dx + dy * dy);
-
 
 				energy += k_ij / 2 * (dx * dx + dy * dy + l_ij * l_ij -
 									  2 * l_ij * d);

@@ -286,8 +286,10 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 		}
 		gx /= graph.getNodes().size();
 		gy /= graph.getNodes().size();
-		double diffx = width / 2 - gx;
-		double diffy = height / 2 - gy;
+//		double diffx = width / 2 - gx;
+//		double diffy = height / 2 - gy;
+		double diffx = 0 - gx;
+		double diffy = 0 - gy;
 		for (CyNode ln: graph.getNodes())
 		{
 			forceItems.get(ln).plocation[0] = (float) (forceItems.get(ln).plocation[0]+diffx);

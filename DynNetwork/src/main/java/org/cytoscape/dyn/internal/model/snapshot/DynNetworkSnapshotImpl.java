@@ -20,11 +20,12 @@
 package org.cytoscape.dyn.internal.model.snapshot;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
@@ -62,9 +63,16 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	private final Map<CyNode,DynInterval<T>> nodeIntervals;
 	private final Map<CyEdge,DynInterval<T>> edgeIntervals;
 	private final Map<CyEdge,DynInterval<T>> edgeAttrIntervals;
-	private final Map<CyEdge,List<Double>> edgeAttrValues;
 	
 	private final Map<CyEdge,Double> weightMap;
+	private final Map<CyEdge,Double> countMap;
+	
+	private double gaussMean;
+	private double gaussStdPast;
+	private double gaussStdFuture;
+	
+	private NormalDistributionImpl ndPast;
+	private NormalDistributionImpl ndFuture;
 
 	/**
 	 * <code> DynNetworkSnapshotImpl </code> constructor.
@@ -88,9 +96,9 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		this.nodeIntervals = new HashMap<CyNode,DynInterval<T>>();
 		this.edgeIntervals = new HashMap<CyEdge,DynInterval<T>>();
 		this.edgeAttrIntervals = new HashMap<CyEdge,DynInterval<T>>();
-		this.edgeAttrValues = new HashMap<CyEdge,List<Double>>();
 		
 		this.weightMap = new HashMap<CyEdge,Double>();
+		this.countMap = new HashMap<CyEdge,Double>();
 	}
 	
 	/**
@@ -105,9 +113,15 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 	
 	@Override
-	public void setInterval(DynInterval<T> timeInterval) 
+	public void setInterval(DynInterval<T> timeInterval, double gaussMean, double gaussStdPast, double gaussStdFuture) 
 	{
 		this.timeInterval = timeInterval; 
+		this.gaussMean = gaussMean;
+		this.gaussStdPast = gaussStdPast;
+		this.gaussStdFuture = gaussStdFuture;
+		
+		this.ndPast = new NormalDistributionImpl(gaussMean,gaussStdPast);
+		this.ndFuture = new NormalDistributionImpl(gaussMean,gaussStdFuture);
 		
 		for (DynInterval<T> i : getChangedNodeIntervals(timeInterval))
 			if (i.isOn())
@@ -140,18 +154,19 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		if (attName!=null && !attName.equals("none"))
 		{
 			for (DynInterval<T> i : getChangedEdgeAttrIntervals(timeInterval))
-				if (i.isOn())
-				{
-					CyEdge edge = network.getEdge(i);
-					addEdgeAttr(edge, i);
-					edgeAttrIntervals.put(edge, i);
-				}
-				else
-				{
-					CyEdge edge = network.getEdge(i);
-					removeEdgeAttr(edge);
-					edgeAttrIntervals.remove(edge);
-				}
+				if (i.getAttribute().getColumn().equals(attName))
+					if (i.isOn())
+					{
+						CyEdge edge = network.getEdge(i);
+						addEdgeAttr(edge, i);
+						edgeAttrIntervals.put(edge, i);
+					}
+					else
+					{
+						CyEdge edge = network.getEdge(i);
+						removeEdgeAttr(edge);
+						edgeAttrIntervals.remove(edge);
+					}
 //			updateEdgeAttr();
 		}
 	}
@@ -291,6 +306,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	@Override
 	public Map<CyEdge,? extends Number> getWeightMap()
 	{
+		for (CyEdge edge : edgeList)
+			if (!weightMap.containsKey(edge))
+			{
+				System.out.println("\nDynamic Layout Error: Missing " + attName + " value for edge " + network.getEdgeLabel(edge));
+				throw new NullPointerException("Missing " + attName + " value for edge " + network.getEdgeLabel(edge));
+			}
 		return weightMap;
 	}
 	
@@ -476,8 +497,10 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 					addInEdge(node, edge);
 			}
 			
-			edgeAttrValues.put(edge, new ArrayList<Double>());
-			weightMap.put(edge, new Double(1));
+			if (attName==null || attName.equals("none"))
+			{
+				weightMap.put(edge, new Double(1));
+			}
 		}
 	}
 
@@ -490,8 +513,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			for (CyNode node : this.outEdges.keySet())
 				this.outEdges.get(node).remove(edge);
 			this.edgeList.remove(edge);
-			weightMap.remove(edge);
-			edgeAttrValues.remove(edge);
+
+			if (attName==null || attName.equals("none"))
+			{
+				weightMap.remove(edge);
+				countMap.remove(edge);
+			}
 		}
 	}
 
@@ -499,20 +526,27 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 		if (edge!=null)
 		{
-			if (i.getOnValue() instanceof Integer)
-				weightMap.put(edge, new Double((Integer)i.getOnValue()));
-//				edgeAttrValues.get(edge).add(new Double((Integer)i.getOnValue()));
-			else if (i.getOnValue() instanceof Double)
-				weightMap.put(edge, new Double((Double)i.getOnValue()));
-//				edgeAttrValues.get(edge).add((Double)i.getOnValue());
+			if (!weightMap.containsKey(edge))
+			{
+				weightMap.put(edge,getWeight(i));
+				countMap.put(edge,getCount(i));
+			}
+			else
+			{
+				weightMap.put(edge,getWeight(i));
+//				weightMap.put(edge,weightMap.get(edge)+getWeight(i));
+				countMap.put(edge,countMap.get(edge)+getCount(i));
+			}
 		}
 	}
 	
 	protected void updateEdgeAttr()
 	{
-		for (CyEdge edge : edgeAttrValues.keySet())
+		for (CyEdge edge : weightMap.keySet())
 			if (edge!=null)
-				weightMap.put(edge, getAverage(edgeAttrValues.get(edge)));
+			{
+				weightMap.put(edge, weightMap.get(edge)/countMap.get(edge));
+			}
 	}
 	
 	protected void removeEdgeAttr(CyEdge edge)
@@ -520,7 +554,8 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		if (edge!=null)
 		{
 			edgeAttrIntervals.remove(edge);
-			edgeAttrValues.put(edge, new ArrayList<Double>());
+			weightMap.remove(edge);
+			countMap.remove(edge);
 		}
 	}
 
@@ -595,18 +630,49 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			}
 		return diff;
 	}
-	
-	private Double getAverage(Collection<Double> collection)
+
+	private double getWeight(DynInterval<T> i)
 	{
-		if (collection.size()>0)
-		{
-			double sum = 0;
-			for (Double item : collection)
-				sum =+ item;
-			return sum/collection.size();
+//		try {
+			if (i.getOnValue() instanceof Integer)
+				return (double) ((Integer)i.getOnValue());
+			else if (i.getOnValue() instanceof Double)
+				return (double) ((Double)i.getOnValue());
+			else
+//			if (i.getOnValue() instanceof Integer)
+//				return (double) ((Integer)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
+//			else if (i.getOnValue() instanceof Double)
+//				return (double) ((Double)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
+//			else
+			{
+				System.out.println("\nDynamic Layout Error: Missing " + attName + " value");
+				throw new NullPointerException("Missing " + attName + " value");
+			}	
+//		} catch (MathException e) {
+//			e.printStackTrace();
+//			return 0.0;
+//		}
+	}
+
+	private double getCount(DynInterval<T> i)
+	{
+		try {
+			return 1.0 * normalDistribution(i.getStart(),i.getEnd());
+		} catch (MathException e) {
+			e.printStackTrace();
+			return 0.0;
 		}
+	}
+
+	private double normalDistribution(double start, double end) throws MathException
+	{
+		if (start<=gaussMean && end<=gaussMean)
+			return ndPast.cumulativeProbability(end)-ndPast.cumulativeProbability(start);
+		else if (start>=-gaussMean && end>=gaussMean)
+			return ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(start);
 		else
-			return new Double(1);
+			return ndPast.cumulativeProbability(0)-ndPast.cumulativeProbability(start) +
+			ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(0);
 	}
 
 }

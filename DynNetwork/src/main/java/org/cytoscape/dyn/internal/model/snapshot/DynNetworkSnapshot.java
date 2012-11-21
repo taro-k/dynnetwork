@@ -40,8 +40,11 @@ public interface DynNetworkSnapshot<T>
 	/**
 	 * Set time interval for snapshot.
 	 * @param interval
+	 * @param gaussMean
+	 * @param gaussStdPast
+	 * @param gaussStdFuture
 	 */
-	public void setInterval(DynInterval<T> interval);
+	public void setInterval(DynInterval<T> interval, double gaussMean, double gaussStdPast, double gaussStdFuture);
 	
 	/**
 	 * Get neighbors of this node

@@ -41,6 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.cytoscape.dyn.internal.util.GraphingData;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
 /**
@@ -157,12 +158,16 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		
+//		JPanel middlePanel = new JPanel();
+//		middlePanel.add(new GraphingData());
+		
+		JPanel bottomPanel = new JPanel();
+		
 		this.okButton = new JButton("OK");
         this.okButton.addActionListener(this);
         this.cancelButton = new JButton("Cancel");
         this.cancelButton.addActionListener(this);
 
-		JPanel bottomPanel = new JPanel();
 		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 		bottomPanel.add(Box.createHorizontalGlue());
 		bottomPanel.add(this.okButton);
@@ -172,6 +177,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 		mainPanel.add(topPanel, BorderLayout.CENTER);
+//		mainPanel.add(middlePanel, BorderLayout.CENTER);
 		mainPanel.add(bottomPanel, BorderLayout.PAGE_END);
 		
 		this.add(mainPanel);
