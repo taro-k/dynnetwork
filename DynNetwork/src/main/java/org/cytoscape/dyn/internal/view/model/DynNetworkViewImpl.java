@@ -82,7 +82,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
-		cyStyleManager.setVisualStyle(cyStyleManager.getDefaultVisualStyle(), view);
 		cyStyleManager.getDefaultVisualStyle().apply(view);
 	}
 	
@@ -278,7 +277,10 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		{
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			
+			// TODO: clean. this is a quick fix for a bug in node_label_transparency (core Cytoscape code)
+			if (visibility==0)
+				nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
 		}
 		
 		for (final View<CyEdge> edgeView : this.getNetworkView().getEdgeViews())

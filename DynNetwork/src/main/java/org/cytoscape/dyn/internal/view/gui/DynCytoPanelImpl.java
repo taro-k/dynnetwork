@@ -197,11 +197,13 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				if (recordButton.getBackground().equals(Color.red))
 				{
 					recordButton.setBackground(forwardButton.getBackground());
+					recordButton.setOpaque(false);
 					transformator.removeSink(null);
 				}
 				else
 				{
 					recordButton.setBackground(Color.red);
+					recordButton.setOpaque(true);
 					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save SVG Image Sequence", FileUtil.SAVE, getFilters());
 					if (file!=null)
 					{
