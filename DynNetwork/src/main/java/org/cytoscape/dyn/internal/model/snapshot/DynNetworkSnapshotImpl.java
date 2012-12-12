@@ -60,12 +60,11 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	private List<DynInterval<T>> currentEdges;
 	private List<DynInterval<T>> currentEdgesAttr;
 	
-	private final Map<CyNode,DynInterval<T>> nodeIntervals;
-	private final Map<CyEdge,DynInterval<T>> edgeIntervals;
-	private final Map<CyEdge,DynInterval<T>> edgeAttrIntervals;
+	private final Map<CyNode,List<DynInterval<T>>> nodeIntervals;
+	private final Map<CyEdge,List<DynInterval<T>>> edgeIntervals;
+	private final Map<CyEdge,List<DynInterval<T>>> edgeAttrIntervals;
 	
 	private final Map<CyEdge,Double> weightMap;
-	private final Map<CyEdge,Double> countMap;
 	
 	private double gaussMean;
 	private double gaussStdPast;
@@ -93,12 +92,11 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		this.currentEdges = new ArrayList<DynInterval<T>>();
 		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
 		
-		this.nodeIntervals = new HashMap<CyNode,DynInterval<T>>();
-		this.edgeIntervals = new HashMap<CyEdge,DynInterval<T>>();
-		this.edgeAttrIntervals = new HashMap<CyEdge,DynInterval<T>>();
+		this.nodeIntervals = new HashMap<CyNode,List<DynInterval<T>>>();
+		this.edgeIntervals = new HashMap<CyEdge,List<DynInterval<T>>>();
+		this.edgeAttrIntervals = new HashMap<CyEdge,List<DynInterval<T>>>();
 		
 		this.weightMap = new HashMap<CyEdge,Double>();
-		this.countMap = new HashMap<CyEdge,Double>();
 	}
 	
 	/**
@@ -115,7 +113,7 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	@Override
 	public void setInterval(DynInterval<T> timeInterval, double gaussMean, double gaussStdPast, double gaussStdFuture) 
 	{
-		this.timeInterval = timeInterval; 
+		this.timeInterval = timeInterval;
 		this.gaussMean = gaussMean;
 		this.gaussStdPast = gaussStdPast;
 		this.gaussStdFuture = gaussStdFuture;
@@ -125,31 +123,15 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		
 		for (DynInterval<T> i : getChangedNodeIntervals(timeInterval))
 			if (i.isOn())
-			{
-				CyNode node = network.getNode(i);
-				addNode(node);
-				nodeIntervals.put(node, i);
-			}
+				addNode(network.getNode(i));
 			else
-			{
-				CyNode node = network.getNode(i);
-				removeNode(node);
-				nodeIntervals.remove(node);
-			}
-		
+				removeNode(network.getNode(i));
+
 		for (DynInterval<T> i : getChangedEdgeIntervals(timeInterval))
 			if (i.isOn())
-			{
-				CyEdge edge = network.getEdge(i);
-				addEdge(edge);
-				edgeIntervals.put(edge, i);
-			}
+				addEdge(network.getEdge(i));
 			else
-			{
-				CyEdge edge = network.getEdge(i);
 				removeEdge(network.getEdge(i));
-				edgeIntervals.remove(edge);
-			}
 		
 		if (attName!=null && !attName.equals("none"))
 		{
@@ -159,15 +141,13 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 					{
 						CyEdge edge = network.getEdge(i);
 						addEdgeAttr(edge, i);
-						edgeAttrIntervals.put(edge, i);
 					}
 					else
 					{
 						CyEdge edge = network.getEdge(i);
-						removeEdgeAttr(edge);
-						edgeAttrIntervals.remove(edge);
+						if (edgeList.contains(edge))
+						removeEdgeAttr(edge, i);
 					}
-//			updateEdgeAttr();
 		}
 	}
 	
@@ -306,12 +286,17 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	@Override
 	public Map<CyEdge,? extends Number> getWeightMap()
 	{
+		weightMap.clear();
 		for (CyEdge edge : edgeList)
-			if (!weightMap.containsKey(edge))
+		{
+			if (edge!=null)
 			{
-				System.out.println("\nDynamic Layout Error: Missing " + attName + " value for edge " + network.getEdgeLabel(edge));
-				throw new NullPointerException("Missing " + attName + " value for edge " + network.getEdgeLabel(edge));
+				if (edgeIntervals.containsKey(edge))
+					weightMap.put(edge, getWeight(edgeAttrIntervals.get(edge)));
+				else
+					weightMap.put(edge, new Double(1));
 			}
+		}
 		return weightMap;
 	}
 	
@@ -426,13 +411,13 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	}
 	
 	@Override
-	public DynInterval<T> getInterval(CyNode node)
+	public List<DynInterval<T>> getIntervalList(CyNode node)
 	{
 		return this.nodeIntervals.get(node);
 	}
 	
 	@Override
-	public DynInterval<T> getInterval(CyEdge edge)
+	public List<DynInterval<T>> getIntervalList(CyEdge edge)
 	{
 		return this.edgeIntervals.get(edge);
 	}
@@ -466,11 +451,14 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		if (node!=null)
 		{
 			this.nodeList.add(node);
+			nodeIntervals.put(node, new ArrayList<DynInterval<T>>());
+			
 			for (CyEdge edge : this.edgeList)
 				if (edge.getSource()==node)
 					addOutEdge(node, edge);
 				else if (edge.getTarget()==node)
 					addInEdge(node, edge);
+				
 		}
 	}
 
@@ -481,6 +469,7 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			this.inEdges.remove(node);
 			this.outEdges.remove(node);
 			this.nodeList.remove(node);
+			this.nodeIntervals.remove(node);
 		}
 	}
 	
@@ -489,17 +478,15 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		if (edge!=null)
 		{
 			this.edgeList.add(edge);
+			edgeIntervals.put(edge, new ArrayList<DynInterval<T>>());
+			edgeAttrIntervals.put(edge, new ArrayList<DynInterval<T>>());
+			
 			for (CyNode node : this.nodeList)
 			{
 				if (edge.getSource()==node)
 					addOutEdge(node, edge);
 				if (edge.getTarget()==node)
 					addInEdge(node, edge);
-			}
-			
-			if (attName==null || attName.equals("none"))
-			{
-				weightMap.put(edge, new Double(1));
 			}
 		}
 	}
@@ -513,12 +500,7 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			for (CyNode node : this.outEdges.keySet())
 				this.outEdges.get(node).remove(edge);
 			this.edgeList.remove(edge);
-
-			if (attName==null || attName.equals("none"))
-			{
-				weightMap.remove(edge);
-				countMap.remove(edge);
-			}
+			this.edgeIntervals.remove(edge);
 		}
 	}
 
@@ -526,36 +508,15 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	{
 		if (edge!=null)
 		{
-			if (!weightMap.containsKey(edge))
-			{
-				weightMap.put(edge,getWeight(i));
-				countMap.put(edge,getCount(i));
-			}
-			else
-			{
-				weightMap.put(edge,getWeight(i));
-//				weightMap.put(edge,weightMap.get(edge)+getWeight(i));
-				countMap.put(edge,countMap.get(edge)+getCount(i));
-			}
+			this.edgeAttrIntervals.get(edge).add(i);	
 		}
 	}
 	
-	protected void updateEdgeAttr()
+	protected void removeEdgeAttr(CyEdge edge, DynInterval<T> i)
 	{
-		for (CyEdge edge : weightMap.keySet())
-			if (edge!=null)
-			{
-				weightMap.put(edge, weightMap.get(edge)/countMap.get(edge));
-			}
-	}
-	
-	protected void removeEdgeAttr(CyEdge edge)
-	{
-		if (edge!=null)
+		if (edge!=null && this.edgeAttrIntervals.containsKey(edge))
 		{
-			edgeAttrIntervals.remove(edge);
-			weightMap.remove(edge);
-			countMap.remove(edge);
+			this.edgeAttrIntervals.get(edge).remove(i);
 		}
 	}
 
@@ -631,50 +592,78 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 		return diff;
 	}
 
-	private double getWeight(DynInterval<T> i)
+	private double getWeight(List<DynInterval<T>> list)
 	{
-//		try {
+		double value = 0;
+		for (DynInterval<T> i : list)
+		{
 			if (i.getOnValue() instanceof Integer)
-				if ((Integer)i.getOnValue()!=0)
-					return (double) ((Integer)i.getOnValue());
-				else
-				{
-					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
-					throw new NullPointerException("Value of " + attName + " cannot be zero!");
-				}
-			else if (i.getOnValue() instanceof Double)
-				if ((Double)i.getOnValue()!=0)
-					return (double) ((Double)i.getOnValue());
-				else
-				{
-					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
-					throw new NullPointerException("Value of " + attName + " cannot be zero!");
-				}
-			else
-//			if (i.getOnValue() instanceof Integer)
-//				return (double) ((Integer)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
-//			else if (i.getOnValue() instanceof Double)
-//				return (double) ((Double)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
-//			else
 			{
-				System.out.println("\nDynamic Layout Error: Missing " + attName + " value");
+				value = (double) ((Integer)i.getOnValue());
+			}
+			else if (i.getOnValue() instanceof Double)
+			{
+				value = (double) ((Double)i.getOnValue());
+			}
+			else
+			{
+				System.out.println("\nDynamic Layout Error: Missing " + attName + " value (Integer or Double)");
 				throw new NullPointerException("Missing " + attName + " value");
 			}	
+		}
+
+		if (value==0)
+		{
+			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
+			throw new NullPointerException("Value of " + attName + " cannot be zero!");
+		}
+		return value;
+	}
+
+//	private double getWeight(DynInterval<T> i)
+//	{
+////		try {
+//			if (i.getOnValue() instanceof Integer)
+//				if ((Integer)i.getOnValue()!=0)
+//					return (double) ((Integer)i.getOnValue());
+//				else
+//				{
+//					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
+//					throw new NullPointerException("Value of " + attName + " cannot be zero!");
+//				}
+//			else if (i.getOnValue() instanceof Double)
+//				if ((Double)i.getOnValue()!=0)
+//					return (double) ((Double)i.getOnValue());
+//				else
+//				{
+//					System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
+//					throw new NullPointerException("Value of " + attName + " cannot be zero!");
+//				}
+//			else
+////			if (i.getOnValue() instanceof Integer)
+////				return (double) ((Integer)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
+////			else if (i.getOnValue() instanceof Double)
+////				return (double) ((Double)i.getOnValue() * normalDistribution(i.getStart(),i.getEnd()));
+////			else
+//			{
+//				System.out.println("\nDynamic Layout Error: Missing " + attName + " value");
+//				throw new NullPointerException("Missing " + attName + " value");
+//			}	
+////		} catch (MathException e) {
+////			e.printStackTrace();
+////			return 0.0;
+////		}
+//	}
+
+//	private double getCount(DynInterval<T> i)
+//	{
+//		try {
+//			return 1.0 * normalDistribution(i.getStart(),i.getEnd());
 //		} catch (MathException e) {
 //			e.printStackTrace();
 //			return 0.0;
 //		}
-	}
-
-	private double getCount(DynInterval<T> i)
-	{
-		try {
-			return 1.0 * normalDistribution(i.getStart(),i.getEnd());
-		} catch (MathException e) {
-			e.printStackTrace();
-			return 0.0;
-		}
-	}
+//	}
 
 	private double normalDistribution(double start, double end) throws MathException
 	{

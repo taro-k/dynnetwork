@@ -257,16 +257,16 @@ public interface DynNetworkSnapshot<T>
 	public DynInterval<T> getInterval();
 	
 	/**
-	 * Get time interval for node.
+	 * Get time interval list for node.
 	 * @return
 	 */
-	public DynInterval<T> getInterval(CyNode node);
+	public List<DynInterval<T>> getIntervalList(CyNode node);
 	
 	/**
-	 * Get time interval for edge.
+	 * Get time interval list for edge.
 	 * @return
 	 */
-	public DynInterval<T> getInterval(CyEdge edge);	
+	public List<DynInterval<T>> getIntervalList(CyEdge edge);	
 	
 	/**
 	 * Print list of nodes and edges.
