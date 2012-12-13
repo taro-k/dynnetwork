@@ -123,7 +123,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 				t0 = events.get(Math.max(0,t-context.m_past_events));
 				t1 = events.get(Math.min(events.size()-1,t+1+context.m_future_events));
 
-				snap.setInterval(new DynInterval<T>(t0,t1),t,0.1,0.1);
+				snap.setInterval(new DynInterval<T>(t0,t1),t,1000,1000);
 				if (!context.m_attribute_name.equals("none"))
 					kklayout.setDistance(new DijkstraShortestPath<T>(snap,snap.getWeightMap(),100));
 				else

@@ -595,15 +595,18 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	private double getWeight(List<DynInterval<T>> list)
 	{
 		double value = 0;
+		int counter = 0;
 		for (DynInterval<T> i : list)
 		{
 			if (i.getOnValue() instanceof Integer)
 			{
-				value = (double) ((Integer)i.getOnValue());
+				value = value + (double) ((Integer)i.getOnValue());
+				counter++;
 			}
 			else if (i.getOnValue() instanceof Double)
 			{
-				value = (double) ((Double)i.getOnValue());
+				value = value + (double) ((Double)i.getOnValue());
+				counter++;
 			}
 			else
 			{
@@ -612,12 +615,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			}	
 		}
 
-		if (value==0)
+		if (value==0 || counter==0)
 		{
 			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
 			throw new NullPointerException("Value of " + attName + " cannot be zero!");
 		}
-		return value;
+		return value/counter;
 	}
 
 //	private double getWeight(DynInterval<T> i)
@@ -668,12 +671,18 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	private double normalDistribution(double start, double end) throws MathException
 	{
 		if (start<=gaussMean && end<=gaussMean)
+		{
 			return ndPast.cumulativeProbability(end)-ndPast.cumulativeProbability(start);
+		}
 		else if (start>=-gaussMean && end>=gaussMean)
+		{
 			return ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(start);
+		}
 		else
+		{
 			return ndPast.cumulativeProbability(0)-ndPast.cumulativeProbability(start) +
 			ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(0);
+		}
 	}
 
 }
