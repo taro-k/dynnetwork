@@ -287,16 +287,22 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	public Map<CyEdge,? extends Number> getWeightMap()
 	{
 		weightMap.clear();
+		if (attName!=null && !attName.equals("none"))
 		for (CyEdge edge : edgeList)
 		{
 			if (edge!=null)
 			{
-				if (edgeIntervals.containsKey(edge))
 					weightMap.put(edge, getWeight(edgeAttrIntervals.get(edge)));
-				else
-					weightMap.put(edge, new Double(1));
 			}
 		}
+		else
+			for (CyEdge edge : edgeList)
+			{
+				if (edge!=null)
+				{
+					weightMap.put(edge, new Double(1));
+				}
+			}
 		return weightMap;
 	}
 	
