@@ -119,7 +119,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 				view.updateView();
 				if (sink!=null)
-					sink.updateView(dynNetwork,timeInterval.getStart()+i*this.deltat);
+					sink.updateView(dynNetwork,timeInterval.getStart());
 		}
 	}
 
@@ -201,7 +201,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 				view.updateView();
 				if (sink!=null)
-					sink.updateView(dynNetwork,timeInterval.getStart()+i*this.deltat);
+					sink.updateView(dynNetwork,timeInterval.getStart());
 		}
 	}
 

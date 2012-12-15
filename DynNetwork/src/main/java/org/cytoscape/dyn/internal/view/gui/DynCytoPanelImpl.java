@@ -53,7 +53,6 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.io.write.graphics.PNGWriterFactory;
-import org.cytoscape.dyn.internal.io.write.graphics.SVGWriterFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
