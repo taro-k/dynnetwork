@@ -19,11 +19,14 @@
 
 package org.cytoscape.dyn.internal.io.write;
 
+import java.io.File;
+
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.presentation.RenderingEngine;
 
 /**
  * <code> AbstractDynNetworkViewWriterFactory </code> is an abstract class to generates 
@@ -33,7 +36,7 @@ import org.cytoscape.model.CyNode;
  * 
  */
 public abstract class AbstractDynNetworkViewWriterFactory<T> implements DynNetworkViewWriterFactory<T> 
-{
+{	
 	@Override
 	public CyEdge addedEdge(DynNetwork<T> dynNetwork, String id, String label,
 			String source, String target, String start, String end) 

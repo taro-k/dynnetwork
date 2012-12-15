@@ -52,6 +52,7 @@ import org.cytoscape.application.events.SetCurrentNetworkViewListener;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.dyn.internal.io.write.graphics.PNGWriterFactory;
 import org.cytoscape.dyn.internal.io.write.graphics.SVGWriterFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -204,10 +205,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				{
 					recordButton.setBackground(Color.red);
 					recordButton.setOpaque(true);
-					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save SVG Image Sequence", FileUtil.SAVE, getFilters());
+					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save Image Sequence", FileUtil.SAVE, getFilters());
 					if (file!=null)
 					{
-						SVGWriterFactory<T> writerFactory = new SVGWriterFactory<T>(appManager.getCurrentRenderingEngine(),file);
+						PNGWriterFactory<T> writerFactory = new PNGWriterFactory<T>(appManager.getCurrentRenderingEngine(),file);
 						transformator.addSink(writerFactory);
 						updateView();
 					}
@@ -603,7 +604,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private List<FileChooserFilter> getFilters()
 	{
 		List<FileChooserFilter> filters = new ArrayList<FileChooserFilter>();
-    	filters.add(new FileChooserFilter("SVG Image", "svg"));
+    	filters.add(new FileChooserFilter("PNG Image", "png"));
     	return filters;
 	}
 

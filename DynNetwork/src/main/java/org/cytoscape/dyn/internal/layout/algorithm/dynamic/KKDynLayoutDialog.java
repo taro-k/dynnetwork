@@ -41,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.cytoscape.dyn.internal.util.GraphingData;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
 /**

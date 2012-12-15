@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.io.write.graphics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 
@@ -30,24 +31,24 @@ import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.view.presentation.RenderingEngine;
 
 /**
- * <code> SVGWriterFactory </code> extends {@link AbstractDynNetworkViewWriterFactory}. 
- * Is used to create instance of the image writer {@link SVGWriter}.
+ * <code> PNGWriterFactory </code> extends {@link AbstractDynNetworkViewWriterFactory}. 
+ * Is used to create instance of the image writer {@link PNGWriter}.
  * 
  * @author Sabina Sara Pfister
  *
  */
-public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T> 
+public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T> 
 {
 	private final RenderingEngine<?> engine;
 	private final File file;
 	private DecimalFormat formatter = new DecimalFormat("#0.000");
 
 	/**
-	 * <code> SVGWriterFactory </code> constructor.
+	 * <code> PNGWriterFactory </code> constructor.
 	 * @param engine
 	 * @param stream
 	 */
-	public SVGWriterFactory(
+	public PNGWriterFactory(
 			final RenderingEngine<?> engine, 
 			final File file) 
 	{
@@ -63,11 +64,13 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	{
 		File outputFile = new File(trim(file.getAbsolutePath()) + 
 				"_" + Calendar.getInstance().getTimeInMillis() +
-				"_Time_" + formatter.format(currentTime) + ".svg");
+				"_Time_" + formatter.format(currentTime) + ".png");
 
 		try {
-			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export();
+			(new PNGWriter(engine, new FileOutputStream(outputFile,false))).export();
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
