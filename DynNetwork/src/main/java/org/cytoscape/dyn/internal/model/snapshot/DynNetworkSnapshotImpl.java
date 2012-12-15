@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
@@ -66,12 +64,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	
 	private final Map<CyEdge,Double> weightMap;
 	
-	private double gaussMean;
-	private double gaussStdPast;
-	private double gaussStdFuture;
-	
-	private NormalDistributionImpl ndPast;
-	private NormalDistributionImpl ndFuture;
+//	private double gaussMean;
+//	private double gaussStdPast;
+//	private double gaussStdFuture;
+//	
+//	private NormalDistributionImpl ndPast;
+//	private NormalDistributionImpl ndFuture;
 
 	/**
 	 * <code> DynNetworkSnapshotImpl </code> constructor.
@@ -114,12 +112,12 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 	public void setInterval(DynInterval<T> timeInterval, double gaussMean, double gaussStdPast, double gaussStdFuture) 
 	{
 		this.timeInterval = timeInterval;
-		this.gaussMean = gaussMean;
-		this.gaussStdPast = gaussStdPast;
-		this.gaussStdFuture = gaussStdFuture;
-		
-		this.ndPast = new NormalDistributionImpl(gaussMean,gaussStdPast);
-		this.ndFuture = new NormalDistributionImpl(gaussMean,gaussStdFuture);
+//		this.gaussMean = gaussMean;
+//		this.gaussStdPast = gaussStdPast;
+//		this.gaussStdFuture = gaussStdFuture;
+//		
+//		this.ndPast = new NormalDistributionImpl(gaussMean,gaussStdPast);
+//		this.ndFuture = new NormalDistributionImpl(gaussMean,gaussStdFuture);
 		
 		for (DynInterval<T> i : getChangedNodeIntervals(timeInterval))
 			if (i.isOn())
@@ -621,10 +619,10 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			}	
 		}
 
-		if (value==0 || counter==0)
+		if (value<=0)
 		{
-			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero!");
-			throw new NullPointerException("Value of " + attName + " cannot be zero!");
+			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero or negative!");
+			throw new NullPointerException("Value of " + attName + " cannot be zero or negative!");
 		}
 		return value/counter;
 	}
@@ -674,21 +672,21 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 //		}
 //	}
 
-	private double normalDistribution(double start, double end) throws MathException
-	{
-		if (start<=gaussMean && end<=gaussMean)
-		{
-			return ndPast.cumulativeProbability(end)-ndPast.cumulativeProbability(start);
-		}
-		else if (start>=-gaussMean && end>=gaussMean)
-		{
-			return ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(start);
-		}
-		else
-		{
-			return ndPast.cumulativeProbability(0)-ndPast.cumulativeProbability(start) +
-			ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(0);
-		}
-	}
+//	private double normalDistribution(double start, double end) throws MathException
+//	{
+//		if (start<=gaussMean && end<=gaussMean)
+//		{
+//			return ndPast.cumulativeProbability(end)-ndPast.cumulativeProbability(start);
+//		}
+//		else if (start>=-gaussMean && end>=gaussMean)
+//		{
+//			return ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(start);
+//		}
+//		else
+//		{
+//			return ndPast.cumulativeProbability(0)-ndPast.cumulativeProbability(start) +
+//			ndFuture.cumulativeProbability(end)-ndFuture.cumulativeProbability(0);
+//		}
+//	}
 
 }
