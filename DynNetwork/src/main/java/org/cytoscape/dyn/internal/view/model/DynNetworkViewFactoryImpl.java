@@ -25,7 +25,6 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.io.read.util.GraphicsTypeMap;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -69,7 +68,6 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 			final CyNetworkViewManager networkViewManager,
 			final VisualMappingManager vmm)
 	{
-		
 		this.viewManager = viewManager;
 		this.cyNetworkViewFactory = cyNetworkViewFactory;
 		this.networkViewManager = networkViewManager;
@@ -87,18 +85,6 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 		DynNetworkViewImpl<T> dynNetworkView = new DynNetworkViewImpl<T>(dynNetwork, networkViewManager,cyNetworkViewFactory,vmm);
 		viewManager.addDynNetworkView(dynNetworkView);
 		return dynNetworkView;
-	}
-
-	@Override
-	public CyEdge addedEdge(DynNetwork<T> dynNetwork, String id, String label, String source, String target, String start, String end) 
-	{
-		return null;
-	}
-
-	@Override
-	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String name, String value, String Type, String start, String end) 
-	{
-		
 	}
 	
 	@Override
@@ -146,7 +132,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 			view.getNodeView(currentNode).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, new Double(x));
 		
 		if (y!=null)
-			view.getNodeView(currentNode).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, new Double(y));
+			view.getNodeView(currentNode).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, new Double(y));
 		
 		if (linew!=null)
 			view.getNodeView(currentNode).setVisualProperty(BasicVisualLexicon.NODE_BORDER_WIDTH, new Double(linew));
@@ -170,57 +156,9 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 		if (fill!=null)
 			view.getEdgeView(currentEdge).setVisualProperty(BasicVisualLexicon.EDGE_UNSELECTED_PAINT, decodeHEXColor(fill));
 	}
-
-	@Override
-	public DynNetwork<T> addedGraph(String id, String label, String start, String end, String directed) 
-	{
-		return null;
-	}
-
-	@Override
-	public void addedGraphAttribute(DynNetwork<T> dynNetwork, String name, String value, String Type, String start, String end) 
-	{
-
-	}
-
-	@Override
-	public CyGroup addedGroup(DynNetwork<T> dynNetwork, CyNode currentNode) 
-	{
-		return null;
-	}
-
-	@Override
-	public CyNode addedNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end) 
-	{
-		return null;
-	}
-
-	@Override
-	public void addedNodeAttribute(DynNetwork<T> dynNetwork, CyNode currentNode, String name, String value, String Type, String start, String end) 
-	{
-
-	}
-
-	@Override
-	public void deletedEdge(DynNetwork<T> dynNetwork, CyEdge edge) 
-	{
-
-	}
-
-	@Override
-	public void deletedGraph(DynNetwork<T> dynNetwork) 
-	{
-
-	}
-
-	@Override
-	public void deletedNode(DynNetwork<T> dynNetwork, CyNode node) 
-	{
-
-	}
 	
 	@Override
-	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
+	public void finalizeNetwork(DynNetworkView<T> dynNetworkView) 
 	{	
 		while (!graphGraphicsList.isEmpty())
 			graphGraphicsList.pop().add(this);
@@ -231,7 +169,7 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
 		while (!edgeGraphicsList.isEmpty())
 			edgeGraphicsList.pop().add(this);
 		
-		networkViewManager.getNetworkViews(dynNetwork.getNetwork()).iterator().next().updateView();
+//		dynNetworkView.getNetworkView().updateView();
 	}
 	
     private static Paint decodeHEXColor(String nm) throws NumberFormatException 
@@ -240,11 +178,5 @@ public final class DynNetworkViewFactoryImpl<T> implements DynNetworkViewFactory
     	int i = intval.intValue();
     	return new Color((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
     }
-
-	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
-	{
-		// Do nothing
-	}
 
 }

@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.io.read.xgmml;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.io.read.xgmml.handler.DynHandlerXGMMLFactory;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.xml.sax.Attributes;
@@ -47,10 +48,11 @@ public final class XGMMLDynParser<T> extends DefaultHandler
 	 * <code> XGMMLDynParser </code> constructor.
 	 * @param networkSink
 	 * @param viewSink
+	 * @param layoutSink
 	 */
-	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
+	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink)
 	{
-		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink);
+		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink,layoutSink);
 	}
 
 	@Override

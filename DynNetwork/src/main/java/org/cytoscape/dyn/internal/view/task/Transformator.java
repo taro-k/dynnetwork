@@ -41,7 +41,6 @@ public class Transformator<T> extends AbstractTransformator<T>
 	private double alpha;
     private int iterations;
     private int delay;
-    private double deltat;
 	
 	private double timeStart;
 	private double timeEnd;
@@ -79,7 +78,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
 		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
 		
-		if (sink==null && nodes.isEmpty() && edges.isEmpty())
+		if (writerFactory==null && nodes.isEmpty() && edges.isEmpty())
 			return;
 		
 		for (int i=0;i<iterations;i++)
@@ -118,8 +117,8 @@ public class Transformator<T> extends AbstractTransformator<T>
 				}
 
 				view.updateView();
-				if (sink!=null)
-					sink.updateView(dynNetwork,timeInterval.getStart());
+				if (writerFactory!=null)
+					writerFactory.updateView(dynNetwork,timeInterval.getStart());
 		}
 	}
 
@@ -149,7 +148,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 		List<DynInterval<T>> nodesPosX = layout.searchChangedNodePositionsX(timeInterval);
 		List<DynInterval<T>> nodesPosY = layout.searchChangedNodePositionsY(timeInterval);
 
-		if (sink==null && nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
+		if (writerFactory==null && nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
 			return;
 		
 		for (int i=0;i<iterations;i++)
@@ -200,8 +199,8 @@ public class Transformator<T> extends AbstractTransformator<T>
 				}
 
 				view.updateView();
-				if (sink!=null)
-					sink.updateView(dynNetwork,timeInterval.getStart());
+				if (writerFactory!=null)
+					writerFactory.updateView(dynNetwork,timeInterval.getStart());
 		}
 	}
 
@@ -276,8 +275,6 @@ public class Transformator<T> extends AbstractTransformator<T>
 				break;
 			}
 		}
-
-		this.deltat = deltat/iterations;
 	}
 	
 	private int round(double value)

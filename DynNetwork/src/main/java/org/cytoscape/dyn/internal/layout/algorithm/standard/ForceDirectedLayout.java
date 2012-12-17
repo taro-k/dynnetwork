@@ -274,9 +274,9 @@ public class ForceDirectedLayout<T> extends AbstractLayout<T>
 	// the center of the screen.
 	private void adjustForGravity() 
 	{
-		Dimension d = getSize();
-		double height = d.getHeight();
-		double width = d.getWidth();
+//		Dimension d = getSize();
+//		double height = d.getHeight();
+//		double width = d.getWidth();
 		double gx = 0;
 		double gy = 0;
 		for (CyNode ln: graph.getNodes()) 

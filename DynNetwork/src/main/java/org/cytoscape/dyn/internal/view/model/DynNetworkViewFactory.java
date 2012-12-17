@@ -35,6 +35,50 @@ import org.cytoscape.model.CyNode;
 public interface DynNetworkViewFactory<T> extends Sink<T>
 {
 	/**
+	 * Process create view event.
+	 * @param dynNetwork
+	 * @return dynNetworkView
+	 */
+	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
+	
+	/**
+	 * Process added graph graphic attribute event.
+	 * @param dynNetwork
+	 * @param fill
+	 */
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill);
+	
+	/**
+	 * Process added edge graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentEdge
+	 * @param width
+	 * @param fill
+	 */
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
+	
+	/**
+	 * Process added node graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentNode
+	 * @param type
+	 * @param height
+	 * @param width
+	 * @param x
+	 * @param y
+	 * @param fill
+	 * @param line width
+	 * @param outline
+	 */
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
+	
+	/**
+	 * Process finalize network event.
+	 * @param dynNetworkView
+	 */
+	public void finalizeNetwork(DynNetworkView<T> dynNetworkView);
+	
+	/**
 	 * Set graph graphics attributes.
 	 * @param dynNetwork
 	 * @param fill

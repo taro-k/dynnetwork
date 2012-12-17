@@ -17,35 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.view.task;
+package org.cytoscape.dyn.internal.io.load;
 
-import org.cytoscape.dyn.internal.io.event.Sink;
-import org.cytoscape.dyn.internal.io.event.Source;
-import org.cytoscape.dyn.internal.io.write.DynNetworkViewWriterFactory;
+import org.cytoscape.work.TaskIterator;
 
 /**
- * <code> AbstractTransformator </code> abstract class to change visual properties by interpolating
- * the values to change..
+ * <code> LoadDynLayoutFactory </code> is interface that provides 
+ * a task iterator for creating networks view from networks.
  * 
  * @author Sabina Sara Pfister
  *
  */
-public abstract class AbstractTransformator<T>  implements Source<T>  
+public interface LoadDynLayoutFactory<T>
 {
-
-	protected DynNetworkViewWriterFactory<T> writerFactory;
-	
-	@Override
-	public void addSink(Sink<T> sink) 
-	{
-		if (sink instanceof DynNetworkViewWriterFactory<?>)
-			this.writerFactory = (DynNetworkViewWriterFactory<T>) sink;
-	}
-	
-	@Override
-	public void removeSink(Sink<T> sink) 
-	{
-		if (this.writerFactory == sink)
-			this.writerFactory = null;
-	}
+	/**
+	 * Create a task iterator for creating a network view from the current dynamic network.
+	 * @param network
+	 * @return a task iterator of type {@link TaskIterator}
+	 */
+	TaskIterator creatTaskIterator();
 }

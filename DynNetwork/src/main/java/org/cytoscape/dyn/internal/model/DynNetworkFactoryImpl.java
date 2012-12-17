@@ -26,7 +26,6 @@ import java.util.List;
 import org.cytoscape.dyn.internal.io.read.util.AttributeTypeMap;
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.group.CyGroupFactory;
 import org.cytoscape.group.CyGroupManager;
@@ -144,24 +143,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String attName, String attValue, String attType, String start, String end)
 	{
 		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end);
-	}
-	
-	@Override
-	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill) 
-	{
-		
-	}
-	
-	@Override
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline) 
-	{
-
-	}
-	
-	@Override
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill) 
-	{
-
 	}
 
 	@Override
@@ -290,20 +271,6 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		for (CyNode node : metaNodes)
 			dynNetwork.getNetwork().removeEdges(dynNetwork.getNetwork().getAdjacentEdgeList(node, CyEdge.Type.ANY));
 		dynNetwork.getNetwork().removeNodes(metaNodes);
-//		dynNetwork.print();
-	}
-	
-	@Override
-	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork) 
-	{
-		// Do nothing
-		return null;
-	}
-	
-	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
-	{
-		// Do nothing
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)

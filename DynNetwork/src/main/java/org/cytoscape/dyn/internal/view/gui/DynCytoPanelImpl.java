@@ -300,7 +300,15 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 			view.initTransparency(visibility);
 			updateGui(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
 			updateView();
+			
+			if (layoutManager.getDynLayout(view.getNetworkView())!=null)
+			{
+				layoutManager.getDynLayout(view.getNetworkView()).initNodePositions(new DynInterval<T>(time,time));
+				view.getNetworkView().fitContent();
+				view.getNetworkView().updateView();
+			}
 		}
+		
 	}
 
 	@Override

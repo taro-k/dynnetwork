@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.io.write;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.io.write.CyWriterFactory;
 import org.cytoscape.view.presentation.RenderingEngine;
 
@@ -33,5 +34,11 @@ import org.cytoscape.view.presentation.RenderingEngine;
  */
 public interface DynNetworkViewWriterFactory<T> extends Sink<T>
 {
+	/**
+     * Process update view event.
+     * @param dynNetwork
+     * @param currentTime
+     */
+    public void updateView(DynNetwork<T> dynNetwork, double currentTime);
 
 }

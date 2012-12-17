@@ -47,6 +47,9 @@ public enum ParseDynState
     EDGE_GRAPHICS("Edge Graphics"),
     LOCKED_VISUAL_PROP_ATT("Bypass Attribute"),
     
+    // Dynamic attribute
+    NODE_DYNAMICS("Node Dynamics"),
+    
     // Others (not implemented yet)
     EDGE_BEND("Edge Bend"),
     EDGE_HANDLE("Edge Handle"),

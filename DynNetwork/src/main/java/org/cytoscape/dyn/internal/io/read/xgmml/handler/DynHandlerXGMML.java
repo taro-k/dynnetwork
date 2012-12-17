@@ -23,9 +23,9 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynParser;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
-import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
@@ -76,13 +76,15 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	 * <code> DynHandlerXGMML </code> constructor.
 	 * @param networkSink
 	 * @param viewSink
+	 * @param layoutSink
 	 */
-	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink)
+	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink)
 	{
 		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
 		this.networkSink = networkSink;
 		this.viewSink = viewSink;
+		this.layoutSink = layoutSink;
 	}
 
 	@Override
@@ -188,6 +190,15 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, x, y, fill, width, outline);
 			break;
 			
+		case NODE_DYNAMICS:
+			x = atts.getValue("x");
+			y = atts.getValue("y");
+			start = atts.getValue("start");
+			end = atts.getValue("end");
+			if (currentNode!=null)
+				this.addNodeDynamics(currentNetwork, currentNode, x, y, start, end);
+			break;
+			
 		case EDGE_GRAPHICS:
 			width = atts.getValue("width");
 			fill = atts.getValue("fill");
@@ -237,13 +248,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			String width, String fill)
 	{
 		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
-	}
-	
-	@Override
-	protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork)
-	{
-		// Do nothing.
-		return null;
 	}
 	
 }

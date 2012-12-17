@@ -20,43 +20,43 @@
 package org.cytoscape.dyn.internal.io.load;
 
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.dyn.internal.model.DynNetworkManager;
-import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 
 /**
- * <code> LoadDynNetworkViewFactoryImpl </code> implements the interface 
- * {@link LoadDynNetworkViewFactory}.
+ * <code> LoadDynLayoutFactoryImpl </code> implements the interface 
+ * {@link LoadDynLayoutFactory}.
  * 
  * @author Sabina Sara Pfister
  *
  */
-public class LoadDynNetworkViewFactoryImpl<T> implements LoadDynNetworkViewFactory<T>
+public class LoadDynLayoutFactoryImpl<T> implements LoadDynNetworkViewFactory<T>
 {
 	private final CyApplicationManager appManager;
-	private final DynNetworkManager<T> dynNetworkManager;
-	private final DynNetworkViewFactory<T> dynNetworkViewFactory;
+	private final DynNetworkViewManager<T> dynNetworkViewManager;
+	private final DynLayoutFactory<T> dynLayoutFactory;
 
 	/**
 	 * <code> LoadDynNetworkViewFactoryImpl </code> constructor.
 	 * @param appManager
-	 * @param dynNetworkManager
-	 * @param dynNetworkViewFactory
+	 * @param dynLayoutManager
+	 * @param dynLayoutFactory
 	 */
-	public LoadDynNetworkViewFactoryImpl(
+	public LoadDynLayoutFactoryImpl(
 			CyApplicationManager appManager,
-			DynNetworkManager<T> dynNetworkManager,
-			DynNetworkViewFactory<T> dynNetworkViewFactory)
+			DynNetworkViewManager<T> dynNetworkViewManager,
+			DynLayoutFactory<T> dynLayoutFactory)
 	{
 		this.appManager = appManager;
-		this.dynNetworkManager = dynNetworkManager;
-		this.dynNetworkViewFactory = dynNetworkViewFactory;
+		this.dynNetworkViewManager = dynNetworkViewManager;
+		this.dynLayoutFactory = dynLayoutFactory;
 	}
 
 	@Override
 	public TaskIterator creatTaskIterator()
 	{
-		return new TaskIterator(1, new LoadDynNetworkViewTask<T>(appManager, dynNetworkManager, dynNetworkViewFactory));
+		return new TaskIterator(1, new LoadDynLayoutTask<T>(appManager, dynNetworkViewManager, dynLayoutFactory));
 	}
 
 }

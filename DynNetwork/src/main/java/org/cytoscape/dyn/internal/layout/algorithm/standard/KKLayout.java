@@ -311,9 +311,9 @@ public final class KKLayout<T> extends AbstractLayout<T>
 	// the center of the screen.
 	private void adjustForGravity() 
 	{
-		Dimension d = getSize();
-		double height = d.getHeight();
-		double width = d.getWidth();
+//		Dimension d = getSize();
+//		double height = d.getHeight();
+//		double width = d.getWidth();
 		double gx = 0;
 		double gy = 0;
 		for (int i = 0; i < xydata.length; i++) 

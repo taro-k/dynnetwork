@@ -19,6 +19,10 @@
 
 package org.cytoscape.dyn.internal.layout;
 
+import org.cytoscape.dyn.internal.io.event.Sink;
+import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 
 /**
@@ -29,28 +33,77 @@ import org.cytoscape.view.model.CyNetworkView;
  *
  * @param <T>
  */
-public interface DynLayoutFactory<T>
+public interface DynLayoutFactory<T> extends Sink<T>
 {
 	/**
-	 * Create layout for view.
-	 * @param view
+	 * Process create layout event.
+	 * @param dynNetworkView
 	 * @return
 	 */
-	public DynLayout<T> createLayout(CyNetworkView view);
+	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView);
 	
 	/**
-	 * Create layout for view.
-	 * @param view
+	 * Process layout event.
+	 * @param networkView
 	 * @param context
 	 * @return
 	 */
-	public DynLayout<T> createLayout(CyNetworkView view, Object context);
+	public DynLayout<T> createLayout(CyNetworkView networkView, Object context);
 	
 	/**
-	 * Remove layout from view.
-	 * @param view
+	 * Process create layout event.
+	 * @param networkView
 	 * @return
 	 */
-	public void removeLayout(CyNetworkView view);
+	public DynLayout<T> createLayout(CyNetworkView networkView);
 	
+	/**
+	 * Process layout event.
+	 * @param dynNetworkView
+	 * @param context
+	 * @return
+	 */
+	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView, Object context);
+	
+	/**
+	 * Process added node graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentNode
+	 * @param x
+	 * @param y
+	 * @param start
+	 * @param end
+	 */
+	public void addedNodeDynamics(DynNetwork<T> dynNetwork, CyNode currentNode, String x, String y, String start, String end);
+	
+	/**
+	 * Set node graphics attributes.
+	 * @param dynNetworkView
+	 * @param currentNode
+	 * @param x
+	 * @param y
+	 * @param start
+	 * @param end
+	 */
+	public void setNodeDynamics(DynNetworkView<T> dynNetworkView, CyNode currentNode, String x, String y, String start, String end);
+	
+	/**
+	 * Process finalize network event.
+	 * @param dynNetworkView
+	 */
+	public void finalizeNetwork(DynNetworkView<T> dynNetworkView);
+	
+	/**
+	 * Remove layout event.
+	 * @param dynNetworkView
+	 * @return
+	 */
+	public void removeLayout(DynNetworkView<T> dynNetworkView);
+	
+	/**
+	 * Remove layout event.
+	 * @param networkView
+	 * @return
+	 */
+	public void removeLayout(CyNetworkView networkView);
 }

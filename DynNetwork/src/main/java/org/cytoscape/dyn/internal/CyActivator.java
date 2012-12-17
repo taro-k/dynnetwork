@@ -106,21 +106,32 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	UndoSupport undo = getService(context,UndoSupport.class);
     	CyEventHelper cyEventHelperRef = getService(context,CyEventHelper.class);
     	
-    	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(cyNetworkManagerServiceRef);
-		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
-		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(cyNetworkViewManagerServiceRef);
-    	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
+    	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(
+    			cyNetworkManagerServiceRef);
+		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(
+				cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
+		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(
+				cyNetworkViewManagerServiceRef);
+    	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(
+    			dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
     	
     	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
-    	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
-    	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,fileUtil);
-    	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Perfuse DynLayout",undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
+    	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(
+    			dynLayoutManager);
+    	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(
+    			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,fileUtil);
+    	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",
+    			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
+    	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Perfuse DynLayout",
+    			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	
-    	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetworkFactory,dynNetworkViewFactory,fileUtil,streamUtil,tunableSetterServiceRef);
-    	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
-    	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
+    	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(
+    			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,fileUtil,streamUtil,tunableSetterServiceRef);
+    	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(
+    			cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
+    	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(
+    			cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
     	
     	Properties myLayoutProps = new Properties();
         myLayoutProps.setProperty("preferredMenu","Dynamic Layouts");

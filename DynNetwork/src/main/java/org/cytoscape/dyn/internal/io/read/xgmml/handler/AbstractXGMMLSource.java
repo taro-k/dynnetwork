@@ -21,8 +21,10 @@ package org.cytoscape.dyn.internal.io.read.xgmml.handler;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.dyn.internal.model.DynNetworkFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
@@ -41,8 +43,9 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	// Note: i don't implement generation of events, since xgmml reading is almost sequential 
 	// and direct calling of sink methods is much faster.
 
-	protected Sink<T> networkSink;
-	protected Sink<T> viewSink;
+	protected DynNetworkFactory<T> networkSink;
+	protected DynNetworkViewFactory<T> viewSink;
+	protected DynLayoutFactory<T> layoutSink;
 
 	protected DynNetwork<T> addGraph(
 			String id, String label, String start, String end, String directed)
@@ -103,6 +106,12 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
 	}
 	
+	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 
+			String x, String y, String start, String end)
+	{
+		layoutSink.addedNodeDynamics(network, currentNode, x, y, start, end);
+	}
+	
 	protected void deleteGraph(DynNetwork<T> netwrok)
 	{
 		networkSink.deletedGraph(netwrok);
@@ -137,16 +146,16 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	{
 		networkSink.finalizeNetwork(currentNetwork);
 	}
-	
-	abstract protected DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
 
 	@Override
 	public void addSink(Sink<T> sink) 
 	{
-		if (this.networkSink==null)
-			this.networkSink = sink;
-		else
-			this.viewSink = sink;
+		if (sink instanceof DynNetworkViewFactory<?>)
+			this.networkSink = (DynNetworkFactory<T>) sink;
+		else if (sink instanceof DynNetworkViewFactory<?>)
+			this.viewSink = (DynNetworkViewFactory<T>) sink;
+		else if (sink instanceof DynLayoutFactory<?>)
+			this.layoutSink = (DynLayoutFactory<T>) sink;
 	}
 	
 	@Override
@@ -156,6 +165,8 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 			this.networkSink = null;
 		else if (this.viewSink == sink)
 			this.viewSink = null;
+		else if (this.layoutSink==null)
+			this.layoutSink = null;
 	}
 	
 }

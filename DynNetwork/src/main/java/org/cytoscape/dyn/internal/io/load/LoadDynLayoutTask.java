@@ -22,42 +22,42 @@ package org.cytoscape.dyn.internal.io.load;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
-import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.dyn.internal.model.DynNetworkManager;
+import org.cytoscape.dyn.internal.layout.DynLayout;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
+import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskMonitor;
 
 /**
- * <code> LoadNetworkViewTask </code> implements {@link Task} and is responsible
- * for creating the network view {@link DynNetworkView} from a network {@link DynNetwork}.
+ * <code> LoadDynLayoutTask </code> implements {@link Task} and is responsible
+ * for creating the network view layout {@link DynLayout}.
  * 
  * @author Sabina Sara Pfister
  *
  */
-public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Source<T> 
+public final class LoadDynLayoutTask<T> extends AbstractTask implements Source<T> 
 {
 	private final CyApplicationManager appManager;
-	private final DynNetworkManager<T> dynNetworkManager;
+	private final DynNetworkViewManager<T> dynNetworkViewManager;
 	
-	private DynNetworkViewFactory<T> dynamicNetworkViewFactory;
+	private DynLayoutFactory<T> layoutFactory;
 	
 	/**
-	 * <code> LoadDynNetworkViewTask </code> constructor.
+	 * <code> LoadDynLayoutTask </code> constructor.
 	 * @param appManager
-	 * @param dynNetworkManager
+	 * @param dynNetworkViewManager
 	 * @param dynNetworkViewFactory
 	 */
-	public LoadDynNetworkViewTask(
+	public LoadDynLayoutTask(
 			final CyApplicationManager appManager,
-			final DynNetworkManager<T> dynNetworkManager,
-			final DynNetworkViewFactory<T> dynamicNetworkViewFactory)
+			final DynNetworkViewManager<T> dynNetworkViewManager,
+			final DynLayoutFactory<T> dynLayoutFactory)
 	{
 		this.appManager = appManager;
-		this.dynNetworkManager = dynNetworkManager;
-		this.addSink(dynamicNetworkViewFactory);
+		this.dynNetworkViewManager = dynNetworkViewManager;
+		this.addSink(dynLayoutFactory);
 	}
 	
 	/**
@@ -66,23 +66,24 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 	public void run(TaskMonitor tm) throws Exception
 	{
 		tm.setProgress(0.0);
-		DynNetwork<T> dynNetwork = dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork());
-		dynamicNetworkViewFactory.finalizeNetwork(dynamicNetworkViewFactory.createView(dynNetwork));
+		DynNetworkView<T> dynNetworkView = dynNetworkViewManager.getDynNetworkView(appManager.getCurrentNetworkView());
+		layoutFactory.createLayout(dynNetworkView);
+		layoutFactory.finalizeNetwork(dynNetworkView);
 		tm.setProgress(1.0);
 	}
 
 	@Override
 	public void addSink(Sink<T> sink) 
 	{
-		if (sink instanceof DynNetworkViewFactory<?>)
-			this.dynamicNetworkViewFactory = (DynNetworkViewFactory<T>) sink;
+		if (sink instanceof DynLayoutFactory<?>)
+			this.layoutFactory = (DynLayoutFactory<T>) sink;
 	}
 	
 	@Override
 	public void removeSink(Sink<T> sink) 
 	{
-		if (this.dynamicNetworkViewFactory == sink)
-			this.dynamicNetworkViewFactory = null;
+		if (this.layoutFactory == sink)
+			this.layoutFactory = null;
 	}
 	
 }
