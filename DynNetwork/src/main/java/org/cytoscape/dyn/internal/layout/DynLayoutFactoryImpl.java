@@ -94,9 +94,6 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 		{
 			while (!nodeDynamicsList.isEmpty())
 				nodeDynamicsList.pop().add(dynNetworkView,this);
-
-//			dynNetworkView.getNetworkView().fitContent();
-//			dynNetworkView.getNetworkView().updateView();
 		}
 	}
 

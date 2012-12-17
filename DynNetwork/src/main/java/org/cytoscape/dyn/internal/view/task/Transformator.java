@@ -78,9 +78,6 @@ public class Transformator<T> extends AbstractTransformator<T>
 		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
 		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
 		
-		if (writerFactory==null && nodes.isEmpty() && edges.isEmpty())
-			return;
-		
 		for (int i=0;i<iterations;i++)
 		{
 			timeStart = System.currentTimeMillis();
@@ -147,9 +144,6 @@ public class Transformator<T> extends AbstractTransformator<T>
 		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
 		List<DynInterval<T>> nodesPosX = layout.searchChangedNodePositionsX(timeInterval);
 		List<DynInterval<T>> nodesPosY = layout.searchChangedNodePositionsY(timeInterval);
-
-		if (writerFactory==null && nodes.isEmpty() && edges.isEmpty() && nodesPosX.isEmpty() && nodesPosY.isEmpty())
-			return;
 		
 		for (int i=0;i<iterations;i++)
 		{
