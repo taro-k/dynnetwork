@@ -122,7 +122,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,fileUtil);
     	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",
     			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
-    	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Perfuse DynLayout",
+    	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Prefuse DynLayout",
     			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	

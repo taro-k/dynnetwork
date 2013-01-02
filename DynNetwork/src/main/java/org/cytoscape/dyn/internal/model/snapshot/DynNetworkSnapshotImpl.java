@@ -619,10 +619,10 @@ public class DynNetworkSnapshotImpl<T> implements DynNetworkSnapshot<T>
 			}	
 		}
 
-		if (value<=0)
+		if (value<0)
 		{
-			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be zero or negative!");
-			throw new NullPointerException("Value of " + attName + " cannot be zero or negative!");
+			System.out.println("\nDynamic Layout Error: Value of " + attName + " cannot be negative!");
+			throw new NullPointerException("Value of " + attName + " cannot be negative!");
 		}
 		return value/counter;
 	}

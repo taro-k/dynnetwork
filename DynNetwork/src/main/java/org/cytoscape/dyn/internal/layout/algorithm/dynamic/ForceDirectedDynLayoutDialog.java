@@ -86,7 +86,7 @@ public class ForceDirectedDynLayoutDialog<T> extends JDialog implements ActionLi
 			final DynNetworkView<T> dynView,
 			final ForceDirectedLayoutContext context) 
 	{
-		super(parent, "Dynamic Perfuse", true);
+		super(parent, "Dynamic Prefuse", true);
 		this.parent = parent;
 		this.dynView = dynView;
 		this.context = context;
