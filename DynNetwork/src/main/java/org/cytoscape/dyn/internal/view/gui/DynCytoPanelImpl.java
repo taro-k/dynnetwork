@@ -369,7 +369,12 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	@Override
 	public double getDeltat()
 	{
-		return (maxTime-minTime)/((NameIDObj)resolutionComboBox.getSelectedItem()).id;
+		int id = ((NameIDObj)resolutionComboBox.getSelectedItem()).id;
+		if (id==1)
+			return 1.0;
+		else
+			return (maxTime-minTime)/id;
+//		return (maxTime-minTime)/((NameIDObj)resolutionComboBox.getSelectedItem()).id;
 	}
 
 	@Override
@@ -462,6 +467,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		dynVizPanel.add(recordPanel);
 
 		NameIDObj[] itemsTimeResolution = { 
+				new NameIDObj(1,    "1/1     "),
 				new NameIDObj(10,   "1/10    "), 
 				new NameIDObj(25,   "1/25    "),
 				new NameIDObj(50,   "1/50    "),
@@ -582,6 +588,8 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	
 	private void updateGui(double absoluteTime, int value)
 	{
+		if (value==1)
+			value = (int) (maxTime-minTime);
 		minTime = network.getMinTime();
 		maxTime = network.getMaxTime();
 		sliderMax = value;
