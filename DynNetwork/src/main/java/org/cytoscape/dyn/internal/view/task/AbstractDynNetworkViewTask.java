@@ -106,8 +106,8 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 		{
 			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 			// TODO: remove this, it's a hack!
-			if (interval.getAttribute().getColumn().equals("color"))
-				view.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, decodeHEXColor((String)interval.getOnValue()));
+//			if (interval.getAttribute().getColumn().equals("color"))
+//				view.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, decodeHEXColor((String)interval.getOnValue()));
 		}
 	}
 	
