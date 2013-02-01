@@ -107,15 +107,26 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 			timeEnd = System.currentTimeMillis();
 			if (round(timeEnd-timeStart)<delay)
+			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			}
 
-				view.updateView();
-				if (writerFactory!=null)
-					writerFactory.updateView(dynNetwork,timeInterval.getStart());
+			view.updateView();
+			if (writerFactory!=null)
+			{
+				if (i==0)
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				writerFactory.updateView(dynNetwork,timeInterval.getStart());
+			}
 		}
 	}
 
@@ -186,15 +197,26 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 			timeEnd = System.currentTimeMillis();
 			if (round(timeEnd-timeStart)<delay)
+			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			}
 
-				view.updateView();
-				if (writerFactory!=null)
-					writerFactory.updateView(dynNetwork,timeInterval.getStart());
+			view.updateView();
+			if (writerFactory!=null)
+			{
+				if (i==0)
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				writerFactory.updateView(dynNetwork,timeInterval.getStart());
+			}
 		}
 	}
 
