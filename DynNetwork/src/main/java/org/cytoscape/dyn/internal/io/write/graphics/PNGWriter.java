@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import javax.imageio.ImageIO;
 
 import org.cytoscape.view.presentation.RenderingEngine;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> PNGWriter </code> is a PNG exporter class.
@@ -37,10 +36,6 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  */
 public class PNGWriter
 {
-	private final Double width;
-	private final Double height;
-	private final double zoom;
-	
 	private final RenderingEngine<?> engine;
 	private final OutputStream stream;
 
@@ -58,20 +53,10 @@ public class PNGWriter
 		
 		this.engine = engine;
 		this.stream = stream;
-
-		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
-		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
-		zoom = 600;
 	}
 
-	public void export() throws IOException
+	public void export(Graphics2D g, BufferedImage image) throws IOException
 	{
-		final double scale = zoom / 100.0; 	
-		final int heightInPixels = (int) ((zoom/100) * height);
-		final int widthInPixels = (int) ((zoom/100) * width);
-		final BufferedImage image = new BufferedImage(widthInPixels, heightInPixels, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = (Graphics2D) image.getGraphics();
-		g.scale(scale, scale);
 		engine.printCanvas(g);
 		g.dispose();
 		

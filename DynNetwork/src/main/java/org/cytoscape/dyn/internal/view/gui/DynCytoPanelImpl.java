@@ -207,8 +207,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save Image Sequence", FileUtil.SAVE, getFilters());
 					if (file!=null)
 					{
-						PNGWriterFactory<T> writerFactory = new PNGWriterFactory<T>(appManager.getCurrentRenderingEngine(),file);
-						transformator.addSink(writerFactory);
+						transformator.addSink(new PNGWriterFactory<T>(file,appManager.getCurrentRenderingEngine()));
 						updateView();
 					}
 					else

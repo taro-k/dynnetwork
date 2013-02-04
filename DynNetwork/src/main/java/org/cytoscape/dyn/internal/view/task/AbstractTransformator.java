@@ -45,6 +45,7 @@ public abstract class AbstractTransformator<T>  implements Source<T>
 	@Override
 	public void removeSink(Sink<T> sink) 
 	{
+		
 		this.writerFactory = null;
 	}
 }

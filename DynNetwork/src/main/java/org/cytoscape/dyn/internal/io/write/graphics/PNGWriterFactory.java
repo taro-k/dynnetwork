@@ -19,6 +19,8 @@
 
 package org.cytoscape.dyn.internal.io.write.graphics;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ import java.util.Calendar;
 import org.cytoscape.dyn.internal.io.write.AbstractDynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.view.presentation.RenderingEngine;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> PNGWriterFactory </code> extends {@link AbstractDynNetworkViewWriterFactory}. 
@@ -41,22 +44,39 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 {
 	private final RenderingEngine<?> engine;
 	private final File file;
+	
+	private final Double width;
+	private final Double height;
+	private final double zoom;
+	
+	private final BufferedImage image;
+	private final Graphics2D g;
+	
 	private DecimalFormat formatter = new DecimalFormat("#0.000");
 
 	/**
 	 * <code> PNGWriterFactory </code> constructor.
-	 * @param engine
-	 * @param stream
 	 */
 	public PNGWriterFactory(
-			final RenderingEngine<?> engine, 
-			final File file) 
+			final File file,
+			final RenderingEngine<?> engine) 
 	{
 		if (engine == null)
 			throw new NullPointerException("Rendering Engine is null.");
 		
 		this.engine = engine;
 		this.file = file;
+		
+		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
+		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
+		zoom = 600;
+		
+		final double scale = zoom / 100.0; 	
+		final int heightInPixels = (int) ((zoom/100) * height);
+		final int widthInPixels = (int) ((zoom/100) * width);
+		image = new BufferedImage(widthInPixels, heightInPixels, BufferedImage.TYPE_INT_RGB);
+		g = (Graphics2D) image.getGraphics();
+		g.scale(scale, scale);
 	}
 
 	@Override
@@ -67,7 +87,7 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 				"_Time_" + formatter.format(currentTime) + ".png");
 
 		try {
-			(new PNGWriter(engine, new FileOutputStream(outputFile,false))).export();
+			(new PNGWriter(engine, new FileOutputStream(outputFile,false))).export(g,image);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
