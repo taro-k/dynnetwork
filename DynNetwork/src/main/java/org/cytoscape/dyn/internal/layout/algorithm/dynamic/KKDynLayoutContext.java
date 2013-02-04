@@ -72,6 +72,13 @@ public class KKDynLayoutContext
 	public int m_future_events = 0;
 	
 	/**
+	 * Boolean to allow exchange of nodes
+	 * (avoids local minima).
+	 */
+	@Tunable(description="Exchange nodes")
+	public boolean m_exchange_nodes = false;
+	
+	/**
 	 * Cancel layout algorithm execution.
 	 */
 	@Tunable(description="Cancel algorithm")

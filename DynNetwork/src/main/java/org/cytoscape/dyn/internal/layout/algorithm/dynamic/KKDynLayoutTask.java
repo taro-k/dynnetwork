@@ -113,7 +113,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 			
 			// Full KK evaluation to initialize the network at time t=0
 			kklayout.setAdjustForGravity(true);
-			kklayout.setExchangeVertices(false);
+			kklayout.setExchangeVertices(context.m_exchange_nodes);
 			kklayout.setMaxIterations(1000);
 
 			// Compute incremental KK. The number of iterations is proportional to the time to the next event.

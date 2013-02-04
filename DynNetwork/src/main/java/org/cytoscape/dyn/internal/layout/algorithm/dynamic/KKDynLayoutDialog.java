@@ -31,6 +31,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -71,6 +72,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
     private JSlider sliderFuture;
     private JSlider sliderIterations;
     private JComboBox attrComboBox;
+    private JCheckBox nodeExchange;
     private Hashtable<Integer, JLabel> labelTablePast;
     private Hashtable<Integer, JLabel> labelTableFuture;
     private Hashtable<Integer, JLabel> labelTableIterations;
@@ -96,7 +98,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 
 	private void initComponents(int type, int iterations, int past, int future) 
 	{	
-		JPanel topPanel = new JPanel(new GridLayout(6,2));
+		JPanel topPanel = new JPanel(new GridLayout(7,2));
 		
 		List<String> attList = dynView.getNetwork().getEdgeAttributes();
 		NameIDObj[] itemsAttributes = new NameIDObj[attList.size()+1];
@@ -144,6 +146,10 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		sliderFuture.setPaintLabels(true);
 		sliderFuture.addChangeListener(this);
 		
+		nodeExchange = new JCheckBox("Allow node exchnage");
+		nodeExchange.setSelected(false);
+		nodeExchange.addActionListener(this);
+		
 		topPanel.add(new JLabel("Distance Edge Attribute"));
 		topPanel.add(attrComboBox);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
@@ -154,6 +160,8 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		topPanel.add(sliderPast);
 		topPanel.add(currentFuture);
 		topPanel.add(sliderFuture);
+		topPanel.add(new JLabel("Exchange nodes"));
+		topPanel.add(nodeExchange);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		
@@ -205,6 +213,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 				context.m_event_list = filterEvents(events, context.m_iteration_rate);
 				context.m_past_events = sliderPast.getValue();
 				context.m_future_events = sliderFuture.getValue();
+				context.m_exchange_nodes = nodeExchange.isSelected();
 				setVisible(false); 
 				dispose();
 			}
@@ -223,6 +232,15 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 				updateGui();
 			}
 		}
+//		else if (event.getSource() instanceof JCheckBox)
+//		{
+//			JCheckBox source = (JCheckBox)event.getSource();
+//			if (source.equals(nodeExchange))
+//			{
+//				events = getEvents(((NameIDObj)attrComboBox.getSelectedItem()).id);
+//				updateGui();
+//			}
+//		}
 	}
 	
 	@Override

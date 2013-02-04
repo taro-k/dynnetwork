@@ -371,7 +371,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	{
 		int id = ((NameIDObj)resolutionComboBox.getSelectedItem()).id;
 		if (id==1)
-			return 1.0;
+			return id;
 		else
 			return (maxTime-minTime)/id;
 //		return (maxTime-minTime)/((NameIDObj)resolutionComboBox.getSelectedItem()).id;
@@ -467,7 +467,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		dynVizPanel.add(recordPanel);
 
 		NameIDObj[] itemsTimeResolution = { 
-				new NameIDObj(1,    "1/1     "),
+				new NameIDObj(1,    "1       "),
 				new NameIDObj(10,   "1/10    "), 
 				new NameIDObj(25,   "1/25    "),
 				new NameIDObj(50,   "1/50    "),
