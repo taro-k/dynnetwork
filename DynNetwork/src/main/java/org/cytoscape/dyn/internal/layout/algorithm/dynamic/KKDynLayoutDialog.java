@@ -93,10 +93,10 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		this.dynView = dynView;
 		this.context = context;
 		context.m_cancel = true;
-		initComponents(context.m_event_type,context.m_max_iterations,context.m_past_events,context.m_future_events);
+		initComponents(context.m_event_type,context.m_max_iterations,context.m_past_events,context.m_future_events,context.m_exchange_nodes);
 	}
 
-	private void initComponents(int type, int iterations, int past, int future) 
+	private void initComponents(int type, int iterations, int past, int future, boolean exchange) 
 	{	
 		JPanel topPanel = new JPanel(new GridLayout(7,2));
 		
@@ -147,7 +147,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		sliderFuture.addChangeListener(this);
 		
 		nodeExchange = new JCheckBox("Allow node exchnage");
-		nodeExchange.setSelected(false);
+		nodeExchange.setSelected(exchange);
 		nodeExchange.addActionListener(this);
 		
 		topPanel.add(new JLabel("Distance Edge Attribute"));
@@ -232,15 +232,6 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 				updateGui();
 			}
 		}
-//		else if (event.getSource() instanceof JCheckBox)
-//		{
-//			JCheckBox source = (JCheckBox)event.getSource();
-//			if (source.equals(nodeExchange))
-//			{
-//				events = getEvents(((NameIDObj)attrComboBox.getSelectedItem()).id);
-//				updateGui();
-//			}
-//		}
 	}
 	
 	@Override
