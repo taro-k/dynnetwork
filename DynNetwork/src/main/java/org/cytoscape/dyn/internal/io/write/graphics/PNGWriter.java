@@ -58,7 +58,6 @@ public class PNGWriter
 	public void export(Graphics2D g, BufferedImage image) throws IOException
 	{
 		engine.printCanvas(g);
-		g.dispose();
 		
 		try {
 			ImageIO.write(image, "png", stream);

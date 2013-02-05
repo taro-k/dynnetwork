@@ -23,7 +23,6 @@ import java.awt.Dimension;
 import java.io.OutputStream;
 
 import org.cytoscape.view.presentation.RenderingEngine;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.freehep.graphicsio.svg.SVGGraphics2D;
 
 /**
@@ -34,8 +33,6 @@ import org.freehep.graphicsio.svg.SVGGraphics2D;
  */
 public class SVGWriter
 {
-	private final Double width;
-	private final Double height;
 	private final RenderingEngine<?> engine;
 	private final OutputStream stream;
 
@@ -54,13 +51,11 @@ public class SVGWriter
 		this.engine = engine;
 		this.stream = stream;
 
-		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
-		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
 	}
 
-	public void export()
+	public void export(int width, int height)
 	{
-		final SVGGraphics2D g = new SVGGraphics2D(stream, new Dimension(width.intValue(), height.intValue()));
+		final SVGGraphics2D g = new SVGGraphics2D(stream, new Dimension(width, height));
 		java.util.Properties p = new java.util.Properties();
 		p.setProperty("org.freehep.graphicsio.AbstractVectorGraphicsIO.TEXT_AS_SHAPES",Boolean.toString(!true));
 		g.setProperties(p);

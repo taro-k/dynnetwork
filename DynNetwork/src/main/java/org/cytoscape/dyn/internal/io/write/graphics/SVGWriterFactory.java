@@ -28,6 +28,7 @@ import java.util.Calendar;
 import org.cytoscape.dyn.internal.io.write.AbstractDynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.view.presentation.RenderingEngine;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> SVGWriterFactory </code> extends {@link AbstractDynNetworkViewWriterFactory}. 
@@ -40,6 +41,10 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 {
 	private final RenderingEngine<?> engine;
 	private final File file;
+	
+	private final Double width;
+	private final Double height;
+	
 	private DecimalFormat formatter = new DecimalFormat("#0.000");
 
 	/**
@@ -56,6 +61,9 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 		
 		this.engine = engine;
 		this.file = file;
+		
+		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
+		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
 	}
 
 	@Override
@@ -64,12 +72,17 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 		File outputFile = new File(trim(file.getAbsolutePath()) + 
 				"_" + Calendar.getInstance().getTimeInMillis() +
 				"_Time_" + formatter.format(currentTime) + ".svg");
-
+		
 		try {
-			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export();
+			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export(width.intValue(),height.intValue());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void dispose()
+	{
+		// Do nothing.
 	}
 	
 	private String trim(String str)

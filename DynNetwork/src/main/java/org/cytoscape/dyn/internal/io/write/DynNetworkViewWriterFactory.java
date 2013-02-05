@@ -40,5 +40,12 @@ public interface DynNetworkViewWriterFactory<T> extends Sink<T>
      * @param currentTime
      */
     public void updateView(DynNetwork<T> dynNetwork, double currentTime);
+    
+    /**
+     * Dispose current graphics.
+     * @param dynNetwork
+     * @param currentTime
+     */
+    public void dispose();
 
 }

@@ -33,5 +33,8 @@ public abstract class AbstractDynNetworkViewWriterFactory<T> implements DynNetwo
 
 	@Override
 	abstract public void updateView(DynNetwork<T> dynNetwork, double currentTime);
+	
+	@Override
+	abstract public void dispose();
 
 }
