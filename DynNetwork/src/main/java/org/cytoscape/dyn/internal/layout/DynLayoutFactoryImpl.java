@@ -90,11 +90,11 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 	@Override
 	public void finalizeNetwork(DynNetworkView<T> dynNetworkView) 
 	{	
-		if (!nodeDynamicsList.isEmpty())
-		{
+//		if (!nodeDynamicsList.isEmpty())
+//		{
 			while (!nodeDynamicsList.isEmpty())
 				nodeDynamicsList.pop().add(dynNetworkView,this);
-		}
+//		}
 	}
 
 	@Override

@@ -19,9 +19,6 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
-import java.awt.Color;
-import java.awt.Paint;
-
 import org.cytoscape.dyn.internal.layout.DynLayout;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -30,7 +27,6 @@ import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> AbstractDynNetworkViewTask </code> is the abstract calls all visual task
@@ -94,34 +90,36 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	{
 		
 	}
-	
+
 	protected void updateAttr(DynInterval<T> interval)
 	{
-		dynNetwork.writeGraphTable(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+		if (interval.getAttribute().getVisualProperty()==null)
+			dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+		else
+			view.getNetworkView().setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
 	}
-	
+
 	protected void updateAttr(CyNode node, DynInterval<T> interval)
 	{
 		if (node!=null)
 		{
-			dynNetwork.writeNodeTable(node, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
-			// TODO: remove this, it's a hack!
-//			if (interval.getAttribute().getColumn().equals("color"))
-//				view.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_FILL_COLOR, decodeHEXColor((String)interval.getOnValue()));
+			if (interval.getAttribute().getVisualProperty()==null)
+				dynNetwork.getNetwork().getRow(node).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+			else
+				view.getNetworkView().getNodeView(node).setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
 		}
 	}
-	
+
 	protected void updateAttr(CyEdge edge, DynInterval<T> interval)
 	{
 		if (edge!=null)
-			dynNetwork.writeEdgeTable(edge, interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+			// TODO: remove this, it's a hack!
+			if (interval.getOverlappingValue(timeInterval)!=null)
+				if (interval.getAttribute().getVisualProperty()==null)
+					dynNetwork.getNetwork().getRow(edge).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+				else
+					view.getNetworkView().getEdgeView(edge).setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
 	}
-	
-	private static Paint decodeHEXColor(String nm) throws NumberFormatException
-    {
-    	Integer intval = Integer.decode(nm);
-    	int i = intval.intValue();
-    	return new Color((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
-    }
-	
+
+
 }

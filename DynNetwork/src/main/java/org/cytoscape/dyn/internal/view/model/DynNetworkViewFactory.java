@@ -21,8 +21,6 @@ package org.cytoscape.dyn.internal.view.model;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNode;
 
 /**
  * <code> DynNetworkViewFactory </code> is a the interface for the factory of
@@ -41,36 +39,41 @@ public interface DynNetworkViewFactory<T> extends Sink<T>
 	 */
 	public DynNetworkView<T> createView(DynNetwork<T> dynNetwork);
 	
-	/**
-	 * Process added graph graphic attribute event.
-	 * @param dynNetwork
-	 * @param fill
-	 */
-	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill);
-	
-	/**
-	 * Process added edge graphic attribute event.
-	 * @param dynNetwork
-	 * @param currentEdge
-	 * @param width
-	 * @param fill
-	 */
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
-	
-	/**
-	 * Process added node graphic attribute event.
-	 * @param dynNetwork
-	 * @param currentNode
-	 * @param type
-	 * @param height
-	 * @param width
-	 * @param x
-	 * @param y
-	 * @param fill
-	 * @param line width
-	 * @param outline
-	 */
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
+//	/**
+//	 * Process added graph graphic attribute event.
+//	 * @param dynNetwork
+//	 * @param fill
+//	 */
+//	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill, String start, String end);
+//	
+//	/**
+//	 * Process added edge graphic attribute event.
+//	 * @param dynNetwork
+//	 * @param currentEdge
+//	 * @param width
+//	 * @param fill
+//	 * @param start
+//	 * @param end
+//	 */
+//	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String start, String end);
+//	
+//	/**
+//	 * Process added node graphic attribute event.
+//	 * @param dynNetwork
+//	 * @param currentNode
+//	 * @param type
+//	 * @param height
+//	 * @param width
+//	 * @param size
+//	 * @param x
+//	 * @param y
+//	 * @param fill
+//	 * @param line width
+//	 * @param outline
+//	 * @param start
+//	 * @param end
+//	 */
+//	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String x, String y, String fill, String linew, String outline, String start, String end);
 	
 	/**
 	 * Process finalize network event.
@@ -78,35 +81,35 @@ public interface DynNetworkViewFactory<T> extends Sink<T>
 	 */
 	public void finalizeNetwork(DynNetworkView<T> dynNetworkView);
 	
-	/**
-	 * Set graph graphics attributes.
-	 * @param dynNetwork
-	 * @param fill
-	 */
-	public void setGraphGraphics(DynNetwork<T> dynNetwork, String fill);
-	
-	/**
-	 * Set node graphics attributes.
-	 * @param dynNetwork
-	 * @param currentNode
-	 * @param type
-	 * @param height
-	 * @param width
-	 * @param x
-	 * @param y
-	 * @param line width
-	 * @param fill
-	 * @param outline
-	 */
-	public void setNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
-	
-	/**
-	 * Set edge graphics attributes.
-	 * @param dynNetwork
-	 * @param currentEdge
-	 * @param width
-	 * @param fill
-	 */
-	public void setEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
+//	/**
+//	 * Set graph graphics attributes.
+//	 * @param dynNetwork
+//	 * @param fill
+//	 */
+//	public void setGraphGraphics(DynNetwork<T> dynNetwork, String fill);
+//	
+//	/**
+//	 * Set node graphics attributes.
+//	 * @param dynNetwork
+//	 * @param currentNode
+//	 * @param type
+//	 * @param height
+//	 * @param width
+//	 * @param x
+//	 * @param y
+//	 * @param line width
+//	 * @param fill
+//	 * @param outline
+//	 */
+//	public void setNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String x, String y, String fill, String linew, String outline);
+//	
+//	/**
+//	 * Set edge graphics attributes.
+//	 * @param dynNetwork
+//	 * @param currentEdge
+//	 * @param width
+//	 * @param fill
+//	 */
+//	public void setEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill);
 	
 }

@@ -89,21 +89,21 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	}
 	
 	protected void addGraphGraphics(DynNetwork<T> network, 
-			String fill)
+			String fill, String start, String end)
 	{
-		viewSink.addedGraphGraphics(network, fill);
+		networkSink.addedGraphGraphics(network, fill, start, end);
 	}
 	
 	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
-			String type, String height, String width, String x, String y, String fill, String linew, String outline)
+			String type, String height, String width, String size, String fill, String linew, String outline, String start, String end)
 	{
-		viewSink.addedNodeGraphics(network, currentNode, type, height, width, x, y, fill, linew, outline);
+		networkSink.addedNodeGraphics(network, currentNode, type, height, width, size, fill, linew, outline, start, end);
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill)
+			String width, String fill, String start, String end)
 	{
-		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
+		networkSink.addedEdgeGraphics(network, currentEdge, width, fill, start, end);
 	}
 	
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 

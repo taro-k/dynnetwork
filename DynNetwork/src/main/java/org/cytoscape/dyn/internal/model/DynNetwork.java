@@ -28,6 +28,7 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.model.VisualProperty;
 
 /**
  * <code> DynNetwork </code> is an the interface to the object that represents a dynamic network
@@ -69,24 +70,53 @@ public interface DynNetwork<T>
 	 * Insert graph attribute.
 	 * @param column
 	 * @param interval
+	 * @param visual property
 	 */
-	public void insertGraphAttr(String column, DynInterval<T> interval);
+	public void insertGraphAttr(String column, DynInterval<T> interval, VisualProperty<T> vp);
 	
 	/**
 	 * Insert node attribute.
 	 * @param node
 	 * @param column
 	 * @param interval
+	 * @param visual property
 	 */
-	public void insertNodeAttr(CyNode node, String column, DynInterval<T> interval);
+	public void insertNodeAttr(CyNode node, String column, DynInterval<T> interval, VisualProperty<T> vp);
 	
 	/**
 	 * Insert edge attribute.
 	 * @param ede
 	 * @param column
 	 * @param interval
+	 * @param visual property
 	 */
-	public void insertEdgeAttr(CyEdge ede, String column, DynInterval<T> interval);
+	public void insertEdgeAttr(CyEdge ede, String column, DynInterval<T> interval, VisualProperty<T> vp);
+	
+//	/**
+//	 * Insert graph graphics attributes.
+//	 * @param dynNetwork
+//	 * @param column
+//	 * @param interval
+//	 */
+//	public void insertGraphGraphics(DynNetwork<T> dynNetwork, DynInterval<T> interval);
+//	
+//	/**
+//	 * Insert node graphics attributes.
+//	 * @param dynNetwork
+//	 * @param node
+//	 * @param column
+//	 * @param interval
+//	 */
+//	public void insertNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String node, DynInterval<T> interval);
+//	
+//	/**
+//	 * Insert edge graphics attributes.
+//	 * @param dynNetwork
+//	 * @param edge
+//	 * @param column
+//	 * @param interval
+//	 */
+//	public void insertEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String edge, DynInterval<T> interval);
 	
 	/**
 	 * Remove graph.

@@ -19,7 +19,10 @@
 
 package org.cytoscape.dyn.internal.model.tree;
 
+import java.awt.Paint;
+
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 
 
 /**
@@ -47,6 +50,36 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	private boolean isOn;
 	
 	private DynAttribute<T> attribute;
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param interval
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(DynInterval interval)
+	{
+		this.onValue = (T) interval.onValue;
+		this.type = (Class<T>) interval.type;
+		this.start = interval.start;
+		this.end = interval.end;
+		this.isOn = false;
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param interval
+	 * @param type of generic
+	 * @param generic value
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(DynInterval interval, Class<T> type, T onValue)
+	{
+		this.onValue = onValue;
+		this.type = type;
+		this.start = interval.start;
+		this.end = interval.end;
+		this.isOn = false;
+	}
 	
 	/**
 	 * <code> DynInterval </code> constructor.
@@ -114,6 +147,30 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	
 	/**
 	 * <code> DynInterval </code> constructor.
+	 * @param paint value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(Paint onValue, double start, double end)
+	{
+		this((Class<T>) Paint.class, (T) onValue, start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param nodeshapevisualproperty value
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(NodeShapeVisualProperty onValue, double start, double end)
+	{
+		this((Class<T>) NodeShapeVisualProperty.class, (T) onValue, start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
 	 * @param type
 	 * @param onValue
 	 * @param offValue
@@ -167,6 +224,32 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 	public DynInterval(boolean onValue, boolean offValue, double start, double end)
 	{
 		this((Class<T>) Boolean.class, (T) new Boolean(onValue), (T) new Boolean(offValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(Paint onValue, String offValue, double start, double end)
+	{
+		this((Class<T>) Paint.class, (T) onValue, (T) new String(offValue), start, end);
+	}
+	
+	/**
+	 * <code> DynInterval </code> constructor.
+	 * @param onValue
+	 * @param offValue
+	 * @param start
+	 * @param end
+	 */
+	@SuppressWarnings("unchecked")
+	public DynInterval(NodeShapeVisualProperty onValue, String offValue, double start, double end)
+	{
+		this((Class<T>) NodeShapeVisualProperty.class, (T) onValue, (T) new String(offValue), start, end);
 	}
 	
 	/**
@@ -234,7 +317,7 @@ public final class DynInterval<T> implements Comparable<DynInterval<T>>
 		if (this.compareTo(interval)>0)
 			return onValue;
 		else
-			return null;
+			return offValue;
 	}
 
 	/**

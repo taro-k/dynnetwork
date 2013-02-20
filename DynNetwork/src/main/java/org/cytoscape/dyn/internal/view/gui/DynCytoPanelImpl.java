@@ -60,14 +60,10 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.task.BlockingQueue;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
-import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskGroup;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.dyn.internal.view.task.Transformator;
-import org.cytoscape.group.CyGroup;
-import org.cytoscape.group.events.GroupCollapsedEvent;
-import org.cytoscape.group.events.GroupCollapsedListener;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.work.TaskIterator;
@@ -83,7 +79,7 @@ import org.cytoscape.work.TaskManager;
  * @param <C>
  */
 public final class DynCytoPanelImpl<T,C> extends JPanel implements DynCytoPanel<T,C>,
-ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedListener
+ChangeListener, ActionListener, SetCurrentNetworkViewListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -204,11 +200,15 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				{
 					recordButton.setBackground(Color.red);
 					recordButton.setOpaque(true);
-					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save Image Sequence", FileUtil.SAVE, getFilters());
+					List<FileChooserFilter> filters = getFilters();
+					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save Image Sequence", FileUtil.SAVE, filters);
+					
+
 					if (file!=null)
 					{
 						transformator.addSink(new PNGWriterFactory<T>(file,appManager.getCurrentRenderingEngine()));
 						updateView();
+
 					}
 					else
 					{
@@ -276,17 +276,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 				updateView();
 			}
 		}
-	}
-	
-	@Override
-	public synchronized void handleEvent(GroupCollapsedEvent e)
-	{
-		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
-		if (recursiveTask!=null)
-			recursiveTask.cancel();
-		
-		if (view!=null)
-			updateGroup((CyGroup) e.getSource());
 	}
 		
 	@Override
@@ -575,11 +564,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue)).start();
 	}
 	
-	private void updateGroup(CyGroup group)
-	{
-		new Thread(new DynNetworkViewTaskGroup<T,C>(this,view,queue,group)).start();
-	}
-	
 	private void updateTransparency()
 	{
 		new Thread(new DynNetworkViewTransparencyTask<T,C>(this,view,queue)).start();
@@ -618,6 +602,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, GroupCollapsedLis
 	private List<FileChooserFilter> getFilters()
 	{
 		List<FileChooserFilter> filters = new ArrayList<FileChooserFilter>();
+//		filters.add(new FileChooserFilter("SVG Image", "svg"));
     	filters.add(new FileChooserFilter("PNG Image", "png"));
     	return filters;
 	}

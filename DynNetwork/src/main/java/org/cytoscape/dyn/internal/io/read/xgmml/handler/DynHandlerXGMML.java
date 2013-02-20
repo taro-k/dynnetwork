@@ -64,6 +64,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	
 	private String h;
 	private String w;
+	private String size;
 	private String x;
 	private String y;
 	private String fill;
@@ -174,25 +175,24 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			
 		case NET_GRAPHICS:
 			fill = atts.getValue("fill");
-			this.addGraphGraphics(currentNetwork, fill);
+			this.addGraphGraphics(currentNetwork, fill, start, end);
 			break;
 			
 		case NODE_GRAPHICS:
 			type = atts.getValue("type");
-			h = atts.getValue("h");
-			w = atts.getValue("w");
-			x = atts.getValue("x");
-			y = atts.getValue("y");
+			h = atts.getValue("height");
+			w = atts.getValue("width");
+			size = atts.getValue("size");
 			fill = atts.getValue("fill");
-			width = atts.getValue("width");
-			outline = atts.getValue("outline");
+			width = atts.getValue("borderwidth");
+			outline = atts.getValue("bordercolor");
+			start = atts.getValue("start");
+			end = atts.getValue("end");
 			if (currentNode!=null)
-				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, x, y, fill, width, outline);
+				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, size, fill, width, outline, start, end);
 			break;
 			
 		case NODE_DYNAMICS:
-			x = atts.getValue("x");
-			y = atts.getValue("y");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentNode!=null)
@@ -202,10 +202,12 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		case EDGE_GRAPHICS:
 			width = atts.getValue("width");
 			fill = atts.getValue("fill");
+			start = atts.getValue("start");
+			end = atts.getValue("end");
 			if (currentEdge!=null)
-				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill);
+				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, start, end);
 			else
-				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill);
+				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, start, end);
 			break;
 			
 		}
@@ -230,24 +232,21 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	}
 
 	@Override
-	protected CyEdge addEdge(DynNetwork<T> currentNetwork, String id, String label,
-			String source, String target, String start, String end)
+	protected CyEdge addEdge(DynNetwork<T> currentNetwork, String id, String label, String source, String target, String start, String end)
 	{
 		return networkSink.addedEdge(currentNetwork, id, label, source, target, start, end);
 	}
 
 	@Override
-	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge,
-			String name, String value, String Type, String start, String end)
+	protected void addEdgeAttribute(DynNetwork<T> network, CyEdge currentEdge, String name, String value, String Type, String start, String end)
 	{
 		networkSink.addedEdgeAttribute(network, currentEdge, name, value, Type, start, end);
 	}
 	
 	@Override
-	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill)
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill, String start, String end)
 	{
-		viewSink.addedEdgeGraphics(network, currentEdge, width, fill);
+		networkSink.addedEdgeGraphics(network, currentEdge, width, fill, start, end);
 	}
 	
 }

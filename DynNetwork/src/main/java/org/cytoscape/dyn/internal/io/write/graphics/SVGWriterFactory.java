@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
-import java.util.Calendar;
 
 import org.cytoscape.dyn.internal.io.write.AbstractDynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -46,6 +45,7 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	private final Double height;
 	
 	private DecimalFormat formatter = new DecimalFormat("#0.000");
+	private DecimalFormat formatter2 = new DecimalFormat("#00");
 
 	/**
 	 * <code> SVGWriterFactory </code> constructor.
@@ -53,8 +53,8 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	 * @param stream
 	 */
 	public SVGWriterFactory(
-			final RenderingEngine<?> engine, 
-			final File file) 
+			final File file,
+			final RenderingEngine<?> engine) 
 	{
 		if (engine == null)
 			throw new NullPointerException("Rendering Engine is null.");
@@ -67,12 +67,16 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	}
 
 	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration) 
 	{
+		//		File outputFile = new File(trim(file.getAbsolutePath()) + 
+		//		"_" + Calendar.getInstance().getTimeInMillis() +
+		//		"_Time_" + formatter.format(currentTime) + ".png");
+
 		File outputFile = new File(trim(file.getAbsolutePath()) + 
-				"_" + Calendar.getInstance().getTimeInMillis() +
-				"_Time_" + formatter.format(currentTime) + ".svg");
-		
+				"_T" + formatter.format(currentTime) + 
+				"_I" + formatter2.format(iteration) + ".svg");
+
 		try {
 			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export(width.intValue(),height.intValue());
 		} catch (FileNotFoundException e) {

@@ -106,7 +106,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
 
 			timeEnd = System.currentTimeMillis();
-			if (round(timeEnd-timeStart)<delay)
+			if (writerFactory==null && round(timeEnd-timeStart)<delay)
 			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));
@@ -125,7 +125,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				writerFactory.updateView(dynNetwork,timeInterval.getStart());
+				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
 			}
 		}
 	}
@@ -196,7 +196,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
 
 			timeEnd = System.currentTimeMillis();
-			if (round(timeEnd-timeStart)<delay)
+			if (writerFactory==null && round(timeEnd-timeStart)<delay)
 			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));
@@ -215,7 +215,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				writerFactory.updateView(dynNetwork,timeInterval.getStart());
+				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
 			}
 		}
 	}

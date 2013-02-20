@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.view.model.VisualProperty;
 
 /**
  * <code> AbstractDynAttribute </code> is the abstract class which rpovides generic methods 
@@ -42,6 +43,8 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	protected KeyPairs key;
 	
 	protected List<DynAttribute<T>> children;
+	
+	protected VisualProperty<T> vp;
 	
 	/**
 	 * <code> AbstractDynAttribute </code> constructor.
@@ -212,6 +215,18 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 					interval.getOnValue().equals(i.getOnValue()))
 				return i;
 		return null;
+	}
+	
+	@Override
+	public void setVisualProperty(VisualProperty<T> vp) 
+	{
+		this.vp = vp;
+	}
+	
+	@Override
+	public VisualProperty<T> getVisualProperty()
+	{
+		return this.vp;
 	}
 
 }

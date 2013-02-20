@@ -68,6 +68,13 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 		tm.setProgress(0.0);
 		DynNetwork<T> dynNetwork = dynNetworkManager.getDynNetwork(appManager.getCurrentNetwork());
 		dynamicNetworkViewFactory.finalizeNetwork(dynamicNetworkViewFactory.createView(dynNetwork));
+		tm.setProgress(0.8);
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		tm.setProgress(1.0);
 	}
 

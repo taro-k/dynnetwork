@@ -33,7 +33,23 @@ public enum AttributeType
     BOOLEAN("boolean"), 
     REAL("real"), 
     INTEGER("integer"), 
-    LIST("list");
+    LIST("list"),
+    PAINT("paint"),
+	RECTANGLE("RECTANGLE"), 
+	RECT("RECT"), 
+	BOX("BOX"), 
+	ROUND_RECTANGLE("ROUND_RECTANGLE"), 
+	ROUND_RECT("ROUND_RECT"),
+	TRIANGLE("TRIANGLE"), 
+	PARALLELOGRAM("PARALLELOGRAM"), 
+	RHOMBUS("RHOMBUS"), 
+	DIAMOND("DIAMOND"), 
+	ELLIPSE("ELLIPSE"), 
+	VER_ELLIPSE("VER_ELLIPSE"), 
+	HOR_ELLIPSE("HOR_ELLIPSE"), 
+	CIRCLE("CIRCLE"), 
+	HEXAGON("HEXAGON"), 
+	OCTAGON("OCTAGON");
 
     private String name;
 

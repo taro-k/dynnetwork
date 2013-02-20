@@ -115,6 +115,40 @@ public interface DynNetworkFactory<T> extends Sink<T>
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String name, String value, String Type, String start, String end);
 	
 	/**
+	 * Process added graph graphic attribute event.
+	 * @param dynNetwork
+	 * @param fill
+	 */
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill, String start, String end);
+	
+	/**
+	 * Process added edge graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentEdge
+	 * @param width
+	 * @param fill
+	 * @param start
+	 * @param end
+	 */
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String start, String end);
+	
+	/**
+	 * Process added node graphic attribute event.
+	 * @param dynNetwork
+	 * @param currentNode
+	 * @param type
+	 * @param height
+	 * @param width
+	 * @param size
+	 * @param fill
+	 * @param line width
+	 * @param outline
+	 * @param start
+	 * @param end
+	 */
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String start, String end);
+	
+	/**
 	 * Process deleted graph event.
 	 * @param dynNetwork
 	 */

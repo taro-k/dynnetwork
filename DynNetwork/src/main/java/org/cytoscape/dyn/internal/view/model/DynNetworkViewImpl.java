@@ -34,6 +34,7 @@ import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.VisualStyleFactory;
 
 /**
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
@@ -64,7 +65,8 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 			DynNetwork<T> dynNetwork,
 			final CyNetworkViewManager networkViewManager,
 			final CyNetworkViewFactory cyNetworkViewFactory,
-			final VisualMappingManager cyStyleManager)
+			final VisualMappingManager cyStyleManager,
+			final VisualStyleFactory visualStyleFactory)
 	{
 		this.currentTime = 0;
 		
@@ -82,7 +84,33 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
+		
+//		VisualStyle vs = visualStyleFactory.createVisualStyle(cyStyleManager.getDefaultVisualStyle());
+//		vs.setTitle(dynNetwork.getNetworkLabel());
+//		
+//		double nodesOverEdges = (1.0*view.getNodeViews().size())/(1.0*view.getEdgeViews().size());
+//		double nodesize = Math.max(1,60.0*Math.sqrt(nodesOverEdges));
+//		int fontSize = Math.max(1,(int) (2.0*nodesize/3.0));
+//		double edgewidth = Math.max(0.1,80.0*nodesOverEdges/10.0);
+//
+//		vs.setDefaultValue(BasicVisualLexicon.NODE_SIZE, new Double(nodesize));
+//		vs.setDefaultValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, new Integer(fontSize));
+//		vs.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
+//		vs.setDefaultValue(BasicVisualLexicon.NODE_BORDER_WIDTH, new Double(0));
+//		vs.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, new Double(edgewidth));
+//		cyStyleManager.addVisualStyle(vs);
+//		cyStyleManager.setCurrentVisualStyle(vs);
+//		vs.apply(view);
+		
 		cyStyleManager.getDefaultVisualStyle().apply(view);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@Override

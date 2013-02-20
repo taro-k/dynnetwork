@@ -130,7 +130,8 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		time = slider.getValue()*((panel.getMaxTime()-panel.getMinTime())/panel.getSliderMax())+(panel.getMinTime());
 		
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
+//			timeInterval = new DynInterval<T>(time, time+0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		
@@ -196,6 +197,7 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
 			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
+//			timeInterval = new DynInterval<T>(time, time+0.0000001);
 		else
 			timeInterval = new DynInterval<T>(time, time);
 		

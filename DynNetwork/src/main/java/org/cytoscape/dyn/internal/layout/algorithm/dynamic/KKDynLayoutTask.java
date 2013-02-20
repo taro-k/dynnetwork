@@ -105,10 +105,13 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 			taskMonitor.setStatusMessage("Running energy minimization...");
 			taskMonitor.setProgress(0);
 			
-			int size = (int) (4*50*Math.sqrt(nodesToLayOut.size()));
+			//int size = (int) (4*50*Math.sqrt(nodesToLayOut.size()));
+
+			int size = (int) (2*dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NODE_SIZE)*Math.sqrt(nodesToLayOut.size()));
+			//int size =(int) dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NETWORK_HEIGHT).floatValue();
 			
 			snap = new DynNetworkSnapshotImpl<T>(dynView,context.m_attribute_name);
-			kklayout = new KKLayout<T>(snap,new Dimension(size,size));
+			kklayout = new KKLayout<T>(snap,new Dimension(4*size,4*size));
 			List<Double> events = context.m_event_list;
 			
 			// Full KK evaluation to initialize the network at time t=0

@@ -27,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Calendar;
 
 import org.cytoscape.dyn.internal.io.write.AbstractDynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -56,6 +55,7 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	private final Graphics2D g;
 	
 	private DecimalFormat formatter = new DecimalFormat("#0.000");
+	private DecimalFormat formatter2 = new DecimalFormat("#00");
 
 	/**
 	 * <code> PNGWriterFactory </code> constructor.
@@ -84,11 +84,16 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	}
 
 	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime) 
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration) 
 	{
+
+//		File outputFile = new File(trim(file.getAbsolutePath()) + 
+//				"_" + Calendar.getInstance().getTimeInMillis() +
+//				"_Time_" + formatter.format(currentTime) + ".png");
+		
 		File outputFile = new File(trim(file.getAbsolutePath()) + 
-				"_" + Calendar.getInstance().getTimeInMillis() +
-				"_Time_" + formatter.format(currentTime) + ".png");
+				"_T" + formatter.format(currentTime) + 
+				"_I" + formatter2.format(iteration) + ".png");
 
 		g.clearRect(0, 0, widthInPixels, heightInPixels);
 		

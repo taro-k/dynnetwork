@@ -17,36 +17,51 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.io.write;
+package org.cytoscape.dyn.internal.model.attribute;
 
-import org.cytoscape.dyn.internal.io.event.Sink;
-import org.cytoscape.dyn.internal.model.DynNetwork;
-import org.cytoscape.io.write.CyWriterFactory;
-import org.cytoscape.view.presentation.RenderingEngine;
+import java.awt.Paint;
+
+import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
+import org.cytoscape.dyn.internal.model.tree.DynInterval;
 
 /**
- * <code> DynNetworkViewWriterFactory </code> is interface for a {@link CyWriterFactory} 
- * that allows a dynamic network view rendered by the specified {@link RenderingEngine} to
- * be specified and written.
+ * <code> DynPaintAttribute </code> implements Paint attributes and contains
+ * a list of their interval times.
  * 
  * @author Sabina Sara Pfister
- *
+ * 
  */
-public interface DynNetworkViewWriterFactory<T> extends Sink<T>
+public class DynPaintAttribute extends AbstractDynAttribute<Paint>
 {
 	/**
-     * Process update view event.
-     * @param dynNetwork
-     * @param currentTime
-     * @param iteration
-     */
-    public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration);
+	 * <code> DynPaintAttribute </code> constructor.
+	 * @param type
+	 */
+	public DynPaintAttribute(Class<Paint> type)
+	{
+		super(type);
+	}
+	
+	/**
+	 * <code> DynPaintAttribute </code> constructor.
+	 * @param interval
+	 * @param key
+	 */
+	public DynPaintAttribute(DynInterval<Paint> interval, KeyPairs key)
+	{
+		super(interval,key);
+	}
+	
+	@Override
+	public Paint getMinValue()
+    {
+		return null;
+    }
     
-    /**
-     * Dispose current graphics.
-     * @param dynNetwork
-     * @param currentTime
-     */
-    public void dispose();
-
+	@Override
+	public Paint getMaxValue()
+	{
+		return null;
+	}
+	
 }

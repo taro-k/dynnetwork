@@ -38,6 +38,8 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.session.CyNetworkNaming;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> DynNetworkFactoryImpl </code> implements the interface
@@ -130,19 +132,75 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	@Override
 	public void addedGraphAttribute(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, attName, attValue, attType, start, end);
+		setAttributes(dynNetwork, attName, attValue, attType, start, end, null);
 	}
 	
 	@Override
 	public void addedNodeAttribute(DynNetwork<T> dynNetwork, CyNode currentNode, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, currentNode, attName, attValue, attType, start, end);
+		setAttributes(dynNetwork, currentNode, attName, attValue, attType, start, end, null);
 	}
 	
 	@Override
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end);
+		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end, null);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill, String start, String end) 
+	{
+		if (fill!=null)
+		{
+			setAttributes(dynNetwork, "GRAPHICS.graph.fill", fill, "paint", start, end, (VisualProperty<T>) BasicVisualLexicon.NETWORK_BACKGROUND_PAINT);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String start, String end) 
+	{
+		if (type!=null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.type", type, type, start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_SHAPE);
+		}
+		if (height!=null && size==null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.height", height, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_HEIGHT);
+		}
+		if (width!=null && size==null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.width", width, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_WIDTH);
+		}
+		if (size!=null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.size", size, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_SIZE);
+		}
+		if (linew!=null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.linewidth", linew, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_WIDTH);
+		}
+		if (fill!=null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.fill", fill, "paint" , start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_FILL_COLOR);
+		}
+		if (outline!=null)
+		{
+			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.outline", outline, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_PAINT);
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge,
+			String width, String fill, String start, String end) 
+	{
+		if (width!=null)
+			setAttributes(dynNetwork, currentEdge, "GRAPHICS.edge.width", width, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.EDGE_WIDTH);
+		if (fill!=null)
+			setAttributes(dynNetwork, currentEdge, "GRAPHICS.edge.fill", width, "paint", start, end, (VisualProperty<T>) BasicVisualLexicon.EDGE_UNSELECTED_PAINT);
 	}
 
 	@Override
@@ -212,16 +270,17 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			throw new IndexOutOfBoundsException("Invalid interval for edge label=" + label + " start=" + start + " end=" + end);
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
+	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end);
 		if (interval.getStart()<=interval.getEnd())
 		{
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
-			dynNetwork.insertGraphAttr(attName, interval);
+			if (vp==null)
+				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
+			dynNetwork.insertGraphAttr(attName, interval, vp);
 		}
 		else
 		{
@@ -231,14 +290,15 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
+	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end);
 		if (interval.getStart()<=interval.getEnd())
 		{
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
-			dynNetwork.insertNodeAttr(node, attName, interval);
+			if (vp==null)
+				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
+			dynNetwork.insertNodeAttr(node, attName, interval, vp);
 		}
 		else
 		{
@@ -248,14 +308,15 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, CyEdge edge, String attName, String attValue, String attType, String start, String end)
+	private void setAttributes(DynNetwork<T> dynNetwork, CyEdge edge, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
 		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end);
 		if (interval.getStart()<=interval.getEnd())
 		{
-			addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
-			dynNetwork.insertEdgeAttr(edge, attName, interval);
+			if (vp==null)
+				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
+			dynNetwork.insertEdgeAttr(edge, attName, interval, vp);
 		}
 		else
 		{

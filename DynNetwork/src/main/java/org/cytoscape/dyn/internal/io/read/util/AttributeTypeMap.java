@@ -19,9 +19,13 @@
 
 package org.cytoscape.dyn.internal.io.read.util;
 
+import java.awt.Color;
+import java.awt.Paint;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 
 /**
  * <code> AttributeTypeMap </code> used to convert string attribute types into the 
@@ -81,38 +85,64 @@ public final class AttributeTypeMap
                 break;
             case STRING:
                 if (value != null) {
-                    // Make sure we convert our newlines and tabs back
                     String sAttr = value.replace("\\t", "\t");
                     sAttr = sAttr.replace("\\n", "\n");
                     return sAttr;
                 }
                 break;
             case LIST:
-                return new ArrayList<Object>();
+            	if (value != null) return new ArrayList<Object>();
+            case PAINT:
+            	if (value != null) return decodeHEXColor(value);
+            case RECTANGLE:
+            	return NodeShapeVisualProperty.RECTANGLE;
+            case RECT:
+            	return NodeShapeVisualProperty.RECTANGLE;
+            case BOX:
+            	return NodeShapeVisualProperty.RECTANGLE;
+            case ROUND_RECTANGLE:
+            	return NodeShapeVisualProperty.ROUND_RECTANGLE;
+            case ROUND_RECT:
+            	return NodeShapeVisualProperty.ROUND_RECTANGLE;
+            case TRIANGLE:
+            	return NodeShapeVisualProperty.TRIANGLE;
+            case PARALLELOGRAM:
+            	return NodeShapeVisualProperty.PARALLELOGRAM;
+            case RHOMBUS:
+            	return NodeShapeVisualProperty.PARALLELOGRAM;
+            case DIAMOND:
+            	return NodeShapeVisualProperty.DIAMOND;
+            case ELLIPSE:
+            	return NodeShapeVisualProperty.ELLIPSE;
+            case VER_ELLIPSE:
+            	return NodeShapeVisualProperty.ELLIPSE;
+            case HOR_ELLIPSE:
+            	return NodeShapeVisualProperty.ELLIPSE;
+            case CIRCLE:
+            	return NodeShapeVisualProperty.ELLIPSE;
+            case HEXAGON:
+            	return NodeShapeVisualProperty.HEXAGON;
+            case OCTAGON:
+            	return NodeShapeVisualProperty.OCTAGON;
         }
 
         return null;
     }
     
-    /**
-     * Parse Boolean string.
-     * @param s
-     * @return boolean
-     */
-    public static boolean fromXGMMLBoolean(String s)
+    private static boolean fromXGMMLBoolean(String s)
     {
-    	// should be only "1", but let's be nice and also accept "true"
-    	// http://www.cs.rpi.edu/research/groups/pb/punin/public_html/XGMML/draft-xgmml-20001006.html#BT
     	return s != null && s.matches("(?i)1|true");
     }
 
-    /**
-     * Return string.
-     * @param value
-     * @return string
-     */
-    public static String toXGMMLBoolean(boolean value)
+//    private static String toXGMMLBoolean(boolean value)
+//    {
+//    	return value ? "1" : "0";
+//    }
+    
+    private static Paint decodeHEXColor(String nm) throws NumberFormatException 
     {
-    	return value ? "1" : "0";
+    	Integer intval = Integer.decode(nm);
+    	int i = intval.intValue();
+    	return (Paint) new Color((i >> 16) & 0xFF, (i >> 8) & 0xFF, i & 0xFF);
     }
 }

@@ -19,6 +19,8 @@
 
 package org.cytoscape.dyn.internal.model;
 
+import java.awt.Color;
+import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +33,8 @@ import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynBooleanAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynDoubleAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynIntegerAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynPaintAttribute;
+import org.cytoscape.dyn.internal.model.attribute.DynShapeAttribute;
 import org.cytoscape.dyn.internal.model.attribute.DynStringAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTreeImpl;
@@ -40,6 +44,9 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.model.VisualProperty;
+import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
  * <code> DynNetworkImpl </code> implements the interface {@link DynNetwork}
@@ -53,7 +60,6 @@ import org.cytoscape.model.CyNode;
 public final class DynNetworkImpl<T> implements DynNetwork<T>
 {	
 	private final CyNetwork network;
-//	private final CyGroupManager groupManager;
 	
 	private final boolean isDirected;
 
@@ -66,7 +72,7 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 	private final DynIntervalTreeImpl<T> graphTreeAttr;
 	private final DynIntervalTreeImpl<T> nodeTreeAttr;
 	private final DynIntervalTreeImpl<T> edgeTreeAttr;
-
+	
 	private final Map<KeyPairs,DynAttribute<T>> graphTable;
 	private final Map<KeyPairs,DynAttribute<T>> nodeTable;
 	private final Map<KeyPairs,DynAttribute<T>> edgeTable;
@@ -88,7 +94,6 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			final boolean isDirected)
 	{
 		this.network = network;
-//		this.groupManager = groupManager;
 		
 		this.isDirected = isDirected;
 
@@ -105,48 +110,49 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.nodeTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.edgeTable = new HashMap<KeyPairs,DynAttribute<T>>();
+
 	}
 
 	@Override
 	public synchronized void insertGraph(String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(column, interval);
+		setDynAttribute(column, interval, null);
 	}
 
 	@Override
 	public synchronized void insertNode(CyNode node, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(node, column, interval);
+		setDynAttribute(node, column, interval, null);
 	}
 
 	@Override
 	public synchronized void insertEdge(CyEdge edge, String column, DynInterval<T> interval)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(edge, column, interval);
+		setDynAttribute(edge, column, interval, null);
 	}
 
 	@Override
-	public synchronized void insertGraphAttr(String column, DynInterval<T> interval)
+	public synchronized void insertGraphAttr(String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(column, interval);
+		setDynAttribute(column, interval, vp);
 	}
 
 	@Override
-	public synchronized void insertNodeAttr(CyNode node, String column, DynInterval<T> interval)
+	public synchronized void insertNodeAttr(CyNode node, String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(node, column, interval);
+		setDynAttribute(node, column, interval, vp);
 	}
 
 	@Override
-	public synchronized void insertEdgeAttr(CyEdge edge, String column, DynInterval<T> interval)
+	public synchronized void insertEdgeAttr(CyEdge edge, String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		setMinMaxTime(interval);
-		setDynAttribute(edge, column, interval);
+		setDynAttribute(edge, column, interval, vp);
 	}
 
 	@Override
@@ -155,6 +161,10 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		this.graphTree.clear();
 		this.nodeTree.clear();
 		this.edgeTree.clear();
+		this.graphTreeAttr.clear();
+		this.nodeTreeAttr.clear();
+		this.edgeTreeAttr.clear();
+		
 		this.graphTable.clear();
 		this.nodeTable.clear();
 		this.edgeTable.clear();
@@ -647,24 +657,17 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 		return maxValue;
 	}
 
-	@SuppressWarnings("unchecked")
-	private synchronized void setDynAttribute(String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		KeyPairs key = new KeyPairs(column, this.network.getSUID());
 		if (this.graphTable.containsKey(key))
 			checkGraphIntervals(this.graphTable.get(key), interval);
 		else
 		{
-			DynAttribute<T> attribute = null;
-			if (interval.getType()==Integer.class)
-				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
-			else if (interval.getType()==Double.class)
-				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
-			else if (interval.getType()==Boolean.class)
-				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
-			else if (interval.getType()==String.class)
-				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			DynAttribute<T> attribute = getAttr(interval,key);
 			this.graphTable.put(key, attribute);
+			if (vp!=null)
+				attribute.setVisualProperty(vp);
 		}
 		
 		if (!column.equals(CyNetwork.NAME))
@@ -672,24 +675,19 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.graphTable.get(key));
 	}
 
-	@SuppressWarnings("unchecked")
-	private synchronized void setDynAttribute(CyNode node, String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(CyNode node, String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		KeyPairs key = new KeyPairs(column, node.getSUID());
 		if (this.nodeTable.containsKey(key))
 			checkNodeIntervals(this.nodeTable.get(key), interval);
 		else
 		{
-			DynAttribute<T> attribute = null;
-			if (interval.getType()==Integer.class)
-				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
-			else if (interval.getType()==Double.class)
-				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
-			else if (interval.getType()==Boolean.class)
-				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
-			else if (interval.getType()==String.class)
-				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			DynAttribute<T> attribute = getAttr(interval,key);
 			this.nodeTable.put(key, attribute);
+			System.out.println(attribute);
+			System.out.println(vp);
+			if (vp!=null)
+				attribute.setVisualProperty(vp);
 		}
 		
 		if (!column.equals(CyNetwork.NAME))
@@ -697,29 +695,43 @@ public final class DynNetworkImpl<T> implements DynNetwork<T>
 			.addChildren(this.nodeTable.get(key));
 	}
 
-	@SuppressWarnings("unchecked")
-	private synchronized void setDynAttribute(CyEdge edge, String column, DynInterval<T> interval)
+	private synchronized void setDynAttribute(CyEdge edge, String column, DynInterval<T> interval, VisualProperty<T> vp)
 	{
 		KeyPairs key = new KeyPairs(column, edge.getSUID());
 		if (this.edgeTable.containsKey(key))
 			checkEdgeIntervals(this.edgeTable.get(key), interval);
 		else
 		{
-			DynAttribute<T> attribute = null;
-			if (interval.getType()==Integer.class)
-				attribute = (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
-			else if (interval.getType()==Double.class)
-				attribute = (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
-			else if (interval.getType()==Boolean.class)
-				attribute = (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
-			else if (interval.getType()==String.class)
-				attribute = (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+			DynAttribute<T> attribute = getAttr(interval,key);
 			this.edgeTable.put(key, attribute);
+			if (vp!=null)
+				attribute.setVisualProperty(vp);
 		}
 
 		if (!column.equals(CyNetwork.NAME))
 			this.edgeTable.get(new KeyPairs(CyNetwork.NAME, edge.getSUID()))
 			.addChildren(this.edgeTable.get(key));
+	}
+	
+	@SuppressWarnings("unchecked")
+	private DynAttribute<T> getAttr(DynInterval<T> interval, KeyPairs key)
+	{
+		if (interval.getType()==Integer.class)
+			return (DynAttribute<T>) new DynIntegerAttribute((DynInterval<Integer>) interval, key);
+		else if (interval.getType()==Double.class)
+			return (DynAttribute<T>) new DynDoubleAttribute((DynInterval<Double>) interval, key);
+		else if (interval.getType()==Boolean.class)
+			return (DynAttribute<T>) new DynBooleanAttribute((DynInterval<Boolean>) interval, key);
+		else if (interval.getType()==String.class)
+			return (DynAttribute<T>) new DynStringAttribute((DynInterval<String>) interval, key);
+		else if (interval.getType()==Paint.class)
+			return (DynAttribute<T>) new DynPaintAttribute((DynInterval<Paint>) interval, key);
+		else if (interval.getType()==Color.class)
+			return (DynAttribute<T>) new DynPaintAttribute((DynInterval<Paint>) interval, key);
+		else if (interval.getType().getInterfaces()[0]==NodeShape.class)
+			return (DynAttribute<T>) new DynShapeAttribute((DynInterval<NodeShapeVisualProperty>) interval, key);
+		System.out.println("\nXGMML Parser Error: Unrecognized Attribute Class Type: " +  interval.getType());
+		throw new NullPointerException("Invalid attribute class " + interval.getType());
 	}
 
 	private synchronized void setMinMaxTime(DynInterval<T> interval)

@@ -34,6 +34,8 @@ public class OrphanGraphicsAttribute<T>
 	private final DynNetwork<T> currentNetwork;
 	private final String width;
 	private final String fill;
+	private final String start;
+	private final String end;
 	
 	/**
 	 * <code> OrphanGraphicsAttribute </code> constructor.
@@ -41,11 +43,13 @@ public class OrphanGraphicsAttribute<T>
 	 * @param width
 	 * @param fill
 	 */
-	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill)
+	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill, String start, String end)
 	{
 		this.currentNetwork = currentNetwork;
 		this.width = width;
 		this.fill = fill;
+		this.start = start;
+		this.end = end;
 	}
 	
 	/**
@@ -56,7 +60,7 @@ public class OrphanGraphicsAttribute<T>
 	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!=null)
-			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill);
+			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill, start, end);
 	}
 	
 }

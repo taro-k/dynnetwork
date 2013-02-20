@@ -112,10 +112,12 @@ public final class OrphanEdge<T>
 	 * @param currentNetwork
 	 * @param width
 	 * @param fill
+	 * @param start
+	 * @param end
 	 */
-	public void addGraphics(DynNetwork<T> currentNetwork, String width, String fill)
+	public void addGraphics(DynNetwork<T> currentNetwork, String width, String fill, String start, String end)
 	{
-		graphics_attributes.add(new OrphanGraphicsAttribute<T>(currentNetwork, width, fill));
+		graphics_attributes.add(new OrphanGraphicsAttribute<T>(currentNetwork, width, fill, start, end));
 	}
 
 }

@@ -25,6 +25,7 @@ import java.util.List;
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
+import org.cytoscape.view.model.VisualProperty;
 
 /**
  * <code> DynAttribute </code> is the interface to represents dynamic attributes, 
@@ -154,5 +155,16 @@ public interface DynAttribute<T>
 	 * @return interval
 	 */
 	public DynInterval<T> getPredecessor(DynInterval<T> interval);
+	
+	/**
+	 * Set visual property.
+	 * @param vp
+	 */
+	public void setVisualProperty(VisualProperty<T> vp);
+	
+	/**
+	 * Get visual property with value.
+	 */
+	public VisualProperty<T> getVisualProperty();
 
 }

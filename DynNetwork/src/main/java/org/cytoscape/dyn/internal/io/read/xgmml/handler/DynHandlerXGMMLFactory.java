@@ -27,9 +27,9 @@ import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NET_ATT;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NET_GRAPHICS;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_ATT;
+import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_DYNAMICS;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_GRAPH;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_GRAPHICS;
-import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_DYNAMICS;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NONE;
 
 import java.util.HashMap;
@@ -131,7 +131,7 @@ public final class DynHandlerXGMMLFactory<T>
 				// Handle edges
 				{ EDGE, "att", EDGE_ATT, null },
 				{ EDGE, "graphics", EDGE_GRAPHICS, null },
-				{ EDGE_GRAPHICS, "att", EDGE_GRAPHICS, null } };
+				{ EDGE_GRAPHICS, "att", EDGE_GRAPHICS, null }};
 		
 		return tbl;
 	}
