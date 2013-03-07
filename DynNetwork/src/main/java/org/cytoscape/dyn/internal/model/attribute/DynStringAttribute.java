@@ -33,11 +33,10 @@ public class DynStringAttribute extends AbstractDynAttribute<String>
 {
 	/**
 	 * <code> DynStringAttribute </code> constructor.
-	 * @param type
 	 */
 	public DynStringAttribute(Class<String> type)
 	{
-		super(type);
+		super(String.class);
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public class DynStringAttribute extends AbstractDynAttribute<String>
 	 */
 	public DynStringAttribute(DynInterval<String> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(String.class,interval,key);
 	}
 	
 	@Override

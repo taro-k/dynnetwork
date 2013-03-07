@@ -67,8 +67,8 @@ public final class LoadDynLayoutTask<T> extends AbstractTask implements Source<T
 	{
 		tm.setProgress(0.0);
 		DynNetworkView<T> dynNetworkView = dynNetworkViewManager.getDynNetworkView(appManager.getCurrentNetworkView());
-		layoutFactory.createLayout(dynNetworkView);
-		layoutFactory.finalizeNetwork(dynNetworkView);
+		layoutFactory.createDynLayout(dynNetworkView.getNetworkView());
+		layoutFactory.finalizeLayout(dynNetworkView);
 		tm.setProgress(1.0);
 	}
 

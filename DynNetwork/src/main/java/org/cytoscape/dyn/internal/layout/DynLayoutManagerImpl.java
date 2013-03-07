@@ -83,7 +83,7 @@ public final class DynLayoutManagerImpl<T> implements DynLayoutManager<T>
 	}
 
 	@Override
-	public Collection<DynLayout<T>> getDynNetworks() 
+	public Collection<DynLayout<T>> getDynLayouts() 
 	{
 		return dynLayoutMap.values();
 	}

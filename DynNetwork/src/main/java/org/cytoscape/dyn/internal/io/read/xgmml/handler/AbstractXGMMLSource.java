@@ -25,9 +25,8 @@ import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
-import org.cytoscape.group.CyGroup;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
-import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 
 /**
@@ -46,6 +45,7 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	protected DynNetworkFactory<T> networkSink;
 	protected DynNetworkViewFactory<T> viewSink;
 	protected DynLayoutFactory<T> layoutSink;
+	protected DynVizMapFactory<T> vizMapSink;
 
 	protected DynNetwork<T> addGraph(
 			String id, String label, String start, String end, String directed)
@@ -53,21 +53,16 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 		return networkSink.addedGraph(id, label, start, end, directed);
 	}
 	
-	protected CyNode addNode(DynNetwork<T> currentNetwork, CyGroup group, 
+	protected CyNode addNode(DynNetwork<T> currentNetwork, 
 			String id, String label, String start, String end)
 	{
-		return networkSink.addedNode(currentNetwork, group, id, label, start, end);
+		return networkSink.addedNode(currentNetwork, id, label, start, end);
 	}
 	
 	protected CyEdge addEdge(DynNetwork<T> currentNetwork, 
 			String id, String label, String source, String target, String start, String end)
 	{
 		return networkSink.addedEdge(currentNetwork, id, label, source, target, start, end);
-	}
-	
-	protected CyGroup addGroup(DynNetwork<T> currentNetwork, CyNode currentNode)
-	{
-		return networkSink.addedGroup(currentNetwork, currentNode);
 	}
 	
 	protected void addGraphAttribute(DynNetwork<T> currentNetwork, 
@@ -91,55 +86,25 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	protected void addGraphGraphics(DynNetwork<T> network, 
 			String fill, String start, String end)
 	{
-		networkSink.addedGraphGraphics(network, fill, start, end);
+		vizMapSink.addedGraphGraphics(network, fill, start, end);
 	}
 	
 	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
-			String type, String height, String width, String size, String fill, String linew, String outline, String start, String end)
+			String type, String height, String width, String size, String fill, String linew, String outline, String transparency, String start, String end)
 	{
-		networkSink.addedNodeGraphics(network, currentNode, type, height, width, size, fill, linew, outline, start, end);
+		vizMapSink.addedNodeGraphics(network, currentNode, type, height, width, size, fill, linew, outline, transparency, start, end);
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill, String start, String end)
+			String width, String fill, String transparency, String start, String end)
 	{
-		networkSink.addedEdgeGraphics(network, currentEdge, width, fill, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, transparency, start, end);
 	}
 	
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 
 			String x, String y, String start, String end)
 	{
 		layoutSink.addedNodeDynamics(network, currentNode, x, y, start, end);
-	}
-	
-	protected void deleteGraph(DynNetwork<T> netwrok)
-	{
-		networkSink.deletedGraph(netwrok);
-	}
-
-	protected void deleteNode(DynNetwork<T> currentNetwork, CyNode node)
-	{
-		networkSink.deletedNode(currentNetwork, node);
-	}
-	
-	protected void deleteEdge(DynNetwork<T> currentNetwork, CyEdge edge)
-	{
-		networkSink.deletedEdge(currentNetwork, edge);
-	}
-	
-	protected void deleteGraphAttribute(DynNetwork<T> currentNetwork, CyNetwork netwrok, String label)
-	{
-//		sink.deletedGraphAttribute(currentNetwork, network, label);
-	}
-	
-	protected void deleteNodeAttribute(DynNetwork<T> currentNetwork, CyNode node, String label)
-	{
-//		sink.deletedNodeAttribute(currentNetwork, node, label);
-	}
-	
-	protected void deleteEdgeAttribute(DynNetwork<T> currentNetwork, CyEdge edge, String label)
-	{
-//		sink.deletedEdgeAttribute(currentNetwork, edge, label);
 	}
 	
 	protected void finalize(DynNetwork<T> currentNetwork)
@@ -156,6 +121,8 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 			this.viewSink = (DynNetworkViewFactory<T>) sink;
 		else if (sink instanceof DynLayoutFactory<?>)
 			this.layoutSink = (DynLayoutFactory<T>) sink;
+		else if (sink instanceof DynVizMapFactory<?>)
+			this.vizMapSink = (DynVizMapFactory<T>) sink;
 	}
 	
 	@Override
@@ -165,8 +132,10 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 			this.networkSink = null;
 		else if (this.viewSink == sink)
 			this.viewSink = null;
-		else if (this.layoutSink==null)
+		else if (this.layoutSink == sink)
 			this.layoutSink = null;
+		else if (this.vizMapSink == sink)
+			this.vizMapSink = null;
 	}
 	
 }

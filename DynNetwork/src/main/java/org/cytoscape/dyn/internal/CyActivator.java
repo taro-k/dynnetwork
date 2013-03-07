@@ -29,6 +29,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.dyn.internal.action.MenuActionLoadXGMML;
 import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleEdges;
 import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleNodes;
+import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutFactoryImpl;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.layout.DynLayoutManagerImpl;
@@ -43,10 +44,12 @@ import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
+import org.cytoscape.dyn.internal.view.task.Transformator;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactoryImpl;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapManager;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapManagerImpl;
 import org.cytoscape.event.CyEventHelper;
-import org.cytoscape.group.CyGroupFactory;
-import org.cytoscape.group.CyGroupManager;
-import org.cytoscape.group.events.GroupCollapsedListener;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
@@ -57,8 +60,8 @@ import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.undo.UndoSupport;
@@ -97,11 +100,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	CyNetworkFactory cyNetworkFactoryServiceRef = getService(context,CyNetworkFactory.class);
     	CyRootNetworkManager cyRootNetworkManagerServiceRef = getService(context,CyRootNetworkManager.class);
     	CyNetworkNaming cyNetworkNamingServiceRef = getService(context,CyNetworkNaming.class);
-    	CyGroupManager groupManagerServiceRef = getService(context,CyGroupManager.class);
-    	CyGroupFactory groupFactoryServiceRef = getService(context,CyGroupFactory.class);
     	TaskManager<T,C> taskManager = getService(context,TaskManager.class);
     	VisualMappingManager visualMappingServiceRef = getService(context,VisualMappingManager.class);
-    	VisualStyleFactory visualStyleFactory = getService(context,VisualStyleFactory.class);
     	FileUtil fileUtil = getService(context,FileUtil.class);
     	StreamUtil streamUtil = getService(context,StreamUtil.class);
     	TunableSetter tunableSetterServiceRef = getService(context,TunableSetter.class);
@@ -111,18 +111,20 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(
     			cyNetworkManagerServiceRef);
 		DynNetworkFactoryImpl<T> dynNetworkFactory = new DynNetworkFactoryImpl<T>(
-				cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,groupManagerServiceRef,groupFactoryServiceRef,dynNetManager,cyNetworkNamingServiceRef);
+				cyNetworkFactoryServiceRef,cyRootNetworkManagerServiceRef,dynNetManager,cyNetworkNamingServiceRef);
 		DynNetworkViewManagerImpl<T> dynNetViewManager = new DynNetworkViewManagerImpl<T>(
 				cyNetworkViewManagerServiceRef);
     	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(
-    			dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef,visualStyleFactory);
+    			dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
     	
-    	
-    	DynLayoutManagerImpl<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
-    	DynLayoutFactoryImpl<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(
-    			dynLayoutManager);
+    	DynLayoutManager<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
+    	DynLayoutFactory<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
+    	DynVizMapManager<T> dynVizMapManager = new DynVizMapManagerImpl<T>();
+    	DynVizMapFactory<T> vizMapFactory = new DynVizMapFactoryImpl<T>(dynVizMapManager);
+    	Transformator<T> transformator = new Transformator<T>(dynLayoutManager,dynVizMapManager);
     	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(
-    			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,fileUtil);
+    			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,dynVizMapManager,transformator,fileUtil);
+    	
     	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",
     			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Prefuse DynLayout",
@@ -130,7 +132,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
     	
     	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(
-    			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,fileUtil,streamUtil,tunableSetterServiceRef);
+    			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory,fileUtil,streamUtil,tunableSetterServiceRef);
     	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(
     			cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
     	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(
@@ -148,10 +150,12 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,selectNodesAction,CyAction.class, new Properties()); 
     	registerService(context,selectEdgesAction,CyAction.class, new Properties()); 
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
+    	registerService(context,transformator,UpdateNetworkPresentationListener.class, new Properties());
     	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynPerfuseLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynClearLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
+    	registerService(context,dynVizMapManager,DynVizMapManager.class, new Properties());
 
 	}
 	

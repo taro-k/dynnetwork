@@ -48,12 +48,12 @@ public final class OrphanAttribute<T>
 	 * @param end
 	 */
 	public OrphanAttribute(
-			DynNetwork<T> currentNetwork, 
-			String name, 
-			String value,
-			String type, 
-			String start, 
-			String end)
+			final DynNetwork<T> currentNetwork, 
+			final String name, 
+			final String value,
+			final String type, 
+			final String start, 
+			final String end)
 	{
 		this.currentNetwork = currentNetwork;
 		this.name = name;

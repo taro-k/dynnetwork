@@ -19,16 +19,9 @@
 
 package org.cytoscape.dyn.internal.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.cytoscape.dyn.internal.io.read.util.AttributeTypeMap;
-import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.AbstractIntervalCheck;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.group.CyGroup;
-import org.cytoscape.group.CyGroupFactory;
-import org.cytoscape.group.CyGroupManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
@@ -38,8 +31,6 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.model.subnetwork.CyRootNetwork;
 import org.cytoscape.model.subnetwork.CyRootNetworkManager;
 import org.cytoscape.session.CyNetworkNaming;
-import org.cytoscape.view.model.VisualProperty;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  * <code> DynNetworkFactoryImpl </code> implements the interface
@@ -49,18 +40,14 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  *
  * @param <T>
  */
-public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
+public final class DynNetworkFactoryImpl<T> extends AbstractIntervalCheck<T> implements DynNetworkFactory<T>
 {
-	private final AttributeTypeMap typeMap;
-	
-	private final CyGroupManager groupManager;
-	private final CyGroupFactory groupFactory;
 	private final CyNetworkFactory networkFactory;
 	private final CyRootNetworkManager rootNetworkManager;
 	private final DynNetworkManager<T> manager;
 	private final CyNetworkNaming nameUtil;
 	
-	private final List<CyNode> metaNodes; 
+	private final AttributeTypeMap typeMap;
 	
 	/**
 	 * <code> DynNetworkFactoryImpl </code> constructor.
@@ -74,20 +61,15 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	public DynNetworkFactoryImpl(
 			final CyNetworkFactory networkFactory,
 			final CyRootNetworkManager rootNetworkManager,
-			final CyGroupManager groupManager,
-			final CyGroupFactory groupFactory,
 			final DynNetworkManager<T> manager,
 			final CyNetworkNaming nameUtil)
 	{
 		this.networkFactory = networkFactory;
 		this.rootNetworkManager = rootNetworkManager;
-		this.groupManager = groupManager;
-		this.groupFactory = groupFactory;
 		this.manager = manager;
 		this.nameUtil = nameUtil;
-		
+
 		this.typeMap = new AttributeTypeMap();
-		this.metaNodes = new ArrayList<CyNode>();
 	}
 
 	@Override
@@ -100,20 +82,11 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	}
 
 	@Override
-	public CyNode addedNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end)
+	public CyNode addedNode(DynNetwork<T> dynNetwork, String id, String label, String start, String end)
 	{
-		CyNode currentNode = createNode(dynNetwork, group, id, label, start, end);
-		setElement(dynNetwork, currentNode, group, id, label, null, start, end);
+		CyNode currentNode = createNode(dynNetwork, id, label, start, end);
+		setElement(dynNetwork, currentNode, id, label, null, start, end);
 		return currentNode;
-	}
-	
-	@Override
-	public CyGroup addedGroup(DynNetwork<T> dynNetwork, CyNode currentNode)
-	{
-		CyGroup currentGroup = groupFactory.createGroup(dynNetwork.getNetwork(), currentNode, true);
-		groupManager.addGroup(currentGroup);
-		metaNodes.add(currentNode);
-		return currentGroup;
 	}
 	
 	@Override
@@ -132,206 +105,76 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	@Override
 	public void addedGraphAttribute(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, attName, attValue, attType, start, end, null);
+		setAttributes(dynNetwork, attName, attValue, attType, start, end);
 	}
 	
 	@Override
 	public void addedNodeAttribute(DynNetwork<T> dynNetwork, CyNode currentNode, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, currentNode, attName, attValue, attType, start, end, null);
+		setAttributes(dynNetwork, currentNode, attName, attValue, attType, start, end);
 	}
 	
 	@Override
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String attName, String attValue, String attType, String start, String end)
 	{
-		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end, null);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill, String start, String end) 
-	{
-		if (fill!=null)
-		{
-			setAttributes(dynNetwork, "GRAPHICS.graph.fill", fill, "paint", start, end, (VisualProperty<T>) BasicVisualLexicon.NETWORK_BACKGROUND_PAINT);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String start, String end) 
-	{
-		if (type!=null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.type", type, type, start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_SHAPE);
-		}
-		if (height!=null && size==null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.height", height, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_HEIGHT);
-		}
-		if (width!=null && size==null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.width", width, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_WIDTH);
-		}
-		if (size!=null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.size", size, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_SIZE);
-		}
-		if (linew!=null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.linewidth", linew, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_WIDTH);
-		}
-		if (fill!=null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.fill", fill, "paint" , start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_FILL_COLOR);
-		}
-		if (outline!=null)
-		{
-			setAttributes(dynNetwork, currentNode, "GRAPHICS.node.outline", outline, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_PAINT);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge,
-			String width, String fill, String start, String end) 
-	{
-		if (width!=null)
-			setAttributes(dynNetwork, currentEdge, "GRAPHICS.edge.width", width, "real", start, end, (VisualProperty<T>) BasicVisualLexicon.EDGE_WIDTH);
-		if (fill!=null)
-			setAttributes(dynNetwork, currentEdge, "GRAPHICS.edge.fill", width, "paint", start, end, (VisualProperty<T>) BasicVisualLexicon.EDGE_UNSELECTED_PAINT);
-	}
-
-	@Override
-	public void deletedGraph(DynNetwork<T> dynNetwork)
-	{
-		dynNetwork.removeAllIntervals();
-		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(dynNetwork.getNetwork());
-		rootNetwork.removeSubNetwork(rootNetwork.getBaseNetwork());
-	}
-
-	@Override
-	public void deletedNode(DynNetwork<T> dynNetwork, CyNode node) 
-	{
-		dynNetwork.removeNode(node);
-		dynNetwork.getNetwork().removeNodes(getNodeRemoveList(node));
-	}
-	
-	@Override
-	public void deletedEdge(DynNetwork<T> dynNetwork, CyEdge edge)
-	{
-		dynNetwork.removeEdge(edge);
-		dynNetwork.getNetwork().removeEdges(getEdgeRemoveList(edge));
+		setAttributes(dynNetwork, currentEdge, attName, attValue, attType, start, end);
 	}
 
 	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(CyNetwork.NAME, nameUtil.getSuggestedNetworkTitle(label));
-		DynInterval<T> interval = getInterval((Class<T>) String.class,(T)label,start,end);
-		if (interval.getStart()<=interval.getEnd())
-			dynNetwork.insertGraph(CyNetwork.NAME, interval);
-		else
-		{
-			System.out.println("\nXGMML Parser Error: invalid interval for graph label=" + label + " start=" + start + " end=" + end + "\n");
-			throw new IndexOutOfBoundsException("Invalid interval for graph label=" + label + " start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getInterval(label,(T)label,start,end);
+		dynNetwork.insertGraph(CyNetwork.NAME, interval);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setElement(DynNetwork<T> dynNetwork, CyNode node, CyGroup group, String id, String label, String value, String start, String end)
+	private void setElement(DynNetwork<T> dynNetwork, CyNode node, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(node).set(CyNetwork.NAME, label);
-		DynInterval<T> interval;
-		if (group==null)
-			interval = getInterval((Class<T>) String.class,dynNetwork,(T)label,start,end);
-		else
-			interval = getInterval((Class<T>) String.class,dynNetwork,group.getGroupNode(),(T)label,start,end);
-		if (interval.getStart()<=interval.getEnd())
-			dynNetwork.insertNode(node, CyNetwork.NAME, interval);
-		else
-		{
-			System.out.println("\nXGMML Parser Error: invalid interval for node label=" + label + " start=" + start + " end=" + end + "\n");
-			throw new IndexOutOfBoundsException("Invalid interval for node label=" + label + " start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getInterval(dynNetwork,label,(T)label,start,end);
+		dynNetwork.insertNode(node, CyNetwork.NAME, interval);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void setElement(DynNetwork<T> dynNetwork, CyEdge edge, String id, String label, String value, String start, String end)
 	{
 		dynNetwork.getNetwork().getRow(edge).set(CyNetwork.NAME, label);
-		DynInterval<T> interval = getInterval((Class<T>) String.class,dynNetwork,edge.getSource(),edge.getTarget(),(T)label,start,end);
-		if (interval.getStart()<=interval.getEnd())
-			dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
-		else
-		{
-			System.out.println("\nXGMML Parser Error: invalid interval for edge label=" + label + " start=" + start + " end=" + end + "\n");
-			throw new IndexOutOfBoundsException("Invalid interval for edge label=" + label + " start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getInterval(dynNetwork,edge.getSource(),edge.getTarget(),label,(T)label,start,end);
+		dynNetwork.insertEdge(edge, CyNetwork.NAME, interval);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
+	private void setAttributes(DynNetwork<T> dynNetwork, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(), dynNetwork, (T)attr ,start, end);
-		if (interval.getStart()<=interval.getEnd())
-		{
-			if (vp==null)
-				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
-			dynNetwork.insertGraphAttr(attName, interval, vp);
-		}
-		else
-		{
-			String label = dynNetwork.getNetworkLabel();
-			System.out.println("\nXGMML Parser Warning: skipped invalid interval for graph label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getIntervalAttr(dynNetwork,attName,(T)attr ,start, end);
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNetworkTable(), dynNetwork.getNetwork(), attName, attr);
+		dynNetwork.insertGraph(attName, interval);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
+	private void setAttributes(DynNetwork<T> dynNetwork, CyNode node, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork, (T)attr ,start, end);
-		if (interval.getStart()<=interval.getEnd())
-		{
-			if (vp==null)
-				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
-			dynNetwork.insertNodeAttr(node, attName, interval, vp);
-		}
-		else
-		{
-			String label = dynNetwork.getNodeLabel(node);
-			System.out.println("\nXGMML Parser Warning: skipped invalid interval for node label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getIntervalAttr(dynNetwork,attName,(T)attr ,start, end);
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultNodeTable(), node, attName, attr);
+		dynNetwork.insertNode(node, attName, interval);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void setAttributes(DynNetwork<T> dynNetwork, CyEdge edge, String attName, String attValue, String attType, String start, String end, VisualProperty<T> vp)
+	private void setAttributes(DynNetwork<T> dynNetwork, CyEdge edge, String attName, String attValue, String attType, String start, String end)
 	{
 		Object attr = typeMap.getTypedValue(typeMap.getType(attType), attValue);
-		DynInterval<T> interval = getInterval((Class<T>) attr.getClass(),dynNetwork,edge, (T)attr, start, end);
-		if (interval.getStart()<=interval.getEnd())
-		{
-			if (vp==null)
-				addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
-			dynNetwork.insertEdgeAttr(edge, attName, interval, vp);
-		}
-		else
-		{
-			String label = dynNetwork.getEdgeLabel(edge);
-			System.out.println("\nXGMML Parser Warning: skipped invalid interval for edge label=" + label + " attr=" + attName +" start=" + start + " end=" + end);
-		}
+		DynInterval<T> interval = getIntervalAttr(dynNetwork,edge,attName,(T)attr, start, end);
+		addRow(dynNetwork.getNetwork(), dynNetwork.getNetwork().getDefaultEdgeTable(), edge, attName, attr);
+		dynNetwork.insertEdge(edge, attName, interval);
 	}
-	
+
 	@Override
 	public void finalizeNetwork(DynNetwork<T> dynNetwork) 
 	{
 		dynNetwork.finalizeNetwork();
-		for (CyNode node : metaNodes)
-			dynNetwork.getNetwork().removeEdges(dynNetwork.getNetwork().getAdjacentEdgeList(node, CyEdge.Type.ANY));
-		dynNetwork.getNetwork().removeNodes(metaNodes);
 	}
 
 	private void addRow(CyNetwork currentNetwork, CyTable table, CyIdentifiable ci, String attName, Object attr)
@@ -344,11 +187,11 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 	private DynNetwork<T> createGraph(String directed, String id, String label, String start, String end)
 	{
 		CyRootNetwork rootNetwork = this.rootNetworkManager.getRootNetwork(networkFactory.createNetwork());
-		DynNetworkImpl<T> dynNetwork = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), groupManager, directed.equals("1")?true:false);
+		DynNetworkImpl<T> dynNetwork = new DynNetworkImpl<T>(rootNetwork.getBaseNetwork(), directed.equals("1")?true:false);
 		return dynNetwork;
 	}
 
-	private CyNode createNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end)
+	private CyNode createNode(DynNetwork<T> dynNetwork, String id, String label, String start, String end)
 	{
 		CyNode node;
 		if (!dynNetwork.containsCyNode(id))
@@ -358,15 +201,8 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 		}
 		else
 		{
-			System.out.println("\nXGMML Parser Warning: updated node label=" + label + " (duplicate)");
+//			System.out.println("\nXGMML Parser Warning: updated node label=" + label + " (duplicate)");
 			node = dynNetwork.getNetwork().getNode(dynNetwork.getNode(id));
-		}
-		
-		if (group!=null)
-		{
-			ArrayList<CyNode> groupNodes = new ArrayList<CyNode>();
-			groupNodes.add(node);
-			group.addNodes(groupNodes);
 		}
 		
 		return node;
@@ -385,110 +221,12 @@ public final class DynNetworkFactoryImpl<T> implements DynNetworkFactory<T>
 			}
 			else
 			{
-				System.out.println("\nXGMML Parser Warning: updated edge label=" + label 
-						+ " source=" + source + " target=" + target + " (duplicate)");
+//				System.out.println("\nXGMML Parser Warning: updated edge label=" + label 
+//						+ " source=" + source + " target=" + target + " (duplicate)");
 				edge = dynNetwork.getNetwork().getEdge(dynNetwork.getEdge(id));
 			}
 
-			for (CyGroup group : groupManager.getGroupsForNode(nodeSource))
-			{
-				ArrayList<CyEdge> groupEdges = new ArrayList<CyEdge>();
-				groupEdges.add(edge);
-				group.addEdges(groupEdges);
-			}
-			
-			for (CyGroup group : groupManager.getGroupsForNode(nodeTarget))
-			{
-				ArrayList<CyEdge> groupEdges = new ArrayList<CyEdge>();
-				groupEdges.add(edge);
-				group.addEdges(groupEdges);
-			}
-
 			return edge;
-	}
-	
-	private Collection<CyNode> getNodeRemoveList(CyNode node)
-	{
-		ArrayList<CyNode> list = new ArrayList<CyNode>();
-		list.add(node);
-		return list;
-	}
-	
-	private Collection<CyEdge> getEdgeRemoveList(CyEdge edge)
-	{
-		ArrayList<CyEdge> list = new ArrayList<CyEdge>();
-		list.add(edge);
-		return list;
-	}
-
-	private DynInterval<T> getInterval(Class<T> type, T value, String start, String end)
-	{
-		return new DynInterval<T>(type, value, parseStart(start), parseEnd(end));
-	}
-
-	private DynInterval<T> getInterval(Class<T> type, DynNetwork<T> dynNetwork, T value, String start, String end)
-	{
-		DynAttribute<T> parentAttr = dynNetwork.getDynAttribute(dynNetwork.getNetwork(), CyNetwork.NAME);
-		return new DynInterval<T>(type, value, 
-				max(parentAttr.getMinTime(), parseStart(start)),
-				min(parentAttr.getMaxTime(), parseEnd(end)) );
-	}
-	
-	private DynInterval<T> getInterval(Class<T> type, DynNetwork<T> dynNetwork, CyNode node, T value, String start, String end)
-	{
-		DynAttribute<T> parentAttr = dynNetwork.getDynAttribute(node, CyNetwork.NAME);
-		return new DynInterval<T>(type, value, 
-				max(parentAttr.getMinTime(), parseStart(start)),
-				min(parentAttr.getMaxTime(), parseEnd(end)) );
-	}
-	
-	private DynInterval<T> getInterval(Class<T> type, DynNetwork<T> dynNetwork, CyNode souce, CyNode target, T value, String start, String end)
-	{
-		DynAttribute<T> parentAttrSoruce = dynNetwork.getDynAttribute(souce, CyNetwork.NAME);
-		DynAttribute<T> parentAttrTarget = dynNetwork.getDynAttribute(target, CyNetwork.NAME);
-			return new DynInterval<T>(type, value, 
-				max(max(parentAttrSoruce.getMinTime(),parentAttrTarget.getMinTime()), parseStart(start)) ,
-				min(min(parentAttrSoruce.getMaxTime(),parentAttrTarget.getMaxTime()), parseEnd(end)) );
-	}
-	
-	private DynInterval<T> getInterval(Class<T> type, DynNetwork<T> dynNetwork, CyEdge edge, T value, String start, String end)
-	{
-		DynAttribute<T> parentAttr = dynNetwork.getDynAttribute(edge, CyNetwork.NAME);
-		return new DynInterval<T>(type, value, 
-				max(parentAttr.getMinTime(), parseStart(start)),
-				min(parentAttr.getMaxTime(), parseEnd(end)) );
-	}
-
-	private double min(double a, double b)
-	{
-		if (a>b)
-			return b;
-		else
-			return a;
-	}
-	
-	private double max(double a, double b)
-	{
-		if (a<b)
-			return b;
-		else
-			return a;
-	}
-	
-	private double parseStart(String start)
-	{
-		if (start!=null)
-			return Double.parseDouble(start);
-		else
-			return Double.NEGATIVE_INFINITY;
-	}
-	
-	private double parseEnd(String end)
-	{
-		if (end!=null)
-			return Double.parseDouble(end);
-		else
-			return Double.POSITIVE_INFINITY;
 	}
 
 }

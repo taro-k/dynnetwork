@@ -28,6 +28,7 @@ import org.cytoscape.dyn.internal.layout.algorithm.standard.ForceDirectedLayout;
 import org.cytoscape.dyn.internal.model.snapshot.DynNetworkSnapshot;
 import org.cytoscape.dyn.internal.model.snapshot.DynNetworkSnapshotImpl;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
@@ -58,7 +59,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 	private final DynNetworkView<T> dynView;
 	
 	private DynNetworkSnapshot<T> snap;
-	private ForceDirectedLayout<T> kklayout;
+	private ForceDirectedLayout<T> forcelayout;
 	
 	private final DynInterval<T> timeInterval;
 	
@@ -91,6 +92,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
             this.timeInterval = timeInterval;
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doLayout(TaskMonitor taskMonitor)
 	{	
@@ -100,16 +102,16 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 			taskMonitor.setStatusMessage("Running energy minimization...");
 			taskMonitor.setProgress(0);
 			
-			int size = (int) (4*50*Math.sqrt(nodesToLayOut.size()));
+			int size = (int) (dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NODE_SIZE)*Math.sqrt(nodesToLayOut.size()));
 			
 			snap = new DynNetworkSnapshotImpl<T>(dynView);
-			kklayout = new ForceDirectedLayout<T>(snap,new Dimension(size,size));
+			forcelayout = new ForceDirectedLayout<T>(snap,new Dimension(size,size));
 			List<Double> events = context.m_event_list;
 			
 //			snap.setInterval(new DynInterval<T>(events.get(0),events.get(events.size()-1)));
-			kklayout.setDefaultSpringCoefficient( 0.0000002);
-			kklayout.setDefaultDampingCoefficient(0.0000001);
-			kklayout.setMaxIterations(100);
+			forcelayout.setDefaultSpringCoefficient( 0.0000002);
+			forcelayout.setDefaultDampingCoefficient(0.0000001);
+			forcelayout.setMaxIterations(100);
 			
 			
 
@@ -133,12 +135,12 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 				t0 = events.get(Math.max(0,t-context.m_past_events));
 				t1 = events.get(Math.min(events.size()-1,t+1+context.m_future_events));
 
-				snap.setInterval(new DynInterval<T>(t0,t1),t,0.1,0.1);
+				snap.setInterval((DynInterval<T>) new DynIntervalDouble(t0,t1),t,0.1,0.1);
 				
-				kklayout.initialize();
-				kklayout.run();
-				updateGraph(new DynInterval<T>(events.get(t),events.get(t+1)));
-				kklayout.setMaxIterations((int) (context.m_iteration_rate*(events.get(t+1)-events.get(t))));
+				forcelayout.initialize();
+				forcelayout.run();
+				updateGraph((DynInterval<T>) new DynIntervalDouble(events.get(t),events.get(t+1)));
+				forcelayout.setMaxIterations((int) (context.m_iteration_rate*(events.get(t+1)-events.get(t))));
 
 				if (t%10==0)
 					taskMonitor.setProgress(((double)t)/(double) events.size());
@@ -152,7 +154,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 			
 			// Set the current network view
 			initializePositions(size);
-			layout.initNodePositions(timeInterval);
+			layout.initNodePositions((DynInterval<T>) timeInterval);
 			view.fitContent();
     		view.updateView();
 		}
@@ -164,33 +166,32 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 		double total = dynView.getNetworkView().getModel().getNodeList().size();
 		for (CyNode node : dynView.getNetworkView().getModel().getNodeList())
 		{
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (size/2)*Math.cos(angle)+size/2);
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (size/2)*Math.sin(angle)+size/2);
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION,(size/2)*Math.cos(angle)+size/2);
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION,(size/2)*Math.sin(angle)+size/2);
 			angle = angle + 2*Math.PI/total;
 		}
 		
 		for (DynInterval<T> i : layout.getIntervalsX())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
-			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION,(Double) i.getOnValue());
 		}
 			
 		for (DynInterval<T> i : layout.getIntervalsY())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
-			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION,(Double) i.getOnValue());
 		}
 			
 	}
 
+	@SuppressWarnings("unchecked")
 	private void updateGraph(DynInterval<T> interval)
 	{
-		for (CyNode node : kklayout.getGraph().getNodes())
+		for (CyNode node : forcelayout.getGraph().getNodes())
 		{
-			layout.insertNodePositionX(node, new DynInterval<T>(kklayout.getX(node),interval.getStart(),interval.getEnd()));
-			layout.insertNodePositionY(node, new DynInterval<T>(kklayout.getY(node),interval.getStart(),interval.getEnd()));
+			layout.insertNodePositionX(node, (DynInterval<T>) new DynIntervalDouble(new Double(forcelayout.getX(node)),interval.getStart(),interval.getEnd()));
+			layout.insertNodePositionY(node, (DynInterval<T>) new DynIntervalDouble(new Double(forcelayout.getX(node)),interval.getStart(),interval.getEnd()));
 		}
 	}
 

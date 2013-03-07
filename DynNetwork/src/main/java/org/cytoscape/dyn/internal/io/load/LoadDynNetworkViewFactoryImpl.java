@@ -26,12 +26,12 @@ import org.cytoscape.work.TaskIterator;
 
 /**
  * <code> LoadDynNetworkViewFactoryImpl </code> implements the interface 
- * {@link LoadDynNetworkViewFactory}.
+ * {@link LoadDynFactory}.
  * 
  * @author Sabina Sara Pfister
  *
  */
-public class LoadDynNetworkViewFactoryImpl<T> implements LoadDynNetworkViewFactory<T>
+public class LoadDynNetworkViewFactoryImpl<T> implements LoadDynFactory<T>
 {
 	private final CyApplicationManager appManager;
 	private final DynNetworkManager<T> dynNetworkManager;

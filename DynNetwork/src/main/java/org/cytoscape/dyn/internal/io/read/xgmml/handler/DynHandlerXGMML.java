@@ -27,7 +27,7 @@ import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
-import org.cytoscape.group.CyGroup;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.xml.sax.Attributes;
@@ -43,11 +43,9 @@ import org.xml.sax.Attributes;
  */
 public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements DynHandler 
 {
-	private final Stack<CyGroup> groupStack;
 	private final Stack<OrphanEdge<T>> orphanEdgeList;
 	
 	private DynNetwork<T> currentNetwork;
-	private CyGroup currentGroup;
 	private CyNode currentNode;
 	private CyEdge currentEdge;
 	
@@ -70,6 +68,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	private String fill;
 	private String width;
 	private String outline;
+	private String transparency;
 	
 	private int ID = 0;
 	
@@ -79,13 +78,13 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	 * @param viewSink
 	 * @param layoutSink
 	 */
-	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink)
+	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink)
 	{
-		groupStack = new Stack<CyGroup>();
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
 		this.networkSink = networkSink;
 		this.viewSink = viewSink;
 		this.layoutSink = layoutSink;
+		this.vizMapSink = vizMapSink;
 	}
 
 	@Override
@@ -106,16 +105,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			id = id==null?label:id;
 			directed = directed==null?"1":directed;
 			currentNetwork = this.addGraph(id, label, start, end, directed);
-			groupStack.push(null);
-			break;
-			
-		case NODE_GRAPH:
-			id = atts.getValue("id");
-			label = atts.getValue("label");
-			start = atts.getValue("start");
-			end = atts.getValue("end");
-			currentGroup = this.addGroup(currentNetwork, currentNode);
-			groupStack.push(currentGroup);
 			break;
 			
 		case NODE:
@@ -124,7 +113,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			id = id==null?label:id;
-			currentNode = this.addNode(currentNetwork, currentGroup, id, label, start, end);
+			currentNode = this.addNode(currentNetwork, id, label, start, end);
 			break;
 			
 		case EDGE:
@@ -186,10 +175,11 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			fill = atts.getValue("fill");
 			width = atts.getValue("borderwidth");
 			outline = atts.getValue("bordercolor");
+			transparency = atts.getValue("transparency");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentNode!=null)
-				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, size, fill, width, outline, start, end);
+				this.addNodeGraphics(currentNetwork, currentNode, type, h, w, size, fill, width, outline, transparency, start, end);
 			break;
 			
 		case NODE_DYNAMICS:
@@ -202,12 +192,13 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		case EDGE_GRAPHICS:
 			width = atts.getValue("width");
 			fill = atts.getValue("fill");
+			transparency = atts.getValue("transparency");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentEdge!=null)
-				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, start, end);
+				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, transparency, start, end);
 			else
-				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, start, end);
+				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, transparency, start, end);
 			break;
 			
 		}
@@ -222,11 +213,6 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			while (!orphanEdgeList.isEmpty())
 				orphanEdgeList.pop().add(this);
 			finalize(currentNetwork);
-			break;
-			
-		case NODE_GRAPH:
-			currentNode = groupStack.pop().getGroupNode();
-            currentGroup = groupStack.peek();
 			break;
 		}
 	}
@@ -244,9 +230,9 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	}
 	
 	@Override
-	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill, String start, String end)
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill, String transparency, String start, String end)
 	{
-		networkSink.addedEdgeGraphics(network, currentEdge, width, fill, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, transparency, start, end);
 	}
 	
 }

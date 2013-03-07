@@ -36,34 +36,19 @@ import org.cytoscape.view.model.CyNetworkView;
 public interface DynLayoutFactory<T> extends Sink<T>
 {
 	/**
-	 * Process create layout event.
-	 * @param dynNetworkView
+	 * Create dynamic layout.
+	 * @param networkView
 	 * @return
 	 */
-	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView);
+	public DynLayout<T> createDynLayout(CyNetworkView networkView);
 	
 	/**
-	 * Process layout event.
+	 * Create dynamic layout
 	 * @param networkView
 	 * @param context
 	 * @return
 	 */
-	public DynLayout<T> createLayout(CyNetworkView networkView, Object context);
-	
-	/**
-	 * Process create layout event.
-	 * @param networkView
-	 * @return
-	 */
-	public DynLayout<T> createLayout(CyNetworkView networkView);
-	
-	/**
-	 * Process layout event.
-	 * @param dynNetworkView
-	 * @param context
-	 * @return
-	 */
-	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView, Object context);
+	public DynLayout<T> createDynLayout(CyNetworkView networkView, Object context);
 	
 	/**
 	 * Process added node graphic attribute event.
@@ -77,31 +62,20 @@ public interface DynLayoutFactory<T> extends Sink<T>
 	public void addedNodeDynamics(DynNetwork<T> dynNetwork, CyNode currentNode, String x, String y, String start, String end);
 	
 	/**
-	 * Set node graphics attributes.
-	 * @param dynNetworkView
-	 * @param currentNode
-	 * @param x
-	 * @param y
-	 * @param start
-	 * @param end
-	 */
-	public void setNodeDynamics(DynNetworkView<T> dynNetworkView, CyNode currentNode, String x, String y, String start, String end);
-	
-	/**
 	 * Process finalize network event.
 	 * @param dynNetworkView
 	 */
-	public void finalizeNetwork(DynNetworkView<T> dynNetworkView);
+	public void finalizeLayout(DynNetworkView<T> dynNetworkView);
 	
 	/**
-	 * Remove layout event.
+	 * Remove layout event and add an empty one.
 	 * @param dynNetworkView
 	 * @return
 	 */
 	public void removeLayout(DynNetworkView<T> dynNetworkView);
 	
 	/**
-	 * Remove layout event.
+	 * Remove layout event and add an empty one.
 	 * @param networkView
 	 * @return
 	 */

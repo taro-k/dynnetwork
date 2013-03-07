@@ -21,7 +21,7 @@ package org.cytoscape.dyn.internal.model.attribute;
 
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
  * <code> DynShapeAttribute </code> implements NodeShapeVisualProperty attributes and contains
@@ -30,15 +30,14 @@ import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
  * @author Sabina Sara Pfister
  * 
  */
-public class DynShapeAttribute extends AbstractDynAttribute<NodeShapeVisualProperty>
+public class DynShapeAttribute extends AbstractDynAttribute<NodeShape>
 {
 	/**
 	 * <code> DynShapeAttribute </code> constructor.
-	 * @param type
 	 */
-	public DynShapeAttribute(Class<NodeShapeVisualProperty> type)
+	public DynShapeAttribute()
 	{
-		super(type);
+		super(NodeShape.class);
 	}
 	
 	/**
@@ -46,19 +45,19 @@ public class DynShapeAttribute extends AbstractDynAttribute<NodeShapeVisualPrope
 	 * @param interval
 	 * @param key
 	 */
-	public DynShapeAttribute(DynInterval<NodeShapeVisualProperty> interval, KeyPairs key)
+	public DynShapeAttribute(DynInterval<NodeShape> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(NodeShape.class,interval,key);
 	}
 	
 	@Override
-	public NodeShapeVisualProperty getMinValue()
+	public NodeShape getMinValue()
     {
     	return null;
     }
     
 	@Override
-	public NodeShapeVisualProperty getMaxValue()
+	public NodeShape getMaxValue()
 	{
 		return null;
 	}

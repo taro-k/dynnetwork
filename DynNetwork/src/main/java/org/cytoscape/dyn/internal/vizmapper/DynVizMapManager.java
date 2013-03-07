@@ -17,23 +17,44 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.cytoscape.dyn.internal.io.load;
+package org.cytoscape.dyn.internal.vizmapper;
 
-import org.cytoscape.work.TaskIterator;
+import java.util.Collection;
+
+import org.cytoscape.view.model.CyNetworkView;
+
 
 /**
- * <code> LoadDynNetworkViewFactory </code> is interface that provides 
- * a task iterator for creating networks view from networks.
+ * <code> DynVizMapManager </code> is the interface of the
+ * {@link DynVizMap}s manager.
  * 
  * @author Sabina Sara Pfister
  *
+ * @param <T>
  */
-public interface LoadDynNetworkViewFactory<T>
+public interface DynVizMapManager<T>
 {
 	/**
-	 * Create a task iterator for creating a network view from the current dynamic network.
-	 * @param network
-	 * @return a task iterator of type {@link TaskIterator}
+	 * Add dynamic VizMap.
+	 * @param dynVizMap
 	 */
-	TaskIterator creatTaskIterator();
+	public void addDynVizMap(DynVizMap<T> dynVizMap);
+
+	/**
+	 * Get dynamic VizMap associated with the given view.
+	 * @param view
+	 */
+	public DynVizMap<T> getDynVizMap(CyNetworkView view);
+	
+	/**
+	 * Remove DynVizMap associated with view if exists.
+	 * @param view
+	 */
+	public void removeDynVizMap(CyNetworkView view);
+	/**
+	 * Get all dynVizMaps.
+	 * @return dynVizMaps
+	 */
+	public Collection<DynVizMap<T>> getDynVizMaps();
+	
 }

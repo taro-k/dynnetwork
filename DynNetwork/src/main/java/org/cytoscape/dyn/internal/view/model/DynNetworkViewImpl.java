@@ -20,7 +20,9 @@
 package org.cytoscape.dyn.internal.view.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -29,12 +31,8 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
-import org.cytoscape.view.model.View;
-import org.cytoscape.view.model.VisualProperty;
-import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyle;
-import org.cytoscape.view.vizmap.VisualStyleFactory;
 
 /**
  * <code> DynNetworkViewImpl </code> is the interface for the visualization of 
@@ -49,6 +47,9 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final DynNetwork<T> dynNetwork;
 	private final CyNetworkView view;
 	private final VisualMappingManager cyStyleManager;
+	
+	protected Map<CyNode,Integer> nodeDummyValue;
+	protected Map<CyEdge,Integer> edgeDummyValue;
 	
 	private int visibleNodes;
 	private int visibleEdges;
@@ -65,8 +66,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 			DynNetwork<T> dynNetwork,
 			final CyNetworkViewManager networkViewManager,
 			final CyNetworkViewFactory cyNetworkViewFactory,
-			final VisualMappingManager cyStyleManager,
-			final VisualStyleFactory visualStyleFactory)
+			final VisualMappingManager cyStyleManager)
 	{
 		this.currentTime = 0;
 		
@@ -82,107 +82,25 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		this.currentNodesAttr = new ArrayList<DynInterval<T>>();
 		this.currentEdgesAttr = new ArrayList<DynInterval<T>>();
 		
+		this.nodeDummyValue = new HashMap<CyNode,Integer>();
+		this.edgeDummyValue = new HashMap<CyEdge,Integer>();
+		
 		this.view = cyNetworkViewFactory.createNetworkView(dynNetwork.getNetwork());
 		networkViewManager.addNetworkView(view);
-		
-//		VisualStyle vs = visualStyleFactory.createVisualStyle(cyStyleManager.getDefaultVisualStyle());
-//		vs.setTitle(dynNetwork.getNetworkLabel());
-//		
-//		double nodesOverEdges = (1.0*view.getNodeViews().size())/(1.0*view.getEdgeViews().size());
-//		double nodesize = Math.max(1,60.0*Math.sqrt(nodesOverEdges));
-//		int fontSize = Math.max(1,(int) (2.0*nodesize/3.0));
-//		double edgewidth = Math.max(0.1,80.0*nodesOverEdges/10.0);
-//
-//		vs.setDefaultValue(BasicVisualLexicon.NODE_SIZE, new Double(nodesize));
-//		vs.setDefaultValue(BasicVisualLexicon.NODE_LABEL_FONT_SIZE, new Integer(fontSize));
-//		vs.setDefaultValue(BasicVisualLexicon.NODE_SHAPE, NodeShapeVisualProperty.ELLIPSE);
-//		vs.setDefaultValue(BasicVisualLexicon.NODE_BORDER_WIDTH, new Double(0));
-//		vs.setDefaultValue(BasicVisualLexicon.EDGE_WIDTH, new Double(edgewidth));
-//		cyStyleManager.addVisualStyle(vs);
-//		cyStyleManager.setCurrentVisualStyle(vs);
-//		vs.apply(view);
-		
 		cyStyleManager.getDefaultVisualStyle().apply(view);
 		
+		// TODO: this is a hack: trying to guess how much time Cytoscape takes to apply the default visual properties
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(1*(this.view.getNodeViews().size()+this.view.getEdgeViews().size()));
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	}
-	
-	@Override
-	public int readVisualProperty(CyNode node, VisualProperty<Integer> vp) 
-	{
-		return view.getNodeView(node).getVisualProperty(vp).intValue();	
-	}
-	
-	@Override
-	public double readVisualProperty(CyNode node, VisualProperty<Double> vp) 
-	{
-		return view.getNodeView(node).getVisualProperty(vp).doubleValue();	
-	}
-	
-	@Override
-	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value) 
-	{
-		view.getNodeView(node).setVisualProperty(vp,value);
-	}
-	
-	@Override
-	public void writeVisualProperty(CyNode node, VisualProperty<Double> vp, double value) 
-	{
-		view.getNodeView(node).setVisualProperty(vp,value);
-	}
-	
-	@Override
-	public void writeLockedVisualProperty(CyNode node, VisualProperty<Integer> vp, int value) 
-	{
-		view.getNodeView(node).setLockedValue(vp, value);
-	}
 
-	@Override
-	public void writeLockedVisualProperty(CyNode node, VisualProperty<Double> vp, double value) 
-	{
-		view.getNodeView(node).setLockedValue(vp, value);
-	}
-	
-	@Override
-	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp) 
-	{
-		return view.getEdgeView(edge).getVisualProperty(vp).intValue();
-	}
-	
-	@Override
-	public double readVisualProperty(CyEdge edge, VisualProperty<Double> vp) 
-	{
-		return view.getEdgeView(edge).getVisualProperty(vp).doubleValue();
-	}
+		for (CyNode node : this.dynNetwork.getNetwork().getNodeList())
+			this.nodeDummyValue.put(node, 255);
+		for (CyEdge edge : this.dynNetwork.getNetwork().getEdgeList())
+			this.edgeDummyValue.put(edge, 255);
 
-	@Override
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value) 
-	{
-		view.getEdgeView(edge).setVisualProperty(vp,value);
-	}
-	
-	@Override
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value) 
-	{
-		view.getEdgeView(edge).setVisualProperty(vp,value);
-	}
-	
-	@Override
-	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value) 
-	{
-		view.getEdgeView(edge).setLockedValue(vp,value);
-	}
-	
-	@Override
-	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value) 
-	{
-		view.getEdgeView(edge).setLockedValue(vp,value);
 	}
 	
 	@Override
@@ -231,7 +149,7 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		currentEdgesAttr = tempList;
 		return changedList;
 	}
-	
+
 	@Override
 	public int getVisibleNodes()
 	{
@@ -280,6 +198,30 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		return cyStyleManager.getCurrentVisualStyle();
 	}
 	
+	@Override
+	public void setNodeDummyValue(CyNode node, int value) 
+	{
+		this.nodeDummyValue.put(node,value);
+	}
+	
+	@Override
+	public void setEdgeDummyValue(CyEdge edge, int value) 
+	{
+		this.edgeDummyValue.put(edge,value);
+	}
+	
+	@Override
+	public int getNodeDummyValue(CyNode node) 
+	{
+		return this.nodeDummyValue.get(node);
+	}
+	
+	@Override
+	public int getEdgeDummyValue(CyEdge edge) 
+	{
+		return this.edgeDummyValue.get(edge);
+	}
+	
 	private List<DynInterval<T>> nonOverlap(List<DynInterval<T>> list1, List<DynInterval<T>> list2) 
 	{
 		List<DynInterval<T>> diff = new ArrayList<DynInterval<T>>();
@@ -296,26 +238,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 				i.setOn(true);
 			}
 		return diff;
-	}
-	
-	@Override
-	public void initTransparency(int visibility) 
-	{
-		for (final View<CyNode> nodeView : this.getNetworkView().getNodeViews())
-		{
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
-			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-			
-			// TODO: clean. this is a quick fix for a bug in node_label_transparency (core Cytoscape code)
-			if (visibility==0)
-				nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
-		}
-		
-		for (final View<CyEdge> edgeView : this.getNetworkView().getEdgeViews())
-		{
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
-			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
-		}
 	}
 
 }

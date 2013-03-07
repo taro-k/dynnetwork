@@ -32,7 +32,6 @@ public enum ParseDynState
 	// Graph elements
     NONE("none"),
     GRAPH("Graph Element"),
-    NODE_GRAPH("Node Graph"),
     NODE("Node Element"),
     EDGE("Edge Element"),
     

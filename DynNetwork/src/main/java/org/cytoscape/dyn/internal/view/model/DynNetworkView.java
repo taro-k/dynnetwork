@@ -26,7 +26,6 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
-import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.vizmap.VisualStyle;
 
 /**
@@ -39,101 +38,6 @@ import org.cytoscape.view.vizmap.VisualStyle;
  */
 public interface DynNetworkView<T>
 {	
-	/**
-	 * Read visual property of node.
-	 * @param node
-	 * @param vp
-	 * @return visual property
-	 */
-	public int readVisualProperty(CyNode node, VisualProperty<Integer> vp);
-	
-	/**
-	 * Read visual property of node.
-	 * @param node
-	 * @param vp
-	 * @return visual property
-	 */
-	public double readVisualProperty(CyNode node, VisualProperty<Double> vp);
-
-	/**
-	 * Write visual property of node.
-	 * @param node
-	 * @param vp
-	 * @param value
-	 */
-	public void writeVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
-	
-	/**
-	 * Write visual property of node.
-	 * @param node
-	 * @param vp
-	 * @param value
-	 */
-	public void writeVisualProperty(CyNode node, VisualProperty<Double> vp, double value);
-	
-	/**
-	 * Write locked visual property of node.
-	 * @param node
-	 * @param vp
-	 * @param value
-	 */
-	public void writeLockedVisualProperty(CyNode node, VisualProperty<Integer> vp, int value);
-	
-	/**
-	 * Write locked visual property of node.
-	 * @param node
-	 * @param vp
-	 * @param value
-	 */
-	public void writeLockedVisualProperty(CyNode node, VisualProperty<Double> vp, double value);
-
-	/**
-	 * Read visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @return visual property
-	 */
-	public int readVisualProperty(CyEdge edge, VisualProperty<Integer> vp);
-	
-	/**
-	 * Read visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @return visual property
-	 */
-	public double readVisualProperty(CyEdge edge, VisualProperty<Double> vp);
-	
-	/**
-	 * Write visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @param value
-	 */
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
-	
-	/**
-	 * Write visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @param value
-	 */
-	public void writeVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value);
-	
-	/**
-	 * Write locked visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @param value
-	 */
-	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Integer> vp, int value);
-	
-	/**
-	 * Write locked visual property of edge.
-	 * @param edge
-	 * @param vp
-	 * @param value
-	 */
-	public void writeLockedVisualProperty(CyEdge edge, VisualProperty<Double> vp, double value);
 	
 	/**
 	 * Search overlapping intervals for graphs given an interval that changed
@@ -174,12 +78,6 @@ public interface DynNetworkView<T>
 	 * @return list of changed overlapping intervals
 	 */
 	public List<DynInterval<T>> searchChangedEdgesAttr(DynInterval<T> interval);
-	
-	/**
-	 * Initialize transparency values.
-	 * @param visibility
-	 */
-	public void initTransparency(int visibility);
 	
 	/**
 	 * Get network view.
@@ -227,4 +125,33 @@ public interface DynNetworkView<T>
 	 * @return
 	 */
 	public int getVisibleEdges();
+	
+	/**
+	 * Get node dummy value
+	 * @param node
+	 * @return node dummy value
+	 */
+	public int getNodeDummyValue(CyNode node);
+	
+	/**
+	 * Get edge dummy value
+	 * @param edge
+	 * @return edge dummy value
+	 */
+	public int getEdgeDummyValue(CyEdge edge);
+	
+	/**
+	 * Set node dummy value
+	 * @param node
+	 * @param value
+	 */
+	public void setNodeDummyValue(CyNode node, int value);
+	
+	/**
+	 * Set edge dummy value
+	 * @param edge
+	 * @param value
+	 */
+	public void setEdgeDummyValue(CyEdge edge, int value);
+	
 }

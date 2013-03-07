@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
  * <code> AttributeTypeMap </code> used to convert string attribute types into the 
@@ -95,35 +96,35 @@ public final class AttributeTypeMap
             case PAINT:
             	if (value != null) return decodeHEXColor(value);
             case RECTANGLE:
-            	return NodeShapeVisualProperty.RECTANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
             case RECT:
-            	return NodeShapeVisualProperty.RECTANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
             case BOX:
-            	return NodeShapeVisualProperty.RECTANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
             case ROUND_RECTANGLE:
-            	return NodeShapeVisualProperty.ROUND_RECTANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.ROUND_RECTANGLE;
             case ROUND_RECT:
-            	return NodeShapeVisualProperty.ROUND_RECTANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.ROUND_RECTANGLE;
             case TRIANGLE:
-            	return NodeShapeVisualProperty.TRIANGLE;
+            	return (NodeShape) NodeShapeVisualProperty.TRIANGLE;
             case PARALLELOGRAM:
-            	return NodeShapeVisualProperty.PARALLELOGRAM;
+            	return (NodeShape) NodeShapeVisualProperty.PARALLELOGRAM;
             case RHOMBUS:
-            	return NodeShapeVisualProperty.PARALLELOGRAM;
+            	return (NodeShape) NodeShapeVisualProperty.PARALLELOGRAM;
             case DIAMOND:
-            	return NodeShapeVisualProperty.DIAMOND;
+            	return (NodeShape) NodeShapeVisualProperty.DIAMOND;
             case ELLIPSE:
-            	return NodeShapeVisualProperty.ELLIPSE;
+            	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
             case VER_ELLIPSE:
-            	return NodeShapeVisualProperty.ELLIPSE;
+            	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
             case HOR_ELLIPSE:
-            	return NodeShapeVisualProperty.ELLIPSE;
+            	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
             case CIRCLE:
-            	return NodeShapeVisualProperty.ELLIPSE;
+            	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
             case HEXAGON:
-            	return NodeShapeVisualProperty.HEXAGON;
+            	return (NodeShape) NodeShapeVisualProperty.HEXAGON;
             case OCTAGON:
-            	return NodeShapeVisualProperty.OCTAGON;
+            	return (NodeShape) NodeShapeVisualProperty.OCTAGON;
         }
 
         return null;

@@ -22,11 +22,16 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.layout.DynLayout;
+import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMap;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
@@ -38,163 +43,145 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  */
 public class Transformator<T> extends AbstractTransformator<T>
 {
-	private double alpha;
-    private int iterations;
-    private int delay;
-	
-	private double timeStart;
-	private double timeEnd;
+	private final DynLayoutManager<T> layoutManager;
+	private final DynVizMapManager<T> vizMapManager;
 	
 	private int onCounter;
 	private int offCounter;
-
-	/**
-	 * <code> Transformator </code> constructor.
-	 */
-	public Transformator() 
-	{
-
-	}
+	
+	private VisualProperty<T> node_x_pos = (VisualProperty<T>) BasicVisualLexicon.NODE_X_LOCATION;
+	private VisualProperty<T> node_y_pos = (VisualProperty<T>) BasicVisualLexicon.NODE_Y_LOCATION;
 	
 	/**
-	 * Run transformation on given interval lists.
-	 * @param interval list changedNodes
-	 * @param interval list changedEdges
-	 * @param interval list changedNodePositions
+	 * <code> Transformator </code> constructor.
+	 * @param layoutManager
+	 * @param vizMapManager
 	 */
-	public void run(
-			final DynNetwork<T> dynNetwork,
-			final DynNetworkView<T> view,
-			final DynInterval<T> timeInterval,
-			final int visibility,
-			final int smoothness,
-			final double deltat)
+	public Transformator(
+			final DynLayoutManager<T> layoutManager,
+			final DynVizMapManager<T> vizMapManager) 
 	{
-		setSmoothness(smoothness,deltat);
-		
-		this.onCounter = 255;
-		this.offCounter = visibility;
-		
-		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
-		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
-		
-		for (int i=0;i<iterations;i++)
-		{
-			timeStart = System.currentTimeMillis();
-			
-			if (i<iterations-1)
-			{
-				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
-				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
-			}
-			else
-			{
-				onCounter = visibility;
-				offCounter = 255;
-			}
-
-			for (DynInterval<T> interval : nodes)
-				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getNode(interval),offCounter);
-				else
-					updateTransparency(view, dynNetwork.getNode(interval),onCounter);
-
-			for (DynInterval<T> interval : edges)
-				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getEdge(interval),offCounter);
-				else
-					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
-
-			timeEnd = System.currentTimeMillis();
-			if (writerFactory==null && round(timeEnd-timeStart)<delay)
-			{
-				try {
-					Thread.sleep(delay-round(timeEnd-timeStart));
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			view.updateView();
-			if (writerFactory!=null)
-			{
-				if (i==0)
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
-			}
-		}
+		this.layoutManager = layoutManager;
+		this.vizMapManager = vizMapManager;
 	}
 
 	/**
 	 * Run transformation on given interval lists.
-	 * @param interval list changedNodes
-	 * @param interval list changedEdges
-	 * @param interval list changedNodePositions
+	 * @param dynNetwork
+	 * @param view
+	 * @param timeInterval
+	 * @param visibility
+	 * @param smoothness
+	 * @param deltat
 	 */
-	@SuppressWarnings("unchecked")
 	public void run(
 			final DynNetwork<T> dynNetwork,
 			final DynNetworkView<T> view,
 			final DynInterval<T> timeInterval,
-			final DynLayout layout,
 			final int visibility,
 			final int smoothness,
 			final double deltat)
 	{	
 		setSmoothness(smoothness,deltat);
-		
+
 		this.onCounter = 255;
 		this.offCounter = visibility;
-		
+
 		List<DynInterval<T>> nodes = view.searchChangedNodes(timeInterval);
 		List<DynInterval<T>> edges = view.searchChangedEdges(timeInterval);
+
+		DynLayout<T> layout = layoutManager.getDynLayout(view.getNetworkView());
 		List<DynInterval<T>> nodesPosX = layout.searchChangedNodePositionsX(timeInterval);
 		List<DynInterval<T>> nodesPosY = layout.searchChangedNodePositionsY(timeInterval);
-		
+
+		DynVizMap<T> vizMap = vizMapManager.getDynVizMap(view.getNetworkView());
+		List<DynInterval<T>> graphVizMap = vizMap.searchChangedGraphGraphics(timeInterval);
+		List<DynInterval<T>> nodesVizMap = vizMap.searchChangedNodeGraphics(timeInterval);
+		List<DynInterval<T>> edgesVizMap = vizMap.searchChangedEdgeGraphics(timeInterval);
+		List<DynInterval<T>> nodesTrasnparencyVizMap = vizMap.searchChangedNodeTransparencyGraphics(timeInterval);
+		List<DynInterval<T>> edgesTrasnparencyVizMap = vizMap.searchChangedEdgeTransparencyGraphics(timeInterval);
+
 		for (int i=0;i<iterations;i++)
 		{
-			timeStart = System.currentTimeMillis();
 			
+			timeStart = System.currentTimeMillis();
+
 			if (i<iterations-1)
 			{
+
+				// Set transparency
 				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
 				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+				updateNodeTransparency(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparency(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,offCounter,onCounter);
+				updateEdgeTransparency(dynNetwork,view,edges,offCounter,onCounter);
+
+				// Set other graphical attributes
+				for (DynInterval<T> interval : nodesPosX)
+					if (interval.isOn())
+						updateVisualProperty(view,dynNetwork.getNode(interval),node_x_pos,interval);
+
+				for (DynInterval<T> interval : nodesPosY)
+					if (interval.isOn())
+						updateVisualProperty(view,dynNetwork.getNode(interval),node_y_pos,interval);
+
+				for (DynInterval<T> interval : graphVizMap)
+					if (interval.isOn())
+						updateVisualProperty(view,vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+				for (DynInterval<T> interval : nodesVizMap)
+					if (interval.isOn())
+						updateVisualProperty(view,dynNetwork.getNode(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+				for (DynInterval<T> interval : edgesVizMap)
+					if (interval.isOn())
+						updateVisualProperty(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+
 			}
 			else
 			{
-				onCounter = visibility;
-				offCounter = 255;
+				// Set transparency
+				updateNodeTransparencyFinal(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparencyFinal(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,255,visibility);
+				updateEdgeTransparency(dynNetwork,view,edges,255,visibility);
+
+				// Set other graphical attributes
+				for (DynInterval<T> interval : nodesPosX)
+					if (interval.isOn())
+						updateVisualPropertyFinal(view,dynNetwork.getNode(interval),node_x_pos,interval);
+
+				for (DynInterval<T> interval : nodesPosY)
+					if (interval.isOn())
+						updateVisualPropertyFinal(view,dynNetwork.getNode(interval),node_y_pos,interval);
+
+				for (DynInterval<T> interval : graphVizMap)
+					if (interval.isOn())
+						updateVisualPropertyFinal(view,vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+				for (DynInterval<T> interval : nodesVizMap)
+					if (interval.isOn())
+						updateVisualPropertyFinal(view,dynNetwork.getNode(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+				for (DynInterval<T> interval : edgesVizMap)
+					if (interval.isOn())
+						updateVisualPropertyFinal(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
 			}
 
-			for (DynInterval<T> interval : nodes)
-				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getNode(interval),offCounter);
-				else
-					updateTransparency(view, dynNetwork.getNode(interval),onCounter);
-
-			for (DynInterval<T> interval : edges)
-				if (interval.isOn())
-					updateTransparency(view, dynNetwork.getEdge(interval),offCounter);
-				else
-					updateTransparency(view, dynNetwork.getEdge(interval),onCounter);
+			view.updateView();
+			synchronized(signal) 
+			{
+				while(shouldWait)
+				{
+					try {
+						signal.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}  
+				}
+			}
 			
-			for (DynInterval<T> interval : nodesPosX)
-				if (!interval.isOn() && interval.getOffValue()!=null)
-					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
-				else if (interval.isOn())
-					updatePositionX(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
-
-			for (DynInterval<T> interval : nodesPosY)
-				if (!interval.isOn() && interval.getOffValue()!=null)
-					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOffValue());
-				else if (interval.isOn())
-					updatePositionY(view,dynNetwork.getNode(interval),interval.getAttribute().getColumn(),(Double)interval.getOnValue());
-
 			timeEnd = System.currentTimeMillis();
 			if (writerFactory==null && round(timeEnd-timeStart)<delay)
 			{
@@ -204,98 +191,45 @@ public class Transformator<T> extends AbstractTransformator<T>
 					e.printStackTrace();
 				}
 			}
-
-			view.updateView();
-			if (writerFactory!=null)
-			{
-				if (i==0)
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
-			}
-		}
-	}
-
-	private final void updateTransparency(final DynNetworkView<T> view, final CyNode node, final int value)
-	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,value);
-		}
-	}
-	
-	private final void updateTransparency(final DynNetworkView<T> view, final CyEdge edge, final int value)
-	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,value);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,value);
-		}
-	}
-
-	private final void updatePositionX(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
-	{
-		if (node!=null)
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, 
-					(1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION)+alpha*value);
-	}
-	
-	private final void updatePositionY(final DynNetworkView<T> view, final CyNode node, final String attr, final double value)
-	{
-		if (node!=null)
-			view.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, 
-					(1-alpha)*view.readVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION)+alpha*value);
-	}
-	
-	private void setSmoothness(int smoothness, double deltat)
-	{
-		if (smoothness==0)
-		{
-			this.iterations = 1;
-			this.delay = 0;
-			this.alpha = 1;
-		}
-		else
-		{
-			this.iterations = (int) (smoothness*25/1000);
-			this.delay = (int) (smoothness/iterations);
 			
-			switch(smoothness)
-			{
-			case 250:
-				this.alpha = 0.35;
-				break;
-			case 500:
-				this.alpha = 0.2;
-				break;
-			case 750:
-				this.alpha = 0.15;
-				break;
-			case 1000:
-				this.alpha = 0.10;
-				break;
-			case 2000:
-				this.alpha = 0.05;
-				break;
-			case 3000:
-				this.alpha = 0.03;
-				break;
-			case 4000:
-				this.alpha = 0.025;
-				break;
-			}
+			if (writerFactory!=null)
+				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
+			
+			
 		}
 	}
-	
-	private int round(double value)
+
+	/**
+	 * Initialize visualization.
+	 * @param view
+	 * @param visibility
+	 * @param timeInterval
+	 */
+	public void initialize(
+			final DynNetworkView<T> view,
+			final DynInterval<T> timeInterval,
+			final int visibility)
 	{
-		return (int) value;
+		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
+		{
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
+
+			// TODO: clean. this is a quick fix for a bug in node_label_transparency (core Cytoscape code)
+			if (visibility==0)
+				nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+		}
+
+		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
+		{
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
+			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+		}
+		
+		layoutManager.getDynLayout(view.getNetworkView()).initNodePositions(timeInterval);
+		view.getNetworkView().fitContent();
 	}
+
+
 
 }

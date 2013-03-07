@@ -56,6 +56,7 @@ import org.cytoscape.dyn.internal.io.write.graphics.PNGWriterFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.task.BlockingQueue;
@@ -64,6 +65,7 @@ import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.dyn.internal.view.task.Transformator;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapManager;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.work.TaskIterator;
@@ -88,7 +90,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 	private final BlockingQueue queue;
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> viewManager;
-	private final DynLayoutManager<T> layoutManager;
 	private final Transformator<T> transformator;
 	private final FileUtil fileUtil;
 	
@@ -131,6 +132,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 	 * @param appManager
 	 * @param viewManager
 	 * @param layoutManager
+	 * @param vizMapManager
 	 * @param continousFactory
 	 * @param discreteFactory
 	 * @param passthroughFactory
@@ -141,14 +143,15 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			final CyApplicationManager appManager,
 			final DynNetworkViewManager<T> viewManager,
 			final DynLayoutManager<T> layoutManager,
+			final DynVizMapManager<T> vizMapManager,
+			final Transformator<T> transformator,
 			final FileUtil fileUtil)
 	{
 		this.desktopApp = desktopApp;
 		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
-		this.layoutManager = layoutManager;
-		this.transformator = new Transformator<T>();
+		this.transformator = transformator;
 		this.fileUtil = fileUtil;
 		
 		this.queue = new BlockingQueue();
@@ -181,10 +184,10 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			JButton source = (JButton)event.getSource();
 			if (source.equals(forwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, slider, +1)).start();
+						this, view,transformator, queue, slider, +1)).start();
 			else if (source.equals(backwardButton))
 				new Thread(recursiveTask = new DynNetworkViewTaskIterator<T,C>(
-						this, view, layoutManager.getDynLayout(view.getNetworkView()), transformator, queue, slider, -1)).start();
+						this, view,transformator, queue, slider, -1)).start();
 			else if (source.equals(vizmapButton))
 				taskManager.execute(new TaskIterator(1, new DynVizmapTask<T>(
 						view,view.getCurrentVisualStyle(), queue)));
@@ -278,6 +281,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 		}
 	}
 		
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initView() 
 	{
@@ -285,16 +289,11 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 		if (view!=null)
 		{
 			network = view.getNetwork();
-			view.initTransparency(visibility);
 			updateGui(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
+			transformator.initialize(view, (DynInterval<T>) new DynIntervalDouble(time,time),visibility);
+			this.smoothness = 0;
 			updateView();
-			
-			if (layoutManager.getDynLayout(view.getNetworkView())!=null)
-			{
-				layoutManager.getDynLayout(view.getNetworkView()).initNodePositions(new DynInterval<T>(time,time));
-				view.getNetworkView().fitContent();
-				view.getNetworkView().updateView();
-			}
+			this.smoothness = ((NameIDObj)smoothnessComboBox.getSelectedItem()).id;
 		}
 		
 	}
@@ -317,13 +316,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 		return this.time;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public DynInterval<T> getTimeInterval() 
 	{
 		if (time>=maxTime)
-			return new DynInterval<T>(time-0.0000001, time-0.0000001);
+			return (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time-0.0000001);
 		else
-			return new DynInterval<T>(time, time);
+			return (DynInterval<T>) new DynIntervalDouble(time, time);
 	}
 	
 	@Override
@@ -478,7 +478,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 				new NameIDObj(3000,"3000 ms "),
 				new NameIDObj(4000,"4000 ms ")};
 		smoothnessComboBox  = new JComboBox(itemsSmoothness);
-		smoothnessComboBox.setSelectedIndex(2);
+		smoothnessComboBox.setSelectedIndex(5);
 		smoothnessComboBox.addActionListener(this);
 		this.smoothness = ((NameIDObj)smoothnessComboBox.getSelectedItem()).id;
 
@@ -498,6 +498,9 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 		featurePanel.add(vizmapButton);
 		featurePanel.add(new JLabel("Node/edge visibility "));
 		featurePanel.add(seeAllCheck);
+		
+		// TODO: remove this after fixing bugs in the visualization
+		seeAllCheck.setEnabled(false);
 		
 		formatter2 = new DecimalFormat("#0");
 		nodeNumber = new JLabel    ("Current nodes = ");
@@ -561,7 +564,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 		if (singleTask!=null)
 			singleTask.cancel();
 		
-		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,layoutManager.getDynLayout(view.getNetworkView()),transformator,queue)).start();
+		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,transformator,queue)).start();
 	}
 	
 	private void updateTransparency()
@@ -602,7 +605,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 	private List<FileChooserFilter> getFilters()
 	{
 		List<FileChooserFilter> filters = new ArrayList<FileChooserFilter>();
-//		filters.add(new FileChooserFilter("SVG Image", "svg"));
     	filters.add(new FileChooserFilter("PNG Image", "png"));
     	return filters;
 	}

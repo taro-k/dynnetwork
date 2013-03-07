@@ -47,9 +47,8 @@ public interface DynLayoutManager<T>
 	public void addDynContext(DynLayout<T> dynLayout, Object context);
 
 	/**
-	 * Get network view.
-	 * @param network
-	 * @return network
+	 * Get layout associated with the given view.
+	 * @param view
 	 */
 	public DynLayout<T> getDynLayout(CyNetworkView view);
 	
@@ -65,10 +64,11 @@ public interface DynLayoutManager<T>
 	 * @param view
 	 */
 	public void removeDynLayout(CyNetworkView view);
+	
 	/**
 	 * Get all dynLayouts.
-	 * @return networks
+	 * @return dynLayouts
 	 */
-	public Collection<DynLayout<T>> getDynNetworks();
+	public Collection<DynLayout<T>> getDynLayouts();
 	
 }

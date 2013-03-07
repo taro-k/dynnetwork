@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.view.task;
 import org.cytoscape.dyn.internal.layout.DynLayout;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 
@@ -53,11 +54,10 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 	public DynNetworkViewTask(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout<T> layout,
 			final Transformator<T> transformator,
 			final BlockingQueue queue) 
 	{
-		super(panel, view, layout, transformator, queue);
+		super(panel, view, transformator, queue);
 	}
 
 	@Override
@@ -73,25 +73,15 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		}
 		
 		setParameters();
-		
-		// update graph attributes
-		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
-			updateAttr(interval);
-		
-		// update node attributes
-		for (DynInterval<T> interval : view.searchChangedNodesAttr(timeInterval))
-			updateAttr(dynNetwork.getNode(interval),interval);
 
-		// update edge attributes
-		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
-			updateAttr(dynNetwork.getEdge(interval),interval);
-		
+		// update attributes
+		updateGraphAttr(view.searchChangedGraphsAttr(timeInterval));
+		updateNodeAttr(view.searchChangedNodesAttr(timeInterval));
+		updateEdgeAttr(view.searchChangedEdgesAttr(timeInterval));
+
 		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness,deltat);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness,deltat);
-		
+		transformator.run(dynNetwork,view,timeInterval,visibility,smoothness,deltat);
+
 		panel.setNodes(view.getVisibleNodes());
 		panel.setEdges(view.getVisibleEdges());
 		
@@ -100,14 +90,14 @@ public final class DynNetworkViewTask<T,C> extends AbstractDynNetworkViewTask<T,
 		queue.unlock(); 
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setParameters()
 	{
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
-//			timeInterval = new DynInterval<T>(time, time+0.0000001);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time-0.0000001);
 		else
-			timeInterval = new DynInterval<T>(time, time);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time, time);
 		
 		this.visibility = this.panel.getVisibility();
 		this.smoothness = this.panel.getSmoothness();

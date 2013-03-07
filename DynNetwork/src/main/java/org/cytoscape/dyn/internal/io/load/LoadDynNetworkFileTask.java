@@ -75,20 +75,20 @@ public final class LoadDynNetworkFileTask extends AbstractLoadDynNetworkTask
 		
 		if (file == null)
 			throw new NullPointerException("No file specified!");
-		
-		InputStream stream = streamUtil.getInputStream(file.toURI().toURL());
-		if (!stream.markSupported())
-			stream = new BufferedInputStream(stream);
 
-		reader = (DynNetworkReader) factory.createTaskIterator(stream, file.getName()).next();
+			InputStream stream = streamUtil.getInputStream(file.toURI().toURL());
+			if (!stream.markSupported())
+				stream = new BufferedInputStream(stream);
 
-		if (cancelled)
-			return;
+			reader = (DynNetworkReader) factory.createTaskIterator(stream, file.getName()).next();
 
-		if (factory == null)
-			throw new NullPointerException("Failed to find appropriate reader for file: " + file);
-		
-		insertTasksAfterCurrentTask(reader);
+			if (cancelled)
+				return;
+
+			if (factory == null)
+				throw new NullPointerException("Failed to find appropriate reader for file: " + file);
+
+			insertTasksAfterCurrentTask(reader);
 	}
 	
 }

@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.view.task;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
@@ -55,7 +56,7 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 			final DynNetworkView<T> view,
 			final BlockingQueue queue) 
 	{
-		super(panel, view, null, null, queue);
+		super(panel, view, null, queue);
 	}
 
 	@Override
@@ -82,31 +83,26 @@ public final class DynNetworkViewTransparencyTask<T,C> extends AbstractDynNetwor
 	
 	private void setTransparency(CyNode node, int visibility)
 	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
-		}
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
 	}
 
 	private void setTransparency(CyEdge edge, int visibility)
 	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
-		}
+		view.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+		view.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setParameters()
 	{
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time-0.0000001);
 //			timeInterval = new DynInterval<T>(time, time+0.0000001);
 		else
-			timeInterval = new DynInterval<T>(time, time);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time, time);
 		
 		this.visibility = this.panel.getVisibility();
 	}

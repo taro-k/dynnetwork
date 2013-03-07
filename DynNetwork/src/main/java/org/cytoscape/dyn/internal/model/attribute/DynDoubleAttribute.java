@@ -33,11 +33,10 @@ public class DynDoubleAttribute extends AbstractDynAttribute<Double>
 {
 	/**
 	 * <code> DynDoubleAttribute </code> constructor.
-	 * @param type
 	 */
-	public DynDoubleAttribute(Class<Double> type)
+	public DynDoubleAttribute()
 	{
-		super(type);
+		super(Double.class);
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public class DynDoubleAttribute extends AbstractDynAttribute<Double>
 	 */
 	public DynDoubleAttribute(DynInterval<Double> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(Double.class,interval,key);
 	}
 	
 	@Override

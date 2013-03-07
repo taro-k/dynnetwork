@@ -22,18 +22,18 @@ package org.cytoscape.dyn.internal.model;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
+import org.cytoscape.dyn.internal.model.tree.AbstractDynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynIntervalTree;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyIdentifiable;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.view.model.VisualProperty;
 
 /**
  * <code> DynNetwork </code> is an the interface to the object that represents a dynamic network
  * composed of {@link CyNode}s, connecting {@link CyEdge}s, attributes, and
- * the respective time intervals {@link DynInterval}s. It provides the link 
+ * the respective time intervals {@link AbstractDynInterval}s. It provides the link 
  * to the current static {@link CyNewtork}. In addition it maintains the
  * information about dynamic attributes {@link DynAttribute} in form of a
  * {@link DynIntervalTree}. 
@@ -65,152 +65,6 @@ public interface DynNetwork<T>
 	 * @param interval
 	 */
 	public void insertEdge(CyEdge ede, String column, DynInterval<T> interval);
-	
-	/**
-	 * Insert graph attribute.
-	 * @param column
-	 * @param interval
-	 * @param visual property
-	 */
-	public void insertGraphAttr(String column, DynInterval<T> interval, VisualProperty<T> vp);
-	
-	/**
-	 * Insert node attribute.
-	 * @param node
-	 * @param column
-	 * @param interval
-	 * @param visual property
-	 */
-	public void insertNodeAttr(CyNode node, String column, DynInterval<T> interval, VisualProperty<T> vp);
-	
-	/**
-	 * Insert edge attribute.
-	 * @param ede
-	 * @param column
-	 * @param interval
-	 * @param visual property
-	 */
-	public void insertEdgeAttr(CyEdge ede, String column, DynInterval<T> interval, VisualProperty<T> vp);
-	
-//	/**
-//	 * Insert graph graphics attributes.
-//	 * @param dynNetwork
-//	 * @param column
-//	 * @param interval
-//	 */
-//	public void insertGraphGraphics(DynNetwork<T> dynNetwork, DynInterval<T> interval);
-//	
-//	/**
-//	 * Insert node graphics attributes.
-//	 * @param dynNetwork
-//	 * @param node
-//	 * @param column
-//	 * @param interval
-//	 */
-//	public void insertNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String node, DynInterval<T> interval);
-//	
-//	/**
-//	 * Insert edge graphics attributes.
-//	 * @param dynNetwork
-//	 * @param edge
-//	 * @param column
-//	 * @param interval
-//	 */
-//	public void insertEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String edge, DynInterval<T> interval);
-	
-	/**
-	 * Remove graph.
-	 */
-	public void removeAllIntervals();
-	
-	/**
-	 * Remove node.
-	 * @param node
-	 */
-	public void removeNode(CyNode node);
-	
-	/**
-	 * Remove edge.
-	 * @param edge
-	 */
-	public void removeEdge(CyEdge edge);
-	
-	/**
-	 * Remove graph attribute.
-	 */
-	public void removeGraphAttr();
-	
-	/**
-	 * Remove node attribute.
-	 * @param node
-	 */
-	public void removeNodeAttr(CyNode node);
-	
-	/**
-	 * Remove edge attribute.
-	 * @param edge
-	 */
-	public void removeEdgeAttr(CyEdge edge);
-	
-	/**
-	 * Get all graph intervals (without attribute intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getGraphIntervals();
-	
-	/**
-	 * Get all node intervals (without attribute intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getNodesIntervals();
-	
-	/**
-	 * Get all edge intervals (without attribute intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getEdgesIntervals();
-	
-	/**
-	 * Get all graph attributes intervals (without graph intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getGraphAttrIntervals();
-	
-	/**
-	 * Get all node attributes intervals (without node intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getNodesAttrIntervals();
-	
-	/**
-	 * Get all edge attributes intervals (without edge intervals).
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getEdgesAttrIntervals();
-	
-	/**
-	 * Get all intervals belonging to the network (with attribute intervals). 
-	 * If the network is not contained in this DynNetwork, a empty list id returned. 
-	 * @param net
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getIntervals(CyNetwork net);
-
-	/**
-	 * Get all intervals belonging to this node (with attribute intervals). 
-	 * If the node is not contained in this DynNetwork, a empty list id returned.
-	 * @param node
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getIntervals(CyNode node);
-
-	/**
-	 * Get all intervals belonging to this edge (with attribute intervals). 
-	 * If the edge is not contained in this DynNetwork, a empty list id returned.
-	 * @param edge
-	 * @return interval list
-	 */
-	public List<DynInterval<T>> getIntervals(CyEdge edge);
 	
 	/**
 	 * Search overlapping intervals for nodes given an interval.
@@ -248,29 +102,11 @@ public interface DynNetwork<T>
 	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval);
 	
 	/**
-	 * Search overlapping intervals for graph attributes given an interval
-	 * filtered by the given attribute name
-	 * @param interval
-	 * @param attName
-	 * @return list of overlapping intervals
-	 */
-	public List<DynInterval<T>> searchGraphsAttr(DynInterval<T> interval, String attName);
-	
-	/**
 	 * Search overlapping intervals for node attributes given an interval.
 	 * @param interval
 	 * @return list of overlapping intervals
 	 */
 	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval);
-	
-	/**
-	 * Search overlapping intervals for node attributes given an interval
-	 * filtered by the given attribute name
-	 * @param interval
-	 * @param attName
-	 * @return list of overlapping intervals
-	 */
-	public List<DynInterval<T>> searchNodesAttr(DynInterval<T> interval, String attName);
 	
 	/**
 	 * Search overlapping intervals for edge attributes given an interval.
@@ -315,6 +151,24 @@ public interface DynNetwork<T>
 	 * @return list of invisible edges
 	 */
 	public List<CyEdge> getVisibleEdgeNotList(DynInterval<T> interval);
+	
+    /**
+     * Get graph attribute list
+     * @return graph attribute list
+     */
+    public List<String> getGraphAttributes();
+   
+    /**
+     * Get node attribute list
+     * @return node attribute list
+     */
+    public List<String> getNodeAttributes();
+
+    /**
+     * Get edge attribute list
+     * @return edge attribute list
+     */
+    public List<String> getEdgeAttributes();
 
 	/**
 	 * Get a list of times at which events occur.
@@ -434,73 +288,6 @@ public interface DynNetwork<T>
 	 * @param value
 	 */
 	public void setCyEdge(String id, long value);
-	
-	/**
-	 * Write to graph table.
-	 * @param name
-	 * @param value
-	 */
-	public void writeGraphTable(String name, T value);
-	
-	/**
-	 * Read graph table.
-	 * @param name
-	 * @param value
-	 * @return value
-	 */
-	public T readGraphTable(String name, T value);
-	
-	/**
-	 * Write to node table.
-	 * @param node
-	 * @param name
-	 * @param value
-	 */
-	public void writeNodeTable(CyNode node, String name, T value);
-	
-	/**
-	 * Read node table.
-	 * @param node
-	 * @param name
-	 * @param value
-	 * @return value
-	 */
-	public T readNodeTable(CyNode node, String name, T value);
-	
-	/**
-	 * Write to edge table.
-	 * @param edge
-	 * @param name
-	 * @param value
-	 */
-	public void writeEdgeTable(CyEdge edge, String name, T value);
-	
-	/**
-	 * Read edge table.
-	 * @param edge
-	 * @param name
-	 * @param value
-	 * @return value
-	 */
-	public T readEdgeTable(CyEdge edge, String name, T value);
-	
-	/**
-	 * Get a list of double attributes for this network.
-	 * @return double attribute map
-	 */
-	public List<String>  getGraphAttributes() ;
-	
-	/**
-	 * Get a list of double attributes for nodes.
-	 * @return double attribute map
-	 */
-	public List<String>  getNodeAttributes();
-	
-	/**
-	 * Get a list of double attributes for edges.
-	 * @return double attribute list
-	 */
-	public List<String>  getEdgeAttributes();
 	
 	/**
 	 * Finalize network. We perform here all operations that require the network construction

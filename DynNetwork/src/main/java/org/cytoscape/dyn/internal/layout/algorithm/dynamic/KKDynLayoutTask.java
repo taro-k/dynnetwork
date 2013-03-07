@@ -30,6 +30,7 @@ import org.cytoscape.dyn.internal.layout.algorithm.standard.distance.UnweightedS
 import org.cytoscape.dyn.internal.model.snapshot.DynNetworkSnapshot;
 import org.cytoscape.dyn.internal.model.snapshot.DynNetworkSnapshotImpl;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.layout.AbstractLayoutTask;
@@ -96,6 +97,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
             this.timeInterval = timeInterval;
     }
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doLayout(TaskMonitor taskMonitor)
 	{	
@@ -107,7 +109,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 			
 			//int size = (int) (4*50*Math.sqrt(nodesToLayOut.size()));
 
-			int size = (int) (2*dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NODE_SIZE)*Math.sqrt(nodesToLayOut.size()));
+			int size = (int) (dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NODE_SIZE)*Math.sqrt(nodesToLayOut.size()));
 			//int size =(int) dynView.getCurrentVisualStyle().getDefaultValue(BasicVisualLexicon.NETWORK_HEIGHT).floatValue();
 			
 			snap = new DynNetworkSnapshotImpl<T>(dynView,context.m_attribute_name);
@@ -126,7 +128,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 				t0 = events.get(Math.max(0,t-context.m_past_events));
 				t1 = events.get(Math.min(events.size()-1,t+1+context.m_future_events));
 
-				snap.setInterval(new DynInterval<T>(t0,t1),t,1000,1000);
+				snap.setInterval((DynInterval<T>) new DynIntervalDouble(t0,t1),t,1000,1000);
 				if (!context.m_attribute_name.equals("none"))
 					kklayout.setDistance(new DijkstraShortestPath<T>(snap,snap.getWeightMap(),100));
 				else
@@ -134,7 +136,7 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 				
 				kklayout.initialize();
 				kklayout.run();
-				updateGraph(new DynInterval<T>(events.get(t),events.get(t+1)));
+				updateGraph((DynInterval<T>) new DynIntervalDouble(events.get(t),events.get(t+1)));
 				kklayout.setMaxIterations((int) (context.m_iteration_rate*(events.get(t+1)-events.get(t))));
 				
 				if (t%10==0)
@@ -161,33 +163,32 @@ public final class KKDynLayoutTask<T> extends AbstractLayoutTask
 		double total = dynView.getNetworkView().getModel().getNodeList().size();
 		for (CyNode node : dynView.getNetworkView().getModel().getNodeList())
 		{
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (size/2)*Math.cos(angle)+size/2);
-			dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (size/2)*Math.sin(angle)+size/2);
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION,(size/2)*Math.cos(angle)+size/2);
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION,(size/2)*Math.sin(angle)+size/2);
 			angle = angle + 2*Math.PI/total;
 		}
 		
 		for (DynInterval<T> i : layout.getIntervalsX())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
-			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION,(Double) i.getOnValue());
 		}
 			
 		for (DynInterval<T> i : layout.getIntervalsY())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
-			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
+			dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION,(Double) i.getOnValue());
 		}	
 			
 	}
 
+	@SuppressWarnings("unchecked")
 	private void updateGraph(DynInterval<T> interval)
 	{
 		for (CyNode node : kklayout.getGraph().getNodes())
 		{
-			layout.insertNodePositionX(node, new DynInterval<T>(kklayout.getX(node),interval.getStart(),interval.getEnd()));
-			layout.insertNodePositionY(node, new DynInterval<T>(kklayout.getY(node),interval.getStart(),interval.getEnd()));
+			layout.insertNodePositionX(node, (DynInterval<T>) new DynIntervalDouble(kklayout.getX(node),interval.getStart(),interval.getEnd()));
+			layout.insertNodePositionY(node, (DynInterval<T>) new DynIntervalDouble(kklayout.getY(node),interval.getStart(),interval.getEnd()));
 		}
 	}
 

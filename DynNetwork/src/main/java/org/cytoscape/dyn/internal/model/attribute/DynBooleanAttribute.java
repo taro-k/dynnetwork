@@ -33,11 +33,10 @@ public class DynBooleanAttribute extends AbstractDynAttribute<Boolean>
 {
 	/**
 	 * <code> DynBooleanAttribute </code> constructor.
-	 * @param type
 	 */
-	public DynBooleanAttribute(Class<Boolean> type)
+	public DynBooleanAttribute()
 	{
-		super(type);
+		super(Boolean.class);
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public class DynBooleanAttribute extends AbstractDynAttribute<Boolean>
 	 */
 	public DynBooleanAttribute(DynInterval<Boolean> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(Boolean.class,interval,key);
 	}
 	
 	@Override

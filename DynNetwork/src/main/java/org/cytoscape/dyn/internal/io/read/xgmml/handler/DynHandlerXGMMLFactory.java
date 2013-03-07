@@ -28,7 +28,6 @@ import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NET_GRAPHIC
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_ATT;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_DYNAMICS;
-import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_GRAPH;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NODE_GRAPHICS;
 import static org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState.NONE;
 
@@ -39,6 +38,7 @@ import org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState;
 import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -64,9 +64,9 @@ public final class DynHandlerXGMMLFactory<T>
 	 * @param viewSink
 	 * @param layoutSink
 	 */
-	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink)
+	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink)
 	{
-		handler = new DynHandlerXGMML<T>(networkSink,viewSink,layoutSink);
+		handler = new DynHandlerXGMML<T>(networkSink,viewSink,layoutSink, vizMapSink);
 		startParseMap = new HashMap<ParseDynState, Map<String, ParseDynState>>();
 		buildMap(createStartParseTable(), startParseMap);
 	}
@@ -114,17 +114,10 @@ public final class DynHandlerXGMMLFactory<T>
 				{ GRAPH, "graphics", NET_GRAPHICS, null },
 				{ NET_GRAPHICS, "att", NET_GRAPHICS, null },
 				
-				// Handle subgraphs
-				{ NODE_ATT, "graph", NODE_GRAPH, null },
-				{ NODE_GRAPH, "att", NET_ATT, null },
-				{ NODE_GRAPH, "node", NODE, null },
-				{ NODE_GRAPH, "edge", EDGE, null },
-				{ NODE_GRAPH, "graphics", NET_GRAPHICS, null },
-				
 				// Handle nodes
 				{ NODE, "att", NODE_ATT, null },
 				{ NODE, "graphics", NODE_GRAPHICS, null },
-				{ NODE, "dynamics", NODE_DYNAMICS, null },
+				{ NODE, "layout", NODE_DYNAMICS, null },
 				{ NODE_GRAPHICS, "att", NODE_GRAPHICS, null },
 				{ NODE_DYNAMICS, "att", NODE_DYNAMICS, null },
 				

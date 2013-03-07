@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.model.CyNetworkView;
@@ -69,6 +70,7 @@ public class SelectAllVisibleEdgesTask<T> extends AbstractSelectTask<T>
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run(TaskMonitor tm) throws Exception 
 	{
@@ -82,8 +84,8 @@ public class SelectAllVisibleEdgesTask<T> extends AbstractSelectTask<T>
 			new SelectionEdit(eventHelper, "Select All Visible Edges", network, view,
 			                  SelectionEdit.SelectionFilter.EDGES_ONLY));
 		tm.setProgress(0.2);
-		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeNotList(new DynInterval<T>(start,end)), false, start, end);
-		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeList(new DynInterval<T>(start,end)), true, start, end);
+		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeNotList((DynInterval<T>) new DynIntervalDouble(start,end)), false, start, end);
+		selectUtils.setSelectedEdges(network,dynNet.getVisibleEdgeList((DynInterval<T>) new DynIntervalDouble(start,end)), true, start, end);
 		tm.setProgress(0.6);
 		updateView();
 		tm.setProgress(1.0);

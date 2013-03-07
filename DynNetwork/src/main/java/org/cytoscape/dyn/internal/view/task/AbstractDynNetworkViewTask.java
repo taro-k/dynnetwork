@@ -19,8 +19,11 @@
 
 package org.cytoscape.dyn.internal.view.task;
 
-import org.cytoscape.dyn.internal.layout.DynLayout;
+import java.util.HashMap;
+import java.util.List;
+
 import org.cytoscape.dyn.internal.model.DynNetwork;
+import org.cytoscape.dyn.internal.model.tree.AbstractDynInterval;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
@@ -42,9 +45,11 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected final DynCytoPanel<T,C> panel;
 	protected final DynNetworkView<T> view;
 	protected final DynNetwork<T> dynNetwork;
-	protected final DynLayout<T> layout;
 	protected final Transformator<T> transformator;
 	protected final BlockingQueue queue;
+	
+	protected final HashMap<CyNode,AbstractDynInterval<T>> nodeTransparency;
+	protected final HashMap<CyEdge,AbstractDynInterval<T>> edgeTransparency;
 	
 	protected double timeStart;
 	protected double timeEnd;
@@ -65,16 +70,17 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	protected AbstractDynNetworkViewTask(
 			final DynCytoPanel<T, C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout<T> layout,
 			final Transformator<T> transformator,
 			final BlockingQueue queue) 
 	{
 		this.panel = panel;
 		this.view = view;
 		this.dynNetwork = view.getNetwork();
-		this.layout = layout;
 		this.transformator = transformator;
 		this.queue = queue;
+
+		this.nodeTransparency = new HashMap<CyNode,AbstractDynInterval<T>>();
+		this.edgeTransparency = new HashMap<CyEdge,AbstractDynInterval<T>>();
 	}
 
 	/**
@@ -88,38 +94,41 @@ public abstract class AbstractDynNetworkViewTask<T,C>  implements Runnable
 	@Override
 	public void run()
 	{
-		
+
 	}
 
-	protected void updateAttr(DynInterval<T> interval)
+	protected void updateGraphAttr(List<DynInterval<T>> intervalList)
 	{
-		if (interval.getAttribute().getVisualProperty()==null)
-			dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
-		else
-			view.getNetworkView().setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
-	}
-
-	protected void updateAttr(CyNode node, DynInterval<T> interval)
-	{
-		if (node!=null)
+		for (DynInterval<T> interval : intervalList)
 		{
-			if (interval.getAttribute().getVisualProperty()==null)
-				dynNetwork.getNetwork().getRow(node).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
-			else
-				view.getNetworkView().getNodeView(node).setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
+			dynNetwork.getNetwork().getRow(dynNetwork.getNetwork()).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
 		}
 	}
 
-	protected void updateAttr(CyEdge edge, DynInterval<T> interval)
+	protected void updateNodeAttr(List<DynInterval<T>> intervalList)
 	{
-		if (edge!=null)
-			// TODO: remove this, it's a hack!
-			if (interval.getOverlappingValue(timeInterval)!=null)
-				if (interval.getAttribute().getVisualProperty()==null)
-					dynNetwork.getNetwork().getRow(edge).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
-				else
-					view.getNetworkView().getEdgeView(edge).setVisualProperty(interval.getAttribute().getVisualProperty(),interval.getOverlappingValue(timeInterval));	
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyNode node = dynNetwork.getNode(interval);
+			if (node!=null)
+			{
+				dynNetwork.getNetwork().getRow(node).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+			}
+		}
 	}
 
-
+	protected void updateEdgeAttr(List<DynInterval<T>> intervalList)
+	{
+		for (DynInterval<T> interval : intervalList)
+		{
+			CyEdge edge = dynNetwork.getEdge(interval);
+			if (edge!=null)
+			{
+				// TODO: remove this, it's a hack!
+//				if (interval.getOverlappingValue(timeInterval)!=null)
+					dynNetwork.getNetwork().getRow(edge).set(interval.getAttribute().getColumn(), interval.getOverlappingValue(timeInterval));
+			}
+		}
+	}
+	
 }

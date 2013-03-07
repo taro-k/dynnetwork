@@ -20,7 +20,6 @@
 package org.cytoscape.dyn.internal.model;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
-import org.cytoscape.group.CyGroup;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 
@@ -49,14 +48,13 @@ public interface DynNetworkFactory<T> extends Sink<T>
 	/**
 	 * Process added node event.
 	 * @param dynNetwork
-	 * @param group
 	 * @param id
 	 * @param label
 	 * @param start
 	 * @param end
 	 * @return node
 	 */
-	public CyNode addedNode(DynNetwork<T> dynNetwork, CyGroup group, String id, String label, String start, String end);
+	public CyNode addedNode(DynNetwork<T> dynNetwork, String id, String label, String start, String end);
 	
 	/**
 	 * Process added edge event.
@@ -70,14 +68,6 @@ public interface DynNetworkFactory<T> extends Sink<T>
 	 * @return edge
 	 */
 	public CyEdge addedEdge(DynNetwork<T> dynNetwork, String id, String label, String source, String target, String start, String end);
-	
-	/**
-	 * Process added group event.
-	 * @param dynNetwork
-	 * @param currentNode
-	 * @return group
-	 */
-	public CyGroup addedGroup(DynNetwork<T> dynNetwork, CyNode currentNode);
 	
 	/**
 	 * Process added graph attribute event.
@@ -113,60 +103,6 @@ public interface DynNetworkFactory<T> extends Sink<T>
 	 * @param end
 	 */
 	public void addedEdgeAttribute(DynNetwork<T> dynNetwork, CyEdge currentEdge, String name, String value, String Type, String start, String end);
-	
-	/**
-	 * Process added graph graphic attribute event.
-	 * @param dynNetwork
-	 * @param fill
-	 */
-	public void addedGraphGraphics(DynNetwork<T> dynNetwork, String fill, String start, String end);
-	
-	/**
-	 * Process added edge graphic attribute event.
-	 * @param dynNetwork
-	 * @param currentEdge
-	 * @param width
-	 * @param fill
-	 * @param start
-	 * @param end
-	 */
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String start, String end);
-	
-	/**
-	 * Process added node graphic attribute event.
-	 * @param dynNetwork
-	 * @param currentNode
-	 * @param type
-	 * @param height
-	 * @param width
-	 * @param size
-	 * @param fill
-	 * @param line width
-	 * @param outline
-	 * @param start
-	 * @param end
-	 */
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String start, String end);
-	
-	/**
-	 * Process deleted graph event.
-	 * @param dynNetwork
-	 */
-	public void deletedGraph(DynNetwork<T> dynNetwork);
-
-	/**
-	 * Process deleted node event.
-	 * @param dynNetwork
-	 * @param node
-	 */
-	public void deletedNode(DynNetwork<T> dynNetwork, CyNode node);
-	
-	/**
-	 * Process deleted edge event.
-	 * @param dynNetwork
-	 * @param edge
-	 */
-	public void deletedEdge(DynNetwork<T> dynNetwork, CyEdge edge);
 	
 	/**
 	 * Process finalize network event.

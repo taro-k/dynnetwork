@@ -29,8 +29,6 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * This is a convenience method which is equivalent to 
      * <code>Graph.getPredecessors(vertex).iterator().next()</code>.
      * @return the parent of <code>vertex</code> in this tree
-     * @see Graph#getPredecessors(Object)
-     * @see #getParentEdge(Object)
      */
     public CyNode getParent(CyNode node);
     
@@ -45,8 +43,6 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * and also to <code>Graph.findEdge(vertex, getParent(vertex))</code>.
      * @return the edge connecting <code>vertex</code> to its parent, or 
      * <code>null</code> if <code>vertex</code> is the root
-     * @see Graph#getInEdges(Object)
-     * @see #getParent(Object)
      */
     public CyEdge getParentEdge(CyNode node);
     
@@ -59,8 +55,6 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * @param vertex the vertex whose children are to be returned
      * @return the <code>Collection</code> of children of <code>vertex</code> 
      * in this tree
-     * @see Graph#getSuccessors(Object)
-     * @see #getChildEdges(Object)
      */
     public Collection<CyNode> getChildren(CyNode node);
     
@@ -74,8 +68,6 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * @param vertex the vertex whose child edges are to be returned
      * @return the <code>Collection</code> of edges connecting 
      * <code>vertex</code> to its children in this tree
-     * @see Graph#getOutEdges(Object)
-     * @see #getChildren(Object)
      */
     public Collection<CyEdge> getChildEdges(CyNode node);
     
@@ -88,9 +80,6 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * @param vertex the vertex whose child edges are to be returned
      * @return the <code>Collection</code> of edges connecting 
      * <code>vertex</code> to its children in this tree
-     * @see #getChildEdges(Object)
-     * @see #getChildren(Object)
-     * @see Graph#getSuccessorCount(Object)
      */
     public int getChildCount(CyNode node); 
     
@@ -100,14 +89,12 @@ public interface DynNetworkTreeSnapshot<T> extends DynNetworkSnapshot<T>
      * @param vertex    the vertex whose depth is to be returned.
      * @return the length of the shortest unweighted path 
      * from <code>vertex</code> to the root of this tree
-     * @see #getHeight()
      */
     public int getDepth(CyNode node);
     
     /**
      * Returns the maximum depth in this tree.
      * @return the maximum depth in this tree
-     * @see #getDepth(Object)
      */
     public int getHeight(CyNode node);
     

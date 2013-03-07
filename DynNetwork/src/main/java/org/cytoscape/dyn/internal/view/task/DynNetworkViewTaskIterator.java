@@ -26,6 +26,7 @@ import javax.swing.JSlider;
 import org.cytoscape.dyn.internal.layout.DynLayout;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
@@ -68,13 +69,12 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	public DynNetworkViewTaskIterator(
 			final DynCytoPanelImpl<T,C> panel,
 			final DynNetworkView<T> view,
-			final DynLayout<T> layout,
 			final Transformator<T> transformator,
 			final BlockingQueue queue,
 			final JSlider slider,
 			final int timestep)
 	{
-		super(panel, view, layout, transformator, queue);
+		super(panel, view, transformator, queue);
 		this.slider = slider;
 		this.timeStep = timestep;
 	}
@@ -124,34 +124,25 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 		queue.unlock();	
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateNetwork()
 	{ 
 		slider.setValue(slider.getValue()+timeStep);
 		time = slider.getValue()*((panel.getMaxTime()-panel.getMinTime())/panel.getSliderMax())+(panel.getMinTime());
 		
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time-0.0000001);
 //			timeInterval = new DynInterval<T>(time, time+0.0000001);
 		else
-			timeInterval = new DynInterval<T>(time, time);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time, time);
 		
-		// update graph attributes
-		for (DynInterval<T> interval : view.searchChangedGraphsAttr(timeInterval))
-			updateAttr(interval);
-		
-		// update node attributes
-		for (DynInterval<T> interval : view.searchChangedNodesAttr(timeInterval))
-			updateAttr(dynNetwork.getNode(interval),interval);
-
-		// update edge attributes
-		for (DynInterval<T> interval : view.searchChangedEdgesAttr(timeInterval))
-			updateAttr(dynNetwork.getEdge(interval),interval);
+		// update attributes
+		updateGraphAttr(view.searchChangedGraphsAttr(timeInterval));
+		updateNodeAttr(view.searchChangedNodesAttr(timeInterval));
+		updateEdgeAttr(view.searchChangedEdgesAttr(timeInterval));;
 		
 		// update node and edges visual properties
-		if (layout!=null)
-			transformator.run(dynNetwork,view,timeInterval,layout,visibility,smoothness,deltat);
-		else
-			transformator.run(dynNetwork,view,timeInterval,visibility,smoothness,deltat);
+		transformator.run(dynNetwork,view,timeInterval,visibility,smoothness,deltat);
 		
 		panel.setNodes(view.getVisibleNodes());
 		panel.setEdges(view.getVisibleEdges());
@@ -175,31 +166,26 @@ public final class DynNetworkViewTaskIterator<T,C> extends AbstractDynNetworkVie
 	
 	private void setTransparency(CyNode node, int visibility)
 	{
-		if (node!=null)
-		{
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(node, BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
-		}
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY,visibility);
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY,visibility);
+		view.getNetworkView().getNodeView(node).setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY,visibility);
 	}
 
 	private void setTransparency(CyEdge edge, int visibility)
 	{
-		if (edge!=null)
-		{
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
-			view.writeLockedVisualProperty(edge, BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
-		}
+		view.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY,visibility);
+		view.getNetworkView().getEdgeView(edge).setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY,visibility);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void setParameters()
 	{
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time-0.0000001);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time-0.0000001);
 //			timeInterval = new DynInterval<T>(time, time+0.0000001);
 		else
-			timeInterval = new DynInterval<T>(time, time);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time, time);
 		
 		this.visibility = this.panel.getVisibility();
 		this.oldVisibility = visibility;

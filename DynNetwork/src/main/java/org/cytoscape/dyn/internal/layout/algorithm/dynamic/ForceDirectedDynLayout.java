@@ -27,6 +27,7 @@ import org.cytoscape.dyn.internal.layout.DynLayout;
 import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
 import org.cytoscape.dyn.internal.layout.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanel;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.model.CyNode;
@@ -102,7 +103,7 @@ public final class ForceDirectedDynLayout<T,C> extends AbstractLayoutAlgorithm
     	else
     	{
     		context = new ForceDirectedLayoutContext();
-    		layout = dynLayoutFactory.createLayout(networkView, context);
+    		layout = dynLayoutFactory.createDynLayout(networkView, context);
     	}
     		
     		new ForceDirectedDynLayoutDialog<T>(new JFrame(), viewManager.getDynNetworkView(networkView), context);
@@ -127,13 +128,14 @@ public final class ForceDirectedDynLayout<T,C> extends AbstractLayoutAlgorithm
 //		return ret;
 //	}
     
+	@SuppressWarnings("unchecked")
 	private void setParameters()
 	{
 		this.time = this.panel.getTime();
 		if (time>=panel.getMaxTime())
-			timeInterval = new DynInterval<T>(time-0.0000001, time+0.0000001);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time-0.0000001, time+0.0000001);
 		else
-			timeInterval = new DynInterval<T>(time, time);
+			timeInterval = (DynInterval<T>) new DynIntervalDouble(time, time);
 
 	}
     

@@ -31,7 +31,7 @@ import org.cytoscape.work.TaskIterator;
  * @author Sabina Sara Pfister
  *
  */
-public class LoadDynLayoutFactoryImpl<T> implements LoadDynNetworkViewFactory<T>
+public class LoadDynLayoutFactoryImpl<T> implements LoadDynFactory<T>
 {
 	private final CyApplicationManager appManager;
 	private final DynNetworkViewManager<T> dynNetworkViewManager;
@@ -40,7 +40,7 @@ public class LoadDynLayoutFactoryImpl<T> implements LoadDynNetworkViewFactory<T>
 	/**
 	 * <code> LoadDynNetworkViewFactoryImpl </code> constructor.
 	 * @param appManager
-	 * @param dynLayoutManager
+	 * @param dynNetworkViewManager
 	 * @param dynLayoutFactory
 	 */
 	public LoadDynLayoutFactoryImpl(

@@ -66,7 +66,6 @@ public final class XGMMLDynNetworkReader extends AbstractDynNetworkReader
 	public void run(TaskMonitor tm) throws Exception
 	{
 		tm.setProgress(0.0);
-		
 		try {
 			readXGMML(tm);
 		} catch (Exception e) {

@@ -33,11 +33,10 @@ public class DynIntegerAttribute extends AbstractDynAttribute<Integer>
 {
 	/**
 	 * <code> DynIntegerAttribute </code> constructor.
-	 * @param type
 	 */
-	public DynIntegerAttribute(Class<Integer> type)
+	public DynIntegerAttribute()
 	{
-		super(type);
+		super(Integer.class);
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public class DynIntegerAttribute extends AbstractDynAttribute<Integer>
 	 */
 	public DynIntegerAttribute(DynInterval<Integer> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(Integer.class,interval,key);
 	}
 	
 	@Override

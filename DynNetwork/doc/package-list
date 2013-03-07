@@ -22,3 +22,4 @@ org.cytoscape.dyn.internal.task.select
 org.cytoscape.dyn.internal.view.gui
 org.cytoscape.dyn.internal.view.model
 org.cytoscape.dyn.internal.view.task
+org.cytoscape.dyn.internal.vizmapper

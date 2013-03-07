@@ -24,7 +24,6 @@ import java.util.Stack;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.dyn.internal.view.model.NodeDynamicsAttribute;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
@@ -46,32 +45,14 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 	 * <code> DynLayoutFactoryImpl </code> constructor.
 	 * @param layoutManager
 	 */
-	public DynLayoutFactoryImpl(
-			DynLayoutManager<T> layoutManager)
+	public DynLayoutFactoryImpl(DynLayoutManager<T> layoutManager)
 	{
 		this.layoutManager = layoutManager;
 		this.nodeDynamicsList = new Stack<NodeDynamicsAttribute<T>>();
 	}
 	
 	@Override
-	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView)
-	{
-		DynLayout<T> layout = new DynLayoutImpl<T>(dynNetworkView.getNetworkView());
-		layoutManager.addDynLayout(layout);
-		return layout;
-	}
-	
-	@Override
-	public DynLayout<T> createLayout(DynNetworkView<T> dynNetworkView, Object context)
-	{
-		DynLayout<T> layout = new DynLayoutImpl<T>(dynNetworkView.getNetworkView());
-		layoutManager.addDynLayout(layout);
-		layoutManager.addDynContext(layout, context);
-		return layout;
-	}
-	
-	@Override
-	public DynLayout<T> createLayout(CyNetworkView networkView) 
+	public DynLayout<T> createDynLayout(CyNetworkView networkView)
 	{
 		DynLayout<T> layout = new DynLayoutImpl<T>(networkView);
 		layoutManager.addDynLayout(layout);
@@ -79,7 +60,7 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 	}
 
 	@Override
-	public DynLayout<T> createLayout(CyNetworkView networkView, Object context) 
+	public DynLayout<T> createDynLayout(CyNetworkView networkView, Object context) 
 	{
 		DynLayout<T> layout = new DynLayoutImpl<T>(networkView);
 		layoutManager.addDynLayout(layout);
@@ -88,50 +69,33 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 	}
 
 	@Override
-	public void finalizeNetwork(DynNetworkView<T> dynNetworkView) 
+	public void finalizeLayout(DynNetworkView<T> dynNetworkView) 
 	{	
-//		if (!nodeDynamicsList.isEmpty())
-//		{
-			while (!nodeDynamicsList.isEmpty())
-				nodeDynamicsList.pop().add(dynNetworkView,this);
-//		}
+		while (!nodeDynamicsList.isEmpty())
+			nodeDynamicsList.pop().add(dynNetworkView,layoutManager);
+		
+		layoutManager.getDynLayout(dynNetworkView.getNetworkView()).finalize();
+		initializePositions(dynNetworkView, layoutManager.getDynLayout(dynNetworkView.getNetworkView()));
 	}
 
 	@Override
 	public void removeLayout(DynNetworkView<T> dynNetworkView) 
 	{
 		layoutManager.removeDynLayout(dynNetworkView.getNetworkView());
+		layoutManager.addDynLayout(new DynLayoutImpl<T>(dynNetworkView.getNetworkView()));
 	}
 	
 	@Override
 	public void removeLayout(CyNetworkView networkView) 
 	{
 		layoutManager.removeDynLayout(networkView);
+		layoutManager.addDynLayout(new DynLayoutImpl<T>(networkView));
 	}
 
 	@Override
-	public void addedNodeDynamics(DynNetwork<T> dynNetwork, CyNode currentNode,
-			String x, String y, String start, String end) 
+	public void addedNodeDynamics(DynNetwork<T> dynNetwork, CyNode currentNode, String x, String y, String start, String end) 
 	{
 		this.nodeDynamicsList.push(new NodeDynamicsAttribute<T>(dynNetwork,currentNode,x,y,start,end));
-	}
-
-	@Override
-	public void setNodeDynamics(DynNetworkView<T> dynNetworkView, CyNode currentNode,
-			String x, String y, String start, String end) 
-	{
-		CyNetworkView view = dynNetworkView.getNetworkView();
-		DynLayout<T> layout = layoutManager.getDynLayout(view);
-		
-		if (x!=null)
-			layout.insertNodePositionX(
-				currentNode,new DynInterval<T>(Double.parseDouble(x),parseStart(start),parseEnd(end)));
-		if (y!=null)
-			layout.insertNodePositionY(
-				currentNode,new DynInterval<T>(Double.parseDouble(y),parseStart(start),parseEnd(end)));
-		
-		layoutManager.getDynLayout(view).finalize();
-		initializePositions(dynNetworkView, layout);
 	}
 	
 	private void initializePositions(DynNetworkView<T> dynView, DynLayout<T> layout)
@@ -140,31 +104,15 @@ public class DynLayoutFactoryImpl<T> implements DynLayoutFactory<T>
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
 			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
+				dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, (Double) i.getOnValue());
 		}
 			
 		for (DynInterval<T> i : layout.getIntervalsY())
 		{
 			CyNode node = dynView.getNetwork().getNode(i);
 			if (node!=null)
-				dynView.writeVisualProperty(node, BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
+				dynView.getNetworkView().getNodeView(node).setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, (Double) i.getOnValue());
 		}	
-	}
-	
-	private double parseStart(String start)
-	{
-		if (start!=null)
-			return Double.parseDouble(start);
-		else
-			return Double.NEGATIVE_INFINITY;
-	}
-	
-	private double parseEnd(String end)
-	{
-		if (end!=null)
-			return Double.parseDouble(end);
-		else
-			return Double.POSITIVE_INFINITY;
 	}
 
 }

@@ -29,9 +29,12 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.dyn.internal.io.load.LoadDynFactory;
 import org.cytoscape.dyn.internal.io.load.LoadDynLayoutFactoryImpl;
+import org.cytoscape.dyn.internal.io.load.LoadDynNetworkFileTaskFactory;
 import org.cytoscape.dyn.internal.io.load.LoadDynNetworkFileTaskFactoryImpl;
 import org.cytoscape.dyn.internal.io.load.LoadDynNetworkViewFactoryImpl;
+import org.cytoscape.dyn.internal.io.load.LoadDynVizMapFactoryImpl;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynFileFilter;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynNetworkReaderFactory;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynParser;
@@ -43,6 +46,7 @@ import org.cytoscape.dyn.internal.view.gui.DynCytoPanelImpl;
 import org.cytoscape.dyn.internal.view.gui.DynCytoPanelTask;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
+import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
 import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.util.swing.FileChooserFilter;
@@ -78,6 +82,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	private final DynNetworkFactory<T> dynNetworkFactory;
 	private final DynNetworkViewFactory<T> dynNetworkViewFactory;
 	private final DynLayoutFactory<T> dynLayoutFactory;
+	private final DynVizMapFactory<T> vizMapFactory;
 	private final FileUtil fileUtil;
 	private final StreamUtil streamUtil;
 	private final TunableSetter tunableSetterServiceRef;
@@ -94,6 +99,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	 * @param dynNetworkFactory
 	 * @param dynNetworkViewFactory
 	 * @param dynLayoutFactory
+	 * @param vizMapFactory
 	 * @param fileUtil
 	 * @param streamUtil
 	 * @param tunableSetterServiceRef
@@ -108,6 +114,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     		final DynNetworkFactory<T> dynNetworkFactory,
     		final DynNetworkViewFactory<T> dynNetworkViewFactory,
     		final DynLayoutFactory<T> dynLayoutFactory,
+    		final DynVizMapFactory<T> vizMapFactory,
     		final FileUtil fileUtil,
     		final StreamUtil streamUtil,
     		final TunableSetter tunableSetterServiceRef)
@@ -124,6 +131,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
         this.dynNetworkFactory = dynNetworkFactory;
         this.dynNetworkViewFactory = dynNetworkViewFactory;
         this.dynLayoutFactory = dynLayoutFactory;
+        this.vizMapFactory = vizMapFactory;
         this.fileUtil = fileUtil;
         this.streamUtil = streamUtil;
         this.tunableSetterServiceRef = tunableSetterServiceRef;
@@ -134,19 +142,25 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
      */
     public void actionPerformed(ActionEvent e)
     {
-    	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory);
-    	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml"}, new String[]{"text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
+    	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory);
+    	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml","XGMML","XML"}, new String[]{"text/xgmml","text/xgmml+xml","text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
     	XGMMLDynNetworkReaderFactory xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory(xgmmlFilter,xgmmlParser);
     	File file = fileUtil.getFile(desktopApp.getJFrame(), "Load Dynamic Network", FileUtil.LOAD, getFilters());
-    	LoadDynNetworkFileTaskFactoryImpl loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
-    	LoadDynNetworkViewFactoryImpl<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
-    	LoadDynLayoutFactoryImpl<T> loadLayoutFactory = new LoadDynLayoutFactoryImpl<T>(appManager,dynNetworkViewManager,dynLayoutFactory);
+    	LoadDynNetworkFileTaskFactory loadFactory = new LoadDynNetworkFileTaskFactoryImpl(xgmmlNetworkReaderFactory, tunableSetterServiceRef, streamUtil);
+    	LoadDynFactory<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
+    	LoadDynFactory<T> loadLayoutFactory = new LoadDynLayoutFactoryImpl<T>(appManager,dynNetworkViewManager,dynLayoutFactory);
+    	LoadDynFactory<T> loadvizMapFactory = new LoadDynVizMapFactoryImpl<T>(appManager,dynNetworkViewManager,vizMapFactory);
     	
     	Task loadTask = loadFactory.creatTaskIterator(file).next();
     	Task loadViewTask = loadViewFactory.creatTaskIterator().next();
     	Task loadLayoutTask = loadLayoutFactory.creatTaskIterator().next();
+    	Task loadvizMapTask = loadvizMapFactory.creatTaskIterator().next();
     	Task loadPanelTask = new DynCytoPanelTask<T,C>(myDynPanel, cytoPanelWest);
-    	TaskIterator iterator = new TaskIterator(loadTask,loadViewTask,loadPanelTask, loadLayoutTask);
+//    	TaskIterator iterator = new TaskIterator(loadTask,loadViewTask,loadPanelTask,loadLayoutTask,loadvizMapTask);
+    	TaskIterator iterator = new TaskIterator(loadTask,loadViewTask,loadLayoutTask,loadvizMapTask,loadPanelTask);
+    	
+    	
+    	
     	taskManager.execute(iterator);
     }
     

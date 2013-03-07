@@ -78,7 +78,7 @@ public class KeyPairs
 	public boolean equals(Object obj) 
 	{
 		KeyPairs o = (KeyPairs) obj;
-		if (this.row==o.row && this.column.equals(o.column))
+		if (this.row.equals(o.row) && this.column.equals(o.column))
 			return true;
 		return false;
 	}

@@ -35,11 +35,10 @@ public class DynPaintAttribute extends AbstractDynAttribute<Paint>
 {
 	/**
 	 * <code> DynPaintAttribute </code> constructor.
-	 * @param type
 	 */
-	public DynPaintAttribute(Class<Paint> type)
+	public DynPaintAttribute()
 	{
-		super(type);
+		super(Paint.class);
 	}
 	
 	/**
@@ -49,7 +48,7 @@ public class DynPaintAttribute extends AbstractDynAttribute<Paint>
 	 */
 	public DynPaintAttribute(DynInterval<Paint> interval, KeyPairs key)
 	{
-		super(interval,key);
+		super(Paint.class,interval,key);
 	}
 	
 	@Override
