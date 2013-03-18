@@ -104,7 +104,6 @@ public abstract class AbstractDynAttributeCheck<T>
 		throw new NullPointerException("Invalid attribute class " + interval.getOnValue().getClass());
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void checkGraphIntervals(CyNetwork network, DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
@@ -138,7 +137,6 @@ public abstract class AbstractDynAttributeCheck<T>
 		attr.addInterval(interval);
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void checkNodeIntervals(CyNetwork network, DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
@@ -172,7 +170,6 @@ public abstract class AbstractDynAttributeCheck<T>
 		attr.addInterval(interval);
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void checkEdgeIntervals(CyNetwork network, DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())

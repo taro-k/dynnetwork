@@ -73,6 +73,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
     private JSlider sliderIterations;
     private JComboBox attrComboBox;
     private JCheckBox nodeExchange;
+    private JCheckBox autoscale;
     private Hashtable<Integer, JLabel> labelTablePast;
     private Hashtable<Integer, JLabel> labelTableFuture;
     private Hashtable<Integer, JLabel> labelTableIterations;
@@ -93,12 +94,12 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		this.dynView = dynView;
 		this.context = context;
 		context.m_cancel = true;
-		initComponents(context.m_event_type,context.m_max_iterations,context.m_past_events,context.m_future_events,context.m_exchange_nodes);
+		initComponents(context.m_event_type,context.m_max_iterations,context.m_past_events,context.m_future_events,context.m_exchange_nodes,context.m_autoscale);
 	}
 
-	private void initComponents(int type, int iterations, int past, int future, boolean exchange) 
+	private void initComponents(int type, int iterations, int past, int future, boolean exchange, boolean autoscaling) 
 	{	
-		JPanel topPanel = new JPanel(new GridLayout(7,2));
+		JPanel topPanel = new JPanel(new GridLayout(8,2));
 		
 		List<String> attList = dynView.getNetwork().getEdgeAttributes();
 		NameIDObj[] itemsAttributes = new NameIDObj[attList.size()+1];
@@ -146,9 +147,13 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		sliderFuture.setPaintLabels(true);
 		sliderFuture.addChangeListener(this);
 		
-		nodeExchange = new JCheckBox("Allow node exchnage");
+		nodeExchange = new JCheckBox("Allow node exchange");
 		nodeExchange.setSelected(exchange);
 		nodeExchange.addActionListener(this);
+		
+		autoscale = new JCheckBox("Allow autoscaling");
+		autoscale.setSelected(autoscaling);
+		autoscale.addActionListener(this);
 		
 		topPanel.add(new JLabel("Distance Edge Attribute"));
 		topPanel.add(attrComboBox);
@@ -162,6 +167,8 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 		topPanel.add(sliderFuture);
 		topPanel.add(new JLabel("Exchange nodes"));
 		topPanel.add(nodeExchange);
+		topPanel.add(new JLabel("Allow autoscaling"));
+		topPanel.add(autoscale);
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		topPanel.add(Box.createRigidArea(new Dimension(10, 3)));
 		
@@ -214,6 +221,7 @@ public class KKDynLayoutDialog<T> extends JDialog implements ActionListener, Cha
 				context.m_past_events = sliderPast.getValue();
 				context.m_future_events = sliderFuture.getValue();
 				context.m_exchange_nodes = nodeExchange.isSelected();
+				context.m_autoscale = autoscale.isSelected();
 				setVisible(false); 
 				dispose();
 			}

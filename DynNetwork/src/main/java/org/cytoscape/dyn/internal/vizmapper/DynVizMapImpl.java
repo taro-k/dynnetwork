@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
+import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.attribute.AbstractDynAttributeCheck;
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -50,6 +51,7 @@ import org.cytoscape.view.model.VisualProperty;
 public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements DynVizMap<T>
 {
 	private final CyNetworkView view;
+	private final DynNetwork<T> dynNetwork;
 	
 	private List<DynInterval<T>> currentGraphsAttr;
 	private List<DynInterval<T>> currentNodesAttr;
@@ -67,6 +69,9 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 	private final DynIntervalTree<T> nodeTrasnparencyTreeAttr;
 	private final DynIntervalTree<T> edgeTrasnparencyTreeAttr;
 	
+	private List<CyNode> transparentNodes;
+	private List<CyEdge> transparentEdges;
+	
 	private final Map<DynAttribute<T>,VisualProperty<T>> visualProprtiesMap;
 	
 	private final List<DynInterval<T>> emptyList;
@@ -75,9 +80,10 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 	 * <code> DynVizMapImpl </code> constructor.
 	 * @param view
 	 */
-	public DynVizMapImpl(CyNetworkView networkView)
+	public DynVizMapImpl(DynNetwork<T> dynNetwork, CyNetworkView networkView)
 	{
 		this.view = networkView;
+		this.dynNetwork = dynNetwork;
 		
 		this.currentGraphsAttr = new ArrayList<DynInterval<T>>();
 		this.currentNodesAttr = new ArrayList<DynInterval<T>>();
@@ -94,6 +100,9 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 		this.graphTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.nodeTable = new HashMap<KeyPairs,DynAttribute<T>>();
 		this.edgeTable = new HashMap<KeyPairs,DynAttribute<T>>();
+		
+		this.transparentNodes = new ArrayList<CyNode>();
+		this.transparentEdges = new ArrayList<CyEdge>();
 		
 		this.visualProprtiesMap = new HashMap<DynAttribute<T>,VisualProperty<T>>();
 		
@@ -131,14 +140,20 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 		for (DynAttribute<T> attr : nodeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 				if (attr.getColumn().equals("GRAPHICS.node.transparency"))
+				{
 					nodeTrasnparencyTreeAttr.insert(interval, attr.getRow());
+					this.transparentNodes.add(dynNetwork.getNode(interval));
+				}
 				else
 					nodeTreeAttr.insert(interval, attr.getRow());
 
 		for (DynAttribute<T> attr : edgeTable.values())
 			for (DynInterval<T> interval : attr.getIntervalList())
 				if (attr.getColumn().equals("GRAPHICS.edge.transparency"))
+				{
 					edgeTrasnparencyTreeAttr.insert(interval, attr.getRow());
+					this.transparentEdges.add(dynNetwork.getEdge(interval));
+				}
 				else
 					edgeTreeAttr.insert(interval, attr.getRow());
 	}
@@ -241,6 +256,30 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 				i.setOn(true);
 			}
 		return diff;
+	}
+	
+	@Override
+	public void addTransparentNode(CyNode node) 
+	{
+		this.transparentNodes.add(node);
+	}
+	
+	@Override
+	public void addTransparentEdge(CyEdge edge) 
+	{
+		this.transparentEdges.add(edge);
+	}
+	
+	@Override
+	public boolean contrainsTransparentNode(CyNode node) 
+	{
+		return this.transparentNodes.contains(node);
+	}
+	
+	@Override
+	public boolean contrainsTransparentEdge(CyEdge edge) 
+	{
+		return this.transparentEdges.contains(edge);
 	}
 
 }

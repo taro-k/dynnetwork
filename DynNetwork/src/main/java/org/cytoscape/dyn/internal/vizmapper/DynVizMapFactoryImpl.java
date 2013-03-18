@@ -53,9 +53,9 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	}
 
 	@Override
-	public DynVizMap<T> createDynVizMap(CyNetworkView networkView) 
+	public DynVizMap<T> createDynVizMap(DynNetwork<T> dynNetwork, CyNetworkView networkView) 
 	{
-		DynVizMap<T> vizmap = new DynVizMapImpl<T>(networkView);
+		DynVizMap<T> vizmap = new DynVizMapImpl<T>(dynNetwork,networkView);
 		vizMapManager.addDynVizMap(vizmap);
 		return vizmap;
 	}
@@ -77,14 +77,7 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	public void removeDynVizMap(DynNetworkView<T> dynNetworkView) 
 	{
 		vizMapManager.removeDynVizMap(dynNetworkView.getNetworkView());
-		vizMapManager.addDynVizMap(new DynVizMapImpl<T>(dynNetworkView.getNetworkView()));
-	}
-
-	@Override
-	public void removeDynVizMap(CyNetworkView networkView) 
-	{
-		vizMapManager.removeDynVizMap(networkView);
-		vizMapManager.addDynVizMap(new DynVizMapImpl<T>(networkView));
+		vizMapManager.addDynVizMap(new DynVizMapImpl<T>(dynNetworkView.getNetwork(), dynNetworkView.getNetworkView()));
 	}
 	
 	@Override

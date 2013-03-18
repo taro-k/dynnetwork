@@ -168,7 +168,9 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 				time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
 				currentTime.setText("Current time = " + formatter.format(time));
 				if (!valueIsAdjusting)
+				{
 					updateView();
+				}
 			}
 	}
 
@@ -291,9 +293,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			network = view.getNetwork();
 			updateGui(view.getCurrentTime(), ((NameIDObj)resolutionComboBox.getSelectedItem()).id);
 			transformator.initialize(view, (DynInterval<T>) new DynIntervalDouble(time,time),visibility);
-			this.smoothness = 0;
 			updateView();
-			this.smoothness = ((NameIDObj)smoothnessComboBox.getSelectedItem()).id;
 		}
 		
 	}
@@ -478,7 +478,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 				new NameIDObj(3000,"3000 ms "),
 				new NameIDObj(4000,"4000 ms ")};
 		smoothnessComboBox  = new JComboBox(itemsSmoothness);
-		smoothnessComboBox.setSelectedIndex(5);
+		smoothnessComboBox.setSelectedIndex(4);
 		smoothnessComboBox.addActionListener(this);
 		this.smoothness = ((NameIDObj)smoothnessComboBox.getSelectedItem()).id;
 
@@ -578,9 +578,11 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			value = (int) (maxTime-minTime);
 		minTime = network.getMinTime();
 		maxTime = network.getMaxTime();
+		valueIsAdjusting = true;
 		sliderMax = value;
 		slider.setMaximum(value);
 		slider.setValue((int) (absoluteTime*(double) sliderMax));
+		valueIsAdjusting = false;
 		
 		time = slider.getValue()*((maxTime-minTime)/sliderMax)+(minTime);
 		currentTime.setText("Current time = " + formatter.format(time));

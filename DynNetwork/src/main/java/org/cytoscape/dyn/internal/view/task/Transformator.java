@@ -41,6 +41,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
  * @author Sabina Sara Pfister
  *
  */
+@SuppressWarnings("unchecked")
 public class Transformator<T> extends AbstractTransformator<T>
 {
 	private final DynLayoutManager<T> layoutManager;
@@ -83,7 +84,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 			final double deltat)
 	{	
 		setSmoothness(smoothness,deltat);
-
+		
 		this.onCounter = 255;
 		this.offCounter = visibility;
 
@@ -150,11 +151,11 @@ public class Transformator<T> extends AbstractTransformator<T>
 				// Set other graphical attributes
 				for (DynInterval<T> interval : nodesPosX)
 					if (interval.isOn())
-						updateVisualPropertyFinal(view,dynNetwork.getNode(interval),node_x_pos,interval);
+						updateVisualProperty(view,dynNetwork.getNode(interval),node_x_pos,interval);
 
 				for (DynInterval<T> interval : nodesPosY)
 					if (interval.isOn())
-						updateVisualPropertyFinal(view,dynNetwork.getNode(interval),node_y_pos,interval);
+						updateVisualProperty(view,dynNetwork.getNode(interval),node_y_pos,interval);
 
 				for (DynInterval<T> interval : graphVizMap)
 					if (interval.isOn())
@@ -210,20 +211,27 @@ public class Transformator<T> extends AbstractTransformator<T>
 			final DynInterval<T> timeInterval,
 			final int visibility)
 	{
+		DynVizMap<T> vizMap = vizMapManager.getDynVizMap(view.getNetworkView());
+		
 		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
 		{
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
-
-			// TODO: clean. this is a quick fix for a bug in node_label_transparency (core Cytoscape code)
-			if (visibility==0)
-				nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
+			if (vizMap.contrainsTransparentNode(nodeView.getModel()))
+				view.setNodeDummyValue(nodeView.getModel(),visibility);
+			else
+				view.setNodeDummyValue(nodeView.getModel(),255);
 		}
 
 		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
 		{
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
+			if (vizMap.contrainsTransparentEdge(edgeView.getModel()))
+				view.setEdgeDummyValue(edgeView.getModel(),visibility);
+			else
+				view.setEdgeDummyValue(edgeView.getModel(),255);
 		}
 		
 		layoutManager.getDynLayout(view.getNetworkView()).initNodePositions(timeInterval);

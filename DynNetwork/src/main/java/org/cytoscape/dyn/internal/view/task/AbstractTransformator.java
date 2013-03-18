@@ -36,7 +36,7 @@ import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
- * <code> AbstractTransformator </code> abstract class to change visual properties by interpolating
+ * <code> AbstractTransformator </code> is an abstract class to change visual properties by interpolating
  * the values to change.
  * 
  * @author Sabina Sara Pfister
@@ -145,7 +145,6 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 
 	protected final void updateVisualProperty(DynNetworkView<T> view, CyEdge edge, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-//		System.out.println(" " );
 		view.getNetworkView().getEdgeView(edge).setVisualProperty(vp,
 				interval.interpolateValue(view.getNetworkView().getEdgeView(edge).getVisualProperty(vp), this.alpha));
 	}

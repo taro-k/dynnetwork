@@ -66,7 +66,7 @@ public final class LoadDynVizMapTask<T> extends AbstractTask implements Source<T
 	{
 		tm.setProgress(0.0);
 		DynNetworkView<T> dynNetworkView = dynNetworkViewManager.getDynNetworkView(appManager.getCurrentNetworkView());
-		vizMapFactory.createDynVizMap(dynNetworkView.getNetworkView());
+		vizMapFactory.createDynVizMap(dynNetworkView.getNetwork(),dynNetworkView.getNetworkView());
 		vizMapFactory.finalizeDynVizMap(dynNetworkView);
 		tm.setProgress(1.0);
 	}

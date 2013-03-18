@@ -39,10 +39,11 @@ public interface DynVizMapFactory<T> extends Sink<T>
 {
 	/**
 	 * Create dynamic VizMap.
+	 * @param dynNetwork
 	 * @param networkView
 	 * @return vizmap
 	 */
-	public DynVizMap<T> createDynVizMap(CyNetworkView networkView);
+	public DynVizMap<T> createDynVizMap(DynNetwork<T> dynNetwork, CyNetworkView networkView);
 	
 	/**
 	 * Process added graph graphic attribute event.
@@ -94,12 +95,5 @@ public interface DynVizMapFactory<T> extends Sink<T>
 	 * @return
 	 */
 	public void removeDynVizMap(DynNetworkView<T> dynNetworkView);
-	
-	/**
-	 * Remove dynVizMap event and add an empty one.
-	 * @param networkView
-	 * @return
-	 */
-	public void removeDynVizMap(CyNetworkView networkView);
 	
 }

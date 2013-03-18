@@ -79,6 +79,9 @@ public final class KKLayout<T> extends AbstractLayout<T>
 	
 	// local minima escape method
 	private boolean exchangeVertices = true;
+	
+	// autoscaling method
+	private boolean autoscaling = true;
 
     // Graph distances between vertices of the visible graph
     private Distance<T> distance;
@@ -156,7 +159,16 @@ public final class KKLayout<T> extends AbstractLayout<T>
 		exchangeVertices = on;
 	}
 	
-    @Override
+	/**
+	 * Set autoscaling method.
+	 * @param on
+	 */
+    public void setAutoscaling(boolean autoscaling) 
+    {
+		this.autoscaling = autoscaling;
+	}
+
+	@Override
 	public boolean done() 
 	{
 		return (currentIteration > maxIterations);
@@ -210,7 +222,8 @@ public final class KKLayout<T> extends AbstractLayout<T>
 				index++;
 			}
 
-    		diameter = DistanceStatistics.diameter(graph, distance, true);
+			if (diameter==0 || this.autoscaling)
+				diameter = DistanceStatistics.diameter(graph, distance, true);
 
     		double L0 = Math.min(height, width);
     		L = (L0 / diameter) * length_factor;

@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.cytoscape.dyn.internal.model.attribute.DynAttribute;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
-import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
@@ -121,5 +120,31 @@ public interface DynVizMap<T>
 	 * @return
 	 */
 	public VisualProperty<T> getVisualProperty(DynAttribute<T> attr);
+	
+	/**
+	 * Add node to transparent node list.
+	 * @param node
+	 */
+	public void addTransparentNode(CyNode node);
+	
+	/**
+	 * Add edge to transparent edge list.
+	 * @param edge
+	 */
+	public void addTransparentEdge(CyEdge edge);
+	
+	/**
+	 * Check if node transparent list contains node.
+	 * @param node
+	 * @return
+	 */
+	public boolean contrainsTransparentNode(CyNode node);
+	
+	/**
+	 * Check if edge transparent list contains edge.
+	 * @param edge
+	 * @return
+	 */
+	public boolean contrainsTransparentEdge(CyEdge edge);
 
 }

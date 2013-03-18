@@ -48,8 +48,8 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 	private final CyNetworkView view;
 	private final VisualMappingManager cyStyleManager;
 	
-	protected Map<CyNode,Integer> nodeDummyValue;
-	protected Map<CyEdge,Integer> edgeDummyValue;
+	private Map<CyNode,Integer> nodeDummyValue;
+	private Map<CyEdge,Integer> edgeDummyValue;
 	
 	private int visibleNodes;
 	private int visibleEdges;
@@ -95,11 +95,6 @@ public final class DynNetworkViewImpl<T> implements DynNetworkView<T>
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
-		for (CyNode node : this.dynNetwork.getNetwork().getNodeList())
-			this.nodeDummyValue.put(node, 255);
-		for (CyEdge edge : this.dynNetwork.getNetwork().getEdgeList())
-			this.edgeDummyValue.put(edge, 255);
 
 	}
 	

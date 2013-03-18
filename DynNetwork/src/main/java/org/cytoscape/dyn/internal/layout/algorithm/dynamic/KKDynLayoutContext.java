@@ -79,6 +79,13 @@ public class KKDynLayoutContext
 	public boolean m_exchange_nodes = false;
 	
 	/**
+	 * Boolean to allow autoscaling
+	 * (avoids local minima).
+	 */
+	@Tunable(description="Autoscale")
+	public boolean m_autoscale = true;
+	
+	/**
 	 * Cancel layout algorithm execution.
 	 */
 	@Tunable(description="Cancel algorithm")
