@@ -135,7 +135,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 				t0 = events.get(Math.max(0,t-context.m_past_events));
 				t1 = events.get(Math.min(events.size()-1,t+1+context.m_future_events));
 
-				snap.setInterval((DynInterval<T>) new DynIntervalDouble(t0,t1),t,0.1,0.1);
+				snap.setInterval((DynInterval<T>) new DynIntervalDouble(t0,t1),t,1000,1000);
 				
 				forcelayout.initialize();
 				forcelayout.run();
@@ -191,7 +191,7 @@ public final class ForceDirectedDynLayoutTask<T> extends AbstractLayoutTask
 		for (CyNode node : forcelayout.getGraph().getNodes())
 		{
 			layout.insertNodePositionX(node, (DynInterval<T>) new DynIntervalDouble(new Double(forcelayout.getX(node)),interval.getStart(),interval.getEnd()));
-			layout.insertNodePositionY(node, (DynInterval<T>) new DynIntervalDouble(new Double(forcelayout.getX(node)),interval.getStart(),interval.getEnd()));
+			layout.insertNodePositionY(node, (DynInterval<T>) new DynIntervalDouble(new Double(forcelayout.getY(node)),interval.getStart(),interval.getEnd()));
 		}
 	}
 
