@@ -20,7 +20,7 @@
 package org.cytoscape.dyn.internal.io.load;
 
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.work.TaskIterator;
 

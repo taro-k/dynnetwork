@@ -21,13 +21,13 @@ package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
-import org.cytoscape.dyn.internal.layout.DynLayout;
-import org.cytoscape.dyn.internal.layout.DynLayoutManager;
+import org.cytoscape.dyn.internal.layout.model.DynLayout;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMap;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapManager;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMap;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.View;

@@ -39,13 +39,16 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T> 
 {
 	private final RenderingEngine<?> engine;
-	private final File file;
+	private final String fileName;
 	
 	private final Double width;
 	private final Double height;
 	
-	private DecimalFormat formatter = new DecimalFormat("#0.000");
-	private DecimalFormat formatter2 = new DecimalFormat("#00");
+//	private DecimalFormat formatter = new DecimalFormat("#0.000");
+//	private DecimalFormat formatter2 = new DecimalFormat("#00");
+	private DecimalFormat formatter3 = new DecimalFormat("#0000000000");
+	
+	private int counter;
 
 	/**
 	 * <code> SVGWriterFactory </code> constructor.
@@ -60,10 +63,12 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 			throw new NullPointerException("Rendering Engine is null.");
 		
 		this.engine = engine;
-		this.file = file;
+		this.fileName = trim(file.getAbsolutePath());
 		
 		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
 		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
+		
+		counter = 0;
 	}
 
 	@Override
@@ -73,15 +78,20 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 		//		"_" + Calendar.getInstance().getTimeInMillis() +
 		//		"_Time_" + formatter.format(currentTime) + ".png");
 
-		File outputFile = new File(trim(file.getAbsolutePath()) + 
-				"_T" + formatter.format(currentTime) + 
-				"_I" + formatter2.format(iteration) + ".svg");
+//		File outputFile = new File(trim(file.getAbsolutePath()) + 
+//				"_T" + formatter.format(currentTime) + 
+//				"_I" + formatter2.format(iteration) + ".svg");
+		
+		File outputFile = new File(fileName +  
+				"_" + formatter3.format(counter) + ".png");
 
 		try {
 			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export(width.intValue(),height.intValue());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		counter = counter + 1;
 	}
 	
 	public void dispose()

@@ -24,7 +24,7 @@ import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskMonitor;

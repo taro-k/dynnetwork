@@ -29,13 +29,13 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.dyn.internal.action.MenuActionLoadXGMML;
 import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleEdges;
 import org.cytoscape.dyn.internal.action.MenuActionSelectVisibleNodes;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactoryImpl;
-import org.cytoscape.dyn.internal.layout.DynLayoutManager;
-import org.cytoscape.dyn.internal.layout.DynLayoutManagerImpl;
-import org.cytoscape.dyn.internal.layout.algorithm.dynamic.CleanDynLayout;
-import org.cytoscape.dyn.internal.layout.algorithm.dynamic.ForceDirectedDynLayout;
-import org.cytoscape.dyn.internal.layout.algorithm.dynamic.KKDynLayout;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactoryImpl;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutManager;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutManagerImpl;
+import org.cytoscape.dyn.internal.layout.task.CleanDynLayout;
+import org.cytoscape.dyn.internal.layout.task.ForceDirectedDynLayout;
+import org.cytoscape.dyn.internal.layout.task.KKDynLayout;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactoryImpl;
 import org.cytoscape.dyn.internal.model.DynNetworkManager;
@@ -45,10 +45,10 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
 import org.cytoscape.dyn.internal.view.task.Transformator;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactoryImpl;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapManager;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapManagerImpl;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactoryImpl;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManagerImpl;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.model.CyNetworkFactory;
@@ -130,6 +130,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	CyLayoutAlgorithm dynPerfuseLayout = new ForceDirectedDynLayout<T,C>("Dynamic Layouts", "Prefuse DynLayout",
     			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
     	CyLayoutAlgorithm dynClearLayout = new CleanDynLayout<T,C>("Dynamic Layouts", "Remove DynLayout",undo,dynLayoutFactory);
+//    	CyLayoutAlgorithm dynClearVizMap = new CleanDynVizMap<T,C>("Dynamic VizMaps", "Remove DynVizMap",undo,vizMapFactory);
     	
     	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(
     			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory,fileUtil,streamUtil,tunableSetterServiceRef);
@@ -140,6 +141,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	
     	Properties myLayoutProps = new Properties();
         myLayoutProps.setProperty("preferredMenu","Dynamic Layouts");
+        
+//        Properties myLayoutProps2 = new Properties();
+//        myLayoutProps2.setProperty("preferredMenu","Dynamic VizMaps");
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());
 		registerService(context,dynNetworkFactory,DynNetworkFactory.class, new Properties());
@@ -154,6 +158,7 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynPerfuseLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynClearLayout,CyLayoutAlgorithm.class, myLayoutProps);
+//    	registerService(context,dynClearVizMap,CyLayoutAlgorithm.class, myLayoutProps2);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
     	registerService(context,dynVizMapManager,DynVizMapManager.class, new Properties());
 

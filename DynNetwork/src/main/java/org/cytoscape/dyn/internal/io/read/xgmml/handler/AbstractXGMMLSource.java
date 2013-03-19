@@ -21,11 +21,11 @@ package org.cytoscape.dyn.internal.io.read.xgmml.handler;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 

@@ -22,10 +22,10 @@ package org.cytoscape.dyn.internal.io.read.xgmml;
 import java.util.Stack;
 
 import org.cytoscape.dyn.internal.io.read.xgmml.handler.DynHandlerXGMMLFactory;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

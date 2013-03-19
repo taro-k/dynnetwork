@@ -23,11 +23,11 @@ import java.util.Stack;
 
 import org.cytoscape.dyn.internal.io.read.xgmml.ParseDynState;
 import org.cytoscape.dyn.internal.io.read.xgmml.XGMMLDynParser;
-import org.cytoscape.dyn.internal.layout.DynLayoutFactory;
+import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
-import org.cytoscape.dyn.internal.vizmapper.DynVizMapFactory;
+import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.xml.sax.Attributes;

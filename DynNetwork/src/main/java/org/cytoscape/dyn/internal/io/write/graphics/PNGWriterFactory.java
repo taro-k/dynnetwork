@@ -43,7 +43,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T> 
 {
 	private final RenderingEngine<?> engine;
-	private final File file;
+	private final String fileName;
 	
 	private final Double width;
 	private final Double height;
@@ -54,8 +54,11 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	private final BufferedImage image;
 	private final Graphics2D g;
 	
-	private DecimalFormat formatter = new DecimalFormat("#0.000");
-	private DecimalFormat formatter2 = new DecimalFormat("#00");
+//	private DecimalFormat formatter = new DecimalFormat("#0.000");
+//	private DecimalFormat formatter2 = new DecimalFormat("#00");
+	private DecimalFormat formatter3 = new DecimalFormat("#0000000000");
+	
+	private int counter;
 
 	/**
 	 * <code> PNGWriterFactory </code> constructor.
@@ -68,7 +71,7 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 			throw new NullPointerException("Rendering Engine is null.");
 		
 		this.engine = engine;
-		this.file = file;
+		this.fileName = trim(file.getAbsolutePath());
 		
 		width = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_WIDTH);
 		height = engine.getViewModel().getVisualProperty(BasicVisualLexicon.NETWORK_HEIGHT);
@@ -81,6 +84,8 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 		g = (Graphics2D) image.getGraphics();
 		g.setBackground(new Color(255, 255, 255, 0));
 		g.scale(scale, scale);
+		
+		counter = 0;
 	}
 
 	@Override
@@ -91,9 +96,11 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 //				"_" + Calendar.getInstance().getTimeInMillis() +
 //				"_Time_" + formatter.format(currentTime) + ".png");
 		
-		File outputFile = new File(trim(file.getAbsolutePath()) + 
-				"_T" + formatter.format(currentTime) + 
-				"_I" + formatter2.format(iteration) + ".png");
+//		File outputFile = new File(trim(file.getAbsolutePath()) + 
+//				"_T" + formatter.format(currentTime) + 
+//				"_I" + formatter2.format(iteration) + ".png");
+		
+		File outputFile = new File(fileName +  "_" + formatter3.format(counter) + ".png");
 
 		g.clearRect(0, 0, widthInPixels, heightInPixels);
 		
@@ -104,6 +111,8 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		counter = counter + 1;
 
 	}
 	
