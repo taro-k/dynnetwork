@@ -131,7 +131,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			break;
 			
 		case NET_ATT:
-			name = atts.getValue("name");
+			name = checkGraphAttributeName(atts.getValue("name"));
 			value = atts.getValue("value");
 			type = atts.getValue("type");
 			start = atts.getValue("start");
@@ -141,7 +141,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			break;
 			
 		case NODE_ATT:
-			name = atts.getValue("name");
+			name = checkNodeAttributeName(atts.getValue("name"));
 			value = atts.getValue("value");
 			type = atts.getValue("type");
 			start = atts.getValue("start");
@@ -151,7 +151,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			break;
 			
 		case EDGE_ATT:
-			name = atts.getValue("name");
+			name = checkEdgeAttributeName(atts.getValue("name"));
 			value = atts.getValue("value");
 			type = atts.getValue("type");
 			start = atts.getValue("start");
@@ -235,4 +235,67 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, transparency, start, end);
 	}
 	
+	private String checkGraphAttributeName(String name)
+	{
+		if (name.equals("name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'name' is reserved and cannot be uded.");
+		}
+		if (name.equals("shared name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'shared name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'shared name' is reserved and cannot be uded.");
+		}
+		if (name.equals("__Annotations"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag '__Annotations' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag '__Annotations' is reserved and cannot be uded.");
+		}
+		
+		return name;
+	}
+	
+	private String checkNodeAttributeName(String name)
+	{
+		if (name.equals("name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'name' is reserved and cannot be uded.");
+		}
+		if (name.equals("shared name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'shared name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'shared name' is reserved and cannot be uded.");
+		}
+		
+		return name;
+	}
+	
+	private String checkEdgeAttributeName(String name)
+	{
+		if (name.equals("name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'name' is reserved and cannot be uded.");
+		}
+		if (name.equals("shared name"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'shared name' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'shared name' is reserved and cannot be uded.");
+		}
+		if (name.equals("interaction"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'interaction' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'interaction' is reserved and cannot be uded.");
+		}
+		if (name.equals("shared interaction"))
+		{
+			System.out.println("\nXGMML Parser Error: Reserved attribute name: the tag 'shared interaction' is reserved and cannot be uded.");
+			throw new IllegalArgumentException("Invalid attribute name: the tag 'shared interaction' is reserved and cannot be uded.");
+		}
+		
+		return name;
+	}
+
 }
