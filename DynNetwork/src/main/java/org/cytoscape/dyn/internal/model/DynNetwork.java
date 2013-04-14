@@ -290,6 +290,29 @@ public interface DynNetwork<T>
 	public void setCyEdge(String id, long value);
 	
 	/**
+	 * Get interval list for graph attribute.
+	 * @param attribute name (use 'name' to get the interval for the graph)
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getGraphIntervals(String attName);
+	
+	/**
+	 * Get interval list for node attribute.
+	 * @param node
+	 * @param attribute name (use 'name' to get the interval for the node)
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getNodeIntervals(CyNode node, String attName);
+	
+	/**
+	 * Get interval list for edge attribute.
+	 * @param edge
+	 * @param attribute name (use 'name' to get the interval for the edge)
+	 * @return interval list
+	 */
+	public List<DynInterval<T>> getEdgeIntervals(CyEdge edge, String attName);
+	
+	/**
 	 * Finalize network. We perform here all operations that require the network construction
 	 * to be finished.
 	 */

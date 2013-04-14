@@ -359,6 +359,24 @@ public final class DynNetworkImpl<T> extends AbstractDynAttributeCheck<T> implem
                             list.add(col.getName());
             return list;
     }
+    
+	@Override
+	public List<DynInterval<T>> getGraphIntervals(String attName) 
+	{
+		return graphTable.get(new KeyPairs(attName, this.getNetwork().getSUID())).getIntervalList();
+	}
+
+	@Override
+	public List<DynInterval<T>> getNodeIntervals(CyNode node, String attName) 
+	{
+		return nodeTable.get(new KeyPairs(attName, node.getSUID())).getIntervalList();
+	}
+	
+	@Override
+	public List<DynInterval<T>> getEdgeIntervals(CyEdge edge, String attName) 
+	{
+		return edgeTable.get(new KeyPairs(attName, edge.getSUID())).getIntervalList();
+	}
 	
 	// For the moment I insert all intervals only at the end of the network creation, since I may need to modify them.
 	// An event based implementation should insert intervals directly, and if there is need for modification, they 
