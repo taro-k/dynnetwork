@@ -42,4 +42,9 @@ public interface Source<T>
 	 * @param sink
 	 */
 	void removeSink(Sink<T> sink);
+	
+	/**
+	 * Remove all {@link Sink}.
+	 */
+	void removeSinks();
 }

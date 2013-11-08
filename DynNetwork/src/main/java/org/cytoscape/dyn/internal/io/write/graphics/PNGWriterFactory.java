@@ -53,10 +53,8 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	
 	private final BufferedImage image;
 	private final Graphics2D g;
-	
-//	private DecimalFormat formatter = new DecimalFormat("#0.000");
-//	private DecimalFormat formatter2 = new DecimalFormat("#00");
-	private DecimalFormat formatter3 = new DecimalFormat("#0000000000");
+
+	private DecimalFormat formatter = new DecimalFormat("#0000000000");
 	
 	private int counter;
 
@@ -89,7 +87,7 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	}
 
 	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration) 
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration, int iterations) 
 	{
 
 //		File outputFile = new File(trim(file.getAbsolutePath()) + 
@@ -100,7 +98,7 @@ public class PNGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 //				"_T" + formatter.format(currentTime) + 
 //				"_I" + formatter2.format(iteration) + ".png");
 		
-		File outputFile = new File(fileName +  "_" + formatter3.format(counter) + ".png");
+		File outputFile = new File(fileName +  "_" + formatter.format(counter) + ".png");
 
 		g.clearRect(0, 0, widthInPixels, heightInPixels);
 		

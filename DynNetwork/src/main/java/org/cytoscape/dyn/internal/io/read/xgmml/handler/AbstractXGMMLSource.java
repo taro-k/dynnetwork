@@ -138,4 +138,13 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 			this.vizMapSink = null;
 	}
 	
+	@Override
+	public void removeSinks() 
+	{
+		this.networkSink = null;
+		this.viewSink = null;
+		this.layoutSink = null;
+		this.vizMapSink = null;
+	}
+	
 }

@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
+import java.util.Vector;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
@@ -45,7 +46,7 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetworkPresentationListener
 {
 
-	protected DynNetworkViewWriterFactory<T> writerFactory;
+	protected Vector<DynNetworkViewWriterFactory<T>> writerFactoryList;
 	
 	protected double alpha;
 	protected int iterations;
@@ -62,21 +63,42 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 	
 	private int value;
 	
+	/**
+	 * <code> AbstractTransformator </code> constructor.
+	 */
+	public AbstractTransformator() 
+	{
+		this.writerFactoryList = new Vector<DynNetworkViewWriterFactory<T>>();
+	}
+	
 	@Override
 	public void addSink(Sink<T> sink) 
 	{
 		if (sink instanceof DynNetworkViewWriterFactory<?>)
-			this.writerFactory = (DynNetworkViewWriterFactory<T>) sink;
+			this.writerFactoryList.add((DynNetworkViewWriterFactory<T>) sink);
 	}
 	
 	@Override
 	public void removeSink(Sink<T> sink) 
 	{
-		if (writerFactory!=null)
+		if (sink instanceof DynNetworkViewWriterFactory<?>)
 		{
-			this.writerFactory.dispose();
-			this.writerFactory = null;
+			if (this.writerFactoryList.contains((DynNetworkViewWriterFactory<T>) sink))
+			{	
+				((DynNetworkViewWriterFactory<T>) sink).dispose();
+				this.writerFactoryList.remove((DynNetworkViewWriterFactory<T>) sink);
+			}
 		}
+	}
+	
+	@Override
+	public void removeSinks() 
+	{
+		for (DynNetworkViewWriterFactory<T> writer : this.writerFactoryList)
+		{
+			writer.dispose();
+		}
+		this.writerFactoryList.clear();
 	}
 
 	@Override

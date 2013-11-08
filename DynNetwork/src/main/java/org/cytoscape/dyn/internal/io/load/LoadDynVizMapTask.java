@@ -85,4 +85,10 @@ public final class LoadDynVizMapTask<T> extends AbstractTask implements Source<T
 			this.vizMapFactory = null;
 	}
 	
+	@Override
+	public void removeSinks() 
+	{
+		this.vizMapFactory = null;
+	}
+	
 }

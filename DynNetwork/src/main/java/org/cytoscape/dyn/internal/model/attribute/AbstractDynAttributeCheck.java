@@ -188,18 +188,18 @@ public abstract class AbstractDynAttributeCheck<T>
 					interval.setEnd(i.getStart());
 				else if (interval.getEnd()==i.getEnd() && interval.getStart()==i.getStart() && interval.getOnValue().equals(i.getOnValue()))
 				{
-//					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
-//					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for edge label=" + label + 
-//							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-//							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
+					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for edge label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 					return;
 				}
 				else
 				{   
-//					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
-//					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
-//							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-//							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
+					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
+							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 					return;
 				}
 			}

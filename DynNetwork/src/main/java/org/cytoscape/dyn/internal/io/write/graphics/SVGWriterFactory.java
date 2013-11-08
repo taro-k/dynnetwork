@@ -44,9 +44,7 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	private final Double width;
 	private final Double height;
 	
-//	private DecimalFormat formatter = new DecimalFormat("#0.000");
-//	private DecimalFormat formatter2 = new DecimalFormat("#00");
-	private DecimalFormat formatter3 = new DecimalFormat("#0000000000");
+	private DecimalFormat formatter = new DecimalFormat("#0000000000");
 	
 	private int counter;
 
@@ -72,7 +70,7 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 	}
 
 	@Override
-	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration) 
+	public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration, int iterations) 
 	{
 		//		File outputFile = new File(trim(file.getAbsolutePath()) + 
 		//		"_" + Calendar.getInstance().getTimeInMillis() +
@@ -83,7 +81,7 @@ public class SVGWriterFactory<T> extends AbstractDynNetworkViewWriterFactory<T>
 //				"_I" + formatter2.format(iteration) + ".svg");
 		
 		File outputFile = new File(fileName +  
-				"_" + formatter3.format(counter) + ".png");
+				"_" + formatter.format(counter) + ".png");
 
 		try {
 			(new SVGWriter(engine, new FileOutputStream(outputFile,false))).export(width.intValue(),height.intValue());

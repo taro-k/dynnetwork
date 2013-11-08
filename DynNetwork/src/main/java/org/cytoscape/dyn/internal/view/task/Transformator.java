@@ -21,6 +21,7 @@ package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
 
+import org.cytoscape.dyn.internal.io.write.DynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.layout.model.DynLayout;
 import org.cytoscape.dyn.internal.layout.model.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -184,7 +185,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 			}
 			
 			timeEnd = System.currentTimeMillis();
-			if (writerFactory==null && round(timeEnd-timeStart)<delay)
+			if (this.writerFactoryList.size()>0 && round(timeEnd-timeStart)<delay)
 			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));
@@ -193,9 +194,10 @@ public class Transformator<T> extends AbstractTransformator<T>
 				}
 			}
 			
-			if (writerFactory!=null)
-				writerFactory.updateView(dynNetwork,timeInterval.getStart(),i);
-			
+			for (DynNetworkViewWriterFactory<T> writer : this.writerFactoryList)
+			{
+				writer.updateView(dynNetwork,timeInterval.getStart(),i,iterations);
+			}
 			
 		}
 	}

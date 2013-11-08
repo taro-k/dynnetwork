@@ -53,6 +53,7 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanel;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.dyn.internal.io.write.graphics.PNGWriterFactory;
+import org.cytoscape.dyn.internal.io.write.text.SRTWriterFactory;
 import org.cytoscape.dyn.internal.layout.model.DynLayoutManager;
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
@@ -199,7 +200,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 				{
 					recordButton.setBackground(forwardButton.getBackground());
 					recordButton.setOpaque(false);
-					transformator.removeSink(null);
+					transformator.removeSinks();
 				}
 				else
 				{
@@ -208,17 +209,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 					List<FileChooserFilter> filters = getFilters();
 					File file = fileUtil.getFile(desktopApp.getJFrame(), "Save Image Sequence", FileUtil.SAVE, filters);
 					
-
 					if (file!=null)
 					{
 						transformator.addSink(new PNGWriterFactory<T>(file,appManager.getCurrentRenderingEngine()));
+						transformator.addSink(new SRTWriterFactory<T>(file));
 						updateView();
-
 					}
 					else
 					{
 						recordButton.setBackground(forwardButton.getBackground());
-						transformator.removeSink(null);
+						transformator.removeSinks();
 					}
 				}
 			}
@@ -456,6 +456,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 
 		NameIDObj[] itemsTimeResolution = { 
 				new NameIDObj(1,    "1       "),
+				new NameIDObj(2,    "1/2       "),
+				new NameIDObj(3,    "1/3       "),
+				new NameIDObj(4,    "1/4       "),
+				new NameIDObj(5,    "1/5       "),
+				new NameIDObj(6,    "1/6       "),
+				new NameIDObj(7,    "1/7       "),
+				new NameIDObj(8,    "1/8       "),
+				new NameIDObj(9,    "1/9       "),
 				new NameIDObj(10,   "1/10    "), 
 				new NameIDObj(25,   "1/25    "),
 				new NameIDObj(50,   "1/50    "),
@@ -465,7 +473,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 				new NameIDObj(10000, "1/10000 "),
 				new NameIDObj(100000,"1/100000") };
 		resolutionComboBox  = new JComboBox(itemsTimeResolution);
-		resolutionComboBox.setSelectedIndex(1);
+		resolutionComboBox.setSelectedIndex(9);
 		resolutionComboBox.addActionListener(this);
 		
 		NameIDObj[] itemsSmoothness = { 

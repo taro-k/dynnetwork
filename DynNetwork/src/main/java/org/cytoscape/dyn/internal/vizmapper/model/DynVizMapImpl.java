@@ -213,7 +213,7 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 	}
 	
 	@Override
-	public List<DynInterval<T>> searchChangedNodeTransparencyGraphics(DynInterval<T> interval) 
+	public List<DynInterval<T>> searchChangedNodeTransparencyGraphics(DynInterval<T> interval)
 	{
 		if (!nodeTable.isEmpty())
 		{

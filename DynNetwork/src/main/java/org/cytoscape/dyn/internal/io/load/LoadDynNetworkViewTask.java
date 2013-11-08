@@ -92,4 +92,10 @@ public final class LoadDynNetworkViewTask<T> extends AbstractTask implements Sou
 			this.dynamicNetworkViewFactory = null;
 	}
 	
+	@Override
+	public void removeSinks() 
+	{
+		this.dynamicNetworkViewFactory = null;
+	}
+	
 }

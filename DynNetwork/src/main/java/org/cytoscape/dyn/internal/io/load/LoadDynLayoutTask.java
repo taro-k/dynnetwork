@@ -86,4 +86,10 @@ public final class LoadDynLayoutTask<T> extends AbstractTask implements Source<T
 			this.layoutFactory = null;
 	}
 	
+	@Override
+	public void removeSinks() 
+	{
+		this.layoutFactory = null;
+	}
+	
 }

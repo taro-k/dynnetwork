@@ -39,8 +39,9 @@ public interface DynNetworkViewWriterFactory<T> extends Sink<T>
      * @param dynNetwork
      * @param currentTime
      * @param iteration
+      @param framePerSecond
      */
-    public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration);
+    public void updateView(DynNetwork<T> dynNetwork, double currentTime, int iteration, int framePerSecond);
     
     /**
      * Dispose current graphics.
