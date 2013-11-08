@@ -68,6 +68,27 @@ public interface DynVizMap<T>
 	public void insertEdgeGraphics(CyEdge edge, VisualProperty<T> vp, String column, DynInterval<T> interval);
 	
 	/**
+	 * Search graphical attributes of the graph in the given time interval.
+	 * @param interval
+	 * @return list of graphical attributes of the graph in the given time interval
+	 */
+	public List<DynInterval<T>> getGraphGraphics(DynInterval<T> interval);
+	
+	/**
+	 * Search graphical attributes of nodes in the given time interval.
+	 * @param interval
+	 * @return list of graphical attributes of nodes in the given time interval
+	 */
+	public List<DynInterval<T>> getNodeGraphics(DynInterval<T> interval);
+
+	/**
+	 * Search graphical attributes of edges in the given time interval.
+	 * @param interval
+	 * @return list of graphical attributes of edges in the given time interval
+	 */
+	public List<DynInterval<T>> getEdgeGraphics(DynInterval<T> interval);
+	
+	/**
 	 * Search graphical attributes of the graph that changed from the last time interval.
 	 * @param interval
 	 * @return list of graphical attributes of the graph that changed from the last time interval

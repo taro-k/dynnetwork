@@ -61,6 +61,7 @@ import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.task.BlockingQueue;
+import org.cytoscape.dyn.internal.view.task.DynNetworkViewRefreshTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
@@ -69,6 +70,10 @@ import org.cytoscape.dyn.internal.view.task.Transformator;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
+import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedEvent;
+import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedListener;
+import org.cytoscape.view.vizmap.events.VisualStyleChangedEvent;
+import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -82,7 +87,8 @@ import org.cytoscape.work.TaskManager;
  * @param <C>
  */
 public final class DynCytoPanelImpl<T,C> extends JPanel implements DynCytoPanel<T,C>,
-ChangeListener, ActionListener, SetCurrentNetworkViewListener
+ChangeListener, ActionListener, SetCurrentNetworkViewListener, VisualStyleChangedListener
+
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -282,6 +288,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			}
 		}
 	}
+	
+	@Override
+	public void handleEvent(VisualStyleChangedEvent e) 
+	{
+		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
+		if (view!=null)
+		{
+			refreshView();
+		}
+	}
 		
 	@SuppressWarnings("unchecked")
 	@Override
@@ -456,14 +472,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 
 		NameIDObj[] itemsTimeResolution = { 
 				new NameIDObj(1,    "1       "),
-				new NameIDObj(2,    "1/2       "),
-				new NameIDObj(3,    "1/3       "),
-				new NameIDObj(4,    "1/4       "),
-				new NameIDObj(5,    "1/5       "),
-				new NameIDObj(6,    "1/6       "),
-				new NameIDObj(7,    "1/7       "),
-				new NameIDObj(8,    "1/8       "),
-				new NameIDObj(9,    "1/9       "),
+				new NameIDObj(2,    "1/2     "),
+				new NameIDObj(3,    "1/3     "),
+				new NameIDObj(4,    "1/4     "),
+				new NameIDObj(5,    "1/5     "),
+				new NameIDObj(6,    "1/6     "),
+				new NameIDObj(7,    "1/7     "),
+				new NameIDObj(8,    "1/8     "),
+				new NameIDObj(9,    "1/9     "),
 				new NameIDObj(10,   "1/10    "), 
 				new NameIDObj(25,   "1/25    "),
 				new NameIDObj(50,   "1/50    "),
@@ -573,6 +589,14 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			singleTask.cancel();
 		
 		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,transformator,queue)).start();
+	}
+	
+	private void refreshView()
+	{
+		if (singleTask!=null)
+			singleTask.cancel();
+		
+		new Thread(new DynNetworkViewRefreshTask<T,C>(this, view,transformator,queue)).start();
 	}
 	
 	private void updateTransparency()

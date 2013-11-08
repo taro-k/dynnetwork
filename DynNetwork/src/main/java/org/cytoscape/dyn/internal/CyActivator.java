@@ -62,6 +62,8 @@ import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
 import org.cytoscape.view.vizmap.VisualMappingManager;
+import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedListener;
+import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.undo.UndoSupport;
@@ -141,9 +143,6 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	
     	Properties myLayoutProps = new Properties();
         myLayoutProps.setProperty("preferredMenu","Dynamic Layouts");
-        
-//        Properties myLayoutProps2 = new Properties();
-//        myLayoutProps2.setProperty("preferredMenu","Dynamic VizMaps");
 
 		registerService(context,dynNetManager,DynNetworkManager.class, new Properties());
 		registerService(context,dynNetworkFactory,DynNetworkFactory.class, new Properties());
@@ -152,15 +151,16 @@ public class CyActivator<T,C> extends AbstractCyActivator
 		registerService(context,dynCytoPanel,CytoPanelComponent.class, new Properties());
     	registerService(context,loadAction,CyAction.class, new Properties());  
     	registerService(context,selectNodesAction,CyAction.class, new Properties()); 
-    	registerService(context,selectEdgesAction,CyAction.class, new Properties()); 
+    	registerService(context,selectEdgesAction,CyAction.class, new Properties());
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
+    	registerService(context,dynCytoPanel,VisualStyleChangedListener.class, new Properties());
     	registerService(context,transformator,UpdateNetworkPresentationListener.class, new Properties());
     	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynPerfuseLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynClearLayout,CyLayoutAlgorithm.class, myLayoutProps);
-//    	registerService(context,dynClearVizMap,CyLayoutAlgorithm.class, myLayoutProps2);
     	registerService(context,dynLayoutManager,DynLayoutManager.class, new Properties());
     	registerService(context,dynVizMapManager,DynVizMapManager.class, new Properties());
+
 
 	}
 	

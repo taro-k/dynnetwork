@@ -169,6 +169,39 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 	{
 		return this.visualProprtiesMap.get(attr);
 	}
+	
+	@Override
+	public List<DynInterval<T>> getGraphGraphics(DynInterval<T> interval) 
+	{
+		if (!graphTable.isEmpty())
+		{
+			return graphTreeAttr.search(interval);
+		}
+		else
+			return this.emptyList;
+	}
+
+	@Override
+	public List<DynInterval<T>> getNodeGraphics(DynInterval<T> interval) 
+	{
+		if (!nodeTable.isEmpty())
+		{
+			return nodeTreeAttr.search(interval);
+		}
+		else
+			return this.emptyList;
+	}
+
+	@Override
+	public List<DynInterval<T>> getEdgeGraphics(DynInterval<T> interval) 
+	{
+		if (!edgeTable.isEmpty())
+		{
+			return edgeTreeAttr.search(interval);
+		}
+		else
+			return this.emptyList;
+	}
 
 	@Override
 	public List<DynInterval<T>> searchChangedGraphGraphics(DynInterval<T> interval) 

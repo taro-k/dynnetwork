@@ -201,6 +201,40 @@ public class Transformator<T> extends AbstractTransformator<T>
 			
 		}
 	}
+	
+	/**
+	 * Refresh transformation on given interval lists.
+	 * @param dynNetwork
+	 * @param view
+	 * @param timeInterval
+	 * @param visibility
+	 * @param smoothness
+	 * @param deltat
+	 */
+	public void refresh(
+			final DynNetwork<T> dynNetwork,
+			final DynNetworkView<T> view,
+			final DynInterval<T> timeInterval)
+	{	
+		DynVizMap<T> vizMap = vizMapManager.getDynVizMap(view.getNetworkView());
+		List<DynInterval<T>> graphVizMap = vizMap.getGraphGraphics(timeInterval);
+		List<DynInterval<T>> nodesVizMap = vizMap.getNodeGraphics(timeInterval);
+		List<DynInterval<T>> edgesVizMap = vizMap.getEdgeGraphics(timeInterval);
+
+		for (DynInterval<T> interval : graphVizMap)
+			if (interval.isOn())
+				updateVisualPropertyFinal(view,vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+		for (DynInterval<T> interval : nodesVizMap)
+			if (interval.isOn())
+				updateVisualPropertyFinal(view,dynNetwork.getNode(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+		for (DynInterval<T> interval : edgesVizMap)
+			if (interval.isOn())
+				updateVisualPropertyFinal(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+
+		view.updateView();
+	}
 
 	/**
 	 * Initialize visualization.
@@ -239,7 +273,5 @@ public class Transformator<T> extends AbstractTransformator<T>
 		layoutManager.getDynLayout(view.getNetworkView()).initNodePositions(timeInterval);
 		view.getNetworkView().fitContent();
 	}
-
-
 
 }
