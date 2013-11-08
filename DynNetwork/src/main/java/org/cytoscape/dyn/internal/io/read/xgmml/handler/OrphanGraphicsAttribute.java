@@ -34,6 +34,7 @@ public class OrphanGraphicsAttribute<T>
 	private final DynNetwork<T> currentNetwork;
 	private final String width;
 	private final String fill;
+	private final String arrowshape;
 	private final String transparency;
 	private final String start;
 	private final String end;
@@ -46,11 +47,12 @@ public class OrphanGraphicsAttribute<T>
 	 * @param start
 	 * @param end
 	 */
-	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill, String transparency, String start, String end)
+	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill, String arrowshape, String transparency, String start, String end)
 	{
 		this.currentNetwork = currentNetwork;
 		this.width = width;
 		this.fill = fill;
+		this.arrowshape = arrowshape;
 		this.transparency = transparency;
 		this.start = start;
 		this.end = end;
@@ -64,7 +66,7 @@ public class OrphanGraphicsAttribute<T>
 	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!=null)
-			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill, transparency, start, end);
+			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill, arrowshape, transparency, start, end);
 	}
 	
 }

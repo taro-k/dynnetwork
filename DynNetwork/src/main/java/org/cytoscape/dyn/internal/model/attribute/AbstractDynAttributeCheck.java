@@ -25,6 +25,7 @@ import java.util.Map;
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyNetwork;
+import org.cytoscape.view.presentation.property.values.ArrowShape;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
@@ -102,7 +103,9 @@ public abstract class AbstractDynAttributeCheck<T>
 		else if (interval.getOnValue() instanceof Paint)
 			return (DynAttribute<T>) new DynPaintAttribute((DynInterval<Paint>) interval, key);
 		else if (interval.getOnValue() instanceof NodeShape)
-			return (DynAttribute<T>) new DynShapeAttribute((DynInterval<NodeShape>) interval, key);
+			return (DynAttribute<T>) new DynNodeShapeAttribute((DynInterval<NodeShape>) interval, key);
+		else if (interval.getOnValue() instanceof ArrowShape)
+			return (DynAttribute<T>) new DynArrowShapeAttribute((DynInterval<ArrowShape>) interval, key);
 		System.out.println("\nXGMML Parser Error: Unrecognized Attribute Class Type: " +  interval.getOnValue().getClass());
 		throw new NullPointerException("Invalid attribute class " + interval.getOnValue().getClass());
 	}

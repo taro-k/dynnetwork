@@ -90,15 +90,15 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	}
 	
 	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode, 
-			String type, String height, String width, String size, String fill, String linew, String outline, String transparency, String start, String end)
+			String type, String height, String width, String size, String fill, String labelfill, String labelsize, String linew, String outline, String transparency, String start, String end)
 	{
-		vizMapSink.addedNodeGraphics(network, currentNode, type, height, width, size, fill, linew, outline, transparency, start, end);
+		vizMapSink.addedNodeGraphics(network, currentNode, type, height, width, size, fill, labelfill, labelsize, linew, outline, transparency, start, end);
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill, String transparency, String start, String end)
+			String width, String fill, String arrowshape, String transparency, String start, String end)
 	{
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, arrowshape, transparency, start, end);
 	}
 	
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 

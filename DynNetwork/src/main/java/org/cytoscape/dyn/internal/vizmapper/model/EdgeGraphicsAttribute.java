@@ -40,6 +40,7 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	private final CyEdge currentEdge;
 	private final String width;
 	private final String fill;
+	private final String arrowshape;
 	private final String transparency;
 	private final String start;
 	private final String end;
@@ -51,6 +52,7 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	 * @param currentEdge
 	 * @param width
 	 * @param fill
+	 * @param arrowshape
 	 * @param transparency
 	 * @param start
 	 * @param end
@@ -60,6 +62,7 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 			final CyEdge currentEdge,
 			final String width,
 			final String fill,
+			final String arrowshape,
 			final String transparency,
 			final String start,
 			final String end)
@@ -68,6 +71,7 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 		this.width = width;
 		this.fill = fill;
 		this.transparency = transparency;
+		this.arrowshape = arrowshape;
 		this.start = start;
 		this.end = end;
 	}
@@ -101,6 +105,15 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					(VisualProperty<T>) BasicVisualLexicon.EDGE_UNSELECTED_PAINT,
 					"GRAPHICS.edge.fill",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
+		}
+		if (arrowshape!=null)
+		{
+			Object attr = typeMap.getTypedValue(typeMap.getType("EDGE_" + arrowshape), arrowshape);
+			vizMap.insertEdgeGraphics(
+					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE,
+					"arrowshape",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.arrowshape",(T) attr ,start, end));
 		}
 		if (transparency!=null)
 		{

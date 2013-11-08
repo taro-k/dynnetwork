@@ -22,6 +22,7 @@ package org.cytoscape.dyn.internal.io.read.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 
 /**
@@ -69,36 +70,51 @@ public class GraphicsTypeMap
 	    public Object getTypedValue(GraphicsType type)
 	    {
 	        switch (type) {
-	            case RECTANGLE:
+	            case NODE_RECTANGLE:
 	                return NodeShapeVisualProperty.RECTANGLE;
-	            case RECT:
+	            case NODE_RECT:
 	                return NodeShapeVisualProperty.RECTANGLE;
-	            case BOX:
+	            case NODE_BOX:
 	                return NodeShapeVisualProperty.RECTANGLE;
-	            case ROUND_RECTANGLE:
+	            case NODE_ROUND_RECTANGLE:
 	                return NodeShapeVisualProperty.ROUND_RECTANGLE;
-	            case ROUND_RECT:
+	            case NODE_ROUND_RECT:
 	                return NodeShapeVisualProperty.ROUND_RECTANGLE;
-	            case TRIANGLE:
+	            case NODE_TRIANGLE:
 	                return NodeShapeVisualProperty.TRIANGLE;
-	            case PARALLELOGRAM:
+	            case NODE_PARALLELOGRAM:
 	                return NodeShapeVisualProperty.PARALLELOGRAM;
-	            case RHOMBUS:
+	            case NODE_RHOMBUS:
 	                return NodeShapeVisualProperty.PARALLELOGRAM;
-	            case DIAMOND:
+	            case NODE_DIAMOND:
 	                return NodeShapeVisualProperty.DIAMOND;
-	            case ELLIPSE:
+	            case NODE_ELLIPSE:
 	                return NodeShapeVisualProperty.ELLIPSE;
-	            case VER_ELLIPSE:
+	            case NODE_VER_ELLIPSE:
 	                return NodeShapeVisualProperty.ELLIPSE;
-	            case HOR_ELLIPSE:
+	            case NODE_HOR_ELLIPSE:
 	                return NodeShapeVisualProperty.ELLIPSE;
-	            case CIRCLE:
+	            case NODE_CIRCLE:
 	                return NodeShapeVisualProperty.ELLIPSE;
-	            case HEXAGON:
+	            case NODE_HEXAGON:
 	                return NodeShapeVisualProperty.HEXAGON;
-	            case OCTAGON:
+	            case NODE_OCTAGON:
 	                return NodeShapeVisualProperty.OCTAGON;
+	                
+	            case EDGE_DIAMOND:
+	                return ArrowShapeVisualProperty.DIAMOND;
+	            case EDGE_DELTA:
+	                return ArrowShapeVisualProperty.DELTA;
+	            case EDGE_ARROW:
+	                return ArrowShapeVisualProperty.ARROW;
+	            case EDGE_T:
+	                return ArrowShapeVisualProperty.T;
+	            case EDGE_CIRCLE:
+	                return ArrowShapeVisualProperty.CIRCLE;
+	            case EDGE_HALF_TOP:
+	                return ArrowShapeVisualProperty.HALF_TOP;
+	            case EDGE_HALF_BOTTOM:
+	                return ArrowShapeVisualProperty.HALF_BOTTOM;
 	        }
 
 	        return null;

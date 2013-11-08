@@ -44,6 +44,8 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	private final String width;
 	private final String size;
 	private final String fill;
+	private final String labelfill;
+	private final String labelsize;
 	private final String linew;
 	private final String outline;
 	private final String transparency;
@@ -60,6 +62,8 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	 * @param width
 	 * @param size
 	 * @param fill
+	 * @param labelfill
+	 * @param labelsize
 	 * @param linew
 	 * @param outline
 	 * @param transparency
@@ -74,6 +78,8 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 			final String width,
 			final String size,
 			final String fill,
+			final String labelfill,
+			final String labelsize,
 			final String linew,
 			final String outline,
 			final String transparency,
@@ -86,6 +92,8 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 		this.width = width;
 		this.size = size;
 		this.fill = fill;
+		this.labelfill = labelfill;
+		this.labelsize = labelsize;
 		this.linew = linew;
 		this.outline = outline;
 		this.transparency = transparency;
@@ -107,7 +115,7 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 		
 		if (type!=null)
 		{
-			Object attr = typeMap.getTypedValue(typeMap.getType(type), type);
+			Object attr = typeMap.getTypedValue(typeMap.getType("NODE_" + type), type);
 			vizMap.insertNodeGraphics(
 					currentNode,
 					(VisualProperty<T>) BasicVisualLexicon.NODE_SHAPE,
@@ -145,11 +153,6 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					(VisualProperty<T>) BasicVisualLexicon.NODE_WIDTH,
 					"GRAPHICS.node.width",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentNode,"GRAPHICS.node.width",(T) attr ,start, end));
-//			vizMap.insertNodeGraphics(
-//				currentNode,
-//				(VisualProperty<T>) BasicVisualLexicon.NODE_SIZE,
-//				"GRAPHICS.node.size",
-//				getIntervalAttr(dynNetworkView.getNetwork(),currentNode,"GRAPHICS.node.size",(T) attr ,start, end));
 		}
 		if (fill!=null)
 		{
@@ -177,6 +180,24 @@ public final class NodeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 				(VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_PAINT,
 				"GRAPHICS.node.outline",
 				getIntervalAttr(dynNetworkView.getNetwork(),currentNode,"GRAPHICS.node.outline",(T) attr ,start, end));
+		}
+		if (labelfill!=null)
+		{
+			Object attr = typeMap.getTypedValue(typeMap.getType("paint"), labelfill);
+			vizMap.insertNodeGraphics(
+				currentNode,
+				(VisualProperty<T>) BasicVisualLexicon.NODE_LABEL_COLOR,
+				"GRAPHICS.node.labelfill",
+				getIntervalAttr(dynNetworkView.getNetwork(),currentNode,"GRAPHICS.node.labelfill",(T) attr ,start, end));
+		}
+		if (labelsize!=null)
+		{
+			Object attr = typeMap.getTypedValue(typeMap.getType("integer"), labelsize);
+			vizMap.insertNodeGraphics(
+				currentNode,
+				(VisualProperty<T>) BasicVisualLexicon.NODE_LABEL_FONT_SIZE,
+				"GRAPHICS.node.labelsize",
+				getIntervalAttr(dynNetworkView.getNetwork(),currentNode,"GRAPHICS.node.labelsize",(T) attr ,start, end));
 		}
 		if (transparency!=null)
 		{

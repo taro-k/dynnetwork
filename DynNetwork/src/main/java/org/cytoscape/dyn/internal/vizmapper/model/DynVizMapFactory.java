@@ -59,11 +59,12 @@ public interface DynVizMapFactory<T> extends Sink<T>
 	 * @param currentEdge
 	 * @param width
 	 * @param fill
+	 * @param arrowshape
 	 * @param transparency
 	 * @param start
 	 * @param end
 	 */
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String transparency, String start, String end);
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String arrowshape, String transparency, String start, String end);
 	
 	/**
 	 * Add node graphic attribute event.
@@ -74,13 +75,15 @@ public interface DynVizMapFactory<T> extends Sink<T>
 	 * @param width
 	 * @param size
 	 * @param fill
+	 * @param labelfill
+	 * @param labelsize
 	 * @param line width
 	 * @param outline
 	 * @param transparency
 	 * @param start
 	 * @param end
 	 */
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String transparency, String start, String end);
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String labelfill, String labelsize, String linew, String outline, String transparency, String start, String end);
 	
 	/**
 	 * Process finalize dynVizMap event.

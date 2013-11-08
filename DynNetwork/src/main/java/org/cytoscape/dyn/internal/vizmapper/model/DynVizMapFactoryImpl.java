@@ -95,15 +95,15 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	}
 
 	@Override
-	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String linew, String outline, String transparency, String start, String end) 
+	public void addedNodeGraphics(DynNetwork<T> dynNetwork, CyNode currentNode, String type, String height, String width, String size, String fill, String labelfill, String labelsize, String linew, String outline, String transparency, String start, String end) 
 	{
-		this.nodeGraphicsList.push(new NodeGraphicsAttribute<T>(dynNetwork,currentNode,type,height,width,size,fill,linew,outline,transparency,start,end));
+		this.nodeGraphicsList.push(new NodeGraphicsAttribute<T>(dynNetwork,currentNode,type,height,width,size,fill,labelfill,labelsize,linew,outline,transparency,start,end));
 	}
 
 	@Override
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String transparency, String start, String end) 
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String arrowshape, String transparency, String start, String end) 
 	{
-		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,transparency,start,end));
+		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,arrowshape,transparency,start,end));
 	}
 
 }

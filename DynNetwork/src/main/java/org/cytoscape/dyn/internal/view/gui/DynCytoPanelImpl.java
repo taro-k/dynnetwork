@@ -70,8 +70,6 @@ import org.cytoscape.dyn.internal.view.task.Transformator;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
-import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedEvent;
-import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedListener;
 import org.cytoscape.view.vizmap.events.VisualStyleChangedEvent;
 import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskIterator;

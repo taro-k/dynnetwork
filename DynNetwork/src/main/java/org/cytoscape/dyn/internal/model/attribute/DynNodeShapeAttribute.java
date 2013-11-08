@@ -24,28 +24,28 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
- * <code> DynShapeAttribute </code> implements NodeShapeVisualProperty attributes and contains
+ * <code> DynNodeShapeAttribute </code> implements NodeShapeVisualProperty attributes and contains
  * a list of their interval times.
  * 
  * @author Sabina Sara Pfister
  * 
  */
-public class DynShapeAttribute extends AbstractDynAttribute<NodeShape>
+public class DynNodeShapeAttribute extends AbstractDynAttribute<NodeShape>
 {
 	/**
-	 * <code> DynShapeAttribute </code> constructor.
+	 * <code> DynNodeShapeAttribute </code> constructor.
 	 */
-	public DynShapeAttribute()
+	public DynNodeShapeAttribute()
 	{
 		super(NodeShape.class);
 	}
 	
 	/**
-	 * <code> DynShapeAttribute </code> constructor.
+	 * <code> DynNodeShapeAttribute </code> constructor.
 	 * @param interval
 	 * @param key
 	 */
-	public DynShapeAttribute(DynInterval<NodeShape> interval, KeyPairs key)
+	public DynNodeShapeAttribute(DynInterval<NodeShape> interval, KeyPairs key)
 	{
 		super(NodeShape.class,interval,key);
 	}
