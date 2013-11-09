@@ -110,9 +110,14 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 			if (i<iterations-1)
 			{
-
+				// Set transparency
+				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
+				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+				updateNodeTransparency(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparency(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,offCounter,onCounter);
+				updateEdgeTransparency(dynNetwork,view,edges,offCounter,onCounter);
 				
-
 				// Set other graphical attributes
 				for (DynInterval<T> interval : nodesPosX)
 					if (interval.isOn())
@@ -134,20 +139,16 @@ public class Transformator<T> extends AbstractTransformator<T>
 				for (DynInterval<T> interval : edgesVizMap)
 					if (interval.isOn())
 						updateVisualProperty(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
-
-				// Set transparency
-				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
-				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
-				updateNodeTransparency(dynNetwork,view,nodesTrasnparencyVizMap);
-				updateEdgeTransparency(dynNetwork,view,edgesTrasnparencyVizMap);
-				updateNodeTransparency(dynNetwork,view,nodes,offCounter,onCounter);
-				updateEdgeTransparency(dynNetwork,view,edges,offCounter,onCounter);
 				
 			}
 			else
 			{
+				// Set transparency
+				updateNodeTransparencyFinal(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparencyFinal(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,255,visibility);
+				updateEdgeTransparency(dynNetwork,view,edges,255,visibility);
 				
-
 				// Set other graphical attributes
 				for (DynInterval<T> interval : nodesPosX)
 					if (interval.isOn())
@@ -168,12 +169,6 @@ public class Transformator<T> extends AbstractTransformator<T>
 				for (DynInterval<T> interval : edgesVizMap)
 					if (interval.isOn())
 						updateVisualPropertyFinal(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
-			
-				// Set transparency
-				updateNodeTransparencyFinal(dynNetwork,view,nodesTrasnparencyVizMap);
-				updateEdgeTransparencyFinal(dynNetwork,view,edgesTrasnparencyVizMap);
-				updateNodeTransparency(dynNetwork,view,nodes,255,visibility);
-				updateEdgeTransparency(dynNetwork,view,edges,255,visibility);
 			
 			}
 

@@ -132,14 +132,12 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					"GRAPHICS.edge.fill",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
 			
-//			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
 //			vizMap.insertEdgeGraphics(
 //					currentEdge,
 //					(VisualProperty<T>) BasicVisualLexicon.EDGE_UNSELECTED_PAINT,
 //					"GRAPHICS.edge.unselectedfill",
 //					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.unselectedfill",(T) attr ,start, end));
 //			
-//			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
 //			vizMap.insertEdgeGraphics(
 //					currentEdge,
 //					(VisualProperty<T>) BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT,
@@ -147,19 +145,18 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 //					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.unselectedpaintfill",(T) attr ,start, end));
 			
 			
-//			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
 //			vizMap.insertEdgeGraphics(
 //					currentEdge,
 //					(VisualProperty<T>) this.visualLexicon.EDGE_SOURCE_ARROW_UNSELECTED_PAINT,
 //					"GRAPHICS.edge.sourcearrowfill",
 //					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.sourcearrowfill",(T) attr ,start, end));
 //			
-//			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
 //			vizMap.insertEdgeGraphics(
 //					currentEdge,
 //					(VisualProperty<T>) this.visualLexicon.EDGE_TARGET_ARROW_UNSELECTED_PAINT,
 //					"GRAPHICS.edge.targetarrowfill",
 //					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.targetarrowfill",(T) attr ,start, end));
+		
 		}
 		if (sourcearrowshape!=null)
 		{
@@ -194,15 +191,15 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					"bend",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.bend",(T) attr ,start, end));
 		}
-		if (transparency!=null)
-		{
-			Object attr = typeMap.getTypedValue(typeMap.getType("integer"), transparency);
-			vizMap.insertEdgeGraphics(
-					currentEdge,
-					(VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY,
-					"GRAPHICS.edge.transparency",
-					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.transparency",(T) attr ,start, end));
-		}
+//		if (transparency!=null)
+//		{
+//			Object attr = typeMap.getTypedValue(typeMap.getType("integer"), transparency);
+//			vizMap.insertEdgeGraphics(
+//					currentEdge,
+//					(VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY,
+//					"GRAPHICS.edge.transparency",
+//					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.transparency",(T) attr ,start, end));
+//		}
 	}
 	
 }
