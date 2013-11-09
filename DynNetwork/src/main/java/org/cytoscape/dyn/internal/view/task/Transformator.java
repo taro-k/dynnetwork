@@ -111,13 +111,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 			if (i<iterations-1)
 			{
 
-				// Set transparency
-				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
-				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
-				updateNodeTransparency(dynNetwork,view,nodesTrasnparencyVizMap);
-				updateEdgeTransparency(dynNetwork,view,edgesTrasnparencyVizMap);
-				updateNodeTransparency(dynNetwork,view,nodes,offCounter,onCounter);
-				updateEdgeTransparency(dynNetwork,view,edges,offCounter,onCounter);
+				
 
 				// Set other graphical attributes
 				for (DynInterval<T> interval : nodesPosX)
@@ -141,14 +135,18 @@ public class Transformator<T> extends AbstractTransformator<T>
 					if (interval.isOn())
 						updateVisualProperty(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
 
+				// Set transparency
+				onCounter = (int) ((1-alpha)*onCounter+alpha*visibility);
+				offCounter = (int) ((1-alpha)*offCounter+alpha*255);
+				updateNodeTransparency(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparency(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,offCounter,onCounter);
+				updateEdgeTransparency(dynNetwork,view,edges,offCounter,onCounter);
+				
 			}
 			else
 			{
-				// Set transparency
-				updateNodeTransparencyFinal(dynNetwork,view,nodesTrasnparencyVizMap);
-				updateEdgeTransparencyFinal(dynNetwork,view,edgesTrasnparencyVizMap);
-				updateNodeTransparency(dynNetwork,view,nodes,255,visibility);
-				updateEdgeTransparency(dynNetwork,view,edges,255,visibility);
+				
 
 				// Set other graphical attributes
 				for (DynInterval<T> interval : nodesPosX)
@@ -170,6 +168,13 @@ public class Transformator<T> extends AbstractTransformator<T>
 				for (DynInterval<T> interval : edgesVizMap)
 					if (interval.isOn())
 						updateVisualPropertyFinal(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
+			
+				// Set transparency
+				updateNodeTransparencyFinal(dynNetwork,view,nodesTrasnparencyVizMap);
+				updateEdgeTransparencyFinal(dynNetwork,view,edgesTrasnparencyVizMap);
+				updateNodeTransparency(dynNetwork,view,nodes,255,visibility);
+				updateEdgeTransparency(dynNetwork,view,edges,255,visibility);
+			
 			}
 
 			view.updateView();
@@ -258,7 +263,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 					vp != ((VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_TRANSPARENCY) |
 					vp != ((VisualProperty<T>) BasicVisualLexicon.NODE_LABEL_TRANSPARENCY))
 				{
-					nodeView.setLockedValue(vp,null);
+					nodeView.setLockedValue(vp,nodeView.getVisualProperty(vp));
 				}
 			}
 			
@@ -278,7 +283,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 				if (vp != ((VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY) ||
 					vp != ((VisualProperty<T>) BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY))
 				{
-					edgeView.setLockedValue(vp,null);
+					edgeView.setLockedValue(vp,edgeView.getVisualProperty(vp));
 				}
 			}
 			

@@ -38,19 +38,25 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	private final Stack<NodeGraphicsAttribute<T>> nodeGraphicsList;
 	private final Stack<EdgeGraphicsAttribute<T>> edgeGraphicsList;
 	
+	private final DVisualLexicon visualLexicon;
+	
 	private final AttributeTypeMap typeMap;
 	
 	/**
 	 * <code> DynVizMapFactoryImplDynVizMapManager </code> constructor.
 	 * @param vizMapManager
+	 * @param visualLexicon
 	 */
-	public DynVizMapFactoryImpl(DynVizMapManager<T> vizMapManager)
+	public DynVizMapFactoryImpl(
+			final DynVizMapManager<T> vizMapManager,
+			final DVisualLexicon visualLexicon)
 	{
 		this.vizMapManager = vizMapManager;
 		this.graphGraphicsList = new Stack<GraphGraphicsAttribute<T>>();
 		this.nodeGraphicsList = new Stack<NodeGraphicsAttribute<T>>();
 		this.edgeGraphicsList = new Stack<EdgeGraphicsAttribute<T>>();
 		
+		this.visualLexicon = visualLexicon;
 		this.typeMap = new AttributeTypeMap();
 	}
 
@@ -105,7 +111,7 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	@Override
 	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end, HandleFactory handleFactory, BendFactory bendFactory) 
 	{
-		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,sourcearrowshape,targetarrowshape,bend,transparency,start,end,handleFactory,bendFactory));
+		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,sourcearrowshape,targetarrowshape,bend,transparency,start,end,handleFactory,bendFactory,visualLexicon));
 	}
 
 }

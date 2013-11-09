@@ -61,12 +61,12 @@ import org.cytoscape.dyn.internal.model.tree.DynIntervalDouble;
 import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.task.BlockingQueue;
-import org.cytoscape.dyn.internal.view.task.DynNetworkViewRefreshTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTask;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTaskIterator;
 import org.cytoscape.dyn.internal.view.task.DynNetworkViewTransparencyTask;
 import org.cytoscape.dyn.internal.view.task.DynVizmapTask;
 import org.cytoscape.dyn.internal.view.task.Transformator;
+import org.cytoscape.dyn.internal.vizmapper.model.DVisualLexicon;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
@@ -136,9 +136,7 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 	 * @param viewManager
 	 * @param layoutManager
 	 * @param vizMapManager
-	 * @param continousFactory
-	 * @param discreteFactory
-	 * @param passthroughFactory
+	 * @param transformator
 	 */
 	public DynCytoPanelImpl(
 			final CySwingApplication desktopApp,
@@ -147,15 +145,16 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			final DynNetworkViewManager<T> viewManager,
 			final DynLayoutManager<T> layoutManager,
 			final DynVizMapManager<T> vizMapManager,
-			final Transformator<T> transformator,
-			final FileUtil fileUtil)
+			final FileUtil fileUtil,
+			final Transformator<T> transformator)
 	{
 		this.desktopApp = desktopApp;
 		this.taskManager = taskManager;
 		this.appManager = appManager;
 		this.viewManager = viewManager;
-		this.transformator = transformator;
 		this.fileUtil = fileUtil;
+
+		this.transformator = transformator;
 		
 		this.queue = new BlockingQueue();
 		initComponents();
@@ -575,14 +574,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener
 			singleTask.cancel();
 		
 		new Thread(singleTask = new DynNetworkViewTask<T,C>(this, view,transformator,queue)).start();
-	}
-	
-	private void refreshView()
-	{
-		if (singleTask!=null)
-			singleTask.cancel();
-		
-		new Thread(new DynNetworkViewRefreshTask<T,C>(this, view,transformator,queue)).start();
 	}
 	
 	private void updateTransparency()

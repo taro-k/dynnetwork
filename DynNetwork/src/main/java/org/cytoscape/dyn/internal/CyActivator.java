@@ -45,6 +45,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
 import org.cytoscape.dyn.internal.view.task.Transformator;
+import org.cytoscape.dyn.internal.vizmapper.model.DVisualLexicon;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactoryImpl;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
@@ -121,13 +122,14 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	DynNetworkViewFactoryImpl<T> dynNetworkViewFactory = new DynNetworkViewFactoryImpl<T>(
     			dynNetViewManager, cyNetworkViewFactoryServiceRef, cyNetworkViewManagerServiceRef,visualMappingServiceRef);
     	
+    	DVisualLexicon visualLexicon = new DVisualLexicon(cyApplicationManagerServiceRef);
     	DynLayoutManager<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
     	DynLayoutFactory<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(dynLayoutManager);
     	DynVizMapManager<T> dynVizMapManager = new DynVizMapManagerImpl<T>();
-    	DynVizMapFactory<T> vizMapFactory = new DynVizMapFactoryImpl<T>(dynVizMapManager);
+    	DynVizMapFactory<T> vizMapFactory = new DynVizMapFactoryImpl<T>(dynVizMapManager, visualLexicon);
     	Transformator<T> transformator = new Transformator<T>(dynLayoutManager,dynVizMapManager);
     	DynCytoPanelImpl<T,C> dynCytoPanel = new DynCytoPanelImpl<T,C>(
-    			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,dynVizMapManager,transformator,fileUtil);
+    			cytoscapeDesktopService,taskManager,cyApplicationManagerServiceRef,dynNetViewManager,dynLayoutManager,dynVizMapManager,fileUtil,transformator);
     	
     	CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T,C>("Dynamic Layouts", "Kamada-Kawai DynLayout",
     			undo,dynCytoPanel,dynLayoutFactory,dynNetViewManager,dynLayoutManager);
