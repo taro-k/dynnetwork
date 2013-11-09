@@ -20,6 +20,7 @@
 package org.cytoscape.dyn.internal.vizmapper.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,6 +169,12 @@ public class DynVizMapImpl<T> extends AbstractDynAttributeCheck<T> implements Dy
 	public VisualProperty<T> getVisualProperty(DynAttribute<T> attr) 
 	{
 		return this.visualProprtiesMap.get(attr);
+	}
+	
+	@Override
+	public Collection<VisualProperty<T>> getVisualProperties() 
+	{
+		return this.visualProprtiesMap.values();
 	}
 	
 	@Override

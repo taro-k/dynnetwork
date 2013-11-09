@@ -19,6 +19,7 @@
 
 package org.cytoscape.dyn.internal.vizmapper.model;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
@@ -139,9 +140,15 @@ public interface DynVizMap<T>
 	/**
 	 * Get visual mapping associated with given dynamic attribute.
 	 * @param attr
-	 * @return
+	 * @return visual property
 	 */
 	public VisualProperty<T> getVisualProperty(DynAttribute<T> attr);
+	
+	/**
+	 * Get all dynamic visual properties.
+	 * @return visual property collections
+	 */
+	public Collection<VisualProperty<T>> getVisualProperties();
 	
 	/**
 	 * Add node to transparent node list.

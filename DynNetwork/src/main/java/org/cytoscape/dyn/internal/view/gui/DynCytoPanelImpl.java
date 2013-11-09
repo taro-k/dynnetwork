@@ -290,11 +290,11 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, VisualStyleChange
 	@Override
 	public void handleEvent(VisualStyleChangedEvent e) 
 	{
-		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
-		if (view!=null)
-		{
-			refreshView();
-		}
+//		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
+//		if (view!=null)
+//		{
+//			refreshView();
+//		}
 	}
 		
 	@SuppressWarnings("unchecked")

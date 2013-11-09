@@ -252,6 +252,16 @@ public class Transformator<T> extends AbstractTransformator<T>
 		
 		for (final View<CyNode> nodeView : view.getNetworkView().getNodeViews())
 		{
+			for (final VisualProperty<T> vp : vizMap.getVisualProperties())
+			{
+				if (vp != ((VisualProperty<T>) BasicVisualLexicon.NODE_TRANSPARENCY) |
+					vp != ((VisualProperty<T>) BasicVisualLexicon.NODE_BORDER_TRANSPARENCY) |
+					vp != ((VisualProperty<T>) BasicVisualLexicon.NODE_LABEL_TRANSPARENCY))
+				{
+					nodeView.setLockedValue(vp,null);
+				}
+			}
+			
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_TRANSPARENCY, visibility);
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_BORDER_TRANSPARENCY, visibility);
 			nodeView.setLockedValue(BasicVisualLexicon.NODE_LABEL_TRANSPARENCY, visibility);
@@ -263,6 +273,15 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 		for (final View<CyEdge> edgeView : view.getNetworkView().getEdgeViews())
 		{
+			for (final VisualProperty<T> vp : vizMap.getVisualProperties())
+			{
+				if (vp != ((VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY) ||
+					vp != ((VisualProperty<T>) BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY))
+				{
+					edgeView.setLockedValue(vp,null);
+				}
+			}
+			
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_TRANSPARENCY, visibility);
 			edgeView.setLockedValue(BasicVisualLexicon.EDGE_LABEL_TRANSPARENCY, visibility);
 			if (vizMap.contrainsTransparentEdge(edgeView.getModel()))

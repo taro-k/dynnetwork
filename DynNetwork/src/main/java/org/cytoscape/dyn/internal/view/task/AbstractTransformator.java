@@ -155,19 +155,19 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 
 	protected final void updateVisualProperty(DynNetworkView<T> view, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().setVisualProperty(vp,
+		view.getNetworkView().setLockedValue(vp,
 				interval.interpolateValue(view.getNetworkView().getVisualProperty(vp), this.alpha));
 	}
 
 	protected final void updateVisualProperty(DynNetworkView<T> view, CyNode node, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().getNodeView(node).setVisualProperty(vp,
+		view.getNetworkView().getNodeView(node).setLockedValue(vp,
 				interval.interpolateValue(view.getNetworkView().getNodeView(node).getVisualProperty(vp), this.alpha));
 	}
 
 	protected final void updateVisualProperty(DynNetworkView<T> view, CyEdge edge, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().getEdgeView(edge).setVisualProperty(vp,
+		view.getNetworkView().getEdgeView(edge).setLockedValue(vp,
 				interval.interpolateValue(view.getNetworkView().getEdgeView(edge).getVisualProperty(vp), this.alpha));
 	}
 	
@@ -198,19 +198,19 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 	
 	protected final void updateVisualPropertyFinal(DynNetworkView<T> view, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().setVisualProperty(vp,
+		view.getNetworkView().setLockedValue(vp,
 				interval.getOnValue());
 	}
 
 	protected final void updateVisualPropertyFinal(DynNetworkView<T> view, CyNode node, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().getNodeView(node).setVisualProperty(vp,
+		view.getNetworkView().getNodeView(node).setLockedValue(vp,
 				interval.interpolateValue(view.getNetworkView().getNodeView(node).getVisualProperty(vp), this.alpha));
 	}
 
 	protected final void updateVisualPropertyFinal(DynNetworkView<T> view, CyEdge edge, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().getEdgeView(edge).setVisualProperty(vp,
+		view.getNetworkView().getEdgeView(edge).setLockedValue(vp,
 				interval.getOnValue());
 	}
 	
