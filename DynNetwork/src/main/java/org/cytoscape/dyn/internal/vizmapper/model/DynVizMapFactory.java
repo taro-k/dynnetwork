@@ -25,6 +25,8 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 /**
  * <code> DynVizMapFactory </code> is the interface for the factory of
@@ -61,11 +63,14 @@ public interface DynVizMapFactory<T> extends Sink<T>
 	 * @param fill
 	 * @param sourcearrowshape
 	 * @param targetarrowshape
+	 * @param bend
 	 * @param transparency
 	 * @param start
 	 * @param end
+	 * @param handleFactory
+	 * @param bendFactory
 	 */
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill,  String sourcearrowshape, String targetarrowshape, String transparency, String start, String end);
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end, HandleFactory handleFactory, BendFactory bendFactory);
 	
 	/**
 	 * Add node graphic attribute event.

@@ -39,6 +39,8 @@ import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -64,9 +66,9 @@ public final class DynHandlerXGMMLFactory<T>
 	 * @param viewSink
 	 * @param layoutSink
 	 */
-	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink)
+	public DynHandlerXGMMLFactory(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink, HandleFactory handleFactory, BendFactory bendFactory)
 	{
-		handler = new DynHandlerXGMML<T>(networkSink,viewSink,layoutSink, vizMapSink);
+		handler = new DynHandlerXGMML<T>(networkSink,viewSink,layoutSink, vizMapSink, handleFactory, bendFactory);
 		startParseMap = new HashMap<ParseDynState, Map<String, ParseDynState>>();
 		buildMap(createStartParseTable(), startParseMap);
 	}

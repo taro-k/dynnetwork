@@ -119,10 +119,4 @@ public class DynIntervalDouble extends AbstractDynInterval<Double>
 		return (1-alpha)*value2.doubleValue()+alpha*onValue.doubleValue();
 	}
 	
-	@Override
-	public String getType()
-	{
-		return "D";
-	}
-	
 }

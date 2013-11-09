@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import org.cytoscape.dyn.internal.model.DynNetwork;
 import org.cytoscape.model.CyEdge;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 /**
  * <code> OrphanEdge </code> is used to store edges connected to nodes that 
@@ -62,7 +63,8 @@ public final class OrphanEdge<T>
 			String source, 
 			String target, 
 			String start, 
-			String end)
+			String end,
+			HandleFactory handleFactory)
 	{
 		this.currentNetwork = currentNetwork;
 		this.id = id;
@@ -70,7 +72,7 @@ public final class OrphanEdge<T>
 		this.source = source;
 		this.target = target;
 		this.start = start;
-		this.end = end;
+		this.end = end;;
 		
 		attributes = new ArrayList<OrphanAttribute<T>>();
 		graphics_attributes = new ArrayList<OrphanGraphicsAttribute<T>>();
@@ -114,13 +116,15 @@ public final class OrphanEdge<T>
 	 * @param fill
 	 * @param sourcearrowshape
 	 * @param targetarrowshape
+	 * @param bend
 	 * @param transparency
 	 * @param start
 	 * @param end
+	 * @param handleFactory
 	 */
-	public void addGraphics(DynNetwork<T> currentNetwork, String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
+	public void addGraphics(DynNetwork<T> currentNetwork, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end)
 	{
-		graphics_attributes.add(new OrphanGraphicsAttribute<T>(currentNetwork, width, sourcearrowshape, targetarrowshape, fill, transparency, start, end));
+		graphics_attributes.add(new OrphanGraphicsAttribute<T>(currentNetwork, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end));
 	}
 
 }

@@ -26,6 +26,7 @@ import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.view.presentation.property.values.ArrowShape;
+import org.cytoscape.view.presentation.property.values.Bend;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
@@ -106,6 +107,8 @@ public abstract class AbstractDynAttributeCheck<T>
 			return (DynAttribute<T>) new DynNodeShapeAttribute((DynInterval<NodeShape>) interval, key);
 		else if (interval.getOnValue() instanceof ArrowShape)
 			return (DynAttribute<T>) new DynArrowShapeAttribute((DynInterval<ArrowShape>) interval, key);
+		else if (interval.getOnValue() instanceof Bend)
+			return (DynAttribute<T>) new DynEdgeBendAttribute((DynInterval<Bend>) interval, key);
 		System.out.println("\nXGMML Parser Error: Unrecognized Attribute Class Type: " +  interval.getOnValue().getClass());
 		throw new NullPointerException("Invalid attribute class " + interval.getOnValue().getClass());
 	}
@@ -176,6 +179,7 @@ public abstract class AbstractDynAttributeCheck<T>
 		attr.addInterval(interval);
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void checkEdgeIntervals(CyNetwork network, DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())

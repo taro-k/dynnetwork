@@ -30,6 +30,8 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.xml.sax.Attributes;
 
 /**
@@ -72,6 +74,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	private String outline;
 	private String sourcearrowshape;
 	private String targetarrowshape;
+	private String bend;
 	private String transparency;
 	
 	private int ID = 0;
@@ -81,14 +84,18 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	 * @param networkSink
 	 * @param viewSink
 	 * @param layoutSink
+	 * @param handleFactory
+	 * @param bendFactory
 	 */
-	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink)
+	public DynHandlerXGMML(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink, HandleFactory handleFactory, BendFactory bendFactory)
 	{
 		orphanEdgeList = new Stack<OrphanEdge<T>>();
 		this.networkSink = networkSink;
 		this.viewSink = viewSink;
 		this.layoutSink = layoutSink;
 		this.vizMapSink = vizMapSink;
+		this.handleFactory = handleFactory;
+		this.bendFactory = bendFactory;
 	}
 
 	@Override
@@ -131,7 +138,7 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			id = id==null?label:id;
 			currentEdge = this.addEdge(currentNetwork, id, label, source, target, start, end);
 			if (currentEdge==null)
-				orphanEdgeList.push(new OrphanEdge<T>(currentNetwork, id, label, source, target, start, end));
+				orphanEdgeList.push(new OrphanEdge<T>(currentNetwork, id, label, source, target, start, end, this.handleFactory));
 			break;
 			
 		case NET_ATT:
@@ -200,13 +207,14 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 			fill = atts.getValue("fill");
 			sourcearrowshape = atts.getValue("sourcearrowshape");
 			targetarrowshape = atts.getValue("targetarrowshape");
+			bend = atts.getValue("bend");
 			transparency = atts.getValue("transparency");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentEdge!=null)
-				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
+				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end);
 			else
-				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
+				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end);
 			break;
 			
 		}
@@ -238,9 +246,9 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	}
 	
 	@Override
-	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill,  String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end)
 	{
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end, this.handleFactory, this.bendFactory);
 	}
 	
 	private String checkGraphAttributeName(String name)

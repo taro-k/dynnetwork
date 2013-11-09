@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
+import org.cytoscape.view.presentation.property.EdgeBendVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
 import org.cytoscape.view.presentation.property.values.ArrowShape;
+import org.cytoscape.view.presentation.property.values.Bend;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
@@ -143,6 +145,9 @@ public final class AttributeTypeMap
                 return (ArrowShape) ArrowShapeVisualProperty.HALF_TOP;
             case EDGE_HALF_BOTTOM:
                 return (ArrowShape) ArrowShapeVisualProperty.HALF_BOTTOM;
+                
+            case EDGE_BEND:
+                return (Bend) EdgeBendVisualProperty.DEFAULT_EDGE_BEND;
         }
 
         return null;

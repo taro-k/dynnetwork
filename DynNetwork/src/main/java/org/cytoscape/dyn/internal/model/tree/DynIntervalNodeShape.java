@@ -122,10 +122,4 @@ public class DynIntervalNodeShape extends AbstractDynInterval<NodeShape>
 		return onValue;
 	}
 	
-	@Override
-	public String getType()
-	{
-		return "N";
-	}
-	
 }

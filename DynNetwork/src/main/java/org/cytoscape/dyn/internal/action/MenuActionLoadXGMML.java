@@ -51,6 +51,8 @@ import org.cytoscape.io.DataCategory;
 import org.cytoscape.io.util.StreamUtil;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
@@ -86,6 +88,8 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	private final FileUtil fileUtil;
 	private final StreamUtil streamUtil;
 	private final TunableSetter tunableSetterServiceRef;
+	private final HandleFactory handleFactoryServiceRef;
+	private final BendFactory bendFactoryRef;
 
 	/**
 	 * <code> MenuActionLoadXGMML </code> constructor.
@@ -103,6 +107,8 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
 	 * @param fileUtil
 	 * @param streamUtil
 	 * @param tunableSetterServiceRef
+	 * @param handleFactoryServiceRef
+	 * @param bendFactoryRef
 	 */
     public MenuActionLoadXGMML(
     		final CySwingApplication desktopApp,
@@ -117,7 +123,9 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
     		final DynVizMapFactory<T> vizMapFactory,
     		final FileUtil fileUtil,
     		final StreamUtil streamUtil,
-    		final TunableSetter tunableSetterServiceRef)
+    		final TunableSetter tunableSetterServiceRef,
+    		final HandleFactory handleFactoryServiceRef,
+    		final BendFactory bendFactoryRef)
     {
         super("XGMML File...");
         this.setPreferredMenu("File.Import.Dynamic Network");
@@ -135,6 +143,8 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
         this.fileUtil = fileUtil;
         this.streamUtil = streamUtil;
         this.tunableSetterServiceRef = tunableSetterServiceRef;
+        this.handleFactoryServiceRef = handleFactoryServiceRef;
+        this.bendFactoryRef = bendFactoryRef;
     }
 
     /**
@@ -142,7 +152,7 @@ public class MenuActionLoadXGMML<T,C> extends AbstractCyAction
      */
     public void actionPerformed(ActionEvent e)
     {
-    	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory);
+    	XGMMLDynParser<T> xgmmlParser = new XGMMLDynParser<T>(dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory, handleFactoryServiceRef, bendFactoryRef);
     	XGMMLDynFileFilter xgmmlFilter = new XGMMLDynFileFilter(new String[]{"xgmml","xml","XGMML","XML"}, new String[]{"text/xgmml","text/xgmml+xml","text/xgmml","text/xgmml+xml"}, "XGMML files",DataCategory.NETWORK, streamUtil);
     	XGMMLDynNetworkReaderFactory xgmmlNetworkReaderFactory = new XGMMLDynNetworkReaderFactory(xgmmlFilter,xgmmlParser);
     	File file = fileUtil.getFile(desktopApp.getJFrame(), "Load Dynamic Network", FileUtil.LOAD, getFilters());

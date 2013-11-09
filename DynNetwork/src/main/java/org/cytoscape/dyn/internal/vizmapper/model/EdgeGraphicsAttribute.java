@@ -27,9 +27,12 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.VisualProperty;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.presentation.property.values.Bend;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 /**
- * <code> NodeGraphicsAttribute </code> is used to store node graphics attributes
+ * <code> EdgeGraphicsAttribute </code> is used to store node graphics attributes
  * to be added later to the visualization.
  * 
  * @author Sabina Sara Pfister
@@ -42,9 +45,13 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	private final String fill;
 	private final String sourcearrowshape;
 	private final String targetarrowshape;
+	private final String bend;
 	private final String transparency;
 	private final String start;
 	private final String end;
+	
+	private final HandleFactory handleFactory;
+	private final BendFactory bendFactory;
 
 	
 	/**
@@ -55,9 +62,12 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	 * @param fill
 	 * @param sourcearrowshape
 	 * @param targetarrowshape
+	 * @param bend
 	 * @param transparency
 	 * @param start
 	 * @param end
+	 * @param handleFactory
+	 * @param bendFactory
 	 */
 	public EdgeGraphicsAttribute(
 			final DynNetwork<T> currentNetwork,
@@ -66,18 +76,24 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 			final String fill,
 			final String sourcearrowshape,
 			final String targetarrowshape,
+			final String bend,
 			final String transparency,
 			final String start,
-			final String end)
+			final String end,
+			final HandleFactory handleFactory,
+			final BendFactory bendFactory)
 	{
 		this.currentEdge = currentEdge;
 		this.width = width;
 		this.fill = fill;
-		this.transparency = transparency;
 		this.sourcearrowshape = sourcearrowshape;
 		this.targetarrowshape = targetarrowshape;
+		this.bend = bend;
+		this.transparency = transparency;
 		this.start = start;
 		this.end = end;
+		this.handleFactory = handleFactory;
+		this.bendFactory = bendFactory;
 	}
 
 	/**
@@ -127,6 +143,21 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					(VisualProperty<T>) BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE,
 					"targetarrowshape",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.targetarrowshape",(T) attr ,start, end));
+		}
+		if (bend!=null)
+		{
+			Object attr = (Object) bendFactory.createBend();
+			((Bend) attr).insertHandleAt(0, handleFactory.createHandle(
+					dynNetworkView.getNetworkView(), 
+					dynNetworkView.getNetworkView().getEdgeView(this.currentEdge), 0, 0));
+			
+//			Double.parseDouble(bend)
+			
+			vizMap.insertEdgeGraphics(
+					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_BEND,
+					"bend",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.bend",(T) attr ,start, end));
 		}
 		if (transparency!=null)
 		{

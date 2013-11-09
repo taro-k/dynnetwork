@@ -1,68 +1,69 @@
 package org.cytoscape.dyn.internal.model.tree;
 
-import org.cytoscape.view.presentation.property.values.ArrowShape;
+import org.cytoscape.view.presentation.property.values.Bend;
 
 /**
- * <code> DynIntervalArrowShape </code> implements ArrowShape intervals.
+ * <code> DynIntervalEdgeBend </code> implements Bend intervals.
  *  
  * @author Sabina Sara Pfister
  */
-public class DynIntervalArrowShape extends AbstractDynInterval<ArrowShape>
+public class DynIntervalEdgeBend extends AbstractDynInterval<Bend>
 {
+	
 	/**
-	 * <code> DynIntervalArrowShape </code> constructor.
+	 * <code> DynIntervalEdgeBend </code> constructor.
 	 * @param interval
 	 * @param onValue
 	 */
-	public DynIntervalArrowShape(DynInterval<ArrowShape> interval, ArrowShape onValue)
+	public DynIntervalEdgeBend(DynInterval<Bend> interval, Bend onValue)
 	{
 		super(interval, onValue);
 	}
 	
 	/**
-	 * <code> DynIntervalArrowShape </code> constructor.
+	 * <code> DynIntervalEdgeBend </code> constructor.
 	 * @param interval
 	 */
-	public DynIntervalArrowShape(DynInterval<ArrowShape> interval)
+	public DynIntervalEdgeBend(DynInterval<Bend> interval)
 	{
 		super(interval);
 	}
 	
 	/**
-	 * <code> DynIntervalArrowShape </code> constructor.
+	 * <code> DynIntervalEdgeBend </code> constructor.
 	 * @param onValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalArrowShape(ArrowShape onValue, double start, double end)
+	public DynIntervalEdgeBend(Bend onValue, double start, double end)
 	{
 		super(onValue, start, end);
 	}
 	
 	/**
-	 * <code> DynIntervalArrowShape </code> constructor.
+	 * <code> DynIntervalEdgeBend </code> constructor.
 	 * @param onValue
 	 * @param offValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalArrowShape(ArrowShape onValue,  ArrowShape offValue, double start, double end)
+	public DynIntervalEdgeBend(Bend onValue, Bend offValue, double start, double end)
 	{
 		super(onValue, offValue, start, end);
 	}
 
 	/**
-	 * <code> DynIntervalArrowShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalArrowShape(double start, double end)
+	public DynIntervalEdgeBend(double start, double end)
 	{
 		super(start, end);
 	}
 
 	@Override
-	public int compareTo(DynInterval<ArrowShape> interval)
+	public int compareTo(DynInterval<Bend> interval)
 	{
 		if ((start <= interval.getEnd() && interval.getStart() <= end) &&	
 				((start < interval.getEnd() && interval.getStart() < end) ||
@@ -75,19 +76,19 @@ public class DynIntervalArrowShape extends AbstractDynInterval<ArrowShape>
 	}
 
 	@Override
-	public ArrowShape getOnValue()
+	public Bend getOnValue()
 	{
 		return onValue;
 	}
 	
 	@Override
-	public ArrowShape getOffValue()
+	public Bend getOffValue()
 	{
 		return offValue;
 	}
 	
 	@Override
-	public ArrowShape getOverlappingValue(DynInterval<ArrowShape> interval)
+	public Bend getOverlappingValue(DynInterval<Bend> interval)
 	{
 		if (this.compareTo(interval)>0)
 			return onValue;
@@ -96,7 +97,7 @@ public class DynIntervalArrowShape extends AbstractDynInterval<ArrowShape>
 	}
 	
 	@Override
-	public ArrowShape interpolateValue(ArrowShape value2, double alpha)
+	public Bend interpolateValue(Bend value2, double alpha)
 	{
 		return onValue;
 	}

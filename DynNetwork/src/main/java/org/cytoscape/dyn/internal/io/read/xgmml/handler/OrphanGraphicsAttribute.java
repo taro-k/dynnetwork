@@ -36,6 +36,7 @@ public class OrphanGraphicsAttribute<T>
 	private final String fill;
 	private final String sourcearrowshape;
 	private final String targetarrowshape;
+	private final String bend;
 	private final String transparency;
 	private final String start;
 	private final String end;
@@ -46,17 +47,19 @@ public class OrphanGraphicsAttribute<T>
 	 * @param width
 	 * @param sourcearrowshape
 	 * @param targetarrowshape
+	 * @param bend
      * @param transparency
 	 * @param start
 	 * @param end
 	 */
-	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
+	public OrphanGraphicsAttribute(DynNetwork<T> currentNetwork, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end)
 	{
 		this.currentNetwork = currentNetwork;
 		this.width = width;
 		this.fill = fill;
 		this.sourcearrowshape = sourcearrowshape;
 		this.targetarrowshape = targetarrowshape;
+		this.bend = bend;
 		this.transparency = transparency;
 		this.start = start;
 		this.end = end;
@@ -66,11 +69,12 @@ public class OrphanGraphicsAttribute<T>
 	 * Add orphan edge graphics attribute to edge.
 	 * @param handler
 	 * @param currentEdge
+	 * @param handleFactory
 	 */
 	public void add(DynHandlerXGMML<T> handler, CyEdge currentEdge)
 	{
 		if (currentEdge!=null)
-			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
+			handler.addEdgeGraphics(currentNetwork, currentEdge, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end);
 	}
 	
 }

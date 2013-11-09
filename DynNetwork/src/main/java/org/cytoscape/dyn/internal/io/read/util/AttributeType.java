@@ -58,7 +58,9 @@ public enum AttributeType
 	EDGE_T("EDGE_T"),
 	EDGE_CIRCLE("EDGE_CIRCLE"),
 	EDGE_HALF_TOP("EDGE_HALF_TOP"),
-	EDGE_HALF_BOTTOM("EDGE_HALF_BOTTOM");
+	EDGE_HALF_BOTTOM("EDGE_HALF_BOTTOM"),
+	
+	EDGE_BEND("EDGE_BEND");
 
     private String name;
 

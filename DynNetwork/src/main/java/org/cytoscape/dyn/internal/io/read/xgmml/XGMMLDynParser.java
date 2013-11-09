@@ -26,6 +26,8 @@ import org.cytoscape.dyn.internal.layout.model.DynLayoutFactory;
 import org.cytoscape.dyn.internal.model.DynNetworkFactory;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -51,9 +53,9 @@ public final class XGMMLDynParser<T> extends DefaultHandler
 	 * @param viewSink
 	 * @param layoutSink
 	 */
-	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink)
+	public XGMMLDynParser(DynNetworkFactory<T> networkSink, DynNetworkViewFactory<T> viewSink, DynLayoutFactory<T> layoutSink, DynVizMapFactory<T> vizMapSink, HandleFactory handleFactory, BendFactory bendFactory)
 	{
-		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink,layoutSink,vizMapSink);
+		this.handler = new DynHandlerXGMMLFactory<T>(networkSink,viewSink,layoutSink,vizMapSink, handleFactory, bendFactory);
 	}
 
 	@Override

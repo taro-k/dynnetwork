@@ -118,11 +118,5 @@ public class DynIntervalBoolean extends AbstractDynInterval<Boolean>
 	{
 		return onValue;
 	}
-	
-	@Override
-	public String getType()
-	{
-		return "B";
-	}
 
 }

@@ -28,6 +28,8 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 /**
  * <code> AbstractXGMMLSource </code> is an abstract class to generates 
@@ -46,6 +48,9 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	protected DynNetworkViewFactory<T> viewSink;
 	protected DynLayoutFactory<T> layoutSink;
 	protected DynVizMapFactory<T> vizMapSink;
+	
+	protected HandleFactory handleFactory;
+	protected BendFactory bendFactory;
 
 	protected DynNetwork<T> addGraph(
 			String id, String label, String start, String end, String directed)
@@ -96,9 +101,9 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
+			String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end)
 	{
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, start, end, this.handleFactory, this.bendFactory);
 	}
 	
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 

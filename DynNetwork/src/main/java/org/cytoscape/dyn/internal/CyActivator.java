@@ -61,8 +61,9 @@ import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.events.VisualMappingFunctionChangedListener;
 import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
@@ -109,6 +110,8 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	TunableSetter tunableSetterServiceRef = getService(context,TunableSetter.class);
     	UndoSupport undo = getService(context,UndoSupport.class);
     	CyEventHelper cyEventHelperRef = getService(context,CyEventHelper.class);
+    	HandleFactory handleFactoryServiceRef = getService(context, HandleFactory.class);
+    	BendFactory bendFactoryServiceRef = getService(context, BendFactory.class);
     	
     	DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(
     			cyNetworkManagerServiceRef);
@@ -135,7 +138,9 @@ public class CyActivator<T,C> extends AbstractCyActivator
 //    	CyLayoutAlgorithm dynClearVizMap = new CleanDynVizMap<T,C>("Dynamic VizMaps", "Remove DynVizMap",undo,vizMapFactory);
     	
     	MenuActionLoadXGMML<T,C> loadAction = new MenuActionLoadXGMML<T,C>(
-    			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,dynNetworkViewFactory,dynLayoutFactory,vizMapFactory,fileUtil,streamUtil,tunableSetterServiceRef);
+    			cytoscapeDesktopService,cyApplicationManagerServiceRef,dynCytoPanel,taskManager,dynNetManager,dynNetViewManager,dynNetworkFactory,
+    			dynNetworkViewFactory,dynLayoutFactory,vizMapFactory,fileUtil,streamUtil,tunableSetterServiceRef,
+    			handleFactoryServiceRef,bendFactoryServiceRef);
     	MenuActionSelectVisibleNodes<T,C> selectNodesAction = new MenuActionSelectVisibleNodes<T,C>(
     			cyApplicationManagerServiceRef,cyNetworkViewManagerServiceRef,dynNetManager,undo,cyEventHelperRef,taskManager,dynCytoPanel);
     	MenuActionSelectVisibleEdges<T,C> selectEdgesAction = new MenuActionSelectVisibleEdges<T,C>(

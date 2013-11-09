@@ -27,6 +27,8 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkView;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 
 public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
@@ -101,9 +103,9 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	}
 
 	@Override
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end) 
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start, String end, HandleFactory handleFactory, BendFactory bendFactory) 
 	{
-		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,sourcearrowshape,targetarrowshape,transparency,start,end));
+		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,sourcearrowshape,targetarrowshape,bend,transparency,start,end,handleFactory,bendFactory));
 	}
 
 }

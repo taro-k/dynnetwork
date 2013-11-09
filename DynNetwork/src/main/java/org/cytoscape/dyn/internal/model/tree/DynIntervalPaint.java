@@ -141,10 +141,4 @@ public class DynIntervalPaint extends AbstractDynInterval<Paint>
 				(int)((1-alpha)*((Color) value2).getBlue()+alpha*this.blueValue));
 	}
 	
-	@Override
-	public String getType()
-	{
-		return "P";
-	}
-	
 }

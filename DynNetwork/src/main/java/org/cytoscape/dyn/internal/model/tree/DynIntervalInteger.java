@@ -121,10 +121,4 @@ public class DynIntervalInteger extends AbstractDynInterval<Integer>
 //		return (int) Math.round((1.0-alpha)*((double)value2.intValue())+alpha*((double)onValue.intValue()));
 	}
 	
-	@Override
-	public String getType()
-	{
-		return "I";
-	}
-	
 }

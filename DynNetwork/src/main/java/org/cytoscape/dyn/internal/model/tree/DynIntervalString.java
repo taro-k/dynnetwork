@@ -119,10 +119,4 @@ public class DynIntervalString extends AbstractDynInterval<String>
 		return onValue;
 	}
 	
-	@Override
-	public String getType()
-	{
-		return "S";
-	}
-	
 }
