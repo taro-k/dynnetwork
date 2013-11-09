@@ -27,7 +27,6 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public class DynIntervalInteger extends AbstractDynInterval<Integer>
 {
-	
 	/**
 	 * <code> DynIntervalInteger </code> constructor.
 	 * @param interval
@@ -117,7 +116,15 @@ public class DynIntervalInteger extends AbstractDynInterval<Integer>
 	@Override
 	public Integer interpolateValue(Integer value2, double alpha)
 	{
-		return (int) ((1-alpha)*value2.intValue()+alpha*onValue.intValue());
+		this.getAttribute().setCurrentValue((1.0-alpha)*this.getAttribute().getCurrentValue()+alpha*((double)onValue.intValue()));
+		return (int) Math.round(this.getAttribute().getCurrentValue());
+//		return (int) Math.round((1.0-alpha)*((double)value2.intValue())+alpha*((double)onValue.intValue()));
+	}
+	
+	@Override
+	public String getType()
+	{
+		return "I";
 	}
 	
 }

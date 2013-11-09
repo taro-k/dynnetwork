@@ -204,8 +204,12 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 
 	protected final void updateVisualPropertyFinal(DynNetworkView<T> view, CyNode node, VisualProperty<T> vp, DynInterval<T> interval)
 	{
-		view.getNetworkView().getNodeView(node).setVisualProperty(vp,
-				interval.getOnValue());
+		if (interval.getOnValue() instanceof Integer)
+			view.getNetworkView().getNodeView(node).setVisualProperty(vp,
+					interval.getOnValue());
+		else
+			view.getNetworkView().getNodeView(node).setVisualProperty(vp,
+					interval.interpolateValue(view.getNetworkView().getNodeView(node).getVisualProperty(vp), this.alpha));
 	}
 
 	protected final void updateVisualPropertyFinal(DynNetworkView<T> view, CyEdge edge, VisualProperty<T> vp, DynInterval<T> interval)

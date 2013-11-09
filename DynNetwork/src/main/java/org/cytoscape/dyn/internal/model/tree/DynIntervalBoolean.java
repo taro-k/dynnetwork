@@ -27,7 +27,6 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public class DynIntervalBoolean extends AbstractDynInterval<Boolean>
 {
-	
 	/**
 	 * <code> DynIntervalBoolean </code> constructor.
 	 * @param interval
@@ -118,6 +117,12 @@ public class DynIntervalBoolean extends AbstractDynInterval<Boolean>
 	public Boolean interpolateValue(Boolean value2, double alpha)
 	{
 		return onValue;
+	}
+	
+	@Override
+	public String getType()
+	{
+		return "B";
 	}
 
 }

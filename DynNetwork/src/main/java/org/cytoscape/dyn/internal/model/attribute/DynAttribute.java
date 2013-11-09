@@ -154,5 +154,17 @@ public interface DynAttribute<T>
 	 * @return interval
 	 */
 	public DynInterval<T> getPredecessor(DynInterval<T> interval);
+	
+	/**
+	 * Get current value. This is a hack, do not use!
+	 * @return currentValue
+	 */
+	public double getCurrentValue();
+	
+	/**
+	 * Set current value. This is a hack, do not use!
+	 * @param currentValue
+	 */
+	public void setCurrentValue(double currentValue);
 
 }

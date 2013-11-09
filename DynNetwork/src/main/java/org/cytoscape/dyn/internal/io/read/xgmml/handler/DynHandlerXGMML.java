@@ -70,7 +70,8 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	private String labelsize;
 	private String width;
 	private String outline;
-	private String arrowshape;
+	private String sourcearrowshape;
+	private String targetarrowshape;
 	private String transparency;
 	
 	private int ID = 0;
@@ -197,14 +198,15 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 		case EDGE_GRAPHICS:
 			width = atts.getValue("width");
 			fill = atts.getValue("fill");
-			arrowshape = atts.getValue("arrowshape");
+			sourcearrowshape = atts.getValue("sourcearrowshape");
+			targetarrowshape = atts.getValue("targetarrowshape");
 			transparency = atts.getValue("transparency");
 			start = atts.getValue("start");
 			end = atts.getValue("end");
 			if (currentEdge!=null)
-				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, arrowshape, transparency, start, end);
+				this.addEdgeGraphics(currentNetwork, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
 			else
-				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, arrowshape, transparency, start, end);
+				orphanEdgeList.peek().addGraphics(currentNetwork, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
 			break;
 			
 		}
@@ -236,9 +238,9 @@ public final class DynHandlerXGMML<T> extends AbstractXGMMLSource<T> implements 
 	}
 	
 	@Override
-	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill, String arrowshape, String transparency, String start, String end)
+	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, String width, String fill,  String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
 	{
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, arrowshape, transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
 	}
 	
 	private String checkGraphAttributeName(String name)

@@ -25,7 +25,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cytoscape.view.presentation.property.ArrowShapeVisualProperty;
 import org.cytoscape.view.presentation.property.NodeShapeVisualProperty;
+import org.cytoscape.view.presentation.property.values.ArrowShape;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
@@ -95,36 +97,52 @@ public final class AttributeTypeMap
             	if (value != null) return new ArrayList<Object>();
             case PAINT:
             	if (value != null) return decodeHEXColor(value);
-            case RECTANGLE:
+            	
+            case NODE_RECTANGLE:
             	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
-            case RECT:
+            case NODE_RECT:
             	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
-            case BOX:
+            case NODE_BOX:
             	return (NodeShape) NodeShapeVisualProperty.RECTANGLE;
-            case ROUND_RECTANGLE:
+            case NODE_ROUND_RECTANGLE:
             	return (NodeShape) NodeShapeVisualProperty.ROUND_RECTANGLE;
-            case ROUND_RECT:
+            case NODE_ROUND_RECT:
             	return (NodeShape) NodeShapeVisualProperty.ROUND_RECTANGLE;
-            case TRIANGLE:
+            case NODE_TRIANGLE:
             	return (NodeShape) NodeShapeVisualProperty.TRIANGLE;
-            case PARALLELOGRAM:
+            case NODE_PARALLELOGRAM:
             	return (NodeShape) NodeShapeVisualProperty.PARALLELOGRAM;
-            case RHOMBUS:
+            case NODE_RHOMBUS:
             	return (NodeShape) NodeShapeVisualProperty.PARALLELOGRAM;
-            case DIAMOND:
+            case NODE_DIAMOND:
             	return (NodeShape) NodeShapeVisualProperty.DIAMOND;
-            case ELLIPSE:
+            case NODE_ELLIPSE:
             	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
-            case VER_ELLIPSE:
+            case NODE_VER_ELLIPSE:
             	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
-            case HOR_ELLIPSE:
+            case NODE_HOR_ELLIPSE:
             	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
-            case CIRCLE:
+            case NODE_CIRCLE:
             	return (NodeShape) NodeShapeVisualProperty.ELLIPSE;
-            case HEXAGON:
+            case NODE_HEXAGON:
             	return (NodeShape) NodeShapeVisualProperty.HEXAGON;
-            case OCTAGON:
+            case NODE_OCTAGON:
             	return (NodeShape) NodeShapeVisualProperty.OCTAGON;
+            	
+            case EDGE_DIAMOND:
+                return (ArrowShape) ArrowShapeVisualProperty.DIAMOND;
+            case EDGE_DELTA:
+                return (ArrowShape) ArrowShapeVisualProperty.DELTA;
+            case EDGE_ARROW:
+                return (ArrowShape) ArrowShapeVisualProperty.ARROW;
+            case EDGE_T:
+                return (ArrowShape) ArrowShapeVisualProperty.T;
+            case EDGE_CIRCLE:
+                return (ArrowShape) ArrowShapeVisualProperty.CIRCLE;
+            case EDGE_HALF_TOP:
+                return (ArrowShape) ArrowShapeVisualProperty.HALF_TOP;
+            case EDGE_HALF_BOTTOM:
+                return (ArrowShape) ArrowShapeVisualProperty.HALF_BOTTOM;
         }
 
         return null;
@@ -134,11 +152,6 @@ public final class AttributeTypeMap
     {
     	return s != null && s.matches("(?i)1|true");
     }
-
-//    private static String toXGMMLBoolean(boolean value)
-//    {
-//    	return value ? "1" : "0";
-//    }
     
     private static Paint decodeHEXColor(String nm) throws NumberFormatException 
     {

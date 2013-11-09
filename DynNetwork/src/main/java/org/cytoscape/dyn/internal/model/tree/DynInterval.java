@@ -122,5 +122,10 @@ public interface DynInterval<T> extends Comparable<DynInterval<T>>
 	 */
 	public void setOn(boolean isOn);
        
+	/**
+	 * Get class type
+	 * @return
+	 */
+	public String getType();
 }
 

@@ -23,61 +23,61 @@ import org.cytoscape.view.presentation.property.values.NodeShape;
 
 
 /**
- * <code> DynIntervalPaint </code> implements NodeShape intervals.
+ * <code> DynIntervalNodeShape </code> implements NodeShape intervals.
  *  
  * @author Sabina Sara Pfister
  */
-public class DynIntervalShape extends AbstractDynInterval<NodeShape>
+public class DynIntervalNodeShape extends AbstractDynInterval<NodeShape>
 {
 	
 	/**
-	 * <code> DynIntervalShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param interval
 	 * @param onValue
 	 */
-	public DynIntervalShape(DynInterval<NodeShape> interval, NodeShape onValue)
+	public DynIntervalNodeShape(DynInterval<NodeShape> interval, NodeShape onValue)
 	{
 		super(interval, onValue);
 	}
 	
 	/**
-	 * <code> DynIntervalShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param interval
 	 */
-	public DynIntervalShape(DynInterval<NodeShape> interval)
+	public DynIntervalNodeShape(DynInterval<NodeShape> interval)
 	{
 		super(interval);
 	}
 	
 	/**
-	 * <code> DynIntervalShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param onValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalShape(NodeShape onValue, double start, double end)
+	public DynIntervalNodeShape(NodeShape onValue, double start, double end)
 	{
 		super(onValue, start, end);
 	}
 	
 	/**
-	 * <code> DynIntervalShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param onValue
 	 * @param offValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalShape(NodeShape onValue,  NodeShape offValue, double start, double end)
+	public DynIntervalNodeShape(NodeShape onValue,  NodeShape offValue, double start, double end)
 	{
 		super(onValue, offValue, start, end);
 	}
 
 	/**
-	 * <code> DynIntervalShape </code> constructor.
+	 * <code> DynIntervalNodeShape </code> constructor.
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalShape(double start, double end)
+	public DynIntervalNodeShape(double start, double end)
 	{
 		super(start, end);
 	}
@@ -120,6 +120,12 @@ public class DynIntervalShape extends AbstractDynInterval<NodeShape>
 	public NodeShape interpolateValue(NodeShape value2, double alpha)
 	{
 		return onValue;
+	}
+	
+	@Override
+	public String getType()
+	{
+		return "N";
 	}
 	
 }

@@ -40,7 +40,8 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	private final CyEdge currentEdge;
 	private final String width;
 	private final String fill;
-	private final String arrowshape;
+	private final String sourcearrowshape;
+	private final String targetarrowshape;
 	private final String transparency;
 	private final String start;
 	private final String end;
@@ -52,7 +53,8 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 	 * @param currentEdge
 	 * @param width
 	 * @param fill
-	 * @param arrowshape
+	 * @param sourcearrowshape
+	 * @param targetarrowshape
 	 * @param transparency
 	 * @param start
 	 * @param end
@@ -62,7 +64,8 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 			final CyEdge currentEdge,
 			final String width,
 			final String fill,
-			final String arrowshape,
+			final String sourcearrowshape,
+			final String targetarrowshape,
 			final String transparency,
 			final String start,
 			final String end)
@@ -71,7 +74,8 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 		this.width = width;
 		this.fill = fill;
 		this.transparency = transparency;
-		this.arrowshape = arrowshape;
+		this.sourcearrowshape = sourcearrowshape;
+		this.targetarrowshape = targetarrowshape;
 		this.start = start;
 		this.end = end;
 	}
@@ -106,14 +110,23 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					"GRAPHICS.edge.fill",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
 		}
-		if (arrowshape!=null)
+		if (sourcearrowshape!=null)
 		{
-			Object attr = typeMap.getTypedValue(typeMap.getType("EDGE_" + arrowshape), arrowshape);
+			Object attr = typeMap.getTypedValue(typeMap.getType("EDGE_" + sourcearrowshape), sourcearrowshape);
+			vizMap.insertEdgeGraphics(
+					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_SOURCE_ARROW_SHAPE,
+					"sourcearrowshape",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.sourcearrowshape",(T) attr ,start, end));
+		}
+		if (targetarrowshape!=null)
+		{
+			Object attr = typeMap.getTypedValue(typeMap.getType("EDGE_" + targetarrowshape), targetarrowshape);
 			vizMap.insertEdgeGraphics(
 					currentEdge,
 					(VisualProperty<T>) BasicVisualLexicon.EDGE_TARGET_ARROW_SHAPE,
-					"arrowshape",
-					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.arrowshape",(T) attr ,start, end));
+					"targetarrowshape",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.targetarrowshape",(T) attr ,start, end));
 		}
 		if (transparency!=null)
 		{

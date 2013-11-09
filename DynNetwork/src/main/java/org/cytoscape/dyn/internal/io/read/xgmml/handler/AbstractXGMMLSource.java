@@ -96,9 +96,9 @@ public abstract class AbstractXGMMLSource<T> implements Source<T>
 	}
 	
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge, 
-			String width, String fill, String arrowshape, String transparency, String start, String end)
+			String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end)
 	{
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, arrowshape, transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, transparency, start, end);
 	}
 	
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode, 

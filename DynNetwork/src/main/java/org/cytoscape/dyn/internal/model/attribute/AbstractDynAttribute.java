@@ -35,6 +35,9 @@ import org.cytoscape.dyn.internal.model.tree.DynInterval;
  */
 public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 {
+	// This is a hack to correct value interpolation errors for integer intervals.
+	public double currentValue = 0;
+	
 	protected Class<T> type;
 	
 	protected List<DynInterval<T>> intervalList;
@@ -141,6 +144,18 @@ public abstract class AbstractDynAttribute<T> implements DynAttribute<T>
 	public long getRow() 
 	{
 		return key.getRow();
+	}
+	
+	@Override
+	public double getCurrentValue() 
+	{
+		return this.currentValue;
+	}
+	
+	@Override
+	public void setCurrentValue(double currentValue) 
+	{
+		this.currentValue = currentValue;
 	}
 	
 	@Override

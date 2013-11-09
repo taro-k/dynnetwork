@@ -197,5 +197,6 @@ public abstract class AbstractDynInterval<T> implements DynInterval<T>
 	{
 		this.isOn = isOn;
 	}
+
 	
 }

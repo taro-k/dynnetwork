@@ -134,8 +134,9 @@ public class Transformator<T> extends AbstractTransformator<T>
 
 				for (DynInterval<T> interval : nodesVizMap)
 					if (interval.isOn())
+					{
 						updateVisualProperty(view,dynNetwork.getNode(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
-
+					}
 				for (DynInterval<T> interval : edgesVizMap)
 					if (interval.isOn())
 						updateVisualProperty(view,dynNetwork.getEdge(interval),vizMap.getVisualProperty(interval.getAttribute()),interval);
@@ -185,7 +186,7 @@ public class Transformator<T> extends AbstractTransformator<T>
 			}
 			
 			timeEnd = System.currentTimeMillis();
-			if (this.writerFactoryList.size()>0 && round(timeEnd-timeStart)<delay)
+			if (this.writerFactoryList.size()==0 && round(timeEnd-timeStart)<delay)
 			{
 				try {
 					Thread.sleep(delay-round(timeEnd-timeStart));

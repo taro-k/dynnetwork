@@ -101,9 +101,9 @@ public class DynVizMapFactoryImpl<T> implements DynVizMapFactory<T>
 	}
 
 	@Override
-	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String arrowshape, String transparency, String start, String end) 
+	public void addedEdgeGraphics(DynNetwork<T> dynNetwork, CyEdge currentEdge, String width, String fill, String sourcearrowshape, String targetarrowshape, String transparency, String start, String end) 
 	{
-		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,arrowshape,transparency,start,end));
+		this.edgeGraphicsList.push(new EdgeGraphicsAttribute<T>(dynNetwork,currentEdge,width,fill,sourcearrowshape,targetarrowshape,transparency,start,end));
 	}
 
 }

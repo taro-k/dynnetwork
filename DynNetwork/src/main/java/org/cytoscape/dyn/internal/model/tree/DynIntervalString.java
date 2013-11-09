@@ -27,7 +27,6 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public class DynIntervalString extends AbstractDynInterval<String>
 {
-	
 	/**
 	 * <code> DynIntervalString </code> constructor.
 	 * @param interval
@@ -118,6 +117,12 @@ public class DynIntervalString extends AbstractDynInterval<String>
 	public String interpolateValue(String value2, double alpha)
 	{
 		return onValue;
+	}
+	
+	@Override
+	public String getType()
+	{
+		return "S";
 	}
 	
 }
