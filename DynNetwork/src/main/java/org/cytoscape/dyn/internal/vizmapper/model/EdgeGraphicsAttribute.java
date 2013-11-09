@@ -122,7 +122,21 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 			Object attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
 			vizMap.insertEdgeGraphics(
 					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_PAINT,
+					"GRAPHICS.edge.fill",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
+			
+			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
+			vizMap.insertEdgeGraphics(
+					currentEdge,
 					(VisualProperty<T>) BasicVisualLexicon.EDGE_UNSELECTED_PAINT,
+					"GRAPHICS.edge.fill",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
+			
+			attr = typeMap.getTypedValue(typeMap.getType("paint"), fill);
+			vizMap.insertEdgeGraphics(
+					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_STROKE_UNSELECTED_PAINT,
 					"GRAPHICS.edge.fill",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.fill",(T) attr ,start, end));
 		}

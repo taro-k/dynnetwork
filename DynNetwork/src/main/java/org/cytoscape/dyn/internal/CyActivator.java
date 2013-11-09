@@ -64,7 +64,6 @@ import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
 import org.cytoscape.view.presentation.property.values.BendFactory;
 import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
-import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TunableSetter;
 import org.cytoscape.work.undo.UndoSupport;
@@ -158,7 +157,6 @@ public class CyActivator<T,C> extends AbstractCyActivator
     	registerService(context,selectNodesAction,CyAction.class, new Properties()); 
     	registerService(context,selectEdgesAction,CyAction.class, new Properties());
     	registerService(context,dynCytoPanel,SetCurrentNetworkViewListener.class, new Properties());
-    	registerService(context,dynCytoPanel,VisualStyleChangedListener.class, new Properties());
     	registerService(context,transformator,UpdateNetworkPresentationListener.class, new Properties());
     	registerService(context,dynKKLayout,CyLayoutAlgorithm.class, myLayoutProps);
     	registerService(context,dynPerfuseLayout,CyLayoutAlgorithm.class, myLayoutProps);

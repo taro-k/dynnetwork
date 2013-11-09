@@ -70,8 +70,6 @@ import org.cytoscape.dyn.internal.view.task.Transformator;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
 import org.cytoscape.util.swing.FileChooserFilter;
 import org.cytoscape.util.swing.FileUtil;
-import org.cytoscape.view.vizmap.events.VisualStyleChangedEvent;
-import org.cytoscape.view.vizmap.events.VisualStyleChangedListener;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 
@@ -85,7 +83,7 @@ import org.cytoscape.work.TaskManager;
  * @param <C>
  */
 public final class DynCytoPanelImpl<T,C> extends JPanel implements DynCytoPanel<T,C>,
-ChangeListener, ActionListener, SetCurrentNetworkViewListener, VisualStyleChangedListener
+ChangeListener, ActionListener, SetCurrentNetworkViewListener
 
 {
 	private static final long serialVersionUID = 1L;
@@ -285,16 +283,6 @@ ChangeListener, ActionListener, SetCurrentNetworkViewListener, VisualStyleChange
 				updateView();
 			}
 		}
-	}
-	
-	@Override
-	public void handleEvent(VisualStyleChangedEvent e) 
-	{
-//		view = viewManager.getDynNetworkView(appManager.getCurrentNetworkView());
-//		if (view!=null)
-//		{
-//			refreshView();
-//		}
 	}
 		
 	@SuppressWarnings("unchecked")
