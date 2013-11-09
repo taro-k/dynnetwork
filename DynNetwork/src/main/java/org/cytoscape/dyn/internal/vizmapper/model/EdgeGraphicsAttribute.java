@@ -191,15 +191,15 @@ public final class EdgeGraphicsAttribute<T> extends AbstractIntervalCheck<T>
 					"bend",
 					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.bend",(T) attr ,start, end));
 		}
-//		if (transparency!=null)
-//		{
-//			Object attr = typeMap.getTypedValue(typeMap.getType("integer"), transparency);
-//			vizMap.insertEdgeGraphics(
-//					currentEdge,
-//					(VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY,
-//					"GRAPHICS.edge.transparency",
-//					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.transparency",(T) attr ,start, end));
-//		}
+		if (transparency!=null)
+		{
+			Object attr = typeMap.getTypedValue(typeMap.getType("integer"), transparency);
+			vizMap.insertEdgeGraphics(
+					currentEdge,
+					(VisualProperty<T>) BasicVisualLexicon.EDGE_TRANSPARENCY,
+					"GRAPHICS.edge.transparency",
+					getIntervalAttr(dynNetworkView.getNetwork(),currentEdge,"GRAPHICS.edge.transparency",(T) attr ,start, end));
+		}
 	}
 	
 }
