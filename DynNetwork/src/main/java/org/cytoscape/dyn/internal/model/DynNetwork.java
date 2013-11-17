@@ -57,7 +57,7 @@ public interface DynNetwork<T>
 	 * @param interval
 	 */
 	public void insertNode(CyNode node, String column, DynInterval<T> interval);
-	
+	public void insertNodeUpdate(CyNode node, String column, DynInterval<T> interval);		
 	/**
 	 * Insert edge.
 	 * @param ede
@@ -318,6 +318,7 @@ public interface DynNetwork<T>
 	 */
 	public void finalizeNetwork();
 	
+	public void UpdateNetwork();
 	/**
 	 * Get minimum time.
 	 * @return minimum time

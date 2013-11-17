@@ -25,8 +25,6 @@ import java.util.Map;
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.view.presentation.property.values.ArrowShape;
-import org.cytoscape.view.presentation.property.values.Bend;
 import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
@@ -45,8 +43,7 @@ public abstract class AbstractDynAttributeCheck<T>
 		if (map.containsKey(key))
 		{
 			checkGraphIntervals(network,map.get(key), interval);
-			if (interval.getAttribute()!=null)
-				extendInterval(map.get(key).getPredecessor(interval), interval, map.get(key).getSuccesor(interval));
+			extendInterval(map.get(key).getPredecessor(interval), interval, map.get(key).getSuccesor(interval));
 		}
 		else
 			map.put(key, getAttr(interval,key));
@@ -58,8 +55,9 @@ public abstract class AbstractDynAttributeCheck<T>
 		if (map.containsKey(key))
 		{
 			checkNodeIntervals(network,map.get(key), interval);
-			if (interval.getAttribute()!=null)
+			if(map.get(key).getPredecessor(interval)!=null&& map.get(key).getSuccesor(interval)!=null){
 				extendInterval(map.get(key).getPredecessor(interval), interval, map.get(key).getSuccesor(interval));
+			}
 		}
 		else
 			map.put(key, getAttr(interval,key));
@@ -71,8 +69,9 @@ public abstract class AbstractDynAttributeCheck<T>
 		if (map.containsKey(key))
 		{
 			checkEdgeIntervals(network,map.get(key), interval);
-			if (interval.getAttribute()!=null)
+			if(map.get(key).getPredecessor(interval)!=null&& map.get(key).getSuccesor(interval)!=null){
 				extendInterval(map.get(key).getPredecessor(interval), interval, map.get(key).getSuccesor(interval));
+			}
 		}
 		else
 			map.put(key, getAttr(interval,key));
@@ -104,11 +103,7 @@ public abstract class AbstractDynAttributeCheck<T>
 		else if (interval.getOnValue() instanceof Paint)
 			return (DynAttribute<T>) new DynPaintAttribute((DynInterval<Paint>) interval, key);
 		else if (interval.getOnValue() instanceof NodeShape)
-			return (DynAttribute<T>) new DynNodeShapeAttribute((DynInterval<NodeShape>) interval, key);
-		else if (interval.getOnValue() instanceof ArrowShape)
-			return (DynAttribute<T>) new DynArrowShapeAttribute((DynInterval<ArrowShape>) interval, key);
-		else if (interval.getOnValue() instanceof Bend)
-			return (DynAttribute<T>) new DynEdgeBendAttribute((DynInterval<Bend>) interval, key);
+			return (DynAttribute<T>) new DynShapeAttribute((DynInterval<NodeShape>) interval, key);
 		System.out.println("\nXGMML Parser Error: Unrecognized Attribute Class Type: " +  interval.getOnValue().getClass());
 		throw new NullPointerException("Invalid attribute class " + interval.getOnValue().getClass());
 	}
@@ -179,7 +174,6 @@ public abstract class AbstractDynAttributeCheck<T>
 		attr.addInterval(interval);
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void checkEdgeIntervals(CyNetwork network, DynAttribute<T> attr, DynInterval<T> interval)
 	{
 		for (DynInterval<T> i : attr.getIntervalList())
@@ -195,18 +189,18 @@ public abstract class AbstractDynAttributeCheck<T>
 					interval.setEnd(i.getStart());
 				else if (interval.getEnd()==i.getEnd() && interval.getStart()==i.getStart() && interval.getOnValue().equals(i.getOnValue()))
 				{
-					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
-					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for edge label=" + label + 
-							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+//					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
+//					System.out.println("\nXGMML Parser Warning: skipping duplicate attribute interval for edge label=" + label + 
+//							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+//							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 					return;
 				}
 				else
 				{   
-					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
-					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
-							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
-							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
+//					String label = ((T) network.getRow(network.getEdge(attr.getRow())).get(CyNetwork.NAME, String.class)).toString();
+//					System.out.println("\nXGMML Parser Warning: inconsistent attribute interval for edge label=" + label + 
+//							"\n  > attr=" + attr.getColumn() + " value=" + i.getOnValue() + " start=" + i.getStart() + " end=" + i.getEnd() +
+//							"\n  > attr=" + attr.getColumn() + " value=" + interval.getOnValue() + " start=" + interval.getStart() + " end=" + interval.getEnd());
 					return;
 				}
 			}

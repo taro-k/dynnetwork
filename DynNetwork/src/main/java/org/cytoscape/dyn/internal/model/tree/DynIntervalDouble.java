@@ -27,6 +27,7 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public class DynIntervalDouble extends AbstractDynInterval<Double>
 {
+	
 	/**
 	 * <code> DynIntervalDouble </code> constructor.
 	 * @param interval

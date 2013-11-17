@@ -21,50 +21,45 @@ package org.cytoscape.dyn.internal.model.attribute;
 
 import org.cytoscape.dyn.internal.io.read.util.KeyPairs;
 import org.cytoscape.dyn.internal.model.tree.DynInterval;
+import org.cytoscape.view.presentation.property.values.NodeShape;
 
 /**
- * <code> DynIntegerAttribute </code> implements Integer attributes and contains
+ * <code> DynShapeAttribute </code> implements NodeShapeVisualProperty attributes and contains
  * a list of their interval times.
  * 
  * @author Sabina Sara Pfister
  * 
  */
-public class DynIntegerAttribute extends AbstractDynAttribute<Integer>
+public class DynShapeAttribute extends AbstractDynAttribute<NodeShape>
 {
 	/**
-	 * <code> DynIntegerAttribute </code> constructor.
+	 * <code> DynShapeAttribute </code> constructor.
 	 */
-	public DynIntegerAttribute()
+	public DynShapeAttribute()
 	{
-		super(Integer.class);
+		super(NodeShape.class);
 	}
 	
 	/**
-	 * <code> DynIntegerAttribute </code> constructor.
+	 * <code> DynShapeAttribute </code> constructor.
 	 * @param interval
 	 * @param key
 	 */
-	public DynIntegerAttribute(DynInterval<Integer> interval, KeyPairs key)
+	public DynShapeAttribute(DynInterval<NodeShape> interval, KeyPairs key)
 	{
-		super(Integer.class,interval,key);
+		super(NodeShape.class,interval,key);
 	}
 	
 	@Override
-	public Integer getMinValue()
+	public NodeShape getMinValue()
     {
-		int min = Integer.MAX_VALUE;
-		for (DynInterval<Integer> i : intervalList)
-			min = Math.min(min, i.getOnValue());
-    	return min;
+    	return null;
     }
     
 	@Override
-	public Integer getMaxValue()
+	public NodeShape getMaxValue()
 	{
-		int max = Integer.MIN_VALUE;
-		for (DynInterval<Integer> i : intervalList)
-			max = Math.max(max, i.getOnValue());
-    	return max;
+		return null;
 	}
 	
 }

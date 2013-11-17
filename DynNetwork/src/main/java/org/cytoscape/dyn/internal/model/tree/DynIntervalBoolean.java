@@ -27,6 +27,7 @@ package org.cytoscape.dyn.internal.model.tree;
  */
 public class DynIntervalBoolean extends AbstractDynInterval<Boolean>
 {
+	
 	/**
 	 * <code> DynIntervalBoolean </code> constructor.
 	 * @param interval

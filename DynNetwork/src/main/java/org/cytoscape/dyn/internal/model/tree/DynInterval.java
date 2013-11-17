@@ -121,6 +121,6 @@ public interface DynInterval<T> extends Comparable<DynInterval<T>>
 	 * @param isOn
 	 */
 	public void setOn(boolean isOn);
-	
+       
 }
 

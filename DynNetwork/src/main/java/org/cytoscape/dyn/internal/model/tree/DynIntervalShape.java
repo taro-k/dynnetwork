@@ -19,69 +19,71 @@
 
 package org.cytoscape.dyn.internal.model.tree;
 
+import org.cytoscape.view.presentation.property.values.NodeShape;
+
 
 /**
- * <code> DynIntervalString </code> implements String intervals.
+ * <code> DynIntervalPaint </code> implements NodeShape intervals.
  *  
  * @author Sabina Sara Pfister
  */
-public class DynIntervalString extends AbstractDynInterval<String>
+public class DynIntervalShape extends AbstractDynInterval<NodeShape>
 {
 	
 	/**
-	 * <code> DynIntervalString </code> constructor.
+	 * <code> DynIntervalShape </code> constructor.
 	 * @param interval
 	 * @param onValue
 	 */
-	public DynIntervalString(DynInterval<String> interval, String onValue)
+	public DynIntervalShape(DynInterval<NodeShape> interval, NodeShape onValue)
 	{
 		super(interval, onValue);
 	}
 	
 	/**
-	 * <code> DynIntervalString </code> constructor.
+	 * <code> DynIntervalShape </code> constructor.
 	 * @param interval
 	 */
-	public DynIntervalString(DynInterval<String> interval)
+	public DynIntervalShape(DynInterval<NodeShape> interval)
 	{
 		super(interval);
 	}
 	
 	/**
-	 * <code> DynIntervalString </code> constructor.
+	 * <code> DynIntervalShape </code> constructor.
 	 * @param onValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalString(String onValue, double start, double end)
+	public DynIntervalShape(NodeShape onValue, double start, double end)
 	{
 		super(onValue, start, end);
 	}
 	
 	/**
-	 * <code> DynIntervalString </code> constructor.
+	 * <code> DynIntervalShape </code> constructor.
 	 * @param onValue
 	 * @param offValue
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalString(String onValue,  String offValue, double start, double end)
+	public DynIntervalShape(NodeShape onValue,  NodeShape offValue, double start, double end)
 	{
 		super(onValue, offValue, start, end);
 	}
 
 	/**
-	 * <code> DynIntervalString </code> constructor.
+	 * <code> DynIntervalShape </code> constructor.
 	 * @param start
 	 * @param end
 	 */
-	public DynIntervalString(double start, double end)
+	public DynIntervalShape(double start, double end)
 	{
 		super(start, end);
 	}
 
 	@Override
-	public int compareTo(DynInterval<String> interval)
+	public int compareTo(DynInterval<NodeShape> interval)
 	{
 		if ((start <= interval.getEnd() && interval.getStart() <= end) &&	
 				((start < interval.getEnd() && interval.getStart() < end) ||
@@ -94,19 +96,19 @@ public class DynIntervalString extends AbstractDynInterval<String>
 	}
 
 	@Override
-	public String getOnValue()
+	public NodeShape getOnValue()
 	{
 		return onValue;
 	}
 	
 	@Override
-	public String getOffValue()
+	public NodeShape getOffValue()
 	{
 		return offValue;
 	}
 	
 	@Override
-	public String getOverlappingValue(DynInterval<String> interval)
+	public NodeShape getOverlappingValue(DynInterval<NodeShape> interval)
 	{
 		if (this.compareTo(interval)>0)
 			return onValue;
@@ -115,7 +117,7 @@ public class DynIntervalString extends AbstractDynInterval<String>
 	}
 	
 	@Override
-	public String interpolateValue(String value2, double alpha)
+	public NodeShape interpolateValue(NodeShape value2, double alpha)
 	{
 		return onValue;
 	}
