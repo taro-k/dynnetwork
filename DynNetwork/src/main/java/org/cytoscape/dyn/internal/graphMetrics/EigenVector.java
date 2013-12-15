@@ -75,8 +75,8 @@ public class EigenVector<T> extends AbstractTask {
 
 		// Need the dynamic network to get event time list
 		DynNetwork<T> dynamicnetwork = view.getNetwork();
-		System.out.println(CyTableUtil.getNodesInState(
-				dynamicnetwork.getNetwork(), "selected", true));
+		//System.out.println(CyTableUtil.getNodesInState(
+		//		dynamicnetwork.getNetwork(), "selected", true));
 		// Declaring and Initialising eventTimeList of the Dynamic Network
 
 		List<Double> eventTimeList = new ArrayList<Double>();
@@ -140,7 +140,7 @@ public class EigenVector<T> extends AbstractTask {
 						nodeList.get(j), "Eigenvector",
 						Double.toString(currentvalue), "real",
 						startTime.toString(), endTime.toString());
-				System.out.println(currentvalue);
+				//System.out.println(currentvalue);
 				totalsum = totalsum + currentvalue;
 			}
 			startTime = endTime;
