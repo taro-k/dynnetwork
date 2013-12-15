@@ -143,7 +143,6 @@ public class MenuActionLoadCSV<T, C> extends AbstractCyAction {
 
 	private List<FileChooserFilter> getFilters() {
 		List<FileChooserFilter> filters = new ArrayList<FileChooserFilter>();
-		filters.add(new FileChooserFilter("XGMML", "xgmml"));
 		filters.add(new FileChooserFilter("CSV", "csv"));
 		return filters;
 	}
