@@ -87,10 +87,17 @@ public class GenerateChart<T> {
 				for (DynInterval<T> interval : dynamicNetwork.getDynAttribute(
 						node, checkedAttributes.get(i)).getIntervalList()) {
 					// System.out.println(interval.getOnValue());
-					double value = (Double) interval.getOnValue();
+					double value;
+					if(interval.getOnValue() instanceof Double)
+						value = (Double) interval.getOnValue();
+					else 
+						value = ((Integer) interval.getOnValue()).doubleValue();
 					// System.out.println(value);
 					attributeSeries[j].add(interval.getStart(), value);
 					attributeSeries[j].add(interval.getEnd(), value);
+					//System.out.println("interval start ="+interval.getStart());
+					//System.out.println("interval end ="+interval.getEnd());
+					//System.out.println("--------");
 				}
 				dataset.addSeries(attributeSeries[j++]);
 			}
@@ -109,14 +116,24 @@ public class GenerateChart<T> {
 				for (DynInterval<T> interval : dynamicNetwork.getDynAttribute(
 						edge, edgeCheckedAttributes.get(i)).getIntervalList()) {
 					// System.out.println(interval.getOnValue());
-					double value = (Double) interval.getOnValue();
+					double value;
+					if(interval.getOnValue() instanceof Double)
+						value = (Double) interval.getOnValue();
+					else if(interval.getOnValue() instanceof Integer)
+						value = ((Integer) interval.getOnValue()).doubleValue();
+					else if(interval.getOnValue() instanceof Short)
+						value = ((Short) interval.getOnValue()).doubleValue();
+					else 
+						value = ((Long) interval.getOnValue()).doubleValue();
 					// System.out.println(value);
 					attributeSeries[j].add(interval.getStart(), value);
 					attributeSeries[j].add(interval.getEnd(), value);
+					
 				}
 				dataset.addSeries(attributeSeries[j++]);
 			}
 		}
+		
 		String title = "Dynamic Graph Metrics";
 		String xAxisLabel = "Time";
 		String yAxisLabel = "Centrality Value";
@@ -132,7 +149,7 @@ public class GenerateChart<T> {
 		chart.getXYPlot().setDomainAxis(xaxis);
 		NumberAxis yaxis = new NumberAxis();
 		yaxis.setAutoRangeIncludesZero(true);
-		yaxis.setLabel("Centrality Value");
+		yaxis.setLabel("Centrality/Attribute Value");
 		chart.getXYPlot().setRangeAxis(yaxis);
 		chart.setBackgroundPaint(Color.white);
 		//chart.setPadding(new RectangleInsets(20,20,20,20));

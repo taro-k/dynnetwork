@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -64,7 +65,6 @@ public class GraphMetricsPanel<T, C> extends JPanel implements
 
 		this.cyactivator = cyActivator;
 		this.dynamicNetwork = dynamicNetwork;
-
 		attributesTable = new JTable(new MyTableModel(
 				dynamicNetwork.getNodeAttributes()));
 		attributesTable.setPreferredScrollableViewportSize(new Dimension(300,
@@ -155,7 +155,7 @@ public class GraphMetricsPanel<T, C> extends JPanel implements
 	@Override
 	public String getTitle() {
 		// TODO Auto-generated method stub
-		return "Dynamic Graph Metrics";
+		return dynamicNetwork.getNetworkLabel()+": "+"attributes/metrics";
 	}
 
 	@Override
@@ -190,6 +190,14 @@ public class GraphMetricsPanel<T, C> extends JPanel implements
 					dynamicNetwork.getNetwork(), "selected", true);
 			List<CyEdge> selectedEdges = CyTableUtil.getEdgesInState(dynamicNetwork.getNetwork(), "selected", true);
 			
+			if(checkedAttributes.isEmpty() && edgeCheckedAttributes.isEmpty())
+				JOptionPane.showMessageDialog(null,"Please select a node/edge attribute from the table and then try to plot!");
+			else if(selectedNodes.isEmpty() && !checkedAttributes.isEmpty())
+				JOptionPane.showMessageDialog(null,"You checked a node attribute. Please select a node to get the plot!");
+			else if(selectedEdges.isEmpty() && !edgeCheckedAttributes.isEmpty())
+				JOptionPane.showMessageDialog(null,"You checked an edge attribute. Please select an edge to get the plot!");
+			
+			else{
 			GenerateChart<T> chartGenerator = new GenerateChart<T>(
 					this.dynamicNetwork, checkedAttributes, edgeCheckedAttributes, selectedNodes,selectedEdges);
 			JFreeChart timeSeries = chartGenerator.generateTimeSeries();
@@ -198,7 +206,10 @@ public class GraphMetricsPanel<T, C> extends JPanel implements
 					timeSeries, cyactivator, dataset, dynamicNetwork);
 			cyactivator.getCyServiceRegistrar().registerService(resultsPanel,
 					CytoPanelComponent.class, new Properties());
+			
 			cyactivator.getCySwingAppication().getCytoPanel(CytoPanelName.EAST).setState(CytoPanelState.DOCK);
+			cyactivator.getCySwingAppication().getCytoPanel(CytoPanelName.EAST).setSelectedIndex(cyactivator.getCySwingAppication().getCytoPanel(CytoPanelName.EAST).indexOfComponent(resultsPanel));
+			}
 		}
 		
 		if (e.getSource() == closeTab) {
