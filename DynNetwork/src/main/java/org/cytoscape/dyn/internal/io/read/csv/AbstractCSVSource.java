@@ -12,6 +12,8 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 
 /**
  * @author Jimmy
@@ -23,6 +25,9 @@ public abstract class AbstractCSVSource<T> implements Source<T> {
 	protected DynNetworkViewFactory<T> viewSink;
 	protected DynLayoutFactory<T> layoutSink;
 	protected DynVizMapFactory<T> vizMapSink;
+	
+	protected HandleFactory handleFactory;
+	protected BendFactory bendFactory;
 
 	protected DynNetwork<T> addGraph(String id, String label, String start,
 			String end, String directed) {
@@ -64,18 +69,18 @@ public abstract class AbstractCSVSource<T> implements Source<T> {
 	}
 
 	protected void addNodeGraphics(DynNetwork<T> network, CyNode currentNode,
-			String type, String height, String width, String size, String fill,
+			String type, String height, String width, String size, String fill, String labelfill, String labelsize,
 			String linew, String outline, String transparency, String start,
 			String end) {
 		vizMapSink.addedNodeGraphics(network, currentNode, type, height, width,
-				size, fill, linew, outline, transparency, start, end);
+				size, fill, labelfill, labelsize, linew, outline, transparency, start, end);
 	}
 
 	protected void addEdgeGraphics(DynNetwork<T> network, CyEdge currentEdge,
-			String width, String fill, String transparency, String start,
+			String width, String fill, String sourcearrowshape, String targetarrowshape, String bend, String transparency, String start,
 			String end) {
-		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill,
-				transparency, start, end);
+		vizMapSink.addedEdgeGraphics(network, currentEdge, width, fill, sourcearrowshape, targetarrowshape, bend,
+				transparency, start, end, this.handleFactory, this.bendFactory);
 	}
 
 	protected void addNodeDynamics(DynNetwork<T> network, CyNode currentNode,
@@ -109,5 +114,14 @@ public abstract class AbstractCSVSource<T> implements Source<T> {
 			this.layoutSink = null;
 		else if (this.vizMapSink == sink)
 			this.vizMapSink = null;
+	}
+	
+	@Override
+	public void removeSinks(){
+	
+		this.networkSink = null;
+		this.viewSink = null;
+		this.layoutSink = null;
+		this.vizMapSink = null;
 	}
 }

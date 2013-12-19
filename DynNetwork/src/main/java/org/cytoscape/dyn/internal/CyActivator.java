@@ -46,6 +46,7 @@ import org.cytoscape.dyn.internal.view.model.DynNetworkViewFactoryImpl;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManager;
 import org.cytoscape.dyn.internal.view.model.DynNetworkViewManagerImpl;
 import org.cytoscape.dyn.internal.view.task.Transformator;
+import org.cytoscape.dyn.internal.vizmapper.model.DVisualLexicon;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactory;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapFactoryImpl;
 import org.cytoscape.dyn.internal.vizmapper.model.DynVizMapManager;
@@ -64,6 +65,8 @@ import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.view.layout.CyLayoutAlgorithm;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.presentation.property.values.BendFactory;
+import org.cytoscape.view.presentation.property.values.HandleFactory;
 import org.cytoscape.view.model.events.UpdateNetworkPresentationListener;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.work.TaskManager;
@@ -122,6 +125,8 @@ public class CyActivator<T, C> extends AbstractCyActivator {
 		UndoSupport undo = getService(context, UndoSupport.class);
 		CyEventHelper cyEventHelperRef = getService(context,
 				CyEventHelper.class);
+		HandleFactory handleFactoryServiceRef = getService(context, HandleFactory.class);
+        BendFactory bendFactoryServiceRef = getService(context, BendFactory.class);
 
 		DynNetworkManagerImpl<T> dynNetManager = new DynNetworkManagerImpl<T>(
 				cyNetworkManagerServiceRef);
@@ -134,18 +139,19 @@ public class CyActivator<T, C> extends AbstractCyActivator {
 				dynNetViewManager, cyNetworkViewFactoryServiceRef,
 				cyNetworkViewManagerServiceRef, visualMappingServiceRef);
 
+		DVisualLexicon visualLexicon = new DVisualLexicon(cyApplicationManagerServiceRef);
 		DynLayoutManager<T> dynLayoutManager = new DynLayoutManagerImpl<T>();
 		DynLayoutFactory<T> dynLayoutFactory = new DynLayoutFactoryImpl<T>(
 				dynLayoutManager);
 		DynVizMapManager<T> dynVizMapManager = new DynVizMapManagerImpl<T>();
 		DynVizMapFactory<T> vizMapFactory = new DynVizMapFactoryImpl<T>(
-				dynVizMapManager);
+				dynVizMapManager, visualLexicon);
 		Transformator<T> transformator = new Transformator<T>(dynLayoutManager,
 				dynVizMapManager);
 		DynCytoPanelImpl<T, C> dynCytoPanel = new DynCytoPanelImpl<T, C>(
 				cytoscapeDesktopService, taskManager,
 				cyApplicationManagerServiceRef, dynNetViewManager,
-				dynLayoutManager, dynVizMapManager, transformator, fileUtil);
+				dynLayoutManager, dynVizMapManager, fileUtil, transformator);
 
 		CyLayoutAlgorithm dynKKLayout = new KKDynLayout<T, C>(
 				"Dynamic Layouts", "Kamada-Kawai DynLayout", undo,
@@ -164,7 +170,7 @@ public class CyActivator<T, C> extends AbstractCyActivator {
 				cytoscapeDesktopService, cyApplicationManagerServiceRef,
 				dynCytoPanel, taskManager, dynNetManager, dynNetViewManager,
 				dynNetworkFactory, dynNetworkViewFactory, dynLayoutFactory,
-				vizMapFactory, fileUtil, streamUtil, tunableSetterServiceRef);
+				vizMapFactory, fileUtil, streamUtil, tunableSetterServiceRef, handleFactoryServiceRef,bendFactoryServiceRef);
 		MenuActionSelectVisibleNodes<T, C> selectNodesAction = new MenuActionSelectVisibleNodes<T, C>(
 				cyApplicationManagerServiceRef, cyNetworkViewManagerServiceRef,
 				dynNetManager, undo, cyEventHelperRef, taskManager,

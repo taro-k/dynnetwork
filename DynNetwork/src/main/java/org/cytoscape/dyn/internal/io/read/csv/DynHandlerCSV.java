@@ -49,6 +49,8 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 	private String width;
 	private String outline;
 	private String transparency;
+	private String labelfill;
+	private String labelsize;
 
 	/**
 	 * <code> DynHandlerCSV </code> constructor.
@@ -171,7 +173,7 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 					if(nodeGraphicAttributesFieldMap.containsKey("transparency"))
 						transparency = nextLine[nodeGraphicAttributesFieldMap.get("transparency")];
 					
-					addNodeGraphics(dynamicNetwork, node, type, h, w, size, fill, width, outline, transparency, nextLine[nodeFieldMap.get("StartTime")], nextLine[nodeFieldMap.get("EndTime")]);
+					addNodeGraphics(dynamicNetwork, node, type, h, w, size, fill, labelfill, labelsize, width, outline, transparency, nextLine[nodeFieldMap.get("StartTime")], nextLine[nodeFieldMap.get("EndTime")]);
 					
 				}	
 				else{
@@ -190,7 +192,7 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 					if(edgeGraphicAttributesFieldMap.containsKey("transparency"))
 						transparency = nextLine[edgeGraphicAttributesFieldMap.get("transparency")];
 								
-					addEdgeGraphics(dynamicNetwork, edge, width, fill, transparency, nextLine[edgeFieldMap.get("StartTime")], nextLine[edgeFieldMap.get("EndTime")]);
+					addEdgeGraphics(dynamicNetwork, edge, width, fill,null, null, null, transparency, nextLine[edgeFieldMap.get("StartTime")], nextLine[edgeFieldMap.get("EndTime")]);
 					
 				}
 					
