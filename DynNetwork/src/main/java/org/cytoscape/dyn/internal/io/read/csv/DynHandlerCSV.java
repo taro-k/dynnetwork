@@ -66,6 +66,9 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 	private String transparency;
 	private String labelfill;
 	private String labelsize;
+	private String sourcearrowshape;
+	private String targetarrowshape;
+	private String bend;
 
 	/**
 	 * <code> DynHandlerCSV </code> constructor.
@@ -86,7 +89,7 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 		this.file = file;
 	}
 
-	public void readNetwork() {
+	public void readNetwork() throws Exception {
 		
 		boolean flagNode = true;
 		boolean flagEdge = true;
@@ -96,15 +99,14 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 		String nextLine[];
 		
 		DynNetwork<T> dynamicNetwork = networkSink.addedGraph("1", file.getName().substring(0, file.getName().length()-4), null, null, "1");
-		try {
+		//try {
 			nextLine = this.csvReader.readNext();
 			while (nextLine != null) {
 				
 				if (nextLine[0].equalsIgnoreCase("NodeId")) {
-					
 					if (!flagNode) {
-						JOptionPane.showMessageDialog(null,"File not in the desired format. Redundant field!");
-						
+						System.out.println("File not in the desired format! NodeId occured multiple times!");
+						throw new IllegalArgumentException("Redundant field!");
 					}
 					
 					for (int i = 0; i < nextLine.length; i++) {
@@ -130,8 +132,10 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 							nodeGraphicAttributesFieldMap.put("borderwidth", i);
 						else if(nextLine[i].equalsIgnoreCase("fill"))
 							nodeGraphicAttributesFieldMap.put("fill", i);
-						else if(nextLine[i].equalsIgnoreCase("transparency"))
-							nodeGraphicAttributesFieldMap.put("transparency", i);
+						else if(nextLine[i].equalsIgnoreCase("labelfill"))
+							nodeGraphicAttributesFieldMap.put("labelfill", i);
+						else if(nextLine[i].equalsIgnoreCase("labelsize"))
+							nodeGraphicAttributesFieldMap.put("labelsize", i);
 						else
 							nodeAttributeFieldMap.put(i,checkNodeAttributeName(nextLine[i]));
 					}
@@ -142,7 +146,8 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 				else if (nextLine[0].equalsIgnoreCase("FromId")) {
 					nodeTableFlag = false;
 					if (!flagEdge) {
-						JOptionPane.showMessageDialog(null,"File not in the desired format. Redundant field!");
+						System.out.println("File not in the desired format! NodeId occured multiple times!");
+						throw new IllegalArgumentException("Redundant field!");
 					}
 					
 					for (int i = 0; i < nextLine.length; i++) {
@@ -160,6 +165,12 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 							edgeGraphicAttributesFieldMap.put("fill", i);
 						else if(nextLine[i].equalsIgnoreCase("transparency"))
 							edgeGraphicAttributesFieldMap.put("transparency", i);
+						else if(nextLine[i].equalsIgnoreCase("sourcearrowshape"))
+							edgeGraphicAttributesFieldMap.put("sourcearrowshape", i);
+						else if(nextLine[i].equalsIgnoreCase("targetarrowshape"))
+							edgeGraphicAttributesFieldMap.put("targetarrowshape", i);
+						else if(nextLine[i].equalsIgnoreCase("bend"))
+							edgeGraphicAttributesFieldMap.put("bend", i);
 						else
 							edgeAttributeFieldMap.put(i, checkEdgeAttributeName(nextLine[i]));
 					}
@@ -187,6 +198,10 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 						size = nextLine[nodeGraphicAttributesFieldMap.get("size")];
 					if(nodeGraphicAttributesFieldMap.containsKey("transparency"))
 						transparency = nextLine[nodeGraphicAttributesFieldMap.get("transparency")];
+					if(nodeGraphicAttributesFieldMap.containsKey("labelfill"))
+						labelfill = nextLine[nodeGraphicAttributesFieldMap.get("labelfill")];
+					if(nodeGraphicAttributesFieldMap.containsKey("labelsize"))
+						labelsize = nextLine[nodeGraphicAttributesFieldMap.get("labelsize")];	
 					
 					addNodeGraphics(dynamicNetwork, node, type, h, w, size, fill, labelfill, labelsize, width, outline, transparency, nextLine[nodeFieldMap.get("StartTime")], nextLine[nodeFieldMap.get("EndTime")]);
 					
@@ -206,8 +221,14 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 						fill = nextLine[edgeGraphicAttributesFieldMap.get("fill")];
 					if(edgeGraphicAttributesFieldMap.containsKey("transparency"))
 						transparency = nextLine[edgeGraphicAttributesFieldMap.get("transparency")];
+					if(edgeGraphicAttributesFieldMap.containsKey("sourcearrowshape"))
+						sourcearrowshape = nextLine[edgeGraphicAttributesFieldMap.get("sourcearrowshape")];
+					if(edgeGraphicAttributesFieldMap.containsKey("targetarrowshape"))
+						targetarrowshape = nextLine[edgeGraphicAttributesFieldMap.get("targetarrowshape")];
+					if(edgeGraphicAttributesFieldMap.containsKey("bend"))
+						bend = nextLine[edgeGraphicAttributesFieldMap.get("bend")];
 								
-					addEdgeGraphics(dynamicNetwork, edge, width, fill,null, null, null, transparency, nextLine[edgeFieldMap.get("StartTime")], nextLine[edgeFieldMap.get("EndTime")]);
+					addEdgeGraphics(dynamicNetwork, edge, width, fill, sourcearrowshape, targetarrowshape, bend, transparency, nextLine[edgeFieldMap.get("StartTime")], nextLine[edgeFieldMap.get("EndTime")]);
 					
 				}
 					
@@ -216,10 +237,11 @@ public class DynHandlerCSV<T> extends AbstractCSVSource<T>{
 			}
 			finalize(dynamicNetwork);
 			
-		} catch (IOException e1) {
+		/*} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			JOptionPane.showMessageDialog(null, "Error Reading file!");
-		}
+			JOptionPane.showMessageDialog(null, "Error Reading file!", "Error", JOptionPane.ERROR_MESSAGE);
+			removeSinks();
+		}*/
 	}
 
 	private String checkGraphAttributeName(String name) {

@@ -138,22 +138,24 @@ public class MenuActionLoadCSV<T, C> extends AbstractCyAction {
 			csvReader = new CSVReader(new FileReader(file.getAbsolutePath()));
 			DynHandlerCSV<T> csvHandler = new DynHandlerCSV<T>(dynNetworkFactory, dynNetworkViewFactory, dynLayoutFactory, vizMapFactory, csvReader, file);
 			csvHandler.readNetwork();
+			LoadDynFactory<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
+			LoadDynFactory<T> loadLayoutFactory = new LoadDynLayoutFactoryImpl<T>(appManager,dynNetworkViewManager,dynLayoutFactory);
+			LoadDynFactory<T> loadvizMapFactory = new LoadDynVizMapFactoryImpl<T>(appManager,dynNetworkViewManager,vizMapFactory);
+    	
+			Task loadViewTask = loadViewFactory.creatTaskIterator().next();
+			Task loadLayoutTask = loadLayoutFactory.creatTaskIterator().next();
+			Task loadvizMapTask = loadvizMapFactory.creatTaskIterator().next();
+			Task loadPanelTask = new DynCytoPanelTask<T,C>(myDynPanel, cytoPanelWest);
+			TaskIterator iterator = new TaskIterator(loadViewTask,loadLayoutTask,loadvizMapTask,loadPanelTask);
+    	
+			taskManager.execute(iterator);
 			
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, "Could not open the file!");
+			JOptionPane.showMessageDialog(null, "Error reading file!", "Error", JOptionPane.ERROR_MESSAGE);
+			//csvHandler.removeSinks();
 		}
 		
-		LoadDynFactory<T> loadViewFactory = new LoadDynNetworkViewFactoryImpl<T>(appManager,dynNetworkManager,dynNetworkViewFactory);
-    	LoadDynFactory<T> loadLayoutFactory = new LoadDynLayoutFactoryImpl<T>(appManager,dynNetworkViewManager,dynLayoutFactory);
-    	LoadDynFactory<T> loadvizMapFactory = new LoadDynVizMapFactoryImpl<T>(appManager,dynNetworkViewManager,vizMapFactory);
-    	
-    	Task loadViewTask = loadViewFactory.creatTaskIterator().next();
-    	Task loadLayoutTask = loadLayoutFactory.creatTaskIterator().next();
-    	Task loadvizMapTask = loadvizMapFactory.creatTaskIterator().next();
-    	Task loadPanelTask = new DynCytoPanelTask<T,C>(myDynPanel, cytoPanelWest);
-    	TaskIterator iterator = new TaskIterator(loadViewTask,loadLayoutTask,loadvizMapTask,loadPanelTask);
-    	
-    	taskManager.execute(iterator);
+		
 	}
 
 	private List<FileChooserFilter> getFilters() {
