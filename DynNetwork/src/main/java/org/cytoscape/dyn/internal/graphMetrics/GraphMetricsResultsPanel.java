@@ -127,8 +127,14 @@ public class GraphMetricsResultsPanel<T, C> extends JPanel implements
 			cyActivator.getCyServiceRegistrar().unregisterService(this,
 					CytoPanelComponent.class);
 		} else if (source == helpButton) {
-			DynamicNetworkHelp help = new DynamicNetworkHelp();
-			help.displayHelp();
+			try{
+				java.awt.Desktop.getDesktop().browse(java.net.URI.create("https://code.google.com/p/dynnetwork/wiki/DynNetworkHelp"));
+			}catch(Exception ex){
+				JOptionPane.showMessageDialog(null, "Error connecting to help!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			//Improve  the documentation
+			//DynamicNetworkHelp help = new DynamicNetworkHelp();
+			//help.displayHelp();
 		}
 	}
 
