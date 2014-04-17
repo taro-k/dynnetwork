@@ -20,7 +20,7 @@
 package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
-
+import java.util.Iterator;
 import org.cytoscape.dyn.internal.io.write.DynNetworkViewWriterFactory;
 import org.cytoscape.dyn.internal.layout.model.DynLayout;
 import org.cytoscape.dyn.internal.layout.model.DynLayoutManager;

@@ -20,7 +20,7 @@
 package org.cytoscape.dyn.internal.view.task;
 
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.cytoscape.dyn.internal.io.event.Sink;
 import org.cytoscape.dyn.internal.io.event.Source;
@@ -46,7 +46,8 @@ import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetworkPresentationListener
 {
 
-	protected Vector<DynNetworkViewWriterFactory<T>> writerFactoryList;
+	protected CopyOnWriteArrayList<DynNetworkViewWriterFactory<T>> writerFactoryList;
+	protected DynNetworkViewWriterFactory<T> writerFactory;
 	
 	protected double alpha;
 	protected int iterations;
@@ -68,7 +69,7 @@ public abstract class AbstractTransformator<T> implements Source<T>, UpdateNetwo
 	 */
 	public AbstractTransformator() 
 	{
-		this.writerFactoryList = new Vector<DynNetworkViewWriterFactory<T>>();
+		this.writerFactoryList = new CopyOnWriteArrayList<DynNetworkViewWriterFactory<T>>();
 	}
 	
 	@Override
